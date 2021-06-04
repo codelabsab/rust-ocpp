@@ -75,12 +75,9 @@ async fn message_parser(msg: Message) -> Result<Message, Message> {
     println!("Calling parse_call_type");
     let parse_call_type = call_type_parser(v).await;
 
-    if parse_call_type.is_ok() {
-        println!("parse_call_type is Ok");
-        Ok(Message::text(parse_call_type.unwrap().to_string()))
-    } else {
-        println!("parse_call_type is Err");
-        Err(parse_call_type.unwrap_err())
+    match parse_call_type {
+        Ok(o) => Ok(Message::text("everything is fine, move along")),
+        Err(e) => Err(Message::text("Something went wrong")),
     }
 }
 
