@@ -36,7 +36,7 @@ pub enum CallTypeEnum {
 
 impl fmt::Display for CallTypeEnum {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", &self)
+        write!(f, "{:?}", &self)
     }
 }
 
