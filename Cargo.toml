@@ -1,0 +1,29 @@
+[package]
+name = "ocpp"
+version = "0.1.0"
+authors = ["Tommy Malmqvist <tommy.malmqvist@codelabs.se"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4.19", features = ["serde"] }
+rand = "0.8"
+async-trait = "0.1.42"
+uuid = { version = "0.8", features = ["v4"] }
+futures = { version = "0.3" }
+tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1.6"
+pretty_env_logger = "0.4.0"
+warp = "0.3"
+
+[dev-dependencies]
+mockall = "0.9.1"
+
+[[bin]]
+name = "ws"
+test = false
+bench = false
+path = "src/ws/main.rs"
