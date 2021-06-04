@@ -12,6 +12,10 @@ use warp::Filter;
 
 use serde_json::{self, Value};
 
+extern crate pretty_env_logger;
+#[macro_use]
+extern crate log;
+
 #[tokio::main]
 async fn main() {
     pretty_env_logger::init();
@@ -27,23 +31,23 @@ async fn connection_handler(ws: WebSocket) {
     let (mut tx, mut rx) = ws.split();
 
     while let Some(result) = rx.next().await {
-        println!("connection_handler looping");
+        info!("connection_handler looping");
         let msg = match result {
             Ok(msg) => msg,
             Err(e) => {
-                eprintln!("websocket error({})", e);
+                error!("websocket error({})", e);
                 break;
             }
         };
         let r = message_parser(msg).await;
-        println!("message_parser completed");
+        info!("message_parser completed");
         match r {
             Ok(o) => {
-                println!("response_handler is Ok");
+                info!("response_handler is Ok");
                 response_handler(o, &mut tx).await
             }
             Err(e) => {
-                println!("response_handler is Err");
+                error!("response_handler is Err");
                 error_handler(e, &mut tx).await
             }
         }
@@ -53,7 +57,7 @@ async fn connection_handler(ws: WebSocket) {
 /// Parse incoming data to Message and create the correct Call type
 async fn message_parser(msg: Message) -> Result<Message, Message> {
     // Skip any non-Text messages...
-    println!("Entered message_parser");
+    info!("Entered message_parser");
     let err = Message::text(format!("Failed to parse"));
     let msg = if let Ok(s) = msg.to_str() {
         s
@@ -69,10 +73,10 @@ async fn message_parser(msg: Message) -> Result<Message, Message> {
     }
 
     // unwrap
-    println!("unwrapping value");
+    info!("unwrapping value");
     let v = v.unwrap();
 
-    println!("Calling parse_call_type");
+    info!("Calling parse_call_type");
     let parse_call_type = call_type_parser(v).await;
 
     match parse_call_type {
@@ -82,48 +86,48 @@ async fn message_parser(msg: Message) -> Result<Message, Message> {
 }
 
 async fn call_type_parser(v: Value) -> Result<CallTypeEnum, Message> {
-    println!("Entered call_type_parser");
+    info!("Entered call_type_parser");
     let call_type: Result<CallTypeEnum, Message> = match v.get(0) {
         Some(data) => {
             if data.is_number() {
-                println!("data.is_number() is true");
+                info!("data.is_number() is true");
                 if data.is_i64() {
-                    println!("data.is_i64() is true");
+                    info!("data.is_i64() is true");
                     if data.as_i64().eq(&Some(2)) {
-                        println!("data.as_i64().eq(&Some(2)) is true");
+                        info!("data.as_i64().eq(&Some(2)) is true");
                         Ok(CallTypeEnum::Call)
                     } else if data.as_i64().eq(&Some(3)) {
-                        println!("data.as_i64().eq(&Some(3)) is true");
+                        info!("data.as_i64().eq(&Some(3)) is true");
                         Ok(CallTypeEnum::CallResult)
                     } else if data.as_i64().eq(&Some(4)) {
-                        println!("data.as_i64().eq(&Some(4)) is true");
+                        info!("data.as_i64().eq(&Some(4)) is true");
                         Ok(CallTypeEnum::CallError)
                     } else {
-                        println!("data.as_i64().eq(&Some(2, 3 eller 4)) is false");
+                        error!("data.as_i64().eq(&Some(2, 3 eller 4)) is false");
                         return Err(Message::text("Not a valid Call Type, expected 2, 3 or 4"));
                     }
                 } else {
-                    println!("data.is_i64() is false");
+                    error!("data.is_i64() is false");
                     return Err(Message::text("Not a valid i64 number"));
                 }
             } else {
-                println!("data.is_number() is false");
+                error!("data.is_number() is false");
                 return Err(Message::text("Not a number"));
             }
         }
         None => {
-            println!("Failed to parse call type");
+            error!("Failed to parse call type");
             return Err(Message::text("Failed to parse call type"));
         }
     };
 
     match call_type {
         Ok(o) => {
-            println!("call_type is Ok");
+            info!("call_type is Ok");
             Ok(o)
         }
         Err(e) => {
-            println!("call_type is Err");
+            error!("call_type is Err");
             Err(e)
         }
     }
@@ -131,21 +135,21 @@ async fn call_type_parser(v: Value) -> Result<CallTypeEnum, Message> {
 
 async fn response_handler(response: Message, tx: &mut SplitSink<WebSocket, Message>) {
     // TODO: add some logging
-    println!("Entered response_handler");
+    info!("Entered response_handler");
     match tx.send(response).await {
         Ok(_) => (),
         Err(e) => {
-            eprintln!("websocket error: Could not send response. Error({})", e);
+            error!("websocket error: Could not send response. Error({})", e);
         }
     }
 }
 
 async fn error_handler(error: Message, tx: &mut SplitSink<WebSocket, Message>) {
-    println!("Entered error_handler");
+    info!("Entered error_handler");
     match tx.send(error).await {
         Ok(_) => (),
         Err(e) => {
-            eprintln!(
+            error!(
                 "websocket error: Could not send error response. Error: ({})",
                 e
             );
