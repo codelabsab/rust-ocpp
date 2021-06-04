@@ -6,6 +6,7 @@ use futures::stream::SplitSink;
 use futures::SinkExt;
 use futures::StreamExt;
 
+use mockall::predicate::str::contains;
 use ocpp::v2_0_1::rpc::call::CallTypeEnum;
 use warp::ws::{Message, WebSocket};
 use warp::Filter;
@@ -31,7 +32,7 @@ async fn connection_handler(ws: WebSocket) {
     let (mut tx, mut rx) = ws.split();
 
     while let Some(result) = rx.next().await {
-        info!("connection_handler looping");
+        info!("rx.next(): message recieved");
         let msg = match result {
             Ok(msg) => msg,
             Err(e) => {
@@ -40,14 +41,10 @@ async fn connection_handler(ws: WebSocket) {
             }
         };
         let r = message_parser(msg).await;
-        info!("message_parser completed");
         match r {
-            Ok(o) => {
-                info!("response_handler is Ok");
-                response_handler(o, &mut tx).await
-            }
+            Ok(o) => response_handler(o, &mut tx).await,
             Err(e) => {
-                error!("response_handler is Err");
+                error!("response_handler error: {}", e.to_str().unwrap());
                 error_handler(e, &mut tx).await
             }
         }
@@ -57,12 +54,11 @@ async fn connection_handler(ws: WebSocket) {
 /// Parse incoming data to Message and create the correct Call type
 async fn message_parser(msg: Message) -> Result<Message, Message> {
     // Skip any non-Text messages...
-    info!("Entered message_parser");
-    let err = Message::text(format!("Failed to parse"));
     let msg = if let Ok(s) = msg.to_str() {
         s
     } else {
-        return Err(err);
+        warn!("Client sent non-text message");
+        return Err(Message::text(format!("Failed to parse text")));
     };
 
     let v = serde_json::Value::from_str(msg);
@@ -70,16 +66,17 @@ async fn message_parser(msg: Message) -> Result<Message, Message> {
     // get json or die
     if v.is_err() {
         return Err(Message::text("Failed to parse json"));
-    }
+    };
 
-    // unwrap
-    info!("unwrapping value");
+    // we didn't die so unwrap()
     let v = v.unwrap();
 
-    info!("Calling parse_call_type");
+    // What type of Call is this? Call, CallResult or CallError?
     let parse_call_type = call_type_parser(v).await;
 
+    // Did we get a valid Call Type?
     match parse_call_type {
+        // What do we do with Ok() here?
         Ok(o) => Ok(Message::text(o.to_string())),
         Err(e) => Err(e),
     }
