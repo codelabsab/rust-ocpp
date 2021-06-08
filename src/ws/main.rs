@@ -6,7 +6,6 @@ use futures::stream::SplitSink;
 use futures::SinkExt;
 use futures::StreamExt;
 
-use mockall::predicate::str::contains;
 use ocpp::v2_0_1::rpc::call::CallTypeEnum;
 use warp::ws::{Message, WebSocket};
 use warp::Filter;
@@ -61,25 +60,19 @@ async fn message_parser(msg: Message) -> Result<Message, Message> {
         return Err(Message::text(format!("Failed to parse text")));
     };
 
-    let v = serde_json::Value::from_str(msg);
-
-    // get json or die
-    if v.is_err() {
-        return Err(Message::text("Failed to parse json"));
+    // Get json or die
+    let v = if let Ok(v) = serde_json::Value::from_str(msg) {
+        v
+    } else {
+        warn!("Client did not send json");
+        return Err(Message::text(format!("Failed to parse json")));
     };
 
-    // we didn't die so unwrap()
-    let v = v.unwrap();
-
-    // What type of Call is this? Call, CallResult or CallError?
-    let parse_call_type = call_type_parser(v).await;
-
+    // We didn't die! So let's unwrap() and try to extract what
+    // type of Call type it is? Call, CallResult or CallError?
+    let call = call_type_parser(v).await?;
     // Did we get a valid Call Type?
-    match parse_call_type {
-        // What do we do with Ok() here?
-        Ok(o) => Ok(Message::text(o.to_string())),
-        Err(e) => Err(e),
-    }
+    Ok(Message::text("Call is ok"))
 }
 
 async fn call_type_parser(v: Value) -> Result<CallTypeEnum, Message> {
