@@ -30,7 +30,17 @@ impl Call {
 pub struct CallResult {
     pub message_type_id: i64,
     pub message_id: String,
-    pub payload: serde_json::Value,
+    pub payload: String,
+}
+
+impl CallResult {
+    pub fn new(message_type_id: i64, message_id: String, payload: String) -> Self {
+        Self {
+            message_type_id,
+            message_id,
+            payload,
+        }
+    }
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
@@ -41,6 +51,24 @@ pub struct CallError {
     pub error_code: String,
     pub error_description: String,
     pub error_details: String,
+}
+
+impl CallError {
+    pub fn new(
+        message_type_id: i64,
+        message_id: String,
+        error_code: String,
+        error_description: String,
+        error_details: String,
+    ) -> Self {
+        Self {
+            message_type_id,
+            message_id,
+            error_code,
+            error_description,
+            error_details,
+        }
+    }
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
