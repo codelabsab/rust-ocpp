@@ -62,17 +62,45 @@ async fn message_parser(msg: Message) -> Result<Message, Message> {
 
     // Get json or die
     let v = if let Ok(v) = serde_json::Value::from_str(msg) {
+        info!("Got json: {}", v);
+        info!("v0: {}", v.get(0).unwrap().is_i64());
+        info!("v1: {}", v.get(1).unwrap().is_string());
+        info!("v2: {:#?}", v.get(2).unwrap().is_string());
+        info!("v3: {}", v.get(3).unwrap().is_object());
+        info!("len: {}", v.as_array().unwrap().len());
         v
     } else {
         warn!("Client did not send json");
         return Err(Message::text(format!("Failed to parse json")));
     };
 
+    // validate json is of type array
+    let valid_json = if let Some(arr) = v.as_array() {
+        arr
+    } else {
+        return Err(Message::text("Expected json array"));
+    };
+
+    // number of fields should be 3, 4 or 5 depending on if it's
+    // a Call, CallResult or CallError
+    if valid_json.len() >= 3 && valid_json.len() <= 5 {
+    } else {
+        return Err(Message::text(format!(
+            "Array length {}, expected 3 or 4",
+            valid_json.len()
+        )));
+    };
+
+    info!("valid json length: {}", valid_json.len());
+
     // We didn't die! So let's unwrap() and try to extract what
     // type of Call type it is? Call, CallResult or CallError?
-    let call = call_type_parser(v).await?;
     // Did we get a valid Call Type?
     Ok(Message::text("Call is ok"))
+}
+
+async fn validate_json(v: Value) -> Result<(), Message> {
+    Ok(())
 }
 
 async fn call_type_parser(v: Value) -> Result<CallTypeEnum, Message> {
