@@ -7,8 +7,9 @@ use futures::SinkExt;
 use futures::StreamExt;
 
 use ocpp::v2_0_1::rpc::call::Call;
-use ocpp::v2_0_1::rpc::call::CallTypeEnum;
-use tokio::sync::broadcast::error;
+use ocpp::v2_0_1::rpc::call::CallActionTypeEnum;
+use ocpp::v2_0_1::rpc::call::CallError;
+use ocpp::v2_0_1::rpc::call::CallResult;
 use warp::ws::{Message, WebSocket};
 use warp::Filter;
 
@@ -42,8 +43,62 @@ async fn connection_handler(ws: WebSocket) {
             }
         };
 
+        let parsed_message = message_parser(msg).await;
+        match parsed_message {
+            Ok(o) => {
+                if o.get(0).is_some() {
+                    if o.get(0).unwrap().as_i64().is_some() {
+                        if o.get(0).unwrap().as_i64().unwrap().eq(&2) {
+                            let call = build_call(o).await;
+                        } else if o.get(0).unwrap().as_i64().unwrap().eq(&3) {
+                            let call = build_call_result(o).await;
+                        } else if o.get(0).unwrap().as_i64().unwrap().eq(&4) {
+                            let call = build_call_error(o).await;
+                        }
+                    }
+                }
+            }
+            Err(e) => error_handler(e, &mut tx).await,
+        }
+
         response_handler(Message::text("yes"), &mut tx).await
     }
+}
+
+async fn build_call(v: Vec<Value>) -> Result<Call, Message> {
+    let message_type_id = v.get(0).unwrap().as_i64().unwrap();
+    let message_id = v.get(1).unwrap().to_string();
+    let action = v.get(2).unwrap().to_string();
+    let payload = v.get(3).unwrap().to_string();
+    let call = Call::new(
+        message_type_id,
+        message_id,
+        CallActionTypeEnum::from_str(&action).unwrap(),
+        payload,
+    );
+    Ok(call)
+}
+async fn build_call_result(v: Vec<Value>) -> Result<CallResult, Message> {
+    let message_type_id = v.get(0).unwrap().as_i64().unwrap();
+    let message_id = v.get(1).unwrap().to_string();
+    let payload = v.get(2).unwrap().to_string();
+    let callresult = CallResult::new(message_type_id, message_id, payload);
+    Ok(callresult)
+}
+async fn build_call_error(v: Vec<Value>) -> Result<CallError, Message> {
+    let message_type_id = v.get(0).unwrap().as_i64().unwrap();
+    let message_id = v.get(1).unwrap().to_string();
+    let error_code = v.get(2).unwrap().to_string();
+    let error_description = v.get(3).unwrap().to_string();
+    let error_details = v.get(4).unwrap().to_string();
+    let callerror = CallError::new(
+        message_type_id,
+        message_id,
+        error_code,
+        error_description,
+        error_details,
+    );
+    Ok(callerror)
 }
 
 /// Parse incoming data to Message and return a vector
