@@ -40,18 +40,13 @@ async fn connection_handler(ws: WebSocket) {
             }
         };
         let r = message_parser(msg).await;
-        match r {
-            Ok(o) => response_handler(o, &mut tx).await,
-            Err(e) => {
-                error!("response_handler error: {}", e.to_str().unwrap());
-                error_handler(e, &mut tx).await
-            }
-        }
+
+        response_handler(Message::text("yes"), &mut tx).await
     }
 }
 
 /// Parse incoming data to Message and create the correct Call type
-async fn message_parser(msg: Message) -> Result<Message, Message> {
+async fn message_parser(msg: Message) -> Result<Vec<Value>, Message> {
     // Skip any non-Text messages...
     let msg = if let Ok(s) = msg.to_str() {
         s
@@ -81,10 +76,9 @@ async fn message_parser(msg: Message) -> Result<Message, Message> {
         return Err(Message::text("Expected json array"));
     };
 
-    // number of fields should be 3, 4 or 5 depending on if it's
+    // The number of fields should be 3, 4 or 5 depending on if it's
     // a Call, CallResult or CallError
-    if valid_json.len() >= 3 && valid_json.len() <= 5 {
-    } else {
+    if !(valid_json.len() >= 3 && valid_json.len() <= 5) {
         return Err(Message::text(format!(
             "Array length {}, expected 3 or 4",
             valid_json.len()
@@ -93,14 +87,7 @@ async fn message_parser(msg: Message) -> Result<Message, Message> {
 
     info!("valid json length: {}", valid_json.len());
 
-    // We didn't die! So let's unwrap() and try to extract what
-    // type of Call type it is? Call, CallResult or CallError?
-    // Did we get a valid Call Type?
-    Ok(Message::text("Call is ok"))
-}
-
-async fn validate_json(v: Value) -> Result<(), Message> {
-    Ok(())
+    Ok(valid_json.to_owned())
 }
 
 async fn call_type_parser(v: Value) -> Result<CallTypeEnum, Message> {
