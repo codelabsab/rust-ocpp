@@ -6,7 +6,9 @@ use futures::stream::SplitSink;
 use futures::SinkExt;
 use futures::StreamExt;
 
+use ocpp::v2_0_1::rpc::call::Call;
 use ocpp::v2_0_1::rpc::call::CallTypeEnum;
+use tokio::sync::broadcast::error;
 use warp::ws::{Message, WebSocket};
 use warp::Filter;
 
@@ -39,13 +41,12 @@ async fn connection_handler(ws: WebSocket) {
                 break;
             }
         };
-        let r = message_parser(msg).await;
 
         response_handler(Message::text("yes"), &mut tx).await
     }
 }
 
-/// Parse incoming data to Message and create the correct Call type
+/// Parse incoming data to Message and return a vector
 async fn message_parser(msg: Message) -> Result<Vec<Value>, Message> {
     // Skip any non-Text messages...
     let msg = if let Ok(s) = msg.to_str() {
@@ -76,65 +77,10 @@ async fn message_parser(msg: Message) -> Result<Vec<Value>, Message> {
         return Err(Message::text("Expected json array"));
     };
 
-    // The number of fields should be 3, 4 or 5 depending on if it's
-    // a Call, CallResult or CallError
-    if !(valid_json.len() >= 3 && valid_json.len() <= 5) {
-        return Err(Message::text(format!(
-            "Array length {}, expected 3 or 4",
-            valid_json.len()
-        )));
-    };
-
-    info!("valid json length: {}", valid_json.len());
-
-    Ok(valid_json.to_owned())
-}
-
-async fn call_type_parser(v: Value) -> Result<CallTypeEnum, Message> {
-    info!("Entered call_type_parser");
-    let call_type: Result<CallTypeEnum, Message> = match v.get(0) {
-        Some(data) => {
-            if data.is_number() {
-                info!("data.is_number() is true");
-                if data.is_i64() {
-                    info!("data.is_i64() is true");
-                    if data.as_i64().eq(&Some(2)) {
-                        info!("data.as_i64().eq(&Some(2)) is true");
-                        Ok(CallTypeEnum::Call)
-                    } else if data.as_i64().eq(&Some(3)) {
-                        info!("data.as_i64().eq(&Some(3)) is true");
-                        Ok(CallTypeEnum::CallResult)
-                    } else if data.as_i64().eq(&Some(4)) {
-                        info!("data.as_i64().eq(&Some(4)) is true");
-                        Ok(CallTypeEnum::CallError)
-                    } else {
-                        error!("data.as_i64().eq(&Some(2, 3 eller 4)) is false");
-                        return Err(Message::text("Not a valid Call Type, expected 2, 3 or 4"));
-                    }
-                } else {
-                    error!("data.is_i64() is false");
-                    return Err(Message::text("Not a valid i64 number"));
-                }
-            } else {
-                error!("data.is_number() is false");
-                return Err(Message::text("Not a number"));
-            }
-        }
-        None => {
-            error!("Failed to parse call type");
-            return Err(Message::text("Failed to parse call type"));
-        }
-    };
-
-    match call_type {
-        Ok(o) => {
-            info!("call_type is Ok");
-            Ok(o)
-        }
-        Err(e) => {
-            error!("call_type is Err");
-            Err(e)
-        }
+    match valid_json.len() {
+        // if len is 3, 4 or 5
+        3 | 4 | 5 => Ok(valid_json.to_owned()),
+        _ => Err(Message::text("Wrong number of fields")),
     }
 }
 
