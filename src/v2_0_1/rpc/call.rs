@@ -9,6 +9,22 @@ pub struct Call {
     pub payload: String,
 }
 
+impl Call {
+    pub fn new(
+        message_type_id: i64,
+        message_id: String,
+        action: CallActionTypeEnum,
+        payload: String,
+    ) -> Self {
+        Self {
+            message_type_id,
+            message_id,
+            action,
+            payload,
+        }
+    }
+}
+
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct CallResult {
@@ -52,17 +68,6 @@ impl FromStr for CallTypeEnum {
         }
     }
 }
-
-// impl From<i64> for CallTypeEnum {
-//     fn from(n: i64) -> Self {
-//         match n {
-//             2 => Ok(CallTypeEnum::Call),
-//             3 => Ok(CallTypeEnum::CallResult),
-//             4 => Ok(CallTypeEnum::CallError),
-//             _ => Err(()),
-//         }
-//     }
-// }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 pub enum CallActionTypeEnum {
