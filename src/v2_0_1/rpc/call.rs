@@ -1,6 +1,6 @@
 use std::{fmt, str::FromStr};
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Call {
     pub message_type_id: i64,
@@ -73,9 +73,10 @@ impl CallError {
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 pub enum CallTypeEnum {
-    Call,
-    CallResult,
-    CallError,
+    Call(Call),
+    CallResult(CallResult),
+    CallError(CallError),
+    None,
 }
 
 impl fmt::Display for CallTypeEnum {
@@ -84,18 +85,18 @@ impl fmt::Display for CallTypeEnum {
     }
 }
 
-impl FromStr for CallTypeEnum {
-    type Err = ();
+// impl FromStr for CallTypeEnum {
+//     type Err = ();
 
-    fn from_str(input: &str) -> Result<CallTypeEnum, Self::Err> {
-        match input {
-            "2" => Ok(CallTypeEnum::Call),
-            "3" => Ok(CallTypeEnum::CallResult),
-            "4" => Ok(CallTypeEnum::CallError),
-            _ => Err(()),
-        }
-    }
-}
+//     fn from_str(input: &str) -> Result<CallTypeEnum, Self::Err> {
+//         match input {
+//             "2" => Ok(CallTypeEnum::Call),
+//             "3" => Ok(CallTypeEnum::CallResult),
+//             "4" => Ok(CallTypeEnum::CallError),
+//             _ => Err(()),
+//         }
+//     }
+// }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 pub enum CallActionTypeEnum {
@@ -177,7 +178,7 @@ impl FromStr for CallActionTypeEnum {
     fn from_str(input: &str) -> Result<CallActionTypeEnum, Self::Err> {
         match input {
             "Authorize" => Ok(CallActionTypeEnum::Authorize),
-            "BootNotification" => Ok(CallActionTypeEnum::BootNotification),
+            "\"BootNotification\"" => Ok(CallActionTypeEnum::BootNotification),
             "CancelReservation" => Ok(CallActionTypeEnum::CancelReservation),
             "CertificateSigned" => Ok(CallActionTypeEnum::CertificateSigned),
             "ChangeAvailability" => Ok(CallActionTypeEnum::ChangeAvailability),
@@ -241,8 +242,21 @@ impl FromStr for CallActionTypeEnum {
             "TriggerMessage" => Ok(CallActionTypeEnum::TriggerMessage),
             "UnlockConnector" => Ok(CallActionTypeEnum::UnlockConnector),
             "UnpublishFirmware" => Ok(CallActionTypeEnum::UnpublishFirmware),
-            "UpdateFirmwar" => Ok(CallActionTypeEnum::UpdateFirmware),
+            "UpdateFirmware" => Ok(CallActionTypeEnum::UpdateFirmware),
             _ => Err(()),
         }
+    }
+}
+
+mod test {
+    use std::str::FromStr;
+
+    use super::CallActionTypeEnum;
+
+    #[test]
+    fn boot_from_action() {
+        let s = "BootNotification".to_string();
+        let c = CallActionTypeEnum::from_str(&s);
+        assert_eq!(c.unwrap(), CallActionTypeEnum::BootNotification);
     }
 }
