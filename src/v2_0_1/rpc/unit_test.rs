@@ -172,6 +172,9 @@ mod tests {
     fn test_rpc_error_codes() {
         let error = RpcErrorCodes::FormatViolation;
         let format_violation_desc = error.description();
-        println!("{}", format_violation_desc);
+        assert_eq!(
+            format_violation_desc,
+            "Payload for Action is syntactically incorrect"
+        );
     }
 }
