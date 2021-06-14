@@ -14,7 +14,7 @@ pub enum RpcErrorCodes {
 }
 
 impl RpcErrorCodes {
-    fn description(&self) -> &str {
+    pub fn description(&self) -> &str {
         match self {
             FormatViolation => "Payload for Action is syntactically incorrect",
             GenericError => "Any other error not covered by the more specific error codes in this table",
@@ -29,16 +29,5 @@ impl RpcErrorCodes {
             SecurityError=> "During the processing of Action a security issue occurred preventing receiver from completing the Action successfully",
             TypeConstraintViolation=> "Payload for Action is syntactically correct but at least one of the fields violates data type constraints (e.g. \"somestring\": 12)",
         }
-    }
-}
-
-mod test {
-    use crate::v2_0_1::rpc::errors::RpcErrorCodes;
-
-    #[test]
-    fn test_rpc() {
-        let error = RpcErrorCodes::FormatViolation;
-        let format_violation_desc = error.description();
-        println!("{}", format_violation_desc);
     }
 }

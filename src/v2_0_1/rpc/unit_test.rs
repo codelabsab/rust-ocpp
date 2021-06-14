@@ -8,7 +8,10 @@ mod tests {
             enumerations::boot_reason_enum_type::BootReasonEnumType,
             messages::boot_notification::BootNotificationRequest,
         },
-        rpc::call::{Call, CallActionTypeEnum, CallError, CallResult},
+        rpc::{
+            call::{Call, CallActionTypeEnum, CallError, CallResult},
+            errors::RpcErrorCodes,
+        },
     };
     use serde_json::{self, json};
 
@@ -163,5 +166,12 @@ mod tests {
             }
         }
         println!("{:?}", val);
+    }
+
+    #[test]
+    fn test_rpc_error_codes() {
+        let error = RpcErrorCodes::FormatViolation;
+        let format_violation_desc = error.description();
+        println!("{}", format_violation_desc);
     }
 }
