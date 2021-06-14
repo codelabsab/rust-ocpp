@@ -44,21 +44,21 @@ mod tests {
         assert_eq!(bnr.reason, BootReasonEnumType::PowerUp);
     }
 
-    #[test]
-    fn test_call_result() {
-        let result = CallResult {
-            message_type_id: 3,
-            message_id: "19223201".to_string(),
-            payload: json!({"currentTime": "2013-02-01T20:53:32.486Z","interval": 300,"status":"Accepted"}),
-        };
+    // #[test]
+    // fn test_call_result() {
+    //     let result = CallResult {
+    //         message_type_id: 3,
+    //         message_id: "19223201".to_string(),
+    //         payload: json!({"currentTime": "2013-02-01T20:53:32.486Z","interval": 300,"status":"Accepted"}),
+    //     };
 
-        assert_eq!(result.message_type_id, 3);
-        assert_eq!(result.message_id, "19223201".to_string());
-        assert_eq!(
-            result.payload,
-            json!({"currentTime": "2013-02-01T20:53:32.486Z", "interval": 300, "status":"Accepted"})
-        );
-    }
+    //     assert_eq!(result.message_type_id, 3);
+    //     assert_eq!(result.message_id, "19223201".to_string());
+    //     assert_eq!(
+    //         result.payload,
+    //         json!({"currentTime": "2013-02-01T20:53:32.486Z", "interval": 300, "status":"Accepted"})
+    //     );
+    // }
 
     #[test]
     fn test_call_error() {
@@ -128,5 +128,40 @@ mod tests {
         let boot_notification_action =
             CallActionTypeEnum::from_str("BootNotification".to_string().as_str());
         assert_eq!(boot_notification_action.is_ok(), true);
+    }
+
+    #[test]
+    fn test_arr() {
+        let json_str = "[2,\"19223201\",\"BootNotification\",{\"reason\": \"PowerUp\",\"chargingStation\": {\"model\": \"SingleSocketCharger\",\"vendorName\": \"VendorX\"}}]";
+        let val = serde_json::Value::from_str(&json_str).unwrap();
+        let action = val.get(2);
+        match action {
+            Some(v) => {
+                println!("Got {} on val.get(2)", v);
+                let action_str = v.as_str();
+                match action_str {
+                    Some(s) => {
+                        println!("Got str {}", s);
+                        let cat = CallActionTypeEnum::from_str(s);
+                        match cat {
+                            Ok(o) => {
+                                println!("cat is ok");
+                                assert_eq!(o, CallActionTypeEnum::BootNotification);
+                            }
+                            Err(_) => {
+                                println!("cat failed");
+                            }
+                        };
+                    }
+                    None => {
+                        println!("Did not get str in action_str");
+                    }
+                }
+            }
+            None => {
+                println!("got none");
+            }
+        }
+        println!("{:?}", val);
     }
 }

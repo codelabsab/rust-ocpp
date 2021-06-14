@@ -178,7 +178,7 @@ impl FromStr for CallActionTypeEnum {
     fn from_str(input: &str) -> Result<CallActionTypeEnum, Self::Err> {
         match input {
             "Authorize" => Ok(CallActionTypeEnum::Authorize),
-            "\"BootNotification\"" => Ok(CallActionTypeEnum::BootNotification),
+            "BootNotification" => Ok(CallActionTypeEnum::BootNotification),
             "CancelReservation" => Ok(CallActionTypeEnum::CancelReservation),
             "CertificateSigned" => Ok(CallActionTypeEnum::CertificateSigned),
             "ChangeAvailability" => Ok(CallActionTypeEnum::ChangeAvailability),
@@ -245,18 +245,5 @@ impl FromStr for CallActionTypeEnum {
             "UpdateFirmware" => Ok(CallActionTypeEnum::UpdateFirmware),
             _ => Err(()),
         }
-    }
-}
-
-mod test {
-    use std::str::FromStr;
-
-    use super::CallActionTypeEnum;
-
-    #[test]
-    fn boot_from_action() {
-        let s = "BootNotification".to_string();
-        let c = CallActionTypeEnum::from_str(&s);
-        assert_eq!(c.unwrap(), CallActionTypeEnum::BootNotification);
     }
 }
