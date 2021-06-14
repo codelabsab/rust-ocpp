@@ -170,11 +170,70 @@ mod tests {
 
     #[test]
     fn test_rpc_error_codes() {
-        let error = RpcErrorCodes::FormatViolation;
-        let format_violation_desc = error.description();
+        // format validation error
+        let format_violation_err = RpcErrorCodes::FormatViolation;
         assert_eq!(
-            format_violation_desc,
+            format_violation_err.description(),
             "Payload for Action is syntactically incorrect"
         );
+
+        // generic error
+        let generic_err = RpcErrorCodes::GenericError;
+        assert_eq!(
+            generic_err.description(),
+            "Any other error not covered by the more specific error codes in this table"
+        );
+
+        // internal error
+        let internal_err = RpcErrorCodes::InternalError;
+        assert_eq!(internal_err.description(), "An internal error occurred and the receiver was not able to process the requested Action successfully");
+
+        // message type not supported
+        let messagetypenotsupported_err = RpcErrorCodes::MessageTypeNotSupported;
+        assert_eq!(messagetypenotsupported_err.description(), "A message with an Message Type Number received that is not supported by this implementation.");
+
+        // not implemented
+        let not_implemented_err = RpcErrorCodes::NotImplemented;
+        assert_eq!(
+            not_implemented_err.description(),
+            "Requested Action is not known by receiver"
+        );
+
+        // not supported
+        let not_supported = RpcErrorCodes::NotSupported;
+        assert_eq!(
+            not_supported.description(),
+            "Requested Action is recognized but not supported by the receiver"
+        );
+
+        // Occurrence constraint violation
+        let occurrence_constraint_violation_err = RpcErrorCodes::OccurrenceConstraintViolation;
+        assert_eq!(occurrence_constraint_violation_err.description(), "Payload for Action is syntactically correct but at least one of the fields violates occurrence constraints");
+
+        // Property constraint violation
+        let property_constraint_violation_err = RpcErrorCodes::PropertyConstraintViolation;
+        assert_eq!(
+            property_constraint_violation_err.description(),
+            "Payload is syntactically correct but at least one field contains an invalid value"
+        );
+
+        // protocol error
+        let protocol_error_err = RpcErrorCodes::ProtocolError;
+        assert_eq!(
+            protocol_error_err.description(),
+            "Payload for Action is not conform the PDU structure"
+        );
+
+        // rpc framework error
+        let rpc_framework_error = RpcErrorCodes::RpcFrameworkError;
+        assert_eq!(rpc_framework_error.description(), "Content of the call is not a valid RPC Request, for example: MessageId could not be read.");
+
+        // security error
+        let security_error_err = RpcErrorCodes::SecurityError;
+        assert_eq!(security_error_err.description(), "During the processing of Action a security issue occurred preventing receiver from completing the Action successfully");
+
+        // type constraint violation
+        let type_constraint_violation = RpcErrorCodes::TypeConstraintViolation;
+        assert_eq!(type_constraint_violation.description(), "Payload for Action is syntactically correct but at least one of the fields violates data type constraints (e.g. \"somestring\": 12)");
     }
 }
