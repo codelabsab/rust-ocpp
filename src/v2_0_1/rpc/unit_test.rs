@@ -206,11 +206,11 @@ mod tests {
             "Requested Action is recognized but not supported by the receiver"
         );
 
-        // Occurrence constraint violation
+        // cccurrence constraint violation
         let occurrence_constraint_violation_err = RpcErrorCodes::OccurrenceConstraintViolation;
         assert_eq!(occurrence_constraint_violation_err.description(), "Payload for Action is syntactically correct but at least one of the fields violates occurrence constraints");
 
-        // Property constraint violation
+        // property constraint violation
         let property_constraint_violation_err = RpcErrorCodes::PropertyConstraintViolation;
         assert_eq!(
             property_constraint_violation_err.description(),
