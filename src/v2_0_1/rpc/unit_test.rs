@@ -168,8 +168,12 @@ mod tests {
         println!("{:?}", val);
     }
 
+    /*
+        Testing all error codes are correct for RpcErrorCodes For OCPP 2.0.1
+        "4.3. RPC Framework Error Codes" in "OCPP-2.0.1_part4_ocpp-j-specification.pdf"
+    */
     #[test]
-    fn test_rpc_error_codes() {
+    fn test_rpc_error_codes_ocpp_2_0_1() {
         // format validation error
         let format_violation_err = RpcErrorCodes::FormatViolation;
         assert_eq!(
