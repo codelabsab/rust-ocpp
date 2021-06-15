@@ -43,127 +43,98 @@ async fn connection_handler(ws: WebSocket) {
                 break;
             }
         };
-
-        let parsed_message = message_parser(msg).await;
-        match parsed_message {
-            Ok(o) => {
-                if o.get(0).is_some() {
-                    if o.get(0).unwrap().as_i64().is_some() {
-                        let call = build_call(o).await;
-                        match call {
-                            CallTypeEnum::Call(Call {
-                                message_type_id,
-                                message_id,
-                                action,
-                                payload,
-                            }) => response_handler(Message::text("Call"), &mut tx).await,
-                            CallTypeEnum::CallResult(CallResult {
-                                message_type_id,
-                                message_id,
-                                payload,
-                            }) => response_handler(Message::text("CallResult"), &mut tx).await,
-                            CallTypeEnum::CallError(CallError {
-                                message_type_id,
-                                message_id,
-                                error_code,
-                                error_description,
-                                error_details,
-                            }) => response_handler(Message::text("CallError"), &mut tx).await,
-                            CallTypeEnum::None => {
-                                response_handler(Message::text("Not a valid Call Type"), &mut tx)
-                                    .await
-                            }
-                        }
-                    }
-                }
-            }
-            Err(e) => error_handler(e, &mut tx).await,
-        }
-
-        response_handler(Message::text("yes"), &mut tx).await
+        message_handler(msg, &mut tx).await;
     }
 }
 
-async fn build_call(v: Vec<Value>) -> CallTypeEnum {
-    let message_type_id = v.get(0).unwrap().as_i64().unwrap();
-    let message_id = v.get(1).unwrap().to_string();
-    match message_type_id {
-        2 => {
-            let action = v.get(2).unwrap().to_string();
-            info!("Action is: {}", &action);
-            let action_type = CallActionTypeEnum::from_str(&action);
-            match action_type {
-                Ok(_) => {}
-                Err(e) => error!("could not parse"),
-            }
-            let payload = v.get(3).unwrap().to_string();
-            let call = Call::new(
-                message_type_id,
-                message_id,
-                CallActionTypeEnum::from_str(&action)
-                    .unwrap_or(CallActionTypeEnum::BootNotification),
-                payload,
-            );
-            CallTypeEnum::Call(call)
-        }
-        3 => {
-            let payload = v.get(2).unwrap().to_string();
-            let callresult = CallResult::new(message_type_id, message_id, payload);
-            CallTypeEnum::CallResult(callresult)
-        }
-        4 => {
-            let error_code = v.get(2).unwrap().to_string();
-            let error_description = v.get(3).unwrap().to_string();
-            let error_details = v.get(4).unwrap().to_string();
-            let callerror = CallError::new(
-                message_type_id,
-                message_id,
-                error_code,
-                error_description,
-                error_details,
-            );
-            CallTypeEnum::CallError(callerror)
-        }
-        _ => CallTypeEnum::None,
-    }
-}
+/*
+    The job of the message_handler is to:
 
-/// Parse incoming data to Message and return a vector
-async fn message_parser(msg: Message) -> Result<Vec<Value>, Message> {
+    Validate that:
+        1. incoming transmission is of type text
+        2. text is valid json
+        3. json data is of type array
+        4. validate that the array is of type Call
+
+    Cast to correct Call type
+
+*/
+async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     // Skip any non-Text messages...
     let msg = if let Ok(s) = msg.to_str() {
         s
     } else {
         warn!("Client sent non-text message");
-        return Err(Message::text(format!("Failed to parse text")));
+        error_handler(
+            Message::text(format!("Failed to parse incoming message")),
+            tx,
+        )
+        .await;
+        return;
     };
 
     // Get json or die
-    let v = if let Ok(v) = serde_json::Value::from_str(msg) {
-        info!("Got json: {}", v);
-        info!("v0: {}", v.get(0).unwrap().is_i64());
-        info!("v1: {}", v.get(1).unwrap().is_string());
-        info!("v2: {:#?}", v.get(2).unwrap().is_string());
-        info!("v3: {}", v.get(3).unwrap().is_object());
-        info!("len: {}", v.as_array().unwrap().len());
+    let json = if let Ok(v) = serde_json::Value::from_str(msg) {
         v
     } else {
-        warn!("Client did not send json");
-        return Err(Message::text(format!("Failed to parse json")));
+        warn!("Client did not send valid json: {}", msg);
+        error_handler(
+            Message::text(format!("Client did not send valid json: {}", msg)),
+            tx,
+        )
+        .await;
+        return;
     };
 
-    // validate json is of type array
-    let valid_json = if let Some(arr) = v.as_array() {
-        arr
-    } else {
-        return Err(Message::text("Expected json array"));
-    };
-
-    match valid_json.len() {
-        // if len is 3, 4 or 5
-        3 | 4 | 5 => Ok(valid_json.to_owned()),
-        _ => Err(Message::text("Wrong number of fields")),
+    // Did we get a json array?
+    if !json.is_array() {
+        error_handler(Message::text(format!("Expected array, got: {}", msg)), tx).await;
+        return;
     }
+
+    // Can we cast it to a Call?
+    let call = call_type_builder(json).await;
+}
+
+async fn call_type_builder(val: Value) -> Result<CallTypeEnum, Message> {
+    // Does field message_type_id exist?
+    let message_type_id_field = if let Some(v) = val.get(0) {
+        v
+    } else {
+        return Err(Message::text("Could not read field message_type_id"));
+    };
+
+    // Is message_type_id a number?
+    let message_type_id = if let Some(n) = message_type_id_field.as_i64() {
+        n
+    } else {
+        return Err(Message::text("Field message_type_id is not a number"));
+    };
+
+    // Validate that message_type_id is either 2, 3 or 4!
+    match message_type_id {
+        2 | 3 | 4 => {}
+        _ => return Err(Message::text("Invalid message_type_id number")),
+    };
+
+    if message_type_id == 2 {
+        // It's a Call
+        info!("It's a Call");
+    } else if message_type_id == 3 {
+        // It's a CallResult
+        info!("It's a CallResult");
+    } else if message_type_id == 4 {
+        // It's a CallError
+        info!("It's a CallError");
+    }
+
+    // CatchAll
+    Ok(CallTypeEnum::Call(Call::new(
+        1,
+        "1".to_string(),
+        CallActionTypeEnum::Authorize,
+        "lala".to_string(),
+    )))
 }
 
 async fn response_handler(response: Message, tx: &mut SplitSink<WebSocket, Message>) {
