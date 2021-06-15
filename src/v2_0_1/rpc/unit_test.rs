@@ -9,11 +9,11 @@ mod tests {
             messages::boot_notification::BootNotificationRequest,
         },
         rpc::{
-            call::{Call, CallActionTypeEnum, CallError, CallResult},
+            call::{Call, CallActionTypeEnum, CallError},
             errors::RpcErrorCodes,
         },
     };
-    use serde_json::{self, json};
+    use serde_json::{self};
 
     #[test]
     fn test_call_to_boot_nofitication_request() {
