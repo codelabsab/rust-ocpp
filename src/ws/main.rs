@@ -8,9 +8,9 @@ use futures::StreamExt;
 
 use ocpp::v2_0_1::rpc::call::Call;
 use ocpp::v2_0_1::rpc::call::CallActionTypeEnum;
-use ocpp::v2_0_1::rpc::call::CallError;
-use ocpp::v2_0_1::rpc::call::CallResult;
 use ocpp::v2_0_1::rpc::call::CallTypeEnum;
+use ocpp::ws::validators::validate_message_id;
+use ocpp::ws::validators::validate_message_type_id;
 use warp::ws::{Message, WebSocket};
 use warp::Filter;
 
@@ -78,11 +78,7 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         v
     } else {
         warn!("Client did not send valid json: {}", msg);
-        error_handler(
-            Message::text(format!("Client did not send valid json: {}", msg)),
-            tx,
-        )
-        .await;
+        error_handler(Message::text(format!("Expected json, got {}", msg)), tx).await;
         return;
     };
 
@@ -92,43 +88,39 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         return;
     }
 
-    // Can we cast it to a Call?
-    let call = call_type_builder(json).await;
+    // validate message_type_id field
+    let message_type_id = validate_message_type_id(&json).await;
+    match message_type_id {
+        Ok(_) => {}
+        Err(e) => {
+            error_handler(e, tx).await;
+            return;
+        }
+    };
+
+    // validate message_id field
+    let message_id = validate_message_id(&json).await;
+    match message_id {
+        Ok(_) => {}
+        Err(e) => {
+            error_handler(e, tx).await;
+            return;
+        }
+    };
+
+    // We have valid json! We have a message_type_id! Let's try to build a Call, CallResult or CallError
+    //let call = call_type_builder(json, message_type_id, message_id).await;
+    response_handler(Message::text("Got a something"), tx).await;
 }
 
-async fn call_type_builder(val: Value) -> Result<CallTypeEnum, Message> {
-    // Does field message_type_id exist?
-    let message_type_id_field = if let Some(v) = val.get(0) {
-        v
-    } else {
-        return Err(Message::text("Could not read field message_type_id"));
-    };
+async fn call_type_builder(
+    val: Value,
+    message_type_id: i64,
+    message_id: &str,
+) -> Result<CallTypeEnum, Message> {
+    // We expect that uid has been validate already
 
-    // Is message_type_id a number?
-    let message_type_id = if let Some(n) = message_type_id_field.as_i64() {
-        n
-    } else {
-        return Err(Message::text("Field message_type_id is not a number"));
-    };
-
-    // Validate that message_type_id is either 2, 3 or 4!
-    match message_type_id {
-        2 | 3 | 4 => {}
-        _ => return Err(Message::text("Invalid message_type_id number")),
-    };
-
-    if message_type_id == 2 {
-        // It's a Call
-        info!("It's a Call");
-    } else if message_type_id == 3 {
-        // It's a CallResult
-        info!("It's a CallResult");
-    } else if message_type_id == 4 {
-        // It's a CallError
-        info!("It's a CallError");
-    }
-
-    // CatchAll
+    // Catch for now all
     Ok(CallTypeEnum::Call(Call::new(
         1,
         "1".to_string(),
@@ -136,6 +128,12 @@ async fn call_type_builder(val: Value) -> Result<CallTypeEnum, Message> {
         "lala".to_string(),
     )))
 }
+
+/*
+    Builds a Call
+    We know that message_type_id is 2 and mu
+*/
+//async fn build_call(val: Value) -> Result<Call, Message> {}
 
 async fn response_handler(response: Message, tx: &mut SplitSink<WebSocket, Message>) {
     // TODO: add some logging
