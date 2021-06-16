@@ -2,7 +2,11 @@ use log::info;
 use serde_json::Value;
 use warp::ws::Message;
 
-pub async fn validate_message_id(json: &Value) -> Result<&str, Message> {
+/*
+    Validates that json[1] field in a json array is
+    able to be parsed as a string
+*/
+pub async fn validate_message_id(json: &Value) -> Result<(), Message> {
     info!("Validating message_id");
     // try to read the message_id_field
     let read_message_id_field = if let Some(s) = json.get(1) {
@@ -12,14 +16,21 @@ pub async fn validate_message_id(json: &Value) -> Result<&str, Message> {
     };
 
     // try to extract a string from message_id field
-    let message_id = if let Some(s) = read_message_id_field.as_str() {
+    let _message_id = if let Some(s) = read_message_id_field.as_str() {
         s
     } else {
         return Err(Message::text("Could not parse String from message_id"));
     };
-    Ok(message_id)
+    Ok(())
 }
 
+/*
+    Validates that the 0'th field in a json array is
+    parasble as a message_type_id.
+    json[0] must be:
+    - parable to an i64
+    - value is either 2, 3 or 4
+*/
 pub async fn validate_message_type_id(json: &Value) -> Result<i64, Message> {
     info!("Validating message_type_id");
     // try to read message_type_id field
