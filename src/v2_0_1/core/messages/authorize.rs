@@ -4,7 +4,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definition of the AuthorizeRequest PDU sent by the Charging Station to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthorizeRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -15,7 +15,7 @@ pub struct AuthorizeRequest {
 }
 
 /// This contains the field definition of the AuthorizeResponse PDU sent by the CSMS to the Charging Station in response to an AuthorizeRequest.
-#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthorizeResponse {
     #[serde(skip_serializing_if = "Option::is_none")]

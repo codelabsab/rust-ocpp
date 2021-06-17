@@ -1,7 +1,7 @@
 use crate::v2_0_1::core::enumerations::hash_algorithm_enum_type::HashAlgorithmEnumType;
 
 /// OCSPRequestDataType is used by: AuthorizeRequest , GetCertificateStatusRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct OCSPRequestDataType {
     pub hash_algorithm: HashAlgorithmEnumType,

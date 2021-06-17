@@ -2,7 +2,7 @@ use super::modem_type::ModemType;
 
 /// The physical system where an Electrical Vehicle (EV) can be charged.
 // ChargingStationType is used by: BootNotificationRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingStationType {
     #[serde(skip_serializing_if = "Option::is_none")]

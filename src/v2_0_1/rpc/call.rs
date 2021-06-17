@@ -1,28 +1,16 @@
 use std::{fmt, str::FromStr};
 
+use serde::de::value::BoolDeserializer;
+
+use crate::v2_0_1::core::messages::boot_notification::BootNotificationRequest;
+
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Call {
     pub message_type_id: i64,
     pub message_id: String,
     pub action: CallActionTypeEnum,
-    pub payload: String,
-}
-
-impl Call {
-    pub fn new(
-        message_type_id: i64,
-        message_id: String,
-        action: CallActionTypeEnum,
-        payload: String,
-    ) -> Self {
-        Self {
-            message_type_id,
-            message_id,
-            action,
-            payload,
-        }
-    }
+    pub payload: CallPayloadTypeEnum,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
@@ -84,19 +72,6 @@ impl fmt::Display for CallTypeEnum {
         write!(f, "{:?}", &self)
     }
 }
-
-// impl FromStr for CallTypeEnum {
-//     type Err = ();
-
-//     fn from_str(input: &str) -> Result<CallTypeEnum, Self::Err> {
-//         match input {
-//             "2" => Ok(CallTypeEnum::Call),
-//             "3" => Ok(CallTypeEnum::CallResult),
-//             "4" => Ok(CallTypeEnum::CallError),
-//             _ => Err(()),
-//         }
-//     }
-// }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 pub enum CallActionTypeEnum {
@@ -244,6 +219,27 @@ impl FromStr for CallActionTypeEnum {
             "UnpublishFirmware" => Ok(CallActionTypeEnum::UnpublishFirmware),
             "UpdateFirmware" => Ok(CallActionTypeEnum::UpdateFirmware),
             _ => Err(()),
+        }
+    }
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[serde(untagged)]
+pub enum CallPayloadTypeEnum {
+    BootNotificationRequest(BootNotificationRequest),
+}
+
+impl fmt::Display for CallPayloadTypeEnum {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+impl CallPayloadTypeEnum {
+    pub fn bootnotificationrequest(&self) -> Option<BootNotificationRequest> {
+        match self {
+            CallPayloadTypeEnum::BootNotificationRequest(b) => Some(b.clone()),
+            _ => None,
         }
     }
 }

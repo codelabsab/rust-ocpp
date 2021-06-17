@@ -109,23 +109,33 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     };
 
     // We have valid json! We have a message_type_id! Let's try to build a Call, CallResult or CallError
-    let call = call_type_builder(json).await;
+    //let call = call_type_builder(json).await;
 
     //let call = call_type_builder(json, message_type_id, message_id).await;
     response_handler(Message::text("Got a something"), tx).await;
 }
 
-async fn call_type_builder(val: Value) -> Result<CallTypeEnum, Message> {
-    // We expect that uid has been validate already
+// async fn call_type_builder(json: Value) -> Result<CallTypeEnum, Message> {
+//     // We expect that uid has been validated already
 
-    // Catch for now all
-    Ok(CallTypeEnum::Call(Call::new(
-        1,
-        "1".to_string(),
-        CallActionTypeEnum::Authorize,
-        "lala".to_string(),
-    )))
-}
+//     // json[0] has already been validate so we can unwrap
+//     let message_type_id = json[0].as_i64().unwrap();
+
+//     match message_type_id {
+//         2 => {}
+//         3 => {}
+//         4 => {}
+//         _ => {}
+//     }
+
+//     // Catch for now all
+//     Ok(CallTypeEnum::Call(Call::new(
+//         1,
+//         "1".to_string(),
+//         CallActionTypeEnum::Authorize,
+//         "lala".to_string(),
+//     )))
+// }
 
 /*
     Builds a Call
