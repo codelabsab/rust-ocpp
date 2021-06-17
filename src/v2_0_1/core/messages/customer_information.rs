@@ -7,7 +7,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definition of the CostUpdatedRequest PDU sent by the CSMS to the Charging Station. With this request the CSMS can send the current cost of a transaction to a Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CustomerInformationRequest {
     pub request_id: i64,
@@ -22,7 +22,7 @@ pub struct CustomerInformationRequest {
     pub customer_certificate: Option<CertificateHashDataType>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CustomerInformationResponse {
     pub status: CustomerInformationStatusEnumType,

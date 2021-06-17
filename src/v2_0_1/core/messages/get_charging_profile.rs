@@ -7,7 +7,7 @@ use crate::v2_0_1::core::{
 };
 
 /// The message GetChargingProfilesRequest can be used by the CSMS to request installed charging profiles from the Charging Station. The charging profiles will then be reported by the Charging Station via ReportChargingProfilesRequest messages.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetChargingProfilesRequest {
     pub request_id: i64,
@@ -17,7 +17,7 @@ pub struct GetChargingProfilesRequest {
 }
 
 /// This contains the field definition of the GetChargingProfilesResponse PDU sent by the Charging Station to the CSMS in response to a GetChargingProfilesRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetChargingProfilesResponse {
     pub status: GetChargingProfileStatusEnumType,

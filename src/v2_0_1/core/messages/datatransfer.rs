@@ -4,7 +4,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definition of the DataTransferRequest PDU sent either by the CSMS to the Charging Station or vice versa.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct DataTransferRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -14,7 +14,7 @@ pub struct DataTransferRequest {
 }
 
 /// This contains the field definition of the DataTransferResponse PDU sent by the Charging Station to the CSMS or vice versa in response to a DataTransferRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct DataTransferResponse {
     pub status: DataTransferStatusEnumType,

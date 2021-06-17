@@ -4,7 +4,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definition of the ClearedChargingLimitRequest PDU sent by the Charging Station to the CSMS
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ClearedChargingLimitRequest {
     pub charging_limit_source: ChargingLimitSourceEnumType,
@@ -13,6 +13,6 @@ pub struct ClearedChargingLimitRequest {
 }
 
 /// This contains the field definition of the ClearedChargingLimitResponse PDU sent by the CSMS to the Charging Station. No fields are defined.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ClearedChargingLimitResponse {}

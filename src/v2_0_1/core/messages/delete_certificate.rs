@@ -6,14 +6,14 @@ use crate::v2_0_1::core::{
 };
 
 /// Used by the CSMS to request deletion of an installed certificate on a Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct DeleteCertificateRequest {
     pub certificate_hash_data: CertificateHashDataType,
 }
 
 /// Response to a DeleteCertificateRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct DeleteCertificateResponse {
     pub status: DeleteCertificateStatusEnumType,

@@ -1,7 +1,7 @@
 use crate::v2_0_1::core::enumerations::hash_algorithm_enum_type::HashAlgorithmEnumType;
 
 /// CertificateHashDataType is used by: Common:CertificateHashDataChainType , DeleteCertificateRequest , CustomerInformationRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CertificateHashDataType {
     pub hash_algorithm: HashAlgorithmEnumType,

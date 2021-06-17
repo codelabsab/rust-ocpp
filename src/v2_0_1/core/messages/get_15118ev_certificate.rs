@@ -8,7 +8,7 @@ use crate::v2_0_1::core::{
 
 /// This message is sent by the Charging Station to the CSMS if an ISO 15118 vehicle selects the service Certificate installation. NOTE:
 /// This message is based on CertificateInstallationReq Res from ISO 15118 2.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Get15118EVCertificateRequest {
     #[serde(rename = "iso15118SchemaVersion")]
@@ -18,7 +18,7 @@ pub struct Get15118EVCertificateRequest {
 }
 
 /// Response message from CSMS to Charging Station containing the status and optionally new certificate. NOTE: This message is based on CertificateInstallationReq Res from ISO 15118-2.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Get15118EVCertificateResponse {
     pub status: Iso15118EVCertificateStatusEnumType,

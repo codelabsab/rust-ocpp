@@ -1,7 +1,7 @@
 use crate::v2_0_1::core::enumerations::firmware_status_enum_type::FirmwareStatusEnumType;
 
 /// This contains the field definition of the FirmwareStatusNotifitacionRequest PDU sent by the Charging Station to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct FirmwareStatusNotificationRequest {
     pub status: FirmwareStatusEnumType,
@@ -10,6 +10,6 @@ pub struct FirmwareStatusNotificationRequest {
 }
 
 /// This contains the field definition of the FirmwareStatusNotificationResponse PDU sent by the CSMS to the Charging Station in response to a FirmwareStatusNotificationRequest. No fields are defined.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct FirmwareStatusNotificationResponse {}

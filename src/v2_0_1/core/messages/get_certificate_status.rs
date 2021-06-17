@@ -4,14 +4,14 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definition of the GetCertificateStatusRequest PDU sent by the Charging Station to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetCertificateStatusRequest {
     pub ocsp_request_data: OCSPRequestDataType,
 }
 
 /// This contains the field definition of the GetCertificateStatusResponse PDU sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetCertificateStatusResponse {
     pub status: GetCertificateStatusEnumType,
