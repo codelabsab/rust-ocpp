@@ -48,9 +48,9 @@ mod tests {
             },
         };
 
-        let bnr = call.payload.as_boot_notification_request().unwrap();
+        let bnr: BootNotificationRequest = call.payload.into_boot_notification_request().unwrap();
 
-        assert_eq!(bnr, &bnr_test);
+        assert_eq!(bnr, bnr_test);
 
         assert_eq!(call.action, CallActionTypeEnum::BootNotification);
     }

@@ -2,7 +2,10 @@ use std::{fmt, str::FromStr};
 
 use enum_as_inner::EnumAsInner;
 
-use crate::v2_0_1::core::messages::boot_notification::BootNotificationRequest;
+use crate::v2_0_1::core::messages::{
+    authorize::{AuthorizeRequest, AuthorizeResponse},
+    boot_notification::{BootNotificationRequest, BootNotificationResponse},
+};
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -226,7 +229,10 @@ impl FromStr for CallActionTypeEnum {
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, EnumAsInner)]
 #[serde(untagged)]
 pub enum CallPayloadTypeEnum {
+    AuthorizeRequest(AuthorizeRequest),
+    AuthorizeResponse(AuthorizeResponse),
     BootNotificationRequest(BootNotificationRequest),
+    BootNotificationResponse(BootNotificationResponse),
 }
 
 impl fmt::Display for CallPayloadTypeEnum {

@@ -6,6 +6,7 @@ use futures::stream::SplitSink;
 use futures::SinkExt;
 use futures::StreamExt;
 
+use ocpp::v2_0_1::rpc::call::Call;
 use ocpp::ws::validators::validate_message_id;
 use ocpp::ws::validators::validate_message_type_id;
 use warp::ws::{Message, WebSocket};
@@ -105,11 +106,23 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         }
     };
 
-    // We have valid json! We have a message_type_id! Let's try to build a Call, CallResult or CallError
-    //let call = call_type_builder(json).await;
+    // let's try to seralize to a Call, CallResult or CallError
+    if message_type_id.unwrap() == 2 {
+        // It's a Call
+        let call: Result<Call, _> = serde_json::from_str(&msg.to_string());
+        match call {
+            Ok(o) => {
+                response_handler(Message::text(format!("Got a Call: {:?}", o)), tx).await;
+            }
+            Err(_) => {
+                error_handler(Message::text("Could not serialize Call"), tx).await;
+                return;
+            }
+        }
+    };
 
+    response_handler(Message::text("Success!"), tx).await;
     //let call = call_type_builder(json, message_type_id, message_id).await;
-    response_handler(Message::text("Got a something"), tx).await;
 }
 
 // async fn call_type_builder(json: Value) -> Result<CallTypeEnum, Message> {
