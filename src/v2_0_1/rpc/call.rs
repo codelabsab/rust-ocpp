@@ -7,6 +7,7 @@ use crate::v2_0_1::core::messages::{
     boot_notification::{BootNotificationRequest, BootNotificationResponse},
     cancel_reservation::{CancelReservationRequest, CancelReservationResponse},
     certificate_signed::{CertificateSignedRequest, CertificateSignedResponse},
+    change_availability::{ChangeAvailabilityRequest, ChangeAvailabilityResponse},
 };
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
@@ -239,6 +240,8 @@ pub enum CallPayloadTypeEnum {
     CancelReservationResponse(CancelReservationResponse),
     CertificateSignedRequest(CertificateSignedRequest),
     CertificateSignedResponse(CertificateSignedResponse),
+    ChangeAvailabilityRequest(ChangeAvailabilityRequest),
+    ChangeAvailabilityResponse(ChangeAvailabilityResponse),
 }
 
 impl fmt::Display for CallPayloadTypeEnum {

@@ -6,7 +6,7 @@ use crate::v2_0_1::core::{
     },
 };
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ChangeAvailabilityRequest {
     pub operational_status: OperationalStatusEnumType,
@@ -14,7 +14,7 @@ pub struct ChangeAvailabilityRequest {
     pub evse: Option<EVSEType>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ChangeAvailabilityResponse {
     pub status: ChangeAvailabilityStatusEnumType,
