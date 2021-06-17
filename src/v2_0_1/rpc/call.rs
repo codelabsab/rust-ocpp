@@ -1,6 +1,6 @@
 use std::{fmt, str::FromStr};
 
-use serde::de::value::BoolDeserializer;
+use enum_as_inner::EnumAsInner;
 
 use crate::v2_0_1::core::messages::boot_notification::BootNotificationRequest;
 
@@ -223,7 +223,7 @@ impl FromStr for CallActionTypeEnum {
     }
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, EnumAsInner)]
 #[serde(untagged)]
 pub enum CallPayloadTypeEnum {
     BootNotificationRequest(BootNotificationRequest),
@@ -232,14 +232,5 @@ pub enum CallPayloadTypeEnum {
 impl fmt::Display for CallPayloadTypeEnum {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
-    }
-}
-
-impl CallPayloadTypeEnum {
-    pub fn bootnotificationrequest(&self) -> Option<BootNotificationRequest> {
-        match self {
-            CallPayloadTypeEnum::BootNotificationRequest(b) => Some(b.clone()),
-            _ => None,
-        }
     }
 }

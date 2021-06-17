@@ -10,59 +10,11 @@ mod tests {
             messages::boot_notification::BootNotificationRequest,
         },
         rpc::{
-            call::{Call, CallActionTypeEnum, CallError, CallPayloadTypeEnum},
+            call::{Call, CallActionTypeEnum, CallError},
             errors::RpcErrorCodes,
         },
     };
     use serde_json::{self};
-
-    // #[test]
-    // fn test_call_to_boot_nofitication_request() {
-    //     let call = Call {
-    //         message_type_id: 2,
-    //         message_id: "19223201".to_string(),
-    //         action: CallActionTypeEnum::BootNotification,
-    //         payload: r#"
-    //         {
-    //             "reason": "PowerUp",
-    //             "chargingStation": {
-    //                 "serialNumber": "101",
-    //                 "model": "CS100",
-    //                 "vendorName": "CLBox",
-    //                 "firmwareVersion": "v0.1",
-    //                 "modem": {
-    //                     "iccid": "iccid",
-    //                     "imsi": "imsi"
-    //                 }
-    //             }
-    //         }"#
-    //         .to_string(),
-    //     };
-
-    //     assert_eq!(call.message_type_id, 2);
-    //     assert_eq!(call.message_id, "19223201".to_string());
-    //     assert_eq!(call.action, CallActionTypeEnum::BootNotification);
-
-    //     // Create a BootNotificationRequest from the payload
-    //     let bnr: BootNotificationRequest = serde_json::from_str(&call.payload).unwrap();
-    //     assert_eq!(bnr.reason, BootReasonEnumType::PowerUp);
-    // }
-
-    // #[test]
-    // fn test_call_result() {
-    //     let result = CallResult {
-    //         message_type_id: 3,
-    //         message_id: "19223201".to_string(),
-    //         payload: json!({"currentTime": "2013-02-01T20:53:32.486Z","interval": 300,"status":"Accepted"}),
-    //     };
-
-    //     assert_eq!(result.message_type_id, 3);
-    //     assert_eq!(result.message_id, "19223201".to_string());
-    //     assert_eq!(
-    //         result.payload,
-    //         json!({"currentTime": "2013-02-01T20:53:32.486Z", "interval": 300, "status":"Accepted"})
-    //     );
-    // }
 
     #[test]
     fn test_serialize_call() {
@@ -83,7 +35,7 @@ mod tests {
 
         let call: Call = serde_json::from_str(json).unwrap();
 
-        println!("{}", call.payload.bootnotificationrequest().unwrap());
+        println!("{}", call.payload);
 
         let bnr_test = BootNotificationRequest {
             reason: BootReasonEnumType::PowerUp,
@@ -96,9 +48,9 @@ mod tests {
             },
         };
 
-        let bnr = call.payload.bootnotificationrequest().unwrap();
+        let bnr = call.payload.as_boot_notification_request().unwrap();
 
-        assert_eq!(bnr, bnr_test);
+        assert_eq!(bnr, &bnr_test);
 
         assert_eq!(call.action, CallActionTypeEnum::BootNotification);
     }
@@ -130,36 +82,6 @@ mod tests {
             "Testing error_details"
         );
     }
-
-    // #[test]
-    // fn test_call_to_value() {
-    //     let json = r#"
-    //         [
-    //             2,
-    //             "19223201",
-    //             "BootNotification",
-    //             {
-    //                 "reason": "PowerUp",
-    //                 "chargingStation": {
-    //                     "model": "SingleSocketCharger",
-    //                     "vendorName": "VendorX"
-    //                 }
-    //             }
-    //         ]
-    //         "#;
-
-    //     let val = serde_json::Value::from_str(json).unwrap();
-
-    //     let call: Call = Call {
-    //         message_type_id: (*val.get(0).unwrap()).as_i64().unwrap(),
-    //         message_id: (*val.get(1).unwrap()).to_string(),
-    //         action: CallActionTypeEnum::from_str(val.get(2).unwrap().as_str().unwrap()).unwrap(),
-    //         payload: (val.get(3).unwrap()),
-    //     };
-
-    //     let bnr: BootNotificationRequest = serde_json::from_str(&call.payload).unwrap();
-    //     assert_eq!(bnr.reason, BootReasonEnumType::PowerUp);
-    // }
 
     #[test]
     fn test_call_action_enum() {

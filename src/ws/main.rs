@@ -6,15 +6,12 @@ use futures::stream::SplitSink;
 use futures::SinkExt;
 use futures::StreamExt;
 
-use ocpp::v2_0_1::rpc::call::Call;
-use ocpp::v2_0_1::rpc::call::CallActionTypeEnum;
-use ocpp::v2_0_1::rpc::call::CallTypeEnum;
 use ocpp::ws::validators::validate_message_id;
 use ocpp::ws::validators::validate_message_type_id;
 use warp::ws::{Message, WebSocket};
 use warp::Filter;
 
-use serde_json::{self, Value};
+use serde_json::{self};
 
 extern crate pretty_env_logger;
 #[macro_use]
