@@ -6,7 +6,7 @@ use crate::v2_0_1::core::{
     },
 };
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CertificateSignedRequest {
     pub certificate_chain: String,
@@ -14,7 +14,7 @@ pub struct CertificateSignedRequest {
     pub certificate_type: Option<CertificateSigningUseEnumType>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CertificateSignedResponse {
     pub status: CertificateSignedStatusEnumType,
