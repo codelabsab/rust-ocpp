@@ -1,6 +1,6 @@
 /// Charging schedule period structure defines a time period in a charging schedule
 /// ChargingSchedulePeriodType is used by: Common:ChargingScheduleType , Common:CompositeScheduleType
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingSchedulePeriodType {
     pub start_period: i64,

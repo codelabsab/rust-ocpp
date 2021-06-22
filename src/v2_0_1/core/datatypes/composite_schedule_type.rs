@@ -5,7 +5,7 @@ use crate::v2_0_1::core::enumerations::charging_rate_unit_enum_type::ChargingRat
 use super::charging_schedule_period_type::ChargingSchedulePeriodType;
 
 /// CompositeScheduleType is used by: GetCompositeScheduleResponse
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CompositeScheduleType {
     pub evse_id: i64,

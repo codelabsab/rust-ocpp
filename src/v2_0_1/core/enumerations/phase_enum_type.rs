@@ -1,5 +1,5 @@
 // DONE: FIX THIS
-#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq)]
 pub enum PhaseEnumType {
     L1,
     L2,

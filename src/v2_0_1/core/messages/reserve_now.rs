@@ -9,7 +9,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definitions of the RequestStopTransactionRequest PDU sent to Charging Station by CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ReserveNowRequest {
     pub id: i64,
@@ -24,7 +24,7 @@ pub struct ReserveNowRequest {
 }
 
 /// This contains the field definition of the ReserveNowResponse PDU sent by the Charging Station to the CSMS in response toReserveNowRequest PDU.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ReserveNowResponse {
     pub status: ReserveNowStatusEnumType,

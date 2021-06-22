@@ -7,7 +7,7 @@ use super::{apn_type::APNType, vpn_type::VPNType};
 
 /// The NetworkConnectionProfile defines the functional and technical parameters of a communication link.
 /// NetworkConnectionProfileType is used by: SetNetworkProfileRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct NetworkConnectionProfileType {
     pub ocpp_version: OCPPVersionEnumType,

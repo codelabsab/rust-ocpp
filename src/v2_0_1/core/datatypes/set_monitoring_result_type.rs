@@ -9,7 +9,7 @@ use super::{
 
 /// Class to hold result of SetVariableMonitoring request.
 /// SetMonitoringResultType is used by: SetVariableMonitoringResponse
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SetMonitoringResultType {
     #[serde(skip_serializing_if = "Option::is_none")]

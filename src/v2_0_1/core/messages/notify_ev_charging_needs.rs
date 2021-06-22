@@ -4,7 +4,7 @@ use crate::v2_0_1::core::{
 };
 
 /// The Charging Station uses this message to communicate the charging needs as calculated by the EV to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyEVChargingNeedsRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -14,7 +14,7 @@ pub struct NotifyEVChargingNeedsRequest {
 }
 
 /// Response to a NotifyEVChargingNeedsRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyEVChargingNeedsResponse {
     pub status: NotifyEVChargingNeedsStatusEnumType,

@@ -1,6 +1,6 @@
 /// DCChargingParametersType is used by: Common:ChargingNeedsType
 // TODO: Does bulk_soc and full_soc really rename correctly?
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct DCChargingParametersType {
     pub ev_max_current: i64,

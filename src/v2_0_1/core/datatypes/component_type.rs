@@ -1,7 +1,7 @@
 use super::evse_type::EVSEType;
 
 /// A physical or logical component
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ComponentType {
     pub name: String,

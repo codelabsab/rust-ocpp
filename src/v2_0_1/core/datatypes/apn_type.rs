@@ -8,7 +8,7 @@ use crate::v2_0_1::core::enumerations::apn_authentication_enum_type::APNAuthenti
     Example: If your preferred network is Vodafone Netherlands, the MCC=204 and the MNC=04 which means the key PreferredNetwork = 20404 Some modems allows to specify a preferred network, which means, if this network is not available, a different network is used.
     If you specify UseOnlyPreferredNetwork and this network is not available, the modem will not dial in
 */
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct APNType {
     pub apn: String,

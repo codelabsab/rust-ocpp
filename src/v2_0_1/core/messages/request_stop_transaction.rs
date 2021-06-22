@@ -4,14 +4,14 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definitions of the RequestStopTransactionRequest PDU sent to Charging Station by CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestStopTransactionRequest {
     pub transaction_id: String,
 }
 
 /// This contains the field definitions of the RequestStopTransactionResponse PDU sent from Charging Station to CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestStopTransactionResponse {
     pub status: RequestStartStopStatusEnumType,

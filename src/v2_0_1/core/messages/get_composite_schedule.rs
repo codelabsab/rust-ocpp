@@ -7,7 +7,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definition of the GetCompositeScheduleRequest PDU sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetCompositeScheduleRequest {
     pub duration: i64,
@@ -17,7 +17,7 @@ pub struct GetCompositeScheduleRequest {
 }
 
 /// This contains the field definition of the GetCompositeScheduleResponse PDU sent by the Charging Station to the CSMS in response to a GetCompositeScheduleRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetCompositeScheduleResponse {
     pub status: GenericStatusEnumType,

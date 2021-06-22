@@ -7,7 +7,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definition of the GetMonitoringReportRequest PDU sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetMonitoringReportRequest {
     pub request_id: i64,
@@ -18,7 +18,7 @@ pub struct GetMonitoringReportRequest {
 }
 
 /// This contains the field definition of the GetMonitoringReportResponse PDU sent by the Charging Station to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetMonitoringReportResponse {
     pub status: GenericDeviceModelStatusEnumType,

@@ -4,7 +4,7 @@ use crate::v2_0_1::core::enumerations::{
 
 /// Attribute data of a variable.
 /// VariableAttributeType is used by: NotifyReportRequest.ReportDataType
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct VariableAttributeType {
     #[serde(rename = "type")]

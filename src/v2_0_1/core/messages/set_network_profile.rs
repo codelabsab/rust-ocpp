@@ -7,7 +7,7 @@ use crate::v2_0_1::core::{
 };
 
 /// With this message the CSMS gains the ability to configure the connection data (e.g. CSMS URL, OCPP version, APN, etc) on a Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SetNetworkProfileRequest {
     pub configuration_slot: i64,
@@ -15,7 +15,7 @@ pub struct SetNetworkProfileRequest {
 }
 
 /// This contains the field definition of the SetNetworkProfileResponse PDU sent by the Charging Station to the CSMS in response to a SetNetworkProfileRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SetNetworkProfileResponse {
     pub status: SetNetworkProfileStatusEnumType,

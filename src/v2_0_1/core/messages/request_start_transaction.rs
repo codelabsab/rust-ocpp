@@ -7,7 +7,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definitions of the RequestStartTransactionRequest PDU sent to Charging Station by CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestStartTransactionRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -21,7 +21,7 @@ pub struct RequestStartTransactionRequest {
 }
 
 /// This contains the field definitions of the RequestStartTransactionResponse PDU sent from Charging Station to CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct RequestStartTransactionResponse {
     pub status: RequestStartStopStatusEnumType,

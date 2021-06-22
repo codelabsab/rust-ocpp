@@ -7,7 +7,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definition of the TriggerMessageRequest PDU sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct TriggerMessageRequest {
     pub requested_message: MessageTriggerEnumType,
@@ -16,7 +16,7 @@ pub struct TriggerMessageRequest {
 }
 
 /// This contains the field definition of the TriggerMessageResponse PDU sent by the Charging Station to the CSMS in response to TriggerMessageResponse.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct TriggerMessageResponse {
     pub status: TriggerMessageStatusEnumType,

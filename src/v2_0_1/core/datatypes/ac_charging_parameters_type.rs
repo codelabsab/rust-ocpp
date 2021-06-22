@@ -1,5 +1,5 @@
 /// ACChargingParametersType is used by: Common:ChargingNeedsType
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ACChargingParametersType {
     pub energy_amount: i64,

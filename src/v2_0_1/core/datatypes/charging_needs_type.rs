@@ -6,7 +6,7 @@ use super::{
 };
 
 /// ChargingNeedsType is used by: NotifyEVChargingNeedsRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingNeedsType {
     pub requested_energy_transfer: ChargingLimitSourceEnumType,

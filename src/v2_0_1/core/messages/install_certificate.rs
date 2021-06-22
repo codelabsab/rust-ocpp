@@ -7,7 +7,7 @@ use crate::v2_0_1::core::{
 };
 
 /// Used by the CSMS to request installation of a certificate on a Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct InstallCertificateRequest {
     pub certificate_type: InstallCertificateUseEnumType,
@@ -15,7 +15,7 @@ pub struct InstallCertificateRequest {
 }
 
 /// This contains the field definition of the InstallCertificateRequest, PDU sent by the Charging Station to the CSMS. No fields are defined.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct InstallCertificateResponse {
     pub status: InstallCertificateStatusEnumType,

@@ -4,7 +4,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definition of the ResetRequest PDU sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ResetRequest {
     pub request_type: ResetEnumType,
@@ -13,7 +13,7 @@ pub struct ResetRequest {
 }
 
 ///This contains the field definition of the ResetResponse PDU sent by the Charging Station to the CSMS in response to ResetRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ResetResponse {
     pub status: ResetStatusEnumType,

@@ -10,7 +10,7 @@ use crate::v2_0_1::core::{
 };
 
 /// Used by the CSMS to request an overview of the installed certificates on a Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetInstalledCertificateIdsRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -18,7 +18,7 @@ pub struct GetInstalledCertificateIdsRequest {
 }
 
 /// Response to a GetInstalledCertificateIDsRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetInstalledCertificateIdsResponse {
     pub status: GetDisplayMessagesStatusEnumType,

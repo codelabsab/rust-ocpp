@@ -4,7 +4,7 @@ use crate::v2_0_1::core::{
 };
 
 /// This contains the field definition of the PublishFirmwareRequest PDU sent by the CSMS to the Local Controller.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct PublishFirmwareRequest {
     pub location: String,
@@ -17,7 +17,7 @@ pub struct PublishFirmwareRequest {
 }
 
 /// This contains the field definition of the PublishFirmwareResponse PDU sent by the Local Controller to the CSMS in response to a PublishFirmwareRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct PublishFirmwareResponse {
     pub status: GenericStatusEnumType,

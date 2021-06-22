@@ -3,7 +3,7 @@ use chrono::{DateTime, Utc};
 use crate::v2_0_1::core::datatypes::report_data_type::ReportDataType;
 
 /// This contains the field definition of the NotifyReportRequest PDU sent by the Charging Station to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyReportRequest {
     pub request_id: i64,
@@ -16,6 +16,6 @@ pub struct NotifyReportRequest {
 }
 
 /// Response to a NotifyReportRequest message. No fields are defined.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyReportResponse {}

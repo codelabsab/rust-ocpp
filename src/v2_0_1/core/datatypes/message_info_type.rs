@@ -9,7 +9,7 @@ use super::{component_type::ComponentType, message_content_type::MessageContentT
 
 /// Contains message details, for a message to be displayed on a Charging Station.
 /// MessageInfoType is used by: SetDisplayMessageRequest , NotifyDisplayMessagesRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct MessageInfoType {
     pub id: i64,

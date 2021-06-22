@@ -9,7 +9,7 @@ use super::{component_type::ComponentType, variable_type::VariableType};
 
 /// Class to report an event notification for a component-variable.
 /// EventDataType is used by: NotifyEventRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct EventDataType {
     pub event_id: i64,

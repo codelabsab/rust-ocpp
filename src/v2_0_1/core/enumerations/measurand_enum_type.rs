@@ -1,5 +1,5 @@
 // DONE: FIX THIS
-#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq)]
 pub enum MeasurandEnumType {
     #[serde(rename = "Current.Export")]
     CurrentExport,

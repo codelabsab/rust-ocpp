@@ -13,7 +13,7 @@ use crate::v2_0_1::core::{
 };
 
 /// Sent by the Charging Station to the CSMS to request that the Certificate Authority signs the public key into a certificate.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct TransactionEventRequest {
     pub event_type: TransactionEventEnumType,
@@ -38,7 +38,7 @@ pub struct TransactionEventRequest {
 }
 
 /// This contains the field definition of the TransactionEventResponse PDU sent by the CSMS to the Charging Station in response to a TransactionEventRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct TransactionEventResponse {
     #[serde(skip_serializing_if = "Option::is_none")]

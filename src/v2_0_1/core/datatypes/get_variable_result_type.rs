@@ -7,7 +7,7 @@ use super::component_type::ComponentType;
 
 /// Class to hold parameters for GetVariables request.
 /// GetVariableDataType is used by: GetVariablesRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetVariableResultType {
     pub attribute_status: GetVariableStatusEnumType,

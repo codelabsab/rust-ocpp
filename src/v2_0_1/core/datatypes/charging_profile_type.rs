@@ -10,7 +10,7 @@ use super::charging_schedule_type::ChargingScheduleType;
 
 /// A ChargingProfile consists of ChargingSchedule, describing the amount of power or current that can be delivered per time interval
 /// ChargingProfileType is used by: RequestStartTransactionRequest , SetChargingProfileRequest , ReportChargingProfilesRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingProfileType {
     #[serde(skip_serializing_if = "Option::is_none")]

@@ -7,7 +7,7 @@ use crate::v2_0_1::core::{
 };
 
 /// Sent by the Charging Station to the CSMS to request that the Certificate Authority signs the public key into a certificate.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SignCertificateRequest {
     pub csr: String,
@@ -16,7 +16,7 @@ pub struct SignCertificateRequest {
 }
 
 /// Sent by the CSMS to the Charging Station in response to the SignCertificateRequest message.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SignCertificateResponse {
     pub status: GenericStatusEnumType,

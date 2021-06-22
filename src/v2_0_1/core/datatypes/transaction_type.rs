@@ -3,7 +3,7 @@ use crate::v2_0_1::core::enumerations::{
 };
 
 /// TransactionType is used by: TransactionEventRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct TransactionType {
     pub transaction_id: String,

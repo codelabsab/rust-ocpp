@@ -8,7 +8,7 @@ use super::{
 };
 
 /// SetVariableResultType is used by: SetVariablesResponse
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SetVariableResultType {
     #[serde(skip_serializing_if = "Option::is_none")]

@@ -2,7 +2,7 @@ use super::sales_tariff_entry_type::SalesTariffEntryType;
 
 /// This dataType is based on dataTypes from ISO 15118-2.
 /// SalesTariffType is used by: Common:ChargingScheduleType
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SalesTariffType {
     #[serde(skip_serializing_if = "Option::is_none")]
