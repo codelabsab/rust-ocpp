@@ -106,7 +106,7 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         }
     };
 
-    // let's try to seralize to a Call, CallResult or CallError
+    // try to seralize json to a Call, CallResult or CallError
     if message_type_id.unwrap() == 2 {
         // It's a Call
         let call: Result<Call, _> = serde_json::from_str(&msg.to_string());

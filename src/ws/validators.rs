@@ -3,8 +3,7 @@ use serde_json::Value;
 use warp::ws::Message;
 
 /*
-    Validates that json[1] field in a json array is
-    able to be parsed as a string
+    Tries to parse json[1] as a String
 */
 pub async fn validate_message_id(json: &Value) -> Result<(), Message> {
     info!("Validating message_id");
@@ -28,7 +27,7 @@ pub async fn validate_message_id(json: &Value) -> Result<(), Message> {
     Validates that the 0'th field in a json array is
     parasble as a message_type_id.
     json[0] must be:
-    - parable to an i64
+    - parsed to i64
     - value is either 2, 3 or 4
 */
 pub async fn validate_message_type_id(json: &Value) -> Result<i64, Message> {
