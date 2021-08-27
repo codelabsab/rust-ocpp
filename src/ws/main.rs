@@ -29,18 +29,27 @@ async fn main() {
     warp::serve(routes).run(([127, 0, 0, 1], 3040)).await;
 }
 
+/*
+    All connection begin at the connection handler,
+    this is the first function that runs after an
+    http upgrade to websockets.
+*/
 async fn connection_handler(ws: WebSocket) {
     let (mut tx, mut rx) = ws.split();
 
     while let Some(result) = rx.next().await {
         info!("rx.next(): message recieved");
         let msg = match result {
-            Ok(msg) => msg,
+            Ok(msg) => msg, // We got a real message
             Err(e) => {
                 error!("websocket error({})", e);
                 break;
             }
         };
+        /*
+           We got a websockets message, send it to the
+           message handler for further processing
+        */
         message_handler(msg, &mut tx).await;
     }
 }
@@ -71,7 +80,9 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         return;
     };
 
-    // Get json or die
+    /*
+       We got some text, but is it json?
+    */
     let json = if let Ok(v) = serde_json::Value::from_str(msg) {
         v
     } else {
@@ -80,13 +91,34 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         return;
     };
 
-    // Did we get a json array?
+    /*
+        Ok, we got some json, but is it an array?
+    */
     if !json.is_array() {
         error_handler(Message::text(format!("Expected array, got: {}", msg)), tx).await;
         return;
     }
 
-    // validate message_type_id field is an i64 of either 2, 3 or 4
+    /*
+        In OCPP_2_01 the message_type_id is encoded in the 0th
+        field in the json array. a message_type_id is either:
+        - 2: A Call
+        - 3: A CallResult
+        - 4: A CallError
+
+        The OCPP_2_0_1 description:
+
+            To identify the type of message one of the following Message Type Numbers MUST be used.
+
+            | MessageType | MessageTypeNumber | Description |
+            | --- | --- | --- |
+            | CALL | 2 | Request message |
+            | CALLRESULT | 3 | Response message |
+            | CALLERROR | 4 | Error response to a request message |
+
+            When a server receives a message with a Message Type Number not in this list, it SHALL ignore the message payload. Each
+            message type may have additional required fields.
+    */
     let message_type_id = validate_message_type_id(&json).await;
     match message_type_id {
         Ok(_) => {}

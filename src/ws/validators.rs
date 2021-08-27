@@ -24,29 +24,34 @@ pub async fn validate_message_id(json: &Value) -> Result<(), Message> {
 }
 
 /*
-    Validates that the 0'th field in a json array is
-    parasble as a message_type_id.
-    json[0] must be:
-    - parsed to i64
-    - value is either 2, 3 or 4
+    To identify the type of message one of the following Message Type Numbers MUST be used.
+
+    | MessageType | MessageTypeNumber | Description |
+    | --- | --- | --- |
+    | CALL | 2 | Request message |
+    | CALLRESULT | 3 | Response message |
+    | CALLERROR | 4 | Error response to a request message |
+
+    When a server receives a message with a Message Type Number not in this list, it SHALL ignore the message payload. Each
+    message type may have additional required fields.
 */
 pub async fn validate_message_type_id(json: &Value) -> Result<i64, Message> {
     info!("Validating message_type_id");
-    // try to read message_type_id field
+    // message_type_id is located in the 0th field in the json array
     let read_message_type_id_field = if let Some(i) = json.get(0) {
         i
     } else {
         return Err(Message::text("Could not read message_type_id field"));
     };
 
-    // try to extract an i64 from message_type_id field
+    // message_type_id field should be an i64
     let message_type_id = if let Some(i) = read_message_type_id_field.as_i64() {
         i
     } else {
         return Err(Message::text("Could not parse number from message_type_id"));
     };
 
-    // Validate that message_type_id is either 2, 3 or 4 or die
+    // Validate that message_type_id is either 2, 3 or 4
     match message_type_id {
         2 | 3 | 4 => {
             info!("Valid message_type_id, got {}", message_type_id);
