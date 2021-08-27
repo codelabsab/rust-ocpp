@@ -3,10 +3,11 @@
 use std::str::FromStr;
 
 use futures::stream::SplitSink;
-use futures::SinkExt;
 use futures::StreamExt;
 
 use ocpp::v2_0_1::rpc::call::Call;
+use ocpp::ws::handlers::error_handler;
+use ocpp::ws::handlers::response_handler;
 use ocpp::ws::validators::validate_message_id;
 use ocpp::ws::validators::validate_message_type_id;
 use warp::ws::{Message, WebSocket};
@@ -128,7 +129,16 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         }
     };
 
-    // validate message_id field
+    /*
+        The message ID
+
+        The message ID serves to identify a request. A message ID for any
+        CALL message MUST be different from all message IDs previously
+        used by the same sender for any other CALL messages on the same
+        WebSocket connection. A message ID for a CALLRESULT or CALLERROR
+        message MUST be equal to that of the CALL  message that the
+        CALLRESULT or CALLERROR message is a response to.
+    */
     let message_id = validate_message_id(&json).await;
     match message_id {
         Ok(_) => {}
@@ -138,7 +148,7 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         }
     };
 
-    // try to seralize json to a Call, CallResult or CallError
+    // try to deseralize json to a Call, CallResult or CallError
     if message_type_id.unwrap() == 2 {
         // It's a Call
         let call: Result<Call, _> = serde_json::from_str(&msg.to_string());
@@ -155,56 +165,4 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
 
     response_handler(Message::text("Success!"), tx).await;
     //let call = call_type_builder(json, message_type_id, message_id).await;
-}
-
-// async fn call_type_builder(json: Value) -> Result<CallTypeEnum, Message> {
-//     // We expect that uid has been validated already
-
-//     // json[0] has already been validate so we can unwrap
-//     let message_type_id = json[0].as_i64().unwrap();
-
-//     match message_type_id {
-//         2 => {}
-//         3 => {}
-//         4 => {}
-//         _ => {}
-//     }
-
-//     // Catch for now all
-//     Ok(CallTypeEnum::Call(Call::new(
-//         1,
-//         "1".to_string(),
-//         CallActionTypeEnum::Authorize,
-//         "lala".to_string(),
-//     )))
-// }
-
-/*
-    Builds a Call
-    We know that message_type_id is 2 and mu
-*/
-//async fn build_call(val: Value) -> Result<Call, Message> {}
-
-async fn response_handler(response: Message, tx: &mut SplitSink<WebSocket, Message>) {
-    // TODO: add some logging
-    info!("Entered response_handler");
-    match tx.send(response).await {
-        Ok(_) => (),
-        Err(e) => {
-            error!("websocket error: Could not send response. Error({})", e);
-        }
-    }
-}
-
-async fn error_handler(error: Message, tx: &mut SplitSink<WebSocket, Message>) {
-    info!("Entered error_handler");
-    match tx.send(error).await {
-        Ok(_) => (),
-        Err(e) => {
-            error!(
-                "websocket error: Could not send error response. Error: ({})",
-                e
-            );
-        }
-    }
 }

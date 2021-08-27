@@ -3,7 +3,27 @@ use serde_json::Value;
 use warp::ws::Message;
 
 /*
-    Tries to parse json[1] as a String
+    Try to parse the 1th field in the json array. The message id
+    is a type of state.
+
+    The OCPP_2_0_1 protocol states the following:
+
+        The message ID
+
+        The message ID serves to identify a request. A message ID for any
+        CALL message MUST be different from all message IDs previously
+        used by the same sender for any other CALL messages on the same
+        WebSocket connection. A message ID for a CALLRESULT or CALLERROR
+        message MUST be equal to that of the CALL  message that the
+        CALLRESULT or CALLERROR message is a response to.
+
+    This means that CALLRESULT and CALLERRORS can only answer a matching
+    CALL request.
+
+    What happens if a pod dies in the after receiving a CALL but before
+    answering it? Will there be a retry or do we need to store state
+    somewhere?
+
 */
 pub async fn validate_message_id(json: &Value) -> Result<(), Message> {
     info!("Validating message_id");
@@ -51,7 +71,12 @@ pub async fn validate_message_type_id(json: &Value) -> Result<i64, Message> {
         return Err(Message::text("Could not parse number from message_type_id"));
     };
 
-    // Validate that message_type_id is either 2, 3 or 4
+    /*
+        Validate that message_type_id is 2, 3 or 4
+            2 -> Call
+            3 -> CallResult
+            4 -> CallError
+    */
     match message_type_id {
         2 | 3 | 4 => {
             info!("Valid message_type_id, got {}", message_type_id);
