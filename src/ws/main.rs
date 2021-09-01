@@ -6,8 +6,8 @@ use futures::stream::SplitSink;
 use futures::StreamExt;
 
 use ocpp::v2_0_1::rpc::call::Call;
-use ocpp::ws::handlers::error_handler;
-use ocpp::ws::handlers::response_handler;
+use ocpp::ws::error::error_handler;
+use ocpp::ws::response::response_handler;
 use ocpp::ws::validators::validate_message_id;
 use ocpp::ws::validators::validate_message_type_id;
 use warp::ws::{Message, WebSocket};
@@ -31,9 +31,8 @@ async fn main() {
 }
 
 /*
-    All connection begin at the connection handler,
-    this is the first function that runs after an
-    http upgrade to websockets.
+    All connection begin at the connection handler, this is the first function
+    that runs after an http upgrade to websockets.
 */
 async fn connection_handler(ws: WebSocket) {
     let (mut tx, mut rx) = ws.split();
@@ -47,25 +46,19 @@ async fn connection_handler(ws: WebSocket) {
                 break;
             }
         };
-        /*
-           We got a websockets message, send it to the
-           message handler for further processing
-        */
+
         message_handler(msg, &mut tx).await;
     }
 }
 
 /*
     The job of the message_handler is to:
-
     Validate that:
         1. incoming transmission is of type text
-        2. text is valid json
+        2. text is deserializeable to jsonValue
         3. json data is of type array
         4. validate that the array is of type Call
-
     Cast to correct Call type
-
 */
 async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     // Skip any non-Text messages...
@@ -81,9 +74,7 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         return;
     };
 
-    /*
-       We got some text, but is it json?
-    */
+    // We got some text, but is it json?
     let json = if let Ok(v) = serde_json::Value::from_str(msg) {
         v
     } else {
@@ -92,33 +83,30 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         return;
     };
 
-    /*
-        Ok, we got some json, but is it an array?
-    */
+    // Ok, we got some json, but is it an array?
     if !json.is_array() {
         error_handler(Message::text(format!("Expected array, got: {}", msg)), tx).await;
         return;
     }
 
     /*
-        In OCPP_2_01 the message_type_id is encoded in the 0th
-        field in the json array. a message_type_id is either:
+        In OCPP_2_01 the message_type_id is encoded in the 0th field in the
+        json array. a message_type_id is either:
         - 2: A Call
         - 3: A CallResult
         - 4: A CallError
 
         The OCPP_2_0_1 description:
-
-            To identify the type of message one of the following Message Type Numbers MUST be used.
-
+            To identify the type of message one of the following Message Type
+            Numbers MUST be used.
             | MessageType | MessageTypeNumber | Description |
             | --- | --- | --- |
             | CALL | 2 | Request message |
             | CALLRESULT | 3 | Response message |
             | CALLERROR | 4 | Error response to a request message |
-
-            When a server receives a message with a Message Type Number not in this list, it SHALL ignore the message payload. Each
-            message type may have additional required fields.
+            When a server receives a message with a Message Type Number not in
+            this list, it SHALL ignore the message payload. Each message type
+            may have additional required fields.
     */
     let message_type_id = validate_message_type_id(&json).await;
     match message_type_id {
@@ -132,12 +120,12 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     /*
         The message ID
 
-        The message ID serves to identify a request. A message ID for any
-        CALL message MUST be different from all message IDs previously
-        used by the same sender for any other CALL messages on the same
-        WebSocket connection. A message ID for a CALLRESULT or CALLERROR
-        message MUST be equal to that of the CALL  message that the
-        CALLRESULT or CALLERROR message is a response to.
+        The message ID serves to identify a request. A message ID for any CALL
+        message MUST be different from all message IDs previously used by the
+        same sender for any other CALL messages on the same WebSocket
+        connection. A message ID for a CALLRESULT or CALLERROR message MUST be
+        equal to that of the CALL  message that the CALLRESULT or CALLERROR
+        message is a response to.
     */
     let message_id = validate_message_id(&json).await;
     match message_id {
@@ -164,5 +152,4 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     };
 
     response_handler(Message::text("Success!"), tx).await;
-    //let call = call_type_builder(json, message_type_id, message_id).await;
 }

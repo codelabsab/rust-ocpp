@@ -1,2 +1,3 @@
-pub mod handlers;
 pub mod validators;
+pub mod response;
+pub mod error;

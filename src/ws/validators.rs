@@ -10,19 +10,18 @@ use warp::ws::Message;
 
         The message ID
 
-        The message ID serves to identify a request. A message ID for any
-        CALL message MUST be different from all message IDs previously
-        used by the same sender for any other CALL messages on the same
-        WebSocket connection. A message ID for a CALLRESULT or CALLERROR
-        message MUST be equal to that of the CALL  message that the
-        CALLRESULT or CALLERROR message is a response to.
+        The message ID serves to identify a request. A message ID for any CALL
+        message MUST be different from all message IDs previously used by the
+        same sender for any other CALL messages on the same WebSocket
+        connection. A message ID for a CALLRESULT or CALLERROR message MUST be
+        equal to that of the CALL  message that the CALLRESULT or CALLERROR
+        message is a response to.
 
-    This means that CALLRESULT and CALLERRORS can only answer a matching
-    CALL request.
+    This means that CALLRESULT and CALLERRORS can only answer a matching CALL
+    request.
 
     What happens if a pod dies in the after receiving a CALL but before
-    answering it? Will there be a retry or do we need to store state
-    somewhere?
+    answering it? Will there be a retry or do we need to store state somewhere?
 
 */
 pub async fn validate_message_id(json: &Value) -> Result<(), Message> {
@@ -44,7 +43,8 @@ pub async fn validate_message_id(json: &Value) -> Result<(), Message> {
 }
 
 /*
-    To identify the type of message one of the following Message Type Numbers MUST be used.
+    To identify the type of message one of the following Message Type Numbers
+    MUST be used.
 
     | MessageType | MessageTypeNumber | Description |
     | --- | --- | --- |
@@ -52,8 +52,9 @@ pub async fn validate_message_id(json: &Value) -> Result<(), Message> {
     | CALLRESULT | 3 | Response message |
     | CALLERROR | 4 | Error response to a request message |
 
-    When a server receives a message with a Message Type Number not in this list, it SHALL ignore the message payload. Each
-    message type may have additional required fields.
+    When a server receives a message with a Message Type Number not in this
+    list, it SHALL ignore the message payload. Each message type may have
+    additional required fields.
 */
 pub async fn validate_message_type_id(json: &Value) -> Result<i64, Message> {
     info!("Validating message_type_id");
