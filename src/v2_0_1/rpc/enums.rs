@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{fmt, str::FromStr};
 
 use super::{call::Call, call_error::CallError, call_result::CallResult};
 
@@ -26,6 +26,18 @@ pub enum AuthorizeEnum {
 pub enum BootNotificationEnum {
     BootNotificationRequest,
     BootNotificationResponse,
+}
+
+impl FromStr for CallActionEnum {
+    type Err = ();
+
+    fn from_str(input: &str) -> Result<CallActionEnum, Self::Err> {
+        match input {
+            "Authorize" => Ok(CallActionEnum::Authorize()),
+            "BootNotification" => Ok(CallActionEnum::BootNotification()),
+            _ => Err(()),
+        }
+    }
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

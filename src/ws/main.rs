@@ -6,6 +6,8 @@ use futures::stream::SplitSink;
 use futures::StreamExt;
 
 use ocpp::v2_0_1::rpc::call::Call;
+use ocpp::v2_0_1::rpc::call_error::CallError;
+use ocpp::v2_0_1::rpc::call_result::CallResult;
 use ocpp::ws::error::error_handler;
 use ocpp::ws::response::response_handler;
 use ocpp::ws::validators::validate_message_id;
@@ -13,7 +15,7 @@ use ocpp::ws::validators::validate_message_type_id;
 use warp::ws::{Message, WebSocket};
 use warp::Filter;
 
-use serde_json::{self};
+use serde_json;
 
 extern crate pretty_env_logger;
 #[macro_use]
@@ -139,21 +141,37 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     // try to deseralize json to a Call, CallResult or CallError
     if message_type_id == 2 {
         // It's a Call
-        let call: Result<Call, _> = serde_json::from_str(&msg.to_string());
-        match call {
+        let _ = match serde_json::from_str(&msg.to_string()) {
             Ok(call) => {
-                // TODO: Move to another function here for futher processing
                 call_handler(call, tx).await;
             }
             Err(_) => {
                 error_handler(Message::text("Could not serialize Call"), tx).await;
                 return;
             }
-        }
+        };
     } else if message_type_id == 3 {
-        todo!()
+        // It's a CallResult
+        let _ = match serde_json::from_str(&msg.to_string()) {
+            Ok(call_result) => {
+                call_result_handler(call_result, tx).await;
+            }
+            Err(_) => {
+                error_handler(Message::text("Could not serialize CallResult"), tx).await;
+                return;
+            }
+        };
     } else if message_type_id == 4 {
-        todo!()
+        // It's a CallError
+        let _ = match serde_json::from_str(&msg.to_string()) {
+            Ok(call_error) => {
+                call_error_handler(call_error, tx).await;
+            }
+            Err(_) => {
+                error_handler(Message::text("Could not serialize CallResultError"), tx).await;
+                return;
+            }
+        };
     };
 
     response_handler(Message::text("Success!"), tx).await;
@@ -163,10 +181,28 @@ async fn call_handler(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
     /*
     State so far:
         pub struct Call {
-            pub message_type_id: i64, // Validated
-            pub message_id: String,   // Validated
-            pub action: String,       // TODO
-            pub payload: String,      // TODO
+            pub message_type_id: i64, // OK by validate_message_type_id() in caller
+            pub message_id: String,   // OK by validate_message_id() in caller
+            pub action: String,       // TODO:
+                                      // Check which action it is and map it to
+                                         an enum of that type. Example:
+                                         BootNotification should map to a
+                                         BootNotificationEnum that contains
+                                         BootNotificationRequest and
+                                         BootNotificationResponse
+
+            pub payload: String,      // TODO: Try to cast the payload to
+                                               the corresponding enum from
+                                               "action"
         }
     */
+    let action_enum = CallActionEnum::from_str(call.action);
+}
+
+async fn call_result_handler(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
+    todo!()
+}
+
+async fn call_error_handler(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
+    todo!()
 }
