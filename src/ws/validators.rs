@@ -24,7 +24,7 @@ use warp::ws::Message;
     answering it? Will there be a retry or do we need to store state somewhere?
 
 */
-pub async fn validate_message_id(json: &Value) -> Result<(), Message> {
+pub async fn validate_message_id(json: &Value) -> Result<String, Message> {
     info!("Validating message_id");
     // try to read the message_id_field
     let read_message_id_field = if let Some(s) = json.get(1) {
@@ -34,12 +34,15 @@ pub async fn validate_message_id(json: &Value) -> Result<(), Message> {
     };
 
     // try to extract a string from message_id field
-    let _message_id = if let Some(s) = read_message_id_field.as_str() {
+    let message_id = if let Some(s) = read_message_id_field.as_str() {
         s
     } else {
         return Err(Message::text("Could not parse String from message_id"));
     };
-    Ok(())
+
+    // TODO: Validate that the message_id has not been previously used
+    //       by this client
+    Ok(message_id.to_string())
 }
 
 /*
@@ -95,7 +98,7 @@ pub async fn validate_message_type_id(json: &Value) -> Result<i64, Message> {
 /*
     Validates that json is correct for a Call
 */
-pub async fn validate_call(val: Value, message_type_id: &i64) -> Result<(), Message> {
+pub async fn validate_call(val: String, message_type_id: &i64) -> Result<(), Message> {
     /*
         Call example json:
             [2,"19223201","BootNotification",{"reason": "PowerUp","chargingStation": {"model": "SingleSocketCharger","vendorName": "VendorX"}}]

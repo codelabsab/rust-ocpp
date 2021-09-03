@@ -116,6 +116,7 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
             return;
         }
     };
+    let message_type_id = message_type_id.unwrap();
 
     /*
         The message ID
@@ -126,30 +127,47 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         connection. A message ID for a CALLRESULT or CALLERROR message MUST be
         equal to that of the CALL  message that the CALLRESULT or CALLERROR
         message is a response to.
+
+        How do we veryfy that the message id has not been previously used?
     */
-    let message_id = validate_message_id(&json).await;
-    match message_id {
-        Ok(_) => {}
-        Err(e) => {
-            error_handler(e, tx).await;
-            return;
-        }
+    let message_id = if let Ok(s) = validate_message_id(&json).await {
+        s
+    } else {
+        error_handler(Message::text("Could not read message_id field"), tx).await;
+        return;
     };
 
     // try to deseralize json to a Call, CallResult or CallError
-    if message_type_id.unwrap() == 2 {
+    if message_type_id == 2 {
         // It's a Call
         let call: Result<Call, _> = serde_json::from_str(&msg.to_string());
         match call {
-            Ok(o) => {
-                response_handler(Message::text(format!("Got a Call: {:?}", o)), tx).await;
+            Ok(call) => {
+                // TODO: Move to another function here for futher processing
+                call_handler(call, tx).await;
             }
             Err(_) => {
                 error_handler(Message::text("Could not serialize Call"), tx).await;
                 return;
             }
         }
+    } else if message_type_id == 3 {
+        todo!()
+    } else if message_type_id == 4 {
+        todo!()
     };
 
     response_handler(Message::text("Success!"), tx).await;
+}
+
+async fn call_handler(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
+    /*
+    State so far:
+        pub struct Call {
+            pub message_type_id: i64, // Valid
+            pub message_id: String,   // Valid
+            pub action: String,       // TODO
+            pub payload: String,      // TODO
+        }
+    */
 }
