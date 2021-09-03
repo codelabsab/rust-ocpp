@@ -108,15 +108,13 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
             this list, it SHALL ignore the message payload. Each message type
             may have additional required fields.
     */
-    let message_type_id = validate_message_type_id(&json).await;
-    match message_type_id {
-        Ok(_) => {}
+    let message_type_id = match validate_message_type_id(&json).await {
+        Ok(o) => o,
         Err(e) => {
             error_handler(e, tx).await;
             return;
         }
     };
-    let message_type_id = message_type_id.unwrap();
 
     /*
         The message ID
@@ -130,11 +128,12 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
 
         How do we veryfy that the message id has not been previously used?
     */
-    let message_id = if let Ok(s) = validate_message_id(&json).await {
-        s
-    } else {
-        error_handler(Message::text("Could not read message_id field"), tx).await;
-        return;
+    let message_id = match validate_message_id(&json).await {
+        Ok(o) => o,
+        Err(e) => {
+            error_handler(e, tx);
+            return;
+        }
     };
 
     // try to deseralize json to a Call, CallResult or CallError
