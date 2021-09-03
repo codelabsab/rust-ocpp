@@ -131,7 +131,7 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     let message_id = match validate_message_id(&json).await {
         Ok(o) => o,
         Err(e) => {
-            error_handler(e, tx);
+            error_handler(e, tx).await;
             return;
         }
     };
@@ -163,8 +163,8 @@ async fn call_handler(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
     /*
     State so far:
         pub struct Call {
-            pub message_type_id: i64, // Valid
-            pub message_id: String,   // Valid
+            pub message_type_id: i64, // Validated
+            pub message_id: String,   // Validated
             pub action: String,       // TODO
             pub payload: String,      // TODO
         }
