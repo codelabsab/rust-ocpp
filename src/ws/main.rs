@@ -194,15 +194,15 @@ async fn call_handler(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
                                                "action"
         }
     */
-    let action: CallActionEnum = match serde_json::from_value(call.payload) {
+    let call_type: CallActionEnum = match serde_json::from_value(call.payload) {
         Ok(o) => o,
         Err(e) => {
             error_handler(Message::text(e.to_string()), tx).await;
             return;
         }
     };
-    info!("Got a {:?}", action);
-    response_handler(Message::text("Got something".to_string()), tx).await;
+    info!("Got a {:?}", call_type);
+    response_handler(Message::text(format!("Got {}", call_type)), tx).await;
 }
 
 async fn call_result_handler(call: CallResult, tx: &mut SplitSink<WebSocket, Message>) {
