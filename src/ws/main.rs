@@ -8,6 +8,7 @@ use futures::StreamExt;
 use ocpp::v2_0_1::rpc::call::Call;
 use ocpp::v2_0_1::rpc::call_error::CallError;
 use ocpp::v2_0_1::rpc::call_result::CallResult;
+use ocpp::v2_0_1::rpc::enums::CallActionEnum;
 use ocpp::ws::error::error_handler;
 use ocpp::ws::response::response_handler;
 use ocpp::ws::validators::validate_message_id;
@@ -141,40 +142,37 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     // try to deseralize json to a Call, CallResult or CallError
     if message_type_id == 2 {
         // It's a Call
-        let _ = match serde_json::from_str(&msg.to_string()) {
-            Ok(call) => {
-                call_handler(call, tx).await;
-            }
-            Err(_) => {
-                error_handler(Message::text("Could not serialize Call"), tx).await;
+        let call: Call = match serde_json::from_str(&msg.to_string()) {
+            Ok(o) => o,
+            Err(e) => {
+                error_handler(Message::text(e.to_string()), tx).await;
                 return;
             }
         };
+        call_handler(call, tx).await;
     } else if message_type_id == 3 {
         // It's a CallResult
-        let _ = match serde_json::from_str(&msg.to_string()) {
-            Ok(call_result) => {
-                call_result_handler(call_result, tx).await;
-            }
+        let call_result: CallResult = match serde_json::from_str(&msg.to_string()) {
+            Ok(o) => o,
             Err(_) => {
-                error_handler(Message::text("Could not serialize CallResult"), tx).await;
+                error_handler(Message::text("Could not deserialize CallResult"), tx).await;
                 return;
             }
         };
+        call_result_handler(call_result, tx).await;
     } else if message_type_id == 4 {
         // It's a CallError
-        let _ = match serde_json::from_str(&msg.to_string()) {
-            Ok(call_error) => {
-                call_error_handler(call_error, tx).await;
-            }
+        let call_error: CallError = match serde_json::from_str(&msg.to_string()) {
+            Ok(o) => o,
             Err(_) => {
-                error_handler(Message::text("Could not serialize CallResultError"), tx).await;
+                error_handler(Message::text("Could not deserialize CallResultError"), tx).await;
                 return;
             }
         };
+        call_error_handler(call_error, tx).await;
     };
 
-    response_handler(Message::text("Success!"), tx).await;
+    response_handler(Message::text("Done, exiting"), tx).await;
 }
 
 async fn call_handler(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
@@ -196,13 +194,21 @@ async fn call_handler(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
                                                "action"
         }
     */
-    let action_enum = CallActionEnum::from_str(call.action);
+    let action: CallActionEnum = match serde_json::from_value(call.payload) {
+        Ok(o) => o,
+        Err(e) => {
+            error_handler(Message::text(e.to_string()), tx).await;
+            return;
+        }
+    };
+    info!("Got a {:?}", action);
+    response_handler(Message::text("Got something".to_string()), tx).await;
 }
 
-async fn call_result_handler(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
+async fn call_result_handler(call: CallResult, tx: &mut SplitSink<WebSocket, Message>) {
     todo!()
 }
 
-async fn call_error_handler(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
+async fn call_error_handler(call: CallError, tx: &mut SplitSink<WebSocket, Message>) {
     todo!()
 }

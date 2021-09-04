@@ -1,46 +1,28 @@
-use std::{fmt, str::FromStr};
+use std::fmt;
+
+use crate::v2_0_1::core::messages::{
+    authorize::{AuthorizeRequest, AuthorizeResponse},
+    boot_notification::{BootNotificationRequest, BootNotificationResponse},
+};
 
 use super::{call::Call, call_error::CallError, call_result::CallResult};
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
-pub enum CallTypeEnum {
-    Call(Call),
-    CallResult(CallResult),
-    CallError(CallError),
-    None,
-}
-
-impl fmt::Display for CallTypeEnum {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", &self)
-    }
-}
-
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[serde(untagged)]
 pub enum AuthorizeEnum {
-    AuthorizeRequest,
-    AuthorizeResponse,
+    AuthorizeRequest(AuthorizeRequest),
+    AuthorizeResponse(AuthorizeResponse),
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[serde(untagged)]
 pub enum BootNotificationEnum {
-    BootNotificationRequest,
-    BootNotificationResponse,
-}
-
-impl FromStr for CallActionEnum {
-    type Err = ();
-
-    fn from_str(input: &str) -> Result<CallActionEnum, Self::Err> {
-        match input {
-            "Authorize" => Ok(CallActionEnum::Authorize()),
-            "BootNotification" => Ok(CallActionEnum::BootNotification()),
-            _ => Err(()),
-        }
-    }
+    BootNotificationRequest(BootNotificationRequest),
+    BootNotificationResponse(BootNotificationResponse),
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[serde(untagged)]
 pub enum CallActionEnum {
     Authorize(AuthorizeEnum),
     BootNotification(BootNotificationEnum),

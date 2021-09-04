@@ -152,3 +152,15 @@ The 3-tier arch
 |  O06  |                                  | Replace DisplayMessage | | o |
 |  P01  | DataTransfer                     | Data Transfer to the Charging Station | x | o |
 |  P02  |                                  | Data Transfer to the CSMS | x | o |
+
+# Tests
+
+`cargo run`
+
+In another window run `websocat ws://127.0.0.1:3040/ws`
+
+Paste a BootNotificationRequest:
+
+```json
+[2,"19223201","BootNotification",{"reason": "PowerUp","chargingStation": {"model": "SingleSocketCharger","vendorName": "VendorX"}}]
+```

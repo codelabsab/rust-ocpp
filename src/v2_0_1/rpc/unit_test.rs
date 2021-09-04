@@ -9,10 +9,7 @@ mod tests {
             enumerations::boot_reason_enum_type::BootReasonEnumType,
             messages::boot_notification::BootNotificationRequest,
         },
-        rpc::{
-            call::{Call, CallActionTypeEnum, CallError},
-            errors::RpcErrorCodes,
-        },
+        rpc::{call::Call, call_error::CallError, call_result::CallResult, errors::RpcErrorCodes},
     };
     use serde_json::{self};
 
@@ -33,9 +30,14 @@ mod tests {
             ]
         "#;
 
-        let call: Call = serde_json::from_str(json).unwrap();
+        let json2 = r#"[2,"19223201","BootNotification",{"reason": "PowerUp","chargingStation": {"model": "SingleSocketCharger","vendorName": "VendorX"}}]"#;
 
-        println!("{}", call.payload);
+        let call: Call = serde_json::from_str(json).unwrap();
+        let call2: Call = serde_json::from_str(json2).unwrap();
+
+        println!("Got a call: {}", call.payload);
+        println!("Also a call: {}", call2.payload);
+        println!("The action is: {}", call2.action);
 
         let bnr_test = BootNotificationRequest {
             reason: BootReasonEnumType::PowerUp,
@@ -47,12 +49,6 @@ mod tests {
                 modem: None,
             },
         };
-
-        let bnr: BootNotificationRequest = call.payload.into_boot_notification_request().unwrap();
-
-        assert_eq!(bnr, bnr_test);
-
-        assert_eq!(call.action, CallActionTypeEnum::BootNotification);
     }
 
     #[test]
@@ -81,53 +77,6 @@ mod tests {
             "{}".to_string(),
             "Testing error_details"
         );
-    }
-
-    #[test]
-    fn test_call_action_enum() {
-        let call_action = CallActionTypeEnum::BootNotification;
-        assert_eq!(call_action.to_string(), "BootNotification".to_string());
-        let auth = "Authorize".to_string();
-        let auth_action_from_str = CallActionTypeEnum::from_str(&auth);
-        assert_eq!(CallActionTypeEnum::Authorize, auth_action_from_str.unwrap());
-        let boot_notification_action =
-            CallActionTypeEnum::from_str("BootNotification".to_string().as_str());
-        assert_eq!(boot_notification_action.is_ok(), true);
-    }
-
-    #[test]
-    fn test_arr() {
-        let json_str = "[2,\"19223201\",\"BootNotification\",{\"reason\": \"PowerUp\",\"chargingStation\": {\"model\": \"SingleSocketCharger\",\"vendorName\": \"VendorX\"}}]";
-        let val = serde_json::Value::from_str(&json_str).unwrap();
-        let action = val.get(2);
-        match action {
-            Some(v) => {
-                println!("Got {} on val.get(2)", v);
-                let action_str = v.as_str();
-                match action_str {
-                    Some(s) => {
-                        println!("Got str {}", s);
-                        let cat = CallActionTypeEnum::from_str(s);
-                        match cat {
-                            Ok(o) => {
-                                println!("cat is ok");
-                                assert_eq!(o, CallActionTypeEnum::BootNotification);
-                            }
-                            Err(_) => {
-                                println!("cat failed");
-                            }
-                        };
-                    }
-                    None => {
-                        println!("Did not get str in action_str");
-                    }
-                }
-            }
-            None => {
-                println!("got none");
-            }
-        }
-        println!("{:?}", val);
     }
 
     /*
