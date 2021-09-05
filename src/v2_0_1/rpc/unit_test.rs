@@ -60,6 +60,10 @@ mod tests {
         };
 
         assert_eq!(bnr.reason, BootReasonEnumType::PowerUp);
+
+        let json = serde_json::to_string(&bnr).unwrap();
+
+        println!("Serialized to {}", json);
     }
 
     #[test]
