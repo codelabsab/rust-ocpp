@@ -14,8 +14,8 @@ mod tests {
     use serde_json::{self};
 
     #[test]
-    fn test_serialize_call() {
-        let json = r#"
+    fn test_deserialize_json_to_call() {
+        let bootnotificationrequest_json = r#"
             [
                 2,
                 "19223201",
@@ -30,16 +30,25 @@ mod tests {
             ]
         "#;
 
-        let json2 = r#"[2,"19223201","BootNotification",{"reason": "PowerUp","chargingStation": {"model": "SingleSocketCharger","vendorName": "VendorX"}}]"#;
+        let authorizerequest_json =
+            r#"[2,"19223201","Authorize",{"id_token":"Token","type":"Central"}]"#;
 
-        let call: Call = serde_json::from_str(json).unwrap();
-        let call2: Call = serde_json::from_str(json2).unwrap();
+        let bootnotificationrequest_call: Call =
+            serde_json::from_str(bootnotificationrequest_json).unwrap();
 
-        println!("Got a call: {}", call.payload);
-        println!("Also a call: {}", call2.payload);
-        println!("The action is: {}", call2.action);
+        assert_eq!(
+            bootnotificationrequest_call.action,
+            "BootNotification".to_string()
+        );
 
-        let bnr_test = BootNotificationRequest {
+        let authorizerequest_call: Call = serde_json::from_str(authorizerequest_json).unwrap();
+
+        assert_eq!(authorizerequest_call.action, "Authorize".to_string());
+    }
+
+    #[test]
+    fn test_serialize_call_to_json() {
+        let bnr = BootNotificationRequest {
             reason: BootReasonEnumType::PowerUp,
             charging_station: ChargingStationType {
                 model: "SingleSocketCharger".to_string(),
@@ -49,6 +58,8 @@ mod tests {
                 modem: None,
             },
         };
+
+        assert_eq!(bnr.reason, BootReasonEnumType::PowerUp);
     }
 
     #[test]
