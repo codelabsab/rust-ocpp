@@ -120,7 +120,7 @@ async fn message_handler(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
         equal to that of the CALL  message that the CALLRESULT or CALLERROR
         message is a response to.
 
-        TODO: How do we veryfy that the message id has not been previously used?
+        TODO: How do we verify that the message id has not been previously used?
     */
     let message_id = match validate_message_id(&json).await {
         Ok(o) => o,
