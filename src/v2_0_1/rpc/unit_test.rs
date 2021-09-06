@@ -6,11 +6,20 @@ mod tests {
     use crate::v2_0_1::{
         core::{
             datatypes::charging_station_type::ChargingStationType,
-            enumerations::boot_reason_enum_type::BootReasonEnumType,
-            messages::boot_notification::BootNotificationRequest,
+            enumerations::{
+                boot_reason_enum_type::BootReasonEnumType,
+                connector_status_enum_type::ConnectorStatusEnumType,
+                registration_status_enum_type::RegistrationStatusEnumType,
+            },
+            messages::{
+                boot_notification::{BootNotificationRequest, BootNotificationResponse},
+                heartbeat::{HeartbeatRequest, HeartbeatResponse},
+                status_notification::StatusNotificationRequest,
+            },
         },
         rpc::{call::Call, call_error::CallError, call_result::CallResult, errors::RpcErrorCodes},
     };
+    use chrono::{DateTime, Utc};
     use serde_json::{self};
 
     #[test]
@@ -165,5 +174,74 @@ mod tests {
         // type constraint violation
         let type_constraint_violation = RpcErrorCodes::TypeConstraintViolation;
         assert_eq!(type_constraint_violation.description(), "Payload for Action is syntactically correct but at least one of the fields violates data type constraints (e.g. \"somestring\": 12)");
+    }
+
+    #[test]
+    fn b01_cold_boot_charging_station() {
+        /*
+          B01 - Cold Boot Charging Station
+        */
+
+        // The Charging Station sends BootNotificationRequest to the CSMS.
+        let bootnotificationrequest_json = r#"
+            [
+                2,
+                "19223201",
+                "BootNotification",
+                {
+                    "reason": "PowerUp",
+                    "chargingStation": {
+                        "model": "SingleSocketCharger",
+                        "vendorName": "VendorX"
+                    }
+                }
+            ]
+        "#;
+
+        let call: Call = serde_json::from_str(&bootnotificationrequest_json).unwrap();
+
+        let bn_req: BootNotificationRequest = serde_json::from_value(call.payload).unwrap();
+
+        assert_eq!(bn_req.reason, BootReasonEnumType::PowerUp);
+
+        // The CSMS returns with BootNotificationResponse with the status Accepted.
+        let bn_res = BootNotificationResponse {
+            current_time: Utc::now(),
+            interval: 1,
+            status: RegistrationStatusEnumType::Accepted,
+            status_info: None,
+        };
+
+        assert_eq!(bn_res.status, RegistrationStatusEnumType::Accepted);
+
+        /*
+          The Charging Station sends StatusNotificationRequest to the CSMS for
+          each Connector. If the status was set to Unavailable or Reserved from
+          the CSMS prior to the (re)boot, the Connector should return to this
+          status, otherwise the status should be Available or, when it resumes
+          a transaction that was ongoing, the status should be Occupied.
+        */
+
+        let status_notification_req = StatusNotificationRequest {
+            timestamp: Utc::now(),
+            connector_status: ConnectorStatusEnumType::Available,
+            evse_id: 6464,
+            connector_id: 6464,
+        };
+
+        assert_eq!(
+            status_notification_req.connector_status,
+            ConnectorStatusEnumType::Available
+        );
+
+        // The Charging Station sends HeartbeatRequest to the CSMS.
+
+        let heart_beat_req: HeartbeatRequest = HeartbeatRequest {};
+        let heart_beat_res: HeartbeatResponse = HeartbeatResponse {
+            current_time: Utc::now(),
+        };
+
+        println!("heart beat request: {:?}", heart_beat_req);
+        println!("heart beat response: {:?}", heart_beat_res);
     }
 }
