@@ -1,7 +1,6 @@
 /// tests
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
 
     use crate::v2_0_1::{
         core::{
@@ -17,9 +16,9 @@ mod tests {
                 status_notification::StatusNotificationRequest,
             },
         },
-        rpc::{call::Call, call_error::CallError, call_result::CallResult, errors::RpcErrorCodes},
+        rpc::{call::Call, call_error::CallError, errors::RpcErrorCodes},
     };
-    use chrono::{DateTime, Utc};
+    use chrono::Utc;
     use serde_json::{self};
 
     #[test]

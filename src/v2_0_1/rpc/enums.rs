@@ -79,8 +79,6 @@ use crate::v2_0_1::core::messages::{
     update_firmware::{UpdateFirmwareRequest, UpdateFirmwareResponse},
 };
 
-use super::{call::Call, call_error::CallError, call_result::CallResult};
-
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(untagged)]
 pub enum AuthorizeEnum {
