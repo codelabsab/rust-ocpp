@@ -23,9 +23,3 @@ validator = { version = "0.14", features = ["derive"] }
 
 [dev-dependencies]
 mockall = "0.10.2"
-
-[[bin]]
-name = "ws"
-test = false
-bench = false
-path = "src/ws/main.rs"

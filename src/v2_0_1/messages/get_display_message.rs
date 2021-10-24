@@ -1,7 +1,7 @@
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::get_display_messages_status_enum_type::GetDisplayMessagesStatusEnumType;
-use crate::v2_0_1::core::enumerations::message_priority_enum_type::MessagePriorityEnumType;
-use crate::v2_0_1::core::enumerations::message_state_enum_type::MessageStateEnumType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::get_display_messages_status_enum_type::GetDisplayMessagesStatusEnumType;
+use crate::v2_0_1::enumerations::message_priority_enum_type::MessagePriorityEnumType;
+use crate::v2_0_1::enumerations::message_state_enum_type::MessageStateEnumType;
 
 /// This contains the field definition of the GetCompositeScheduleRequest PDU sent by the CSMS to the Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

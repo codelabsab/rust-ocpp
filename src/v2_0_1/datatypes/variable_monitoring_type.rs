@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::enumerations::monitor_enum_type::MonitorEnumType;
+use crate::v2_0_1::enumerations::monitor_enum_type::MonitorEnumType;
 
 /// A monitoring setting for a variable.
 /// VariableMonitoringType is used by: NotifyMonitoringReportRequest.MonitoringDataType

@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::datatypes::meter_value_type::MeterValueType;
+use crate::v2_0_1::datatypes::meter_value_type::MeterValueType;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]

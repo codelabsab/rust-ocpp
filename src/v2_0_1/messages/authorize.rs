@@ -1,6 +1,6 @@
-use crate::v2_0_1::core::datatypes::id_token_type::IdTokenType;
-use crate::v2_0_1::core::datatypes::ocsp_request_data_type::OCSPRequestDataType;
-use crate::v2_0_1::core::enumerations::authorize_certificate_status_enum_type::AuthorizeCertificateStatusEnumType;
+use crate::v2_0_1::datatypes::id_token_type::IdTokenType;
+use crate::v2_0_1::datatypes::ocsp_request_data_type::OCSPRequestDataType;
+use crate::v2_0_1::enumerations::authorize_certificate_status_enum_type::AuthorizeCertificateStatusEnumType;
 
 /// This contains the field definition of the AuthorizeRequest PDU sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq)]

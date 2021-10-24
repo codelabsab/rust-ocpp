@@ -1,6 +1,6 @@
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::certificate_action_enum_type::CertificateActionEnumType;
-use crate::v2_0_1::core::enumerations::iso15118ev_certificate_status_enum_type::Iso15118EVCertificateStatusEnumType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::certificate_action_enum_type::CertificateActionEnumType;
+use crate::v2_0_1::enumerations::iso15118ev_certificate_status_enum_type::Iso15118EVCertificateStatusEnumType;
 
 /// This message is sent by the Charging Station to the CSMS if an ISO 15118 vehicle selects the service Certificate installation. NOTE:
 /// This message is based on CertificateInstallationReq Res from ISO 15118 2.

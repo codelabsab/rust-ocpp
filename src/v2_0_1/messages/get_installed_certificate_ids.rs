@@ -1,7 +1,7 @@
-use crate::v2_0_1::core::datatypes::certificate_hash_data_chain_type::CertificateHashDataChainType;
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::get_certificate_id_use_enum_type::GetCertificateIdUseEnumType;
-use crate::v2_0_1::core::enumerations::get_display_messages_status_enum_type::GetDisplayMessagesStatusEnumType;
+use crate::v2_0_1::datatypes::certificate_hash_data_chain_type::CertificateHashDataChainType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::get_certificate_id_use_enum_type::GetCertificateIdUseEnumType;
+use crate::v2_0_1::enumerations::get_display_messages_status_enum_type::GetDisplayMessagesStatusEnumType;
 
 /// Used by the CSMS to request an overview of the installed certificates on a Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

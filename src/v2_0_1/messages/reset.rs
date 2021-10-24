@@ -1,6 +1,6 @@
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::reset_enum_type::ResetEnumType;
-use crate::v2_0_1::core::enumerations::reset_status_enum_type::ResetStatusEnumType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::reset_enum_type::ResetEnumType;
+use crate::v2_0_1::enumerations::reset_status_enum_type::ResetStatusEnumType;
 
 /// This contains the field definition of the ResetRequest PDU sent by the CSMS to the Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

@@ -1,5 +1,5 @@
-use crate::v2_0_1::core::datatypes::get_variable_data_type::GetVariableDataType;
-use crate::v2_0_1::core::datatypes::get_variable_result_type::GetVariableResultType;
+use crate::v2_0_1::datatypes::get_variable_data_type::GetVariableDataType;
+use crate::v2_0_1::datatypes::get_variable_result_type::GetVariableResultType;
 
 /// This contains the field definition of the GetVariablesRequest PDU sent by the CSMS to the Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

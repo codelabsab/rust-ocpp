@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::enumerations::update_enum_type::UpdateEnumType;
+use crate::v2_0_1::enumerations::update_enum_type::UpdateEnumType;
 
 /// This contains the field definition of the SendLocalListRequest PDU sent by the CSMS to the Charging Station. If no (empty) localAuthorizationList is given and the updateType is Full, all IdTokens are removed from the list. Requesting a Differential update without or with empty localAuthorizationList will have no effect on the list. All IdTokens in the localAuthorizationList MUST be unique, no duplicate values are allowed.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

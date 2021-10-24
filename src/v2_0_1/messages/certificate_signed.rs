@@ -1,6 +1,6 @@
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::certificate_signed_status_enum_type::CertificateSignedStatusEnumType;
-use crate::v2_0_1::core::enumerations::certificate_signing_use_enum_type::CertificateSigningUseEnumType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::certificate_signed_status_enum_type::CertificateSignedStatusEnumType;
+use crate::v2_0_1::enumerations::certificate_signing_use_enum_type::CertificateSigningUseEnumType;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]

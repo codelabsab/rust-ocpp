@@ -1,6 +1,6 @@
-use crate::v2_0_1::core::datatypes::charging_needs_type::ChargingNeedsType;
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::notify_ev_charging_needs_status_enum_type::NotifyEVChargingNeedsStatusEnumType;
+use crate::v2_0_1::datatypes::charging_needs_type::ChargingNeedsType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::notify_ev_charging_needs_status_enum_type::NotifyEVChargingNeedsStatusEnumType;
 
 /// The Charging Station uses this message to communicate the charging needs as calculated by the EV to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

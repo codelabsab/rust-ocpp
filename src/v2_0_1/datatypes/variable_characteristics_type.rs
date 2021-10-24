@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::enumerations::data_enum_type::DataEnumType;
+use crate::v2_0_1::enumerations::data_enum_type::DataEnumType;
 
 /// Fixed read-only parameters of a variable.
 /// VariableCharacteristicsType is used by: NotifyReportRequest.ReportDataType

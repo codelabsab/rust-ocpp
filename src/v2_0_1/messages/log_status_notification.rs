@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::enumerations::upload_log_status_enum_type::UploadLogStatusEnumType;
+use crate::v2_0_1::enumerations::upload_log_status_enum_type::UploadLogStatusEnumType;
 
 /// This contains the field definition of the LogStatusNotificationRequest PDU sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

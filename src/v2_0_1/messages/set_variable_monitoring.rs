@@ -1,5 +1,5 @@
-use crate::v2_0_1::core::datatypes::set_monitoring_data_type::SetMonitoringDataType;
-use crate::v2_0_1::core::datatypes::set_monitoring_result_type::SetMonitoringResultType;
+use crate::v2_0_1::datatypes::set_monitoring_data_type::SetMonitoringDataType;
+use crate::v2_0_1::datatypes::set_monitoring_result_type::SetMonitoringResultType;
 
 /// This contains the field definition of the SetVariableMonitoringRequest PDU sent by the CSMS to the Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

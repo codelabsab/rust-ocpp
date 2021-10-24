@@ -1,7 +1,7 @@
 use chrono::DateTime;
 use chrono::Utc;
 
-use crate::v2_0_1::core::datatypes::report_data_type::ReportDataType;
+use crate::v2_0_1::datatypes::report_data_type::ReportDataType;
 
 /// This contains the field definition of the NotifyReportRequest PDU sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

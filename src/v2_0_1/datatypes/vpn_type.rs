@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::enumerations::vpn_enum_type::VPNEnumType;
+use crate::v2_0_1::enumerations::vpn_enum_type::VPNEnumType;
 
 /// VPN Configuration settings
 /// VPNType is used by: SetNetworkProfileRequest.NetworkConnectionProfileType

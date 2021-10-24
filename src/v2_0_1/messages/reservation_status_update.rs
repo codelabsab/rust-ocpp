@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::enumerations::reservation_update_status_enum_type::ReservationUpdateStatusEnumType;
+use crate::v2_0_1::enumerations::reservation_update_status_enum_type::ReservationUpdateStatusEnumType;
 
 /// This contains the field definition of the ReservationStatusUpdateRequest PDU sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

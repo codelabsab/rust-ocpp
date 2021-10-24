@@ -1,6 +1,6 @@
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::generic_device_model_status_enum_type::GenericDeviceModelStatusEnumType;
-use crate::v2_0_1::core::enumerations::report_base_enum_type::ReportBaseEnumType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::generic_device_model_status_enum_type::GenericDeviceModelStatusEnumType;
+use crate::v2_0_1::enumerations::report_base_enum_type::ReportBaseEnumType;
 
 /// This contains the field definition of the GetBaseReportRequest PDU sent by the CSMS to the Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

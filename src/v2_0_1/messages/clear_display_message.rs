@@ -1,5 +1,5 @@
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::clear_message_status_enum_type::ClearMessageStatusEnumType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::clear_message_status_enum_type::ClearMessageStatusEnumType;
 
 /// This contains the field definition of the ClearDisplayMessageRequest PDU sent by the CSMS to the Charging Station. The CSMS asks the Charging Station to clear a display message that has been configured in the Charging Station to be cleared/removed. See also O05 - Clear a Display Message.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

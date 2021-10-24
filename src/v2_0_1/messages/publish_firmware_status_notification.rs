@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::enumerations::publish_firmware_status_enum_type::PublishFirmwareStatusEnumType;
+use crate::v2_0_1::enumerations::publish_firmware_status_enum_type::PublishFirmwareStatusEnumType;
 
 /// This contains the field definition of the PublishFirmwareStatusNotificationRequest PDU sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

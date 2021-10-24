@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::datatypes::clear_monitoring_result_type::ClearMonitoringResultType;
+use crate::v2_0_1::datatypes::clear_monitoring_result_type::ClearMonitoringResultType;
 
 /// This contains the field definition of the ClearVariableMonitoringRequest PDU sent by the CSMS to the Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

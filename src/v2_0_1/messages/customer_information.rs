@@ -1,7 +1,7 @@
-use crate::v2_0_1::core::datatypes::certificate_hash_data_type::CertificateHashDataType;
-use crate::v2_0_1::core::datatypes::id_token_type::IdTokenType;
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::customer_information_status_enum_type::CustomerInformationStatusEnumType;
+use crate::v2_0_1::datatypes::certificate_hash_data_type::CertificateHashDataType;
+use crate::v2_0_1::datatypes::id_token_type::IdTokenType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::customer_information_status_enum_type::CustomerInformationStatusEnumType;
 
 /// This contains the field definition of the CostUpdatedRequest PDU sent by the CSMS to the Charging Station. With this request the CSMS can send the current cost of a transaction to a Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

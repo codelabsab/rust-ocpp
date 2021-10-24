@@ -1,14 +1,14 @@
 use chrono::DateTime;
 use chrono::Utc;
 
-use crate::v2_0_1::core::datatypes::evse_type::EVSEType;
-use crate::v2_0_1::core::datatypes::id_token_info_type::IdTokenInfoType;
-use crate::v2_0_1::core::datatypes::id_token_type::IdTokenType;
-use crate::v2_0_1::core::datatypes::message_content_type::MessageContentType;
-use crate::v2_0_1::core::datatypes::meter_value_type::MeterValueType;
-use crate::v2_0_1::core::datatypes::transaction_type::TransactionType;
-use crate::v2_0_1::core::enumerations::transaction_event_enum_type::TransactionEventEnumType;
-use crate::v2_0_1::core::enumerations::trigger_reason_enum_type::TriggerReasonEnumType;
+use crate::v2_0_1::datatypes::evse_type::EVSEType;
+use crate::v2_0_1::datatypes::id_token_info_type::IdTokenInfoType;
+use crate::v2_0_1::datatypes::id_token_type::IdTokenType;
+use crate::v2_0_1::datatypes::message_content_type::MessageContentType;
+use crate::v2_0_1::datatypes::meter_value_type::MeterValueType;
+use crate::v2_0_1::datatypes::transaction_type::TransactionType;
+use crate::v2_0_1::enumerations::transaction_event_enum_type::TransactionEventEnumType;
+use crate::v2_0_1::enumerations::trigger_reason_enum_type::TriggerReasonEnumType;
 
 /// Sent by the Charging Station to the CSMS to request that the Certificate Authority signs the public key into a certificate.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

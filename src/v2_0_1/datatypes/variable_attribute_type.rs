@@ -1,5 +1,5 @@
-use crate::v2_0_1::core::enumerations::attribute_enum_type::AttributeEnumType;
-use crate::v2_0_1::core::enumerations::mutability_enum_type::MutabilityEnumType;
+use crate::v2_0_1::enumerations::attribute_enum_type::AttributeEnumType;
+use crate::v2_0_1::enumerations::mutability_enum_type::MutabilityEnumType;
 
 /// Attribute data of a variable.
 /// VariableAttributeType is used by: NotifyReportRequest.ReportDataType

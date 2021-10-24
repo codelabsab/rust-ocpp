@@ -1,10 +1,10 @@
 use chrono::DateTime;
 use chrono::Utc;
 
-use crate::v2_0_1::core::datatypes::id_token_type::IdTokenType;
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::connector_enum_type::ConnectorEnumType;
-use crate::v2_0_1::core::enumerations::reserve_now_status_enum_type::ReserveNowStatusEnumType;
+use crate::v2_0_1::datatypes::id_token_type::IdTokenType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::connector_enum_type::ConnectorEnumType;
+use crate::v2_0_1::enumerations::reserve_now_status_enum_type::ReserveNowStatusEnumType;
 
 /// This contains the field definitions of the RequestStopTransactionRequest PDU sent to Charging Station by CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

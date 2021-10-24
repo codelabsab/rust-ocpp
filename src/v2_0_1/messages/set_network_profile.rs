@@ -1,6 +1,6 @@
-use crate::v2_0_1::core::datatypes::network_connection_profile_type::NetworkConnectionProfileType;
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::set_network_profile_status_enum_type::SetNetworkProfileStatusEnumType;
+use crate::v2_0_1::datatypes::network_connection_profile_type::NetworkConnectionProfileType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::set_network_profile_status_enum_type::SetNetworkProfileStatusEnumType;
 
 /// With this message the CSMS gains the ability to configure the connection data (e.g. CSMS URL, OCPP version, APN, etc) on a Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

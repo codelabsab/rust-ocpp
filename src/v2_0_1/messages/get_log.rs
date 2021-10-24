@@ -1,7 +1,7 @@
-use crate::v2_0_1::core::datatypes::log_parameters_type::LogParametersType;
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::log_enum_type::LogEnumType;
-use crate::v2_0_1::core::enumerations::log_status_enum_type::LogStatusEnumType;
+use crate::v2_0_1::datatypes::log_parameters_type::LogParametersType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::log_enum_type::LogEnumType;
+use crate::v2_0_1::enumerations::log_status_enum_type::LogStatusEnumType;
 
 /// This contains the field definition of the GetLogRequest PDU sent by the CSMS to the Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

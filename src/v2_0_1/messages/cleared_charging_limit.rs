@@ -1,5 +1,5 @@
-use crate::v2_0_1::core::datatypes::evse_type::EVSEType;
-use crate::v2_0_1::core::enumerations::charging_limit_source_enum_type::ChargingLimitSourceEnumType;
+use crate::v2_0_1::datatypes::evse_type::EVSEType;
+use crate::v2_0_1::enumerations::charging_limit_source_enum_type::ChargingLimitSourceEnumType;
 
 /// This contains the field definition of the ClearedChargingLimitRequest PDU sent by the Charging Station to the CSMS
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

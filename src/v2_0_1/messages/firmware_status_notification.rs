@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::enumerations::firmware_status_enum_type::FirmwareStatusEnumType;
+use crate::v2_0_1::enumerations::firmware_status_enum_type::FirmwareStatusEnumType;
 
 /// This contains the field definition of the FirmwareStatusNotifitacionRequest PDU sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

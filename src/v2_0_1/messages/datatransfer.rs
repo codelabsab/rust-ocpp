@@ -1,5 +1,5 @@
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::data_transfer_status_enum_type::DataTransferStatusEnumType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::data_transfer_status_enum_type::DataTransferStatusEnumType;
 
 /// This contains the field definition of the DataTransferRequest PDU sent either by the CSMS to the Charging Station or vice versa.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

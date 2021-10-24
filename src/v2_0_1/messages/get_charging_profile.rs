@@ -1,6 +1,6 @@
-use crate::v2_0_1::core::datatypes::charging_profile_criterion_type::ChargingProfileCriterionType;
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::get_charging_profile_status_enum_type::GetChargingProfileStatusEnumType;
+use crate::v2_0_1::datatypes::charging_profile_criterion_type::ChargingProfileCriterionType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::get_charging_profile_status_enum_type::GetChargingProfileStatusEnumType;
 
 /// The message GetChargingProfilesRequest can be used by the CSMS to request installed charging profiles from the Charging Station. The charging profiles will then be reported by the Charging Station via ReportChargingProfilesRequest messages.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

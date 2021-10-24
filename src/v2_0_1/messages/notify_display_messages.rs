@@ -1,4 +1,4 @@
-use crate::v2_0_1::core::datatypes::message_info_type::MessageInfoType;
+use crate::v2_0_1::datatypes::message_info_type::MessageInfoType;
 
 /// This contains the field definition of the NotifyDisplayMessagesRequest PDU sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

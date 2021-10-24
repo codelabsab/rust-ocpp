@@ -1,7 +1,7 @@
 use chrono::DateTime;
 use chrono::Utc;
 
-use crate::v2_0_1::core::datatypes::event_data_type::EventDataType;
+use crate::v2_0_1::datatypes::event_data_type::EventDataType;
 
 /// This contains the field definition of the NotifyEventRequest PDU sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

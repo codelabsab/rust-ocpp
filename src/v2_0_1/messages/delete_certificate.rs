@@ -1,6 +1,6 @@
-use crate::v2_0_1::core::datatypes::certificate_hash_data_type::CertificateHashDataType;
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::delete_certificate_status_enum_type::DeleteCertificateStatusEnumType;
+use crate::v2_0_1::datatypes::certificate_hash_data_type::CertificateHashDataType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::delete_certificate_status_enum_type::DeleteCertificateStatusEnumType;
 
 /// Used by the CSMS to request deletion of an installed certificate on a Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]

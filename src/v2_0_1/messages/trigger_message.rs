@@ -1,7 +1,7 @@
-use crate::v2_0_1::core::datatypes::evse_type::EVSEType;
-use crate::v2_0_1::core::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::core::enumerations::message_trigger_enum_type::MessageTriggerEnumType;
-use crate::v2_0_1::core::enumerations::trigger_message_status_enum_type::TriggerMessageStatusEnumType;
+use crate::v2_0_1::datatypes::evse_type::EVSEType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::enumerations::message_trigger_enum_type::MessageTriggerEnumType;
+use crate::v2_0_1::enumerations::trigger_message_status_enum_type::TriggerMessageStatusEnumType;
 
 /// This contains the field definition of the TriggerMessageRequest PDU sent by the CSMS to the Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
