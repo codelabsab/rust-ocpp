@@ -1,0 +1,50 @@
+/// Status in TriggerMessageResponse
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+pub enum UnitOfMeasure {
+    /// Watt-hours (energy). Default.
+    Wh,
+    /// kiloWatt-hours (energy).
+    #[serde(rename = "kWh")]
+    KWh,
+    /// Var-hours (reactive energy).
+    #[serde(rename = "varh")]
+    Varh,
+    /// kilovar-hours (reactive energy).
+    #[serde(rename = "kvarh")]
+    Kvarh,
+    /// Watts (power).
+    W,
+    /// kilowatts (power).
+    #[serde(rename = "kW")]
+    Kw,
+    /// VoltAmpere (apparent power).
+    #[serde(rename = "VA")]
+    Va,
+    /// kiloVolt Ampere (apparent power).
+    #[serde(rename = "kVA")]
+    Kva,
+    /// Vars (reactive power).
+    #[serde(rename = "var")]
+    Var,
+    /// kilovars (reactive power).
+    #[serde(rename = "kvar")]
+    Kvar,
+    /// Amperes (current).
+    A,
+    /// Voltage (r.m.s. AC).
+    V,
+    /// Degrees (temperature).
+    Celsius,
+    /// Degrees (temperature).
+    Fahrenheit,
+    /// Degrees Kelvin (temperature).
+    K,
+    /// Percentage.
+    Percent,
+}
+
+impl Default for UnitOfMeasure {
+    fn default() -> Self {
+        UnitOfMeasure::Wh
+    }
+}

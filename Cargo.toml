@@ -19,10 +19,10 @@ tokio-stream = "0.1.6"
 pretty_env_logger = "0.4.0"
 log = "0.4"
 warp = "0.3"
-enum-as-inner = "0.3.3"
+validator = { version = "0.14", features = ["derive"] }
 
 [dev-dependencies]
-mockall = "0.9.1"
+mockall = "0.10.2"
 
 [[bin]]
 name = "ws"

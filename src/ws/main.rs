@@ -5,15 +5,6 @@ use std::str::FromStr;
 use futures::stream::SplitSink;
 use futures::StreamExt;
 
-use ocpp::v2_0_1::rpc::call::Call;
-use ocpp::v2_0_1::rpc::call_error::CallError;
-use ocpp::v2_0_1::rpc::call_result::CallResult;
-use ocpp::v2_0_1::rpc::enums::CallActionEnum;
-use ocpp::ws::error::error_handler;
-use ocpp::ws::response::response_handler;
-use ocpp::ws::validators::validate_message_id;
-use ocpp::ws::validators::validate_message_type_id;
-use warp::ws::{Message, WebSocket};
 use warp::Filter;
 
 use serde_json;
