@@ -8,7 +8,7 @@ use validator::Validate;
 pub struct AuthorizeRequest {
     /// Required. This contains the identifier that needs to be authorized.
     #[validate(length(min = 1, max = 20))]
-    pub id_tag: String,
+    pub id_tag: String, // IdToken, should maybe be a type?
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
