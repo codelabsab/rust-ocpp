@@ -1,5 +1,5 @@
 [package]
-name = "ocpp"
+name = "rust-ocpp"
 version = "0.1.0"
 authors = ["Tommy Malmqvist <tommy.malmqvist@codelabs.se"]
 edition = "2018"
