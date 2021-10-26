@@ -1,12 +1,17 @@
 [package]
 name = "rust-ocpp"
+description = "ocpp 1.6 and 2.0.1 libraries"
+readme = "README.md"
 license = "MIT OR Apache-2.0"
 version = "0.1.0"
 authors = ["Tommy Malmqvist <tommy.malmqvist@codelabs.se"]
+homepage = "https://codelabs.se/"
+repository = "https://github.com/codelabsab/rust-ocpp"
 edition = "2021"
 keywords = ["ocpp", "ev", "csms"]
 categories = ["library"]
 exclude = ["/docs"]
+publish = true
 
 [badges]
 maintenance = { status = "experimental" }
