@@ -11,4 +11,3 @@ Validate implementation against schemas
 # Links
 
 [Open Charge Alliance](https://www.openchargealliance.org/)
-
