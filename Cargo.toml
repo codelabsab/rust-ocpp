@@ -9,7 +9,7 @@ homepage = "https://codelabs.se/"
 repository = "https://github.com/codelabsab/rust-ocpp"
 edition = "2021"
 keywords = ["ocpp", "ev", "csms"]
-categories = ["library"]
+categories = ["accessibility", "data-structures", "embedded", "encoding", "web-programming::websocket"]
 exclude = ["/docs"]
 publish = true
 
