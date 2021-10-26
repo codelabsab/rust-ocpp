@@ -12,5 +12,6 @@ pub struct SetMonitoringLevelRequest {
 #[serde(rename_all = "camelCase")]
 pub struct SetMonitoringLevelResponse {
     pub status: GenericStatusEnumType,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,
 }

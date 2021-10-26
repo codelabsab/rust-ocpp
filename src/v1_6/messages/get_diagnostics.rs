@@ -6,6 +6,7 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct GetDiagnosticsRequest {
     /// Required. This contains the location (directory) where the diagnostics file shall be uploaded to.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub location: Option<String>,
     /// Optional. This specifies how many times Charge Point must try to upload the diagnostics before giving up. If this field is not present, it is left to Charge Point to decide how many times it wants to retry.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -27,5 +28,6 @@ pub struct GetDiagnosticsRequest {
 pub struct GetDiagnosticsResponse {
     /// Optional. This contains the name of the file with diagnostic information that will be uploaded. This field is not present when no diagnostic information is vailable.
     #[validate(length(min = 1, max = 255))]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub file_name: Option<String>,
 }
