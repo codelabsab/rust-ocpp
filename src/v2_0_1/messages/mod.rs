@@ -16,7 +16,7 @@ pub mod firmware_status_notification;
 pub mod get_15118ev_certificate;
 pub mod get_base_report;
 pub mod get_certificate_status;
-pub mod get_charging_profile;
+pub mod get_charging_profiles;
 pub mod get_composite_schedule;
 pub mod get_display_message;
 pub mod get_installed_certificate_ids;

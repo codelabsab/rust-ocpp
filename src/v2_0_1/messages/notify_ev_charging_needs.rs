@@ -13,7 +13,7 @@ pub struct NotifyEVChargingNeedsRequest {
     pub charging_needs: ChargingNeedsType,
 }
 
-/// Response to a NotifyEVChargingNeedsRequest.
+/// Response to a [`NotifyEVChargingNeedsRequest`]
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyEVChargingNeedsResponse {
