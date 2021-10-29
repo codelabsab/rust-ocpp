@@ -2,7 +2,9 @@
 use super::component_type::ComponentType;
 use super::variable_type::VariableType;
 
-///    ComponentVariableType is used by: GetMonitoringReportRequest , GetReportRequest
+/// ComponentVariableType is used by:
+/// [GetMonitoringReportRequest](`crate::v2_0_1::messages::get_monitoring_report::GetMonitoringReportRequest`)
+/// [GetReportRequest](`crate::v2_0_1::messages::get_report::GetReportRequest`)
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ComponentVariableType {
