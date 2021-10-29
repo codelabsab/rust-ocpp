@@ -1,8 +1,7 @@
+//! Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.
 use validator::Validate;
 
-/// Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.
-
-/// AdditionalInfoType is used by: Common:IdTokenType
+/// Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers. AdditionalInfoType is used by: Common:IdTokenType
 #[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct AdditionalInfoType {

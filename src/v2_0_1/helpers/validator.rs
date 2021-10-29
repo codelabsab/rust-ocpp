@@ -10,10 +10,10 @@ pub fn validate_identifier_string(s: &str) -> Result<(), ValidationError> {
     // regex for identifierString as defined by the specification
     let re = Regex::new(r"[a-z]|[A-Z]|[0-9]|[+]|[*]|[-]|[=]|[:]|[0]|[|]|[@]|[.]").unwrap();
 
-    let res = re.is_match(&s);
+    let res = re.is_match(s);
 
     match res {
-        true => return Ok(()),
-        false => return Err(ValidationError::new("Not a valid identifierString")),
+        true => Ok(()),
+        false => Err(ValidationError::new("Not a valid identifierString")),
     }
 }

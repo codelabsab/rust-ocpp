@@ -1,4 +1,6 @@
-/// EV AC charging parameters. ACChargingParametersType is used by: Common:ChargingNeedsType
+//! EV AC charging parameters.
+
+/// ACChargingParametersType is used by: Common:ChargingNeedsType
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ACChargingParametersType {
