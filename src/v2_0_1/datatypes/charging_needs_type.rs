@@ -1,10 +1,13 @@
+//! ChargingNeedsType
 use chrono::{DateTime, Utc};
 
 use super::ac_charging_parameters_type::ACChargingParametersType;
 use super::dc_charging_parameters_type::DCChargingParametersType;
 use crate::v2_0_1::enumerations::energy_transfer_mode_enum_type::EnergyTransferModeEnumType;
 
-/// ChargingNeedsType is used by: NotifyEVChargingNeedsRequest
+/// ChargingNeedsType
+///
+/// ChargingNeedsType is used by: [NotifyEVChargingNeedsRequest](`crate::v2_0_1::messages::notify_ev_charging_needs::NotifyEVChargingNeedsRequest`)
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingNeedsType {
