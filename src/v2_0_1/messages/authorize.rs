@@ -4,7 +4,7 @@ use crate::v2_0_1::datatypes::ocsp_request_data_type::OCSPRequestDataType;
 use crate::v2_0_1::enumerations::authorize_certificate_status_enum_type::AuthorizeCertificateStatusEnumType;
 use validator::Validate;
 
-/// This contains the field definition of the AuthorizeRequest PDU sent by the Charging Station to the CSMS.
+/// ´AuthorizeRequest`, sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Validate, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthorizeRequest {
@@ -19,15 +19,15 @@ pub struct AuthorizeRequest {
     pub iso_15118_certificate_hash_data: Option<OCSPRequestDataType>,
 }
 
-/// This contains the field definition of the AuthorizeResponse PDU sent by the
+/// `AuthorizeResponse`, sent by the
 /// CSMS to the Charging Station in response to an [`AuthorizeRequest`].
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthorizeResponse {
     /// Certificate status information. - if all certificates are valid: return
-    /// 'Accepted'. - if one of the certificates was revoked, return 'CertificateRevoked'.
+    /// `Accepted`. - if one of the certificates was revoked, return `CertificateRevoked`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub certificate_status: Option<AuthorizeCertificateStatusEnumType>,
-    /// This contains information about authorization status, expiry and group id.
+    /// Contains information about authorization status, expiry and group id.
     pub id_token: IdTokenType,
 }
