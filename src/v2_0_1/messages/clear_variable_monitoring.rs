@@ -1,15 +1,18 @@
+//! ClearedChargingLimit
 use crate::v2_0_1::datatypes::clear_monitoring_result_type::ClearMonitoringResultType;
 
-/// This contains the field definition of the ClearVariableMonitoringRequest PDU sent by the CSMS to the Charging Station.
+/// ClearVariableMonitoringRequest, sent by the CSMS to the Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ClearVariableMonitoringRequest {
+    /// List of the monitors to be cleared, identified by there Id.
     pub id: i64,
 }
 
-/// This contains the field definition of the ClearVariableMonitoringResponse PDU sent by the Charging Station to the CSMS.
+/// ClearVariableMonitoringResponse, sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ClearVariableMonitoringResponse {
+    /// List of result statuses per monitor.
     pub clear_monitoring_result: ClearMonitoringResultType,
 }
