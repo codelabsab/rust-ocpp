@@ -14,7 +14,7 @@ pub struct CostUpdatedRequest {
     pub transaction_id: String,
 }
 
-/// CostUpdatedResponse, sent by the Charging Station to the CSMS in response to CostUpdatedRequest.
+/// CostUpdatedResponse, sent by the Charging Station to the CSMS in response to [`CostUpdatedRequest`].
 ///
 /// No fields are defined.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
