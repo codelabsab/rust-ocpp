@@ -1,3 +1,4 @@
+//! GetInstalledCertificateIds
 use crate::v2_0_1::datatypes::certificate_hash_data_chain_type::CertificateHashDataChainType;
 use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::get_certificate_id_use_enum_type::GetCertificateIdUseEnumType;
@@ -7,6 +8,7 @@ use crate::v2_0_1::enumerations::get_display_messages_status_enum_type::GetDispl
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetInstalledCertificateIdsRequest {
+    /// Indicates the type of certificates requested.When omitted, all certificate types are requested.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub certificate_type: Option<GetCertificateIdUseEnumType>,
 }
@@ -15,9 +17,12 @@ pub struct GetInstalledCertificateIdsRequest {
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetInstalledCertificateIdsResponse {
+    /// Charging Station indicates if it can process therequest
     pub status: GetDisplayMessagesStatusEnumType,
+    /// The Charging Station includes the Certificateinformation for each available certificate.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub certificate_hash_data_chain: Option<CertificateHashDataChainType>,
+    /// Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,
 }
