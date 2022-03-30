@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["GenericFraction","Generic implementation of the fraction type"]],"struct":[["BigInt","A big signed integer type."],["BigUint","A big unsigned integer type."]],"type":[["BigFraction","Fraction consisting from two `BigUint` numbers"],["Fraction","Fraction consisting from two `u64` numbers"]]});

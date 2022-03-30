@@ -1,1 +1,0 @@
-initSidebarItems({"trait":[["NumCmp","A trait for comparison between differently typed numbers."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["PathChunk","A key within a JSON object or an index within a JSON array. A sequence of chunks represents a valid path within a JSON value."]],"struct":[["AbsolutePath","An absolute reference"],["JSONPointer","JSON Pointer as a wrapper around individual path components."]]});
