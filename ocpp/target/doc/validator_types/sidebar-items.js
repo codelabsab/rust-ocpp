@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Validator","Contains all the validators that can be used"],["ValueOrPath",""]],"struct":[["CustomArgument","This struct stores information about defined custom arguments that will be passed in by the user in the validation step."]]});

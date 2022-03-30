@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["PrimitiveType","For faster error handling in “type” keyword validator we have this enum, to match with it instead of a string."]],"struct":[["PrimitiveTypesBitMap","Compact representation of multiple `PrimitiveType`"],["PrimitiveTypesBitMapIterator","Iterator over all `PrimitiveType` present in a `PrimitiveTypesBitMap`"]]});

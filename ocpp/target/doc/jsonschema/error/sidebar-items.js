@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["TypeKind",""],["ValidationErrorKind","Kinds of errors that may happen during validation"]],"struct":[["ValidationError","An error that can occur during validation."]],"type":[["ErrorIterator","An iterator over instances of `ValidationError` that represent validation error for the input instance."]]});

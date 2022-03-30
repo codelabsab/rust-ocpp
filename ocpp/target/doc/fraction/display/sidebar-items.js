@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["format_fraction",""],["format_sign",""]],"struct":[["Format","Same as fmt::Formatter, but allowing to change flags so we can reuse it in recursive format implementations"]]});
