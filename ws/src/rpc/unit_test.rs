@@ -5,18 +5,19 @@ mod tests {
     use chrono::Utc;
     use serde_json::{self};
 
-    use crate::v2_0_1::core::datatypes::charging_station_type::ChargingStationType;
-    use crate::v2_0_1::core::enumerations::boot_reason_enum_type::BootReasonEnumType;
-    use crate::v2_0_1::core::enumerations::connector_status_enum_type::ConnectorStatusEnumType;
-    use crate::v2_0_1::core::enumerations::registration_status_enum_type::RegistrationStatusEnumType;
-    use crate::v2_0_1::core::messages::boot_notification::BootNotificationRequest;
-    use crate::v2_0_1::core::messages::boot_notification::BootNotificationResponse;
-    use crate::v2_0_1::core::messages::heartbeat::HeartbeatRequest;
-    use crate::v2_0_1::core::messages::heartbeat::HeartbeatResponse;
-    use crate::v2_0_1::core::messages::status_notification::StatusNotificationRequest;
-    use crate::v2_0_1::rpc::call::Call;
-    use crate::v2_0_1::rpc::call_error::CallError;
-    use crate::v2_0_1::rpc::errors::RpcErrorCodes;
+    use rust_ocpp::v2_0_1::datatypes::charging_station_type::ChargingStationType;
+    use rust_ocpp::v2_0_1::enumerations::boot_reason_enum_type::BootReasonEnumType;
+    use rust_ocpp::v2_0_1::enumerations::connector_status_enum_type::ConnectorStatusEnumType;
+    use rust_ocpp::v2_0_1::enumerations::registration_status_enum_type::RegistrationStatusEnumType;
+    use rust_ocpp::v2_0_1::messages::boot_notification::BootNotificationRequest;
+    use rust_ocpp::v2_0_1::messages::boot_notification::BootNotificationResponse;
+    use rust_ocpp::v2_0_1::messages::heartbeat::HeartbeatRequest;
+    use rust_ocpp::v2_0_1::messages::heartbeat::HeartbeatResponse;
+    use rust_ocpp::v2_0_1::messages::status_notification::StatusNotificationRequest;
+
+    use crate::rpc::call::Call;
+    use crate::rpc::call_error::CallError;
+    use crate::rpc::errors::RpcErrorCodes;
 
     #[test]
     fn test_deserialize_json_to_call() {

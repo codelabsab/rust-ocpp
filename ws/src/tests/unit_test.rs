@@ -1,5 +1,5 @@
 use crate::handlers::message::handle_message;
-use ocpp::v2_0_1::core::datatypes::charging_station_type::ChargingStationType;
+use rust_ocpp::v2_0_1::datatypes::charging_station_type::ChargingStationType;
 use serde_json;
 extern crate pretty_env_logger;
 extern crate tokio;

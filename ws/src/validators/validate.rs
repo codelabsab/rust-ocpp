@@ -61,15 +61,15 @@ pub async fn validate_message_id(json: &Value) -> Result<String, Message> {
 */
 pub async fn validate_message_type_id(json: &Value) -> Result<i64, Message> {
     info!("Validating message_type_id");
-    // message_type_id is located in the 0th field in the json array
+    // check for message_type_id in the 0th field
     let read_message_type_id_field = if let Some(i) = json.get(0) {
-        i
+        i.as_i64()
     } else {
         return Err(Message::text("Could not read message_type_id field"));
     };
 
     // message_type_id field should be an i64
-    let message_type_id = if let Some(i) = read_message_type_id_field.as_i64() {
+    let message_type_id = if let Some(i) = read_message_type_id_field {
         i
     } else {
         return Err(Message::text("Could not parse number from message_type_id"));
