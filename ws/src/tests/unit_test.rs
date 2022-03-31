@@ -1,6 +1,7 @@
-use crate::handlers::message::handle_message;
+use crate::{handlers::message::handle_message, rpc::enums::BootNotificationEnum};
 use rust_ocpp::v2_0_1::datatypes::charging_station_type::ChargingStationType;
-use serde_json;
+use rust_ocpp::v2_0_1::messages::boot_notification::BootNotificationRequest;
+use serde_json::{self, Error};
 extern crate pretty_env_logger;
 extern crate tokio;
 use futures::StreamExt;
@@ -27,13 +28,13 @@ fn mock_handle_connection(
 
 #[tokio::test]
 async fn ws_bootnotificationrequest_test() {
-    // test client
+    // mock a test client
     let mut client = warp::test::ws()
         .handshake(mock_handle_connection())
         .await
         .expect("handshake");
 
-    // we need to send something
+    // Setup our test message that the client will send
     let bootnotificationrequest = r#"
     [
         2,
@@ -46,7 +47,7 @@ async fn ws_bootnotificationrequest_test() {
         }
     ]"#;
 
-    // send message
+    // client sends message
     client.send(Message::text(bootnotificationrequest)).await;
 
     // recieve sent message or die
@@ -67,10 +68,16 @@ async fn ws_bootnotificationrequest_test() {
     };
     let charging_station_json = serde_json::to_string(&charging_station).unwrap();
 
+    // cast string to real BootNotificationRequest struct
+    let bnr: Result<BootNotificationRequest, Error> = serde_json::from_str(&res);
+
+    if bnr.is_ok() {}
+
     // actual tests
     assert_eq!(reason, json_res["reason"]);
     assert_eq!(
         charging_station_json,
         json_res["chargingStation"].to_string()
     );
+    assert_eq!(bnr.is_ok(), true);
 }
