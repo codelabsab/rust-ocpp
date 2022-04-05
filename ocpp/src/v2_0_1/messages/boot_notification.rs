@@ -13,7 +13,6 @@ use std::fmt;
 use chrono::DateTime;
 use chrono::Utc;
 
-use crate::v1_6::messages::boot_notification;
 use crate::v2_0_1::datatypes::charging_station_type::ChargingStationType;
 use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::boot_reason_enum_type::BootReasonEnumType;

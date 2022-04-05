@@ -1,4 +1,5 @@
 use serde_json::Value;
+use strum_macros::Display;
 
 pub struct OCPPError {
     code: CallErrorCode,
@@ -36,7 +37,7 @@ impl OCPPError {
     }
 }
 
-#[derive(Copy, Clone, PartialOrd, PartialEq, strum_macros::ToString, Debug)]
+#[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Display)]
 pub enum CallErrorCode {
     FormatViolation,
     GenericError,

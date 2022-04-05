@@ -1,4 +1,4 @@
-use crate::{handlers::message::handle_message, rpc::enums::BootNotificationEnum};
+use crate::{handlers::message::handle_message};
 use rust_ocpp::v2_0_1::datatypes::charging_station_type::ChargingStationType;
 use rust_ocpp::v2_0_1::messages::boot_notification::BootNotificationRequest;
 use serde_json::{self, Error};
@@ -35,7 +35,7 @@ async fn ws_bootnotificationrequest_test() {
         .expect("handshake");
 
     // Setup our test message that the client will send
-    let bootnotificationrequest = r#"
+    let boot_notification_request = r#"
     [
         2,
         "19223201",
@@ -48,9 +48,9 @@ async fn ws_bootnotificationrequest_test() {
     ]"#;
 
     // client sends message
-    client.send(Message::text(bootnotificationrequest)).await;
+    client.send(Message::text(boot_notification_request)).await;
 
-    // recieve sent message or die
+    // receive sent message or die
     let res = client.recv().await.expect("Failed test");
 
     // convert to str and json
@@ -70,8 +70,6 @@ async fn ws_bootnotificationrequest_test() {
 
     // cast string to real BootNotificationRequest struct
     let bnr: Result<BootNotificationRequest, Error> = serde_json::from_str(&res);
-
-    if bnr.is_ok() {}
 
     // actual tests
     assert_eq!(reason, json_res["reason"]);
