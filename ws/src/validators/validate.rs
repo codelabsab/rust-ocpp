@@ -68,7 +68,7 @@ pub async fn validate_message_type_id(json: &Value) -> Result<i64, Message> {
         return Err(Message::text("Could not read message_type_id field"));
     };
 
-    // message_type_id field should be an i64
+    // message_type_id field should be parseable as an i64
     let message_type_id = if let Some(i) = read_message_type_id_field {
         i
     } else {
