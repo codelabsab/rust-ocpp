@@ -11,10 +11,10 @@ use crate::{
 };
 
 /*
-    The job of the message_handler is to:
+    The job of handle_message is to:
     Validate that:
         1. incoming transmission is of type text
-        2. text is deserializeable to jsonValue
+        2. text is deserializable to jsonValue
         3. json data is of type array
         4. validate that the array is of type Call
     Cast to correct Call type
@@ -33,7 +33,7 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
         return;
     };
 
-    // We got some text, but is it json?
+    // We got some text, let's try to deserialize to json
     let json = if let Ok(v) = serde_json::Value::from_str(msg) {
         v
     } else {
@@ -42,7 +42,7 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
         return;
     };
 
-    // Ok, we got some json, but is it an array?
+    // validate that json is of type array
     if !json.is_array() {
         handle_error(Message::text(format!("Expected array, got: {}", msg)), tx).await;
         return;
@@ -96,7 +96,7 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
     };
     info!("Got message_id: {}", message_id);
 
-    // try to deseralize json to a Call, CallResult or CallError
+    // try to deserialize json to a Call, CallResult or CallError
     if message_type_id == 2 {
         // It's a Call
         let call: Call = match serde_json::from_str(&msg.to_string()) {
