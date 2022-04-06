@@ -1,21 +1,7 @@
-# OCPP Library
+# rust-ocpp
 
-Libraries implemeting OCPP 1.6 and 2.0.1.
+this repo contains implementations of `ocpp`
 
-Specification and schemas are stored under `docs/`
+`ocpp/` : contains library implementations of 1.6 and 2.0.1
 
-# crate
-
-https://crates.io/crates/rust-ocpp
-
-# docs
-
-https://docs.rs/rust-ocpp/latest/rust_ocpp/
-
-# Todo
-
-Validate implementation against schemas
-
-# Links
-
-[Open Charge Alliance](https://www.openchargealliance.org/)
+`ws/` : contains demo websockets server
