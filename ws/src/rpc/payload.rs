@@ -9,6 +9,11 @@ use std::error::Error;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(untagged)]
+/// A Payload consist of either a Call, a CallResult or a CallError
+///
+/// Call: [<MessageTypeId>, "<MessageId>", "<Action>", {<Payload>}]
+/// CallResult: [<MessageTypeId>, "<MessageId>", {<Payload>}]
+/// CallError: [<MessageTypeId>, "<MessageId>", "<errorCode>", "<errorDescription>", {<errorDetails>}]
 pub enum Payload {
     /// OCPP Call
     Request(usize, String, String, Value),
@@ -35,7 +40,7 @@ impl Payload {
 
             Ok((id.to_string(), request))
         } else {
-            Err("The payload was not an response type".into())
+            Err("The payload was not of type request".into())
         }
     }
     pub fn try_to_response<T: DeserializeOwned>(
@@ -44,7 +49,7 @@ impl Payload {
         if let Self::Response(_, id, payload) = self {
             Ok((id.to_string(), serde_json::from_value(payload.clone())?))
         } else {
-            Err("The payload was not an response type".into())
+            Err("The payload was not of type response".into())
         }
     }
     pub fn try_to_error(
@@ -75,6 +80,10 @@ impl Payload {
 
     pub fn is_request(&self) -> bool {
         matches!(self, Self::Request(_, _, _, _))
+    }
+
+    pub fn is_error(&self) -> bool {
+        matches!(self, Self::Error(_, _, _, _, _))
     }
 
     pub fn id(&self) -> &str {

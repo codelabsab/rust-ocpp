@@ -4,11 +4,14 @@ use futures::stream::SplitSink;
 use log::{info, warn};
 use warp::ws::{Message, WebSocket};
 
+use crate::rpc::payload::Payload;
 use crate::{
     handlers::{call::handle_call, error::handle_error, response::handle_response},
     rpc::{call::Call, call_error::CallError, call_result::CallResult},
     validators::validate::{validate_message_id, validate_message_type_id},
 };
+
+use super::call::{handle_callerror, handle_callresult};
 
 /*
     The job of handle_message is to:
@@ -33,20 +36,54 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
         return;
     };
 
-    // We got some text, let's try to deserialize to json
-    let json = if let Ok(v) = serde_json::Value::from_str(msg) {
-        v
-    } else {
-        warn!("Client did not send valid json: {}", msg);
-        handle_error(Message::text(format!("Expected json, got {}", msg)), tx).await;
-        return;
+    // serialize or die
+    let payload: Payload = match serde_json::from_str(msg) {
+        Ok(o) => o,
+        Err(_) => {
+            handle_error(Message::text("failed to parse payload"), tx).await;
+            return;
+        }
     };
 
-    // validate that json is of type array
-    if !json.is_array() {
-        handle_error(Message::text(format!("Expected array, got: {}", msg)), tx).await;
-        return;
+    // what type of payload did we get?
+    match payload {
+        // request?
+        Payload::Request(message_type_id, message_id, action, payload) => {
+            let call = Call::new(message_type_id, message_id, action, payload);
+            handle_call(call, tx).await;
+        }
+        // response?
+        Payload::Response(message_type_id, message_id, payload) => {
+            let call_result = CallResult::new(message_type_id, message_id, payload);
+            handle_callresult(call_result, tx).await;
+        }
+        // error?
+        Payload::Error(message_type_id, message_id, code, description, details) => {
+            let call_error = CallError::new(
+                message_type_id,
+                message_id,
+                code,
+                description,
+                "".to_string(),
+            );
+            handle_callerror(call_error, tx).await;
+        }
     }
+
+    // We got some text, let's try to deserialize to json
+    // let json = if let Ok(v) = serde_json::Value::from_str(msg) {
+    //     v
+    // } else {
+    //     warn!("Client did not send valid json: {}", msg);
+    //     handle_error(Message::text(format!("Expected json, got {}", msg)), tx).await;
+    //     return;
+    // };
+
+    // validate that json is of type array
+    // if !json.is_array() {
+    //     handle_error(Message::text(format!("Expected array, got: {}", msg)), tx).await;
+    //     return;
+    // }
 
     /*
         In OCPP_2_01 the message_type_id is encoded in the 0th field in the
@@ -67,13 +104,13 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
             this list, it SHALL ignore the message payload. Each message type
             may have additional required fields.
     */
-    let message_type_id = match validate_message_type_id(&json).await {
-        Ok(o) => o,
-        Err(e) => {
-            handle_error(e, tx).await;
-            return;
-        }
-    };
+    // let message_type_id = match validate_message_type_id(&json).await {
+    //     Ok(o) => o,
+    //     Err(e) => {
+    //         handle_error(e, tx).await;
+    //         return;
+    //     }
+    // };
 
     /*
         The message ID
@@ -87,47 +124,47 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
 
         TODO: How do we verify that the message id has not been previously used?
     */
-    let message_id = match validate_message_id(&json).await {
-        Ok(o) => o,
-        Err(e) => {
-            handle_error(e, tx).await;
-            return;
-        }
-    };
-    info!("Got message_id: {}", message_id);
+    // let message_id = match validate_message_id(&json).await {
+    //     Ok(o) => o,
+    //     Err(e) => {
+    //         handle_error(e, tx).await;
+    //         return;
+    //     }
+    // };
+    // info!("Got message_id: {}", message_id);
 
     // try to deserialize json to a Call, CallResult or CallError
-    if message_type_id == 2 {
-        // It's a Call
-        let call: Call = match serde_json::from_str(&msg.to_string()) {
-            Ok(o) => o,
-            Err(e) => {
-                handle_error(Message::text(e.to_string()), tx).await;
-                return;
-            }
-        };
-        handle_call(call, tx).await;
-    } else if message_type_id == 3 {
-        // It's a CallResult
-        let call_result: CallResult = match serde_json::from_str(&msg.to_string()) {
-            Ok(o) => o,
-            Err(_) => {
-                handle_error(Message::text("Could not deserialize CallResult"), tx).await;
-                return;
-            }
-        };
-        info!("got {:?}", call_result);
-        handle_response(Message::text("Responding to CallResult"), tx).await;
-    } else if message_type_id == 4 {
-        // It's a CallError
-        let call_error: CallError = match serde_json::from_str(&msg.to_string()) {
-            Ok(o) => o,
-            Err(_) => {
-                handle_error(Message::text("Could not deserialize CallResultError"), tx).await;
-                return;
-            }
-        };
-        info!("got {:?}", call_error);
-        handle_response(Message::text("Responding to CallError"), tx).await;
-    };
+    // if message_type_id == 2 {
+    //     // It's a Call
+    //     let call: Call = match serde_json::from_str(&msg.to_string()) {
+    //         Ok(o) => o,
+    //         Err(e) => {
+    //             handle_error(Message::text(e.to_string()), tx).await;
+    //             return;
+    //         }
+    //     };
+    //     handle_call(call, tx).await;
+    // } else if message_type_id == 3 {
+    //     // It's a CallResult
+    //     let call_result: CallResult = match serde_json::from_str(&msg.to_string()) {
+    //         Ok(o) => o,
+    //         Err(_) => {
+    //             handle_error(Message::text("Could not deserialize CallResult"), tx).await;
+    //             return;
+    //         }
+    //     };
+    //     info!("got {:?}", call_result);
+    //     handle_response(Message::text("Responding to CallResult"), tx).await;
+    // } else if message_type_id == 4 {
+    //     // It's a CallError
+    //     let call_error: CallError = match serde_json::from_str(&msg.to_string()) {
+    //         Ok(o) => o,
+    //         Err(_) => {
+    //             handle_error(Message::text("Could not deserialize CallResultError"), tx).await;
+    //             return;
+    //         }
+    //     };
+    //     info!("got {:?}", call_error);
+    //     handle_response(Message::text("Responding to CallError"), tx).await;
+    // };
 }
