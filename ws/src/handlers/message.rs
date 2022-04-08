@@ -1,14 +1,11 @@
-use std::str::FromStr;
-
 use futures::stream::SplitSink;
-use log::{info, warn};
+use log::warn;
 use warp::ws::{Message, WebSocket};
 
 use crate::rpc::payload::Payload;
 use crate::{
-    handlers::{call::handle_call, error::handle_error, response::handle_response},
+    handlers::{call::handle_call, error::handle_error},
     rpc::{call::Call, call_error::CallError, call_result::CallResult},
-    validators::validate::{validate_message_id, validate_message_type_id},
 };
 
 use super::call::{handle_callerror, handle_callresult};
@@ -58,13 +55,19 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
             handle_callresult(call_result, tx).await;
         }
         // error?
-        Payload::Error(message_type_id, message_id, code, description, details) => {
+        Payload::Error(
+            message_type_id,
+            message_id,
+            error_code,
+            error_description,
+            error_details,
+        ) => {
             let call_error = CallError::new(
                 message_type_id,
                 message_id,
-                code,
-                description,
-                "".to_string(),
+                error_code,
+                error_description,
+                error_details,
             );
             handle_callerror(call_error, tx).await;
         }
