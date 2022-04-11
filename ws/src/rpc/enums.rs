@@ -1,4 +1,5 @@
 use std::fmt;
+use strum_macros::Display;
 
 use rust_ocpp::v2_0_1::messages::authorize::AuthorizeRequest;
 use rust_ocpp::v2_0_1::messages::authorize::AuthorizeResponse;
@@ -133,126 +134,126 @@ use super::call::Call;
 use super::call_error::CallError;
 use super::call_result::CallResult;
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum AuthorizeEnum {
     AuthorizeRequest(AuthorizeRequest),
     AuthorizeResponse(AuthorizeResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum BootNotificationEnum {
     BootNotificationRequest(BootNotificationRequest),
     BootNotificationResponse(BootNotificationResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum CancelReservationEnum {
     CancelReservationRequest(CancelReservationRequest),
     CancelReservationResponse(CancelReservationResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum CertificateSignedEnum {
     CertificateSignedRequest(CertificateSignedRequest),
     CertificateSignedResponse(CertificateSignedResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum ChangeAvailabilityEnum {
     ChangeAvailabilityRequest(ChangeAvailabilityRequest),
     ChangeAvailabilityResponse(ChangeAvailabilityResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum ClearCacheEnum {
     ClearCacheRequest(ClearCacheRequest),
     ClearCacheResponse(ClearCacheResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum ClearChargingProfileEnum {
     ClearChargingProfileRequest(ClearChargingProfileRequest),
     ClearChargingProfileResponse(ClearChargingProfileResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum ClearDisplayMessageEnum {
     ClearDisplayMessageRequest(ClearDisplayMessageRequest),
     ClearDisplayMessageResponse(ClearDisplayMessageResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum ClearedChargingLimitEnum {
     ClearedChargingLimitRequest(ClearedChargingLimitRequest),
     ClearedChargingLimitResponse(ClearedChargingLimitResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum ClearVariableMonitoringEnum {
     ClearVariableMonitoringRequest(ClearVariableMonitoringRequest),
     ClearVariableMonitoringResponse(ClearVariableMonitoringResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum CostUpdatedEnum {
     CostUpdatedRequest(CostUpdatedRequest),
     CostUpdatedResponse(CostUpdatedResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum CustomerInformationEnum {
     CustomerInformationRequest(CustomerInformationRequest),
     CustomerInformationResponse(CustomerInformationResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum DataTransferEnum {
     DatatransferRequest(DataTransferRequest),
     DatatransferResponse(DataTransferResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum DeleteCertificateEnum {
     DeleteCertificateRequest(DeleteCertificateRequest),
     DeleteCertificateResponse(DeleteCertificateResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum FirmwareStatusNotificationEnum {
     FirmwareStatusNotificationRequest(FirmwareStatusNotificationRequest),
     FirmwareStatusNotificationResponse(FirmwareStatusNotificationResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum Get15118EVCertificateEnum {
     Get15118EVCertificateRequest(Get15118EVCertificateRequest),
     Get15118EVCertificateResponse(Get15118EVCertificateResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetBaseReportEnum {
     GetBaseReportRequest(GetBaseReportRequest),
     GetBaseReportResponse(GetBaseReportResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetCertificateStatusEnum {
     GetCertificateStatusRequest(GetCertificateStatusRequest),
@@ -260,322 +261,322 @@ pub enum GetCertificateStatusEnum {
 }
 
 // Is this name correct? Enum is called Singular Profile vs struct that says Profiles in pluralis
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetChargingProfilesEnum {
     GetChargingProfilesRequest(GetChargingProfilesRequest),
     GetChargingProfilesResponse(GetChargingProfilesResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetCompositeScheduleEnum {
     GetCompositeScheduleRequest(GetCompositeScheduleRequest),
     GetCompositeScheduleResponse(GetCompositeScheduleResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetDisplayMessagesEnum {
     GetDisplayMessagesRequest(GetDisplayMessagesRequest),
     GetDisplayMessagesResponse(GetDisplayMessagesResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetInstalledCertificateIdsEnum {
     GetInstalledCertificateIdsRequest(GetInstalledCertificateIdsRequest),
     GetInstalledCertificateIdsResponse(Box<GetInstalledCertificateIdsResponse>),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetLocalListVersionEnum {
     GetLocalListVersionRequest(GetLocalListVersionRequest),
     GetLocalListVersionResponse(GetLocalListVersionResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetLogEnum {
     GetLogRequest(GetLogRequest),
     GetLogResponse(GetLogResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetMonitoringReportEnum {
     GetMonitoringReportRequest(GetMonitoringReportRequest),
     GetMonitoringReportResponse(GetMonitoringReportResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetReportEnum {
     GetReportRequest(GetReportRequest),
     GetReportResponse(GetReportResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetTransactionStatusEnum {
     GetTransactionStatusRequest(GetTransactionStatusRequest),
     GetTransactionStatusResponse(GetTransactionStatusResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum GetVariablesEnum {
     GetVariablesRequest(GetVariablesRequest),
     GetVariablesResponse(GetVariablesResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum HeartbeatEnum {
     HeartbeatRequest(HeartbeatRequest),
     HeartbeatResponse(HeartbeatResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum InstallCertificateEnum {
     InstallCertificateRequest(InstallCertificateRequest),
     InstallCertificateResponse(InstallCertificateResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum LogStatusNotificationEnum {
     LogStatusNotificationRequest(LogStatusNotificationRequest),
     LogStatusNotificationResponse(LogStatusNotificationResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum MeterValuesEnum {
     MeterValuesRequest(MeterValuesRequest),
     MeterValuesResponse(MeterValuesResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum NotifyChargingLimitEnum {
     NotifyChargingLimitRequest(NotifyChargingLimitRequest),
     NotifyChargingLimitResponse(NotifyChargingLimitResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum NotifyCustomerInformationEnum {
     NotifyCustomerInformationRequest(NotifyCustomerInformationRequest),
     NotifyCustomerInformationResponse(NotifyCustomerInformationResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum NotifyDisplayMessagesEnum {
     NotifyDisplayMessagesRequest(NotifyDisplayMessagesRequest),
     NotifyDisplayMessagesResponse(NotifyDisplayMessagesResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum NotifyEVChargingNeedsEnum {
     NotifyEVChargingNeedsRequest(NotifyEVChargingNeedsRequest),
     NotifyEVChargingNeedsResponse(NotifyEVChargingNeedsResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum NotifyEVChargingScheduleEnum {
     NotifyEVChargingScheduleRequest(NotifyEVChargingScheduleRequest),
     NotifyEVChargingScheduleResponse(NotifyEVChargingScheduleResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum NotifyEventEnum {
     NotifyEventRequest(NotifyEventRequest),
     NotifyEventResponse(NotifyEventResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum NotifyMonitoringReportEnum {
     NotifyMonitoringReportRequest(NotifyMonitoringReportRequest),
     NotifyMonitoringReportResponse(NotifyMonitoringReportResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum NotifyReportEnum {
     NotifyReportRequest(NotifyReportRequest),
     NotifyReportResponse(NotifyReportResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum PublishFirmwareEnum {
     PublishFirmwareRequest(PublishFirmwareRequest),
     PublishFirmwareResponse(PublishFirmwareResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum PublishFirmwareStatusNotificationEnum {
     PublishFirmwareStatusNotificationRequest(PublishFirmwareStatusNotificationRequest),
     PublishFirmwareStatusNotificationResponse(PublishFirmwareStatusNotificationResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum ReportChargingProfilesEnum {
     ReportChargingProfilesRequest(ReportChargingProfilesRequest),
     ReportChargingProfilesResponse(ReportChargingProfilesResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum RequestStartTransactionEnum {
     RequestStartTransactionRequest(RequestStartTransactionRequest),
     RequestStartTransactionResponse(RequestStartTransactionResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum RequestStopTransactionEnum {
     RequestStopTransactionRequest(RequestStopTransactionRequest),
     RequestStopTransactionResponse(RequestStopTransactionResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum ReservationStatusUpdateEnum {
     ReservationStatusUpdateRequest(ReservationStatusUpdateRequest),
     ReservationStatusUpdateResponse(ReservationStatusUpdateResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum ReserveNowEnum {
     ReserveNowRequest(ReserveNowRequest),
     ReserveNowResponse(ReserveNowResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum ResetEnum {
     ResetRequest(ResetRequest),
     ResetResponse(ResetResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum SecurityEventNotificationEnum {
     SecurityEventNotificationRequest(SecurityEventNotificationRequest),
     SecurityEventNotificationResponse(SecurityEventNotificationResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum SendLocalListEnum {
     SendLocalListRequest(SendLocalListRequest),
     SendLocalListResponse(SendLocalListResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum SetChargingProfileEnum {
     SetChargingProfileRequest(SetChargingProfileRequest),
     SetChargingProfileResponse(SetChargingProfileResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum SetDisplayMessageEnum {
     SetDisplayMessageRequest(SetDisplayMessageRequest),
     SetDisplayMessageResponse(SetDisplayMessageResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum SetMonitoringBaseEnum {
     SetMonitoringBaseRequest(SetMonitoringBaseRequest),
     SetMonitoringBaseResponse(SetMonitoringBaseResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum SetMonitoringLevelEnum {
     SetMonitoringLevelRequest(SetMonitoringLevelRequest),
     SetMonitoringLevelResponse(SetMonitoringLevelResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum SetNetworkProfileEnum {
     SetNetworkProfileRequest(SetNetworkProfileRequest),
     SetNetworkProfileResponse(SetNetworkProfileResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum SetVariableMonitoringEnum {
     SetVariableMonitoringRequest(SetVariableMonitoringRequest),
     SetVariableMonitoringResponse(SetVariableMonitoringResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum SetVariablesEnum {
     SetVariablesRequest(SetVariablesRequest),
     SetVariablesResponse(SetVariablesResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum SignCertificateEnum {
     SignCertificateRequest(SignCertificateRequest),
     SignCertificateResponse(SignCertificateResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum StatusNotificationEnum {
     StatusNotificationRequest(StatusNotificationRequest),
     StatusNotificationResponse(StatusNotificationResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum TransactionEventEnum {
     TransactionEventRequest(TransactionEventRequest),
     TransactionEventResponse(TransactionEventResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum TriggerMessageEnum {
     TriggerMessageRequest(TriggerMessageRequest),
     TriggerMessageResponse(TriggerMessageResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum UnlockConnectorEnum {
     UnlockConnectorRequest(UnlockConnectorRequest),
     UnlockConnectorResponse(UnlockConnectorResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum UnpublishFirmwareEnum {
     UnpublishFirmwareRequest(UnpublishFirmwareRequest),
     UnpublishFirmwareResponse(UnpublishFirmwareResponse),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum UpdateFirmwareEnum {
     UpdateFirmwareRequest(UpdateFirmwareRequest),
@@ -584,7 +585,7 @@ pub enum UpdateFirmwareEnum {
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(untagged)]
-pub enum CallActionEnum {
+pub enum ActionEnum {
     Authorize(AuthorizeEnum),
     BootNotification(BootNotificationEnum),
     CancelReservation(CancelReservationEnum),
@@ -651,7 +652,7 @@ pub enum CallActionEnum {
     UpdateFirmware(UpdateFirmwareEnum),
 }
 
-impl fmt::Display for CallActionEnum {
+impl fmt::Display for ActionEnum {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
     }

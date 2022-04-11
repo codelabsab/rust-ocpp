@@ -7,7 +7,7 @@ use crate::handlers::{error::handle_error, response::handle_response};
 use crate::rpc::call::Call;
 use crate::rpc::call_error::CallError;
 use crate::rpc::call_result::CallResult;
-use crate::rpc::enums::CallActionEnum;
+use crate::rpc::enums::ActionEnum;
 
 /*
 State so far:
@@ -29,7 +29,7 @@ State so far:
 */
 pub async fn handle_call(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
     info!("Got {:?} and {:?}", call, tx);
-    let c: Result<CallActionEnum, serde_json::Error> = serde_json::from_value(call.payload);
+    let c: Result<ActionEnum, serde_json::Error> = serde_json::from_value(call.payload);
     match c {
         Ok(o) => {
             let res = serde_json::to_string(&o).unwrap();
