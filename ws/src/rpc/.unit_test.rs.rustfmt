@@ -17,7 +17,6 @@ mod tests {
 
     use crate::rpc::call::Call;
     use crate::rpc::call_error::CallError;
-    use crate::rpc::enums::ActionEnum;
     use crate::rpc::errors::RpcErrorCodes;
 
     #[test]
@@ -45,12 +44,12 @@ mod tests {
 
         assert_eq!(
             bootnotificationrequest_call.action,
-            ActionEnum::BootNotification
+            "BootNotification".to_string()
         );
 
         let authorizerequest_call: Call = serde_json::from_str(authorizerequest_json).unwrap();
 
-        assert_eq!(authorizerequest_call.action, ActionEnum::Authorize);
+        assert_eq!(authorizerequest_call.action, "Authorize".to_string());
     }
 
     #[test]
@@ -80,7 +79,7 @@ mod tests {
             message_id: "19223201".to_string(),
             error_code: "NotSupported".to_string(),
             error_description: "SetDisplayMessageRequest not implemented".to_string(),
-            error_details: None,
+            error_details: "{}".to_string(),
         };
 
         assert_eq!(error.message_type_id, 4, "Testing message_type_id");
@@ -94,7 +93,11 @@ mod tests {
             "NotSupported".to_string(),
             "Testing error_code"
         );
-        assert_eq!(error.error_details, None, "Testing error_details");
+        assert_eq!(
+            error.error_details,
+            "{}".to_string(),
+            "Testing error_details"
+        );
     }
 
     // Testing all error codes are correct for RpcErrorCodes For OCPP 2.0.1
@@ -173,7 +176,7 @@ mod tests {
         // B01 - Cold Boot Charging Station
 
         // The Charging Station sends BootNotificationRequest to the CSMS.
-        let call_with_bootnotification_request = r#"
+        let bootnotificationrequest_json = r#"
             [
                 2,
                 "19223201",
@@ -188,11 +191,11 @@ mod tests {
             ]
         "#;
 
-        let call: Call = serde_json::from_str(call_with_bootnotification_request).unwrap();
+        let call: Call = serde_json::from_str(bootnotificationrequest_json).unwrap();
 
-        let kind = serde_json::from_str(call.payload).unwrap();
+        let bn_req: BootNotificationRequest = serde_json::from_value(call.payload).unwrap();
 
-        assert_eq!(call.payload.reason, BootReasonEnumType::PowerUp);
+        assert_eq!(bn_req.reason, BootReasonEnumType::PowerUp);
 
         // The CSMS returns with BootNotificationResponse with the status Accepted.
         let bn_res = BootNotificationResponse {

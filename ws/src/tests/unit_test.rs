@@ -1,4 +1,4 @@
-use crate::{handlers::message::handle_message};
+use crate::handlers::message::handle_message;
 use rust_ocpp::v2_0_1::datatypes::charging_station_type::ChargingStationType;
 use rust_ocpp::v2_0_1::messages::boot_notification::BootNotificationRequest;
 use serde_json::{self, Error};

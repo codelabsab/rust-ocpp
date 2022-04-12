@@ -2,12 +2,10 @@ use futures::stream::SplitSink;
 use log::info;
 use warp::ws::{Message, WebSocket};
 
-use crate::handlers::{error::handle_error, response::handle_response};
+use crate::handlers::response::handle_response;
 
-use crate::rpc::call::Call;
 use crate::rpc::call_error::CallError;
 use crate::rpc::call_result::CallResult;
-use crate::rpc::enums::ActionEnum;
 
 /*
 State so far:

@@ -2,13 +2,8 @@ use futures::stream::SplitSink;
 use log::warn;
 use warp::ws::{Message, WebSocket};
 
-use crate::rpc::payload::Payload;
-use crate::{
-    handlers::error::handle_error,
-    rpc::{call::Call, call_error::CallError, call_result::CallResult},
-};
+use crate::handlers::error::handle_error;
 
-use super::call::{handle_callerror, handle_callresult};
 use super::response::handle_response;
 
 /*
@@ -22,7 +17,7 @@ use super::response::handle_response;
 */
 pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     // Skip any non-Text messages...
-    let msg = if let Ok(s) = msg.to_str() {
+    let _ = if let Ok(s) = msg.to_str() {
         s
     } else {
         warn!("Client sent non-text message");
@@ -35,13 +30,13 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
     };
 
     // serialize or die
-    let payload: Payload = match serde_json::from_str(msg) {
-        Ok(o) => o,
-        Err(_) => {
-            handle_error(Message::text("failed to parse payload"), tx).await;
-            return;
-        }
-    };
+    // let payload: Payload = match serde_json::from_str(msg) {
+    //     Ok(o) => o,
+    //     Err(_) => {
+    //         handle_error(Message::text("failed to parse payload"), tx).await;
+    //         return;
+    //     }
+    // };
 
     handle_response(Message::text("online"), tx).await;
 
