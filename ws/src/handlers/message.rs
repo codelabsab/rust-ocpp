@@ -4,11 +4,12 @@ use warp::ws::{Message, WebSocket};
 
 use crate::rpc::payload::Payload;
 use crate::{
-    handlers::{call::handle_call, error::handle_error},
+    handlers::error::handle_error,
     rpc::{call::Call, call_error::CallError, call_result::CallResult},
 };
 
 use super::call::{handle_callerror, handle_callresult};
+use super::response::handle_response;
 
 /*
     The job of handle_message is to:
@@ -42,36 +43,38 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
         }
     };
 
+    handle_response(Message::text("online"), tx).await;
+
     // what type of payload did we get?
-    match payload {
-        // request?
-        Payload::Request(message_type_id, message_id, action, payload) => {
-            let call = Call::new(message_type_id, message_id, action, payload);
-            handle_call(call, tx).await;
-        }
-        // response?
-        Payload::Response(message_type_id, message_id, payload) => {
-            let call_result = CallResult::new(message_type_id, message_id, payload);
-            handle_callresult(call_result, tx).await;
-        }
-        // error?
-        Payload::Error(
-            message_type_id,
-            message_id,
-            error_code,
-            error_description,
-            error_details,
-        ) => {
-            let call_error = CallError::new(
-                message_type_id,
-                message_id,
-                error_code,
-                error_description,
-                error_details,
-            );
-            handle_callerror(call_error, tx).await;
-        }
-    }
+    // match payload {
+    //     // request?
+    //     Payload::Request(message_type_id, message_id, action, payload) => {
+    //         let call = Call::new(message_type_id, message_id, action, payload);
+    //         handle_call(call, tx).await;
+    //     }
+    //     // response?
+    //     Payload::Response(message_type_id, message_id, payload) => {
+    //         let call_result = CallResult::new(message_type_id, message_id, payload);
+    //         handle_callresult(call_result, tx).await;
+    //     }
+    //     // error?
+    //     Payload::Error(
+    //         message_type_id,
+    //         message_id,
+    //         error_code,
+    //         error_description,
+    //         error_details,
+    //     ) => {
+    //         let call_error = CallError::new(
+    //             message_type_id,
+    //             message_id,
+    //             error_code,
+    //             error_description,
+    //             error_details,
+    //         );
+    //         handle_callerror(call_error, tx).await;
+    //     }
+    // }
 
     // We got some text, let's try to deserialize to json
     // let json = if let Ok(v) = serde_json::Value::from_str(msg) {

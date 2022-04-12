@@ -27,17 +27,17 @@ State so far:
                                            "action"
     }
 */
-pub async fn handle_call(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
-    info!("Got {:?} and {:?}", call, tx);
-    let c: Result<ActionEnum, serde_json::Error> = serde_json::from_value(call.payload);
-    match c {
-        Ok(o) => {
-            let res = serde_json::to_string(&o).unwrap();
-            handle_response(Message::text(res), tx).await;
-        }
-        Err(_) => handle_error(Message::text("Could not transform json value to Call"), tx).await,
-    };
-}
+// pub async fn handle_call(call: Call, tx: &mut SplitSink<WebSocket, Message>) {
+//     info!("Got {:?} and {:?}", call, tx);
+//     let c: Result<ActionEnum, serde_json::Error> = serde_json::from_value(call.payload);
+//     match c {
+//         Ok(o) => {
+//             let res = serde_json::to_string(&o).unwrap();
+//             handle_response(Message::text(res), tx).await;
+//         }
+//         Err(_) => handle_error(Message::text("Could not transform json value to Call"), tx).await,
+//     };
+// }
 pub async fn handle_callresult(call: CallResult, tx: &mut SplitSink<WebSocket, Message>) {
     info!("Got {:?} and {:?}", call, tx);
     handle_response(Message::text("call result".to_string()), tx).await;
