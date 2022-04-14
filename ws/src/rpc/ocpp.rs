@@ -9,11 +9,11 @@ use serde_json::Value;
 /// CallResult: [<MessageTypeId>, "<MessageId>", {<Payload>}]
 ///
 /// CallError: [<MessageTypeId>, "<MessageId>", "<errorCode>", "<errorDescription>", {<errorDetails>}]
-pub enum OCPPMessage {
+pub enum CallType {
     /// OCPP Call
-    Request(usize, String, String, Value),
+    Call(usize, String, String, Value),
     /// OCPP Result
-    Response(usize, String, Value),
+    CallResult(usize, String, Value),
     /// OCPP Error
-    Error(usize, String, String, String, Option<Value>),
+    CallError(usize, String, String, String, Value),
 }

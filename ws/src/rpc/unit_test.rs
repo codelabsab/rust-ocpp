@@ -1,3 +1,5 @@
+use super::ocpp::CallType;
+
 /// tests
 #[cfg(test)]
 mod tests {
@@ -17,11 +19,11 @@ mod tests {
     use rust_ocpp::v2_0_1::messages::status_notification::StatusNotificationRequest;
 
     use crate::rpc::call::Call;
-    use crate::rpc::call_error::CallError;
     use crate::rpc::enums::ActionEnum;
     use crate::rpc::enums::PayloadKindEnum;
     use crate::rpc::errors::RpcErrorCodes;
-    use crate::rpc::ocpp_message::OCPPMessage;
+    use crate::rpc::ocpp::CallType;
+    use crate::rpc::unit_test::call_type_test;
 
     #[test]
     fn test_deserialize_json_to_call() {
@@ -74,30 +76,6 @@ mod tests {
         let json = serde_json::to_string(&bnr).unwrap();
 
         println!("Serialized to {}", json);
-    }
-
-    #[test]
-    fn test_call_error() {
-        let error = CallError {
-            message_type_id: 4,
-            message_id: "19223201".to_string(),
-            error_code: "NotSupported".to_string(),
-            error_description: "SetDisplayMessageRequest not implemented".to_string(),
-            error_details: None,
-        };
-
-        assert_eq!(error.message_type_id, 4, "Testing message_type_id");
-        assert_eq!(
-            error.message_id,
-            "19223201".to_string(),
-            "Testing message_id"
-        );
-        assert_eq!(
-            error.error_code,
-            "NotSupported".to_string(),
-            "Testing error_code"
-        );
-        assert_eq!(error.error_details, None, "Testing error_details");
     }
 
     // Testing all error codes are correct for RpcErrorCodes For OCPP 2.0.1
@@ -237,7 +215,7 @@ mod tests {
     }
 
     #[test]
-    fn test_enum() {
+    fn test_call() {
         let bootnotificationrequest_json = r#"
             [
                 2,
@@ -253,39 +231,88 @@ mod tests {
             ]
         "#;
         // get ocpp message
-        let ocpp_msg: OCPPMessage = serde_json::from_str(&bootnotificationrequest_json).unwrap();
+        let ocpp_msg: CallType = serde_json::from_str(&bootnotificationrequest_json).unwrap();
 
-        // what type did we get?
-        if let OCPPMessage::Request(message_type_id, message_id, action, payload) = ocpp_msg {
-            println!("Got Call:");
-            println!("---------");
-            println!("message type id : {message_type_id}");
-            println!("message id      : {message_id}");
-            println!("action          : {action}");
-            println!("payload         : {payload}");
-        } else if let OCPPMessage::Response(message_type_id, message_id, payload) = ocpp_msg {
-            println!("Got CallResult:");
-            println!("---------");
-            println!("message type id : {message_type_id}");
-            println!("message id      : {message_id}");
-            println!("payload         : {payload}");
-        } else if let OCPPMessage::Error(
-            message_type_id,
-            message_id,
-            error_code,
-            error_description,
-            error_details,
-        ) = ocpp_msg
-        {
-            println!("Got CallError:");
-            println!("---------");
-            println!("message type id   : {message_type_id}");
-            println!("message id        : {message_id}");
-            println!("error             : {error_code}");
-            println!("error description : {error_description}");
-            println!("error details     : {error_details:?}");
-        } else {
-            println!("Not a ocpp message");
-        }
+        let test = call_type_test(ocpp_msg);
+
+        assert_eq!(test.is_ok(), true);
+    }
+
+    #[test]
+    fn test_call_result() {
+        let bootnotificationrequest_json = r#"
+        [
+            3,
+            "19223201",
+            {
+                "currentTime": "2013-02-01T20:53:32.486Z",
+                "interval": 300,
+                "status": "Accepted"
+            }
+        ]
+        "#;
+        // get ocpp message
+        let ocpp_msg: CallType = serde_json::from_str(&bootnotificationrequest_json).unwrap();
+
+        let test = call_type_test(ocpp_msg);
+
+        assert_eq!(test.is_ok(), true);
+    }
+
+    #[test]
+    fn test_call_error() {
+        let bootnotificationrequest_json = r#"
+        [
+            4,
+            "162376037",
+            "NotSupported",
+            "SetDisplayMessageRequest not implemented",
+            {}
+        ]
+        "#;
+        // get ocpp message
+        let ocpp_msg: CallType = serde_json::from_str(&bootnotificationrequest_json).unwrap();
+
+        let test = call_type_test(ocpp_msg);
+
+        assert_eq!(test.is_ok(), true);
+    }
+}
+
+pub fn call_type_test(ocpp_msg: CallType) -> Result<(), bool> {
+    if let CallType::Call(message_type_id, message_id, action, payload) = ocpp_msg {
+        println!("Got Call:");
+        println!("---------");
+        println!("message type id : {message_type_id}");
+        println!("message id      : {message_id}");
+        println!("action          : {action}");
+        println!("payload         : {payload}");
+        return Ok(());
+    } else if let CallType::CallResult(message_type_id, message_id, payload) = ocpp_msg {
+        println!("Got CallResult:");
+        println!("---------");
+        println!("message type id : {message_type_id}");
+        println!("message id      : {message_id}");
+        println!("payload         : {payload}");
+        return Ok(());
+    } else if let CallType::CallError(
+        message_type_id,
+        message_id,
+        error_code,
+        error_description,
+        error_details,
+    ) = ocpp_msg
+    {
+        println!("Got CallError:");
+        println!("---------");
+        println!("message type id   : {message_type_id}");
+        println!("message id        : {message_id}");
+        println!("error             : {error_code}");
+        println!("error description : {error_description}");
+        println!("error details     : {error_details:?}");
+        return Ok(());
+    } else {
+        println!("Not a ocpp message");
+        return Err(false);
     }
 }

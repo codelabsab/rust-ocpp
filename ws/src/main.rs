@@ -9,7 +9,6 @@ use crate::handlers::connection::handle_connection;
 
 mod handlers;
 mod rpc;
-mod validators;
 
 #[cfg(test)]
 mod tests;
