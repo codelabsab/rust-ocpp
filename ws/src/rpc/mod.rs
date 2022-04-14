@@ -4,6 +4,6 @@ pub mod call_result;
 pub mod enums;
 pub mod errors;
 pub mod ocpp_error;
-pub mod payload;
+pub mod ocpp_message;
 pub mod request;
 pub mod unit_test;

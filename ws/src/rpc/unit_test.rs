@@ -3,6 +3,7 @@
 mod tests {
 
     use chrono::Utc;
+    use serde_json::Value;
     use serde_json::{self};
 
     use rust_ocpp::v2_0_1::datatypes::charging_station_type::ChargingStationType;
@@ -18,7 +19,9 @@ mod tests {
     use crate::rpc::call::Call;
     use crate::rpc::call_error::CallError;
     use crate::rpc::enums::ActionEnum;
+    use crate::rpc::enums::PayloadKindEnum;
     use crate::rpc::errors::RpcErrorCodes;
+    use crate::rpc::ocpp_message::OCPPMessage;
 
     #[test]
     fn test_deserialize_json_to_call() {
@@ -190,9 +193,9 @@ mod tests {
 
         let call: Call = serde_json::from_str(call_with_bootnotification_request).unwrap();
 
-        let kind = serde_json::from_str(call.payload).unwrap();
+        let kind = call.payload;
 
-        assert_eq!(call.payload.reason, BootReasonEnumType::PowerUp);
+        assert_eq!(call.action, ActionEnum::BootNotification);
 
         // The CSMS returns with BootNotificationResponse with the status Accepted.
         let bn_res = BootNotificationResponse {
@@ -249,6 +252,40 @@ mod tests {
                 }
             ]
         "#;
-        let test = serde_json::from_str(&bootnotificationrequest_json);
+        // get ocpp message
+        let ocpp_msg: OCPPMessage = serde_json::from_str(&bootnotificationrequest_json).unwrap();
+
+        // what type did we get?
+        if let OCPPMessage::Request(message_type_id, message_id, action, payload) = ocpp_msg {
+            println!("Got Call:");
+            println!("---------");
+            println!("message type id : {message_type_id}");
+            println!("message id      : {message_id}");
+            println!("action          : {action}");
+            println!("payload         : {payload}");
+        } else if let OCPPMessage::Response(message_type_id, message_id, payload) = ocpp_msg {
+            println!("Got CallResult:");
+            println!("---------");
+            println!("message type id : {message_type_id}");
+            println!("message id      : {message_id}");
+            println!("payload         : {payload}");
+        } else if let OCPPMessage::Error(
+            message_type_id,
+            message_id,
+            error_code,
+            error_description,
+            error_details,
+        ) = ocpp_msg
+        {
+            println!("Got CallError:");
+            println!("---------");
+            println!("message type id   : {message_type_id}");
+            println!("message id        : {message_id}");
+            println!("error             : {error_code}");
+            println!("error description : {error_description}");
+            println!("error details     : {error_details:?}");
+        } else {
+            println!("Not a ocpp message");
+        }
     }
 }
