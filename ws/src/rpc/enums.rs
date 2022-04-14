@@ -131,7 +131,6 @@ use rust_ocpp::v2_0_1::messages::unpublish_firmware::UnpublishFirmwareResponse;
 use rust_ocpp::v2_0_1::messages::update_firmware::UpdateFirmwareRequest;
 use rust_ocpp::v2_0_1::messages::update_firmware::UpdateFirmwareResponse;
 
-use super::call::Call;
 use super::call_error::CallError;
 use super::call_result::CallResult;
 
@@ -586,7 +585,7 @@ pub enum UpdateFirmwareKind {
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(untagged)]
-pub enum ActionEnum {
+pub enum OcppActionEnum {
     Authorize,
     BootNotification,
     CancelReservation,
@@ -653,83 +652,83 @@ pub enum ActionEnum {
     UpdateFirmware,
 }
 
-impl fmt::Display for ActionEnum {
+impl fmt::Display for OcppActionEnum {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
     }
 }
 
-impl FromStr for ActionEnum {
+impl FromStr for OcppActionEnum {
     type Err = ();
 
-    fn from_str(input: &str) -> Result<ActionEnum, Self::Err> {
+    fn from_str(input: &str) -> Result<OcppActionEnum, Self::Err> {
         match input {
-            "Authorize" => Ok(ActionEnum::Authorize),
-            "BootNotification" => Ok(ActionEnum::BootNotification),
-            "CancelReservation" => Ok(ActionEnum::CancelReservation),
-            "CertificateSigned" => Ok(ActionEnum::CertificateSigned),
-            "ChangeAvailability" => Ok(ActionEnum::ChangeAvailability),
-            "ClearCache" => Ok(ActionEnum::ClearCache),
-            "ClearChargingProfile" => Ok(ActionEnum::ClearChargingProfile),
-            "ClearDisplayMessage" => Ok(ActionEnum::ClearDisplayMessage),
-            "ClearedChargingLimit" => Ok(ActionEnum::ClearedChargingLimit),
-            "ClearVariableMonitoring" => Ok(ActionEnum::ClearVariableMonitoring),
-            "CostUpdated" => Ok(ActionEnum::CostUpdated),
-            "CustomerInformation" => Ok(ActionEnum::CustomerInformation),
-            "DataTransfer" => Ok(ActionEnum::DataTransfer),
-            "DeleteCertificate" => Ok(ActionEnum::DeleteCertificate),
-            "FirmwareStatusNotification" => Ok(ActionEnum::FirmwareStatusNotification),
-            "Get15118EVCertificate" => Ok(ActionEnum::Get15118EVCertificate),
-            "GetBaseReport" => Ok(ActionEnum::GetBaseReport),
-            "GetCertificateStatus" => Ok(ActionEnum::GetCertificateStatus),
-            "GetChargingProfile" => Ok(ActionEnum::GetChargingProfile),
-            "GetCompositeSchedule" => Ok(ActionEnum::GetCompositeSchedule),
-            "GetDisplayMessage" => Ok(ActionEnum::GetDisplayMessage),
-            "GetInstalledCertificateIds" => Ok(ActionEnum::GetInstalledCertificateIds),
-            "GetLocalListVersion" => Ok(ActionEnum::GetLocalListVersion),
-            "GetLog" => Ok(ActionEnum::GetLog),
-            "GetMonitoringReport" => Ok(ActionEnum::GetMonitoringReport),
-            "GetReport" => Ok(ActionEnum::GetReport),
-            "GetTransactionStatus" => Ok(ActionEnum::GetTransactionStatus),
-            "GetVariables" => Ok(ActionEnum::GetVariables),
-            "Heartbeat" => Ok(ActionEnum::Heartbeat),
-            "InstallCertificate" => Ok(ActionEnum::InstallCertificate),
-            "LogStatusNotification" => Ok(ActionEnum::LogStatusNotification),
-            "MeterValues" => Ok(ActionEnum::MeterValues),
-            "NotifyChargingLimit" => Ok(ActionEnum::NotifyChargingLimit),
-            "NotifyCustomerInformation" => Ok(ActionEnum::NotifyCustomerInformation),
-            "NotifyDisplayMessages" => Ok(ActionEnum::NotifyDisplayMessages),
-            "NotifyEVChargingNeeds" => Ok(ActionEnum::NotifyEVChargingNeeds),
-            "NotifyEVChargingSchedule" => Ok(ActionEnum::NotifyEVChargingSchedule),
-            "NotifyEvent" => Ok(ActionEnum::NotifyEvent),
-            "NotifyMonitoringReport" => Ok(ActionEnum::NotifyMonitoringReport),
-            "NotifyReport" => Ok(ActionEnum::NotifyReport),
-            "PublishFirmware" => Ok(ActionEnum::PublishFirmware),
+            "Authorize" => Ok(OcppActionEnum::Authorize),
+            "BootNotification" => Ok(OcppActionEnum::BootNotification),
+            "CancelReservation" => Ok(OcppActionEnum::CancelReservation),
+            "CertificateSigned" => Ok(OcppActionEnum::CertificateSigned),
+            "ChangeAvailability" => Ok(OcppActionEnum::ChangeAvailability),
+            "ClearCache" => Ok(OcppActionEnum::ClearCache),
+            "ClearChargingProfile" => Ok(OcppActionEnum::ClearChargingProfile),
+            "ClearDisplayMessage" => Ok(OcppActionEnum::ClearDisplayMessage),
+            "ClearedChargingLimit" => Ok(OcppActionEnum::ClearedChargingLimit),
+            "ClearVariableMonitoring" => Ok(OcppActionEnum::ClearVariableMonitoring),
+            "CostUpdated" => Ok(OcppActionEnum::CostUpdated),
+            "CustomerInformation" => Ok(OcppActionEnum::CustomerInformation),
+            "DataTransfer" => Ok(OcppActionEnum::DataTransfer),
+            "DeleteCertificate" => Ok(OcppActionEnum::DeleteCertificate),
+            "FirmwareStatusNotification" => Ok(OcppActionEnum::FirmwareStatusNotification),
+            "Get15118EVCertificate" => Ok(OcppActionEnum::Get15118EVCertificate),
+            "GetBaseReport" => Ok(OcppActionEnum::GetBaseReport),
+            "GetCertificateStatus" => Ok(OcppActionEnum::GetCertificateStatus),
+            "GetChargingProfile" => Ok(OcppActionEnum::GetChargingProfile),
+            "GetCompositeSchedule" => Ok(OcppActionEnum::GetCompositeSchedule),
+            "GetDisplayMessage" => Ok(OcppActionEnum::GetDisplayMessage),
+            "GetInstalledCertificateIds" => Ok(OcppActionEnum::GetInstalledCertificateIds),
+            "GetLocalListVersion" => Ok(OcppActionEnum::GetLocalListVersion),
+            "GetLog" => Ok(OcppActionEnum::GetLog),
+            "GetMonitoringReport" => Ok(OcppActionEnum::GetMonitoringReport),
+            "GetReport" => Ok(OcppActionEnum::GetReport),
+            "GetTransactionStatus" => Ok(OcppActionEnum::GetTransactionStatus),
+            "GetVariables" => Ok(OcppActionEnum::GetVariables),
+            "Heartbeat" => Ok(OcppActionEnum::Heartbeat),
+            "InstallCertificate" => Ok(OcppActionEnum::InstallCertificate),
+            "LogStatusNotification" => Ok(OcppActionEnum::LogStatusNotification),
+            "MeterValues" => Ok(OcppActionEnum::MeterValues),
+            "NotifyChargingLimit" => Ok(OcppActionEnum::NotifyChargingLimit),
+            "NotifyCustomerInformation" => Ok(OcppActionEnum::NotifyCustomerInformation),
+            "NotifyDisplayMessages" => Ok(OcppActionEnum::NotifyDisplayMessages),
+            "NotifyEVChargingNeeds" => Ok(OcppActionEnum::NotifyEVChargingNeeds),
+            "NotifyEVChargingSchedule" => Ok(OcppActionEnum::NotifyEVChargingSchedule),
+            "NotifyEvent" => Ok(OcppActionEnum::NotifyEvent),
+            "NotifyMonitoringReport" => Ok(OcppActionEnum::NotifyMonitoringReport),
+            "NotifyReport" => Ok(OcppActionEnum::NotifyReport),
+            "PublishFirmware" => Ok(OcppActionEnum::PublishFirmware),
             "PublishFirmwareStatusNotification" => {
-                Ok(ActionEnum::PublishFirmwareStatusNotification)
+                Ok(OcppActionEnum::PublishFirmwareStatusNotification)
             }
-            "ReportChargingProfiles" => Ok(ActionEnum::ReportChargingProfiles),
-            "RequestStartTransaction" => Ok(ActionEnum::RequestStartTransaction),
-            "RequestStopTransaction" => Ok(ActionEnum::RequestStopTransaction),
-            "ReservationStatusUpdate" => Ok(ActionEnum::ReservationStatusUpdate),
-            "ReserveNow" => Ok(ActionEnum::ReserveNow),
-            "Reset" => Ok(ActionEnum::Reset),
-            "SecurityEventNotification" => Ok(ActionEnum::SecurityEventNotification),
-            "SendLocalList" => Ok(ActionEnum::SendLocalList),
-            "SetChargingProfile" => Ok(ActionEnum::SetChargingProfile),
-            "SetDisplayMessage" => Ok(ActionEnum::SetDisplayMessage),
-            "SetMonitoringBase" => Ok(ActionEnum::SetMonitoringBase),
-            "SetMonitoringLevel" => Ok(ActionEnum::SetMonitoringLevel),
-            "SetNetworkProfile" => Ok(ActionEnum::SetNetworkProfile),
-            "SetVariableMonitoring" => Ok(ActionEnum::SetVariableMonitoring),
-            "SetVariables" => Ok(ActionEnum::SetVariables),
-            "SignCertificate" => Ok(ActionEnum::SignCertificate),
-            "StatusNotification" => Ok(ActionEnum::StatusNotification),
-            "TransactionEvent" => Ok(ActionEnum::TransactionEvent),
-            "TriggerMessage" => Ok(ActionEnum::TriggerMessage),
-            "UnlockConnector" => Ok(ActionEnum::UnlockConnector),
-            "UnpublishFirmware" => Ok(ActionEnum::UnpublishFirmware),
-            "UpdateFirmware" => Ok(ActionEnum::UpdateFirmware),
+            "ReportChargingProfiles" => Ok(OcppActionEnum::ReportChargingProfiles),
+            "RequestStartTransaction" => Ok(OcppActionEnum::RequestStartTransaction),
+            "RequestStopTransaction" => Ok(OcppActionEnum::RequestStopTransaction),
+            "ReservationStatusUpdate" => Ok(OcppActionEnum::ReservationStatusUpdate),
+            "ReserveNow" => Ok(OcppActionEnum::ReserveNow),
+            "Reset" => Ok(OcppActionEnum::Reset),
+            "SecurityEventNotification" => Ok(OcppActionEnum::SecurityEventNotification),
+            "SendLocalList" => Ok(OcppActionEnum::SendLocalList),
+            "SetChargingProfile" => Ok(OcppActionEnum::SetChargingProfile),
+            "SetDisplayMessage" => Ok(OcppActionEnum::SetDisplayMessage),
+            "SetMonitoringBase" => Ok(OcppActionEnum::SetMonitoringBase),
+            "SetMonitoringLevel" => Ok(OcppActionEnum::SetMonitoringLevel),
+            "SetNetworkProfile" => Ok(OcppActionEnum::SetNetworkProfile),
+            "SetVariableMonitoring" => Ok(OcppActionEnum::SetVariableMonitoring),
+            "SetVariables" => Ok(OcppActionEnum::SetVariables),
+            "SignCertificate" => Ok(OcppActionEnum::SignCertificate),
+            "StatusNotification" => Ok(OcppActionEnum::StatusNotification),
+            "TransactionEvent" => Ok(OcppActionEnum::TransactionEvent),
+            "TriggerMessage" => Ok(OcppActionEnum::TriggerMessage),
+            "UnlockConnector" => Ok(OcppActionEnum::UnlockConnector),
+            "UnpublishFirmware" => Ok(OcppActionEnum::UnpublishFirmware),
+            "UpdateFirmware" => Ok(OcppActionEnum::UpdateFirmware),
             _ => Err(()),
         }
     }
@@ -737,7 +736,7 @@ impl FromStr for ActionEnum {
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(untagged)]
-pub enum PayloadKindEnum {
+pub enum OcppPayloadKindEnum {
     Authorize(AuthorizeKind),
     BootNotification(BootNotificationKind),
     CancelReservation(CancelReservationKind),

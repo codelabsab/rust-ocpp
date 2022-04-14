@@ -20,7 +20,7 @@ mod tests {
 
     use crate::rpc::call::Call;
     use crate::rpc::enums::ActionEnum;
-    use crate::rpc::enums::PayloadKindEnum;
+    use crate::rpc::enums::OcppPayloadKindEnum;
     use crate::rpc::errors::RpcErrorCodes;
     use crate::rpc::ocpp::CallType;
     use crate::rpc::unit_test::calltype_test;
