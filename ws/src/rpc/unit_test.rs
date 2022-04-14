@@ -5,8 +5,8 @@ use super::ocpp::CallType;
 mod tests {
 
     use chrono::Utc;
+    use serde_json;
     use serde_json::Value;
-    use serde_json::{self};
 
     use rust_ocpp::v2_0_1::datatypes::charging_station_type::ChargingStationType;
     use rust_ocpp::v2_0_1::enumerations::boot_reason_enum_type::BootReasonEnumType;
@@ -23,7 +23,7 @@ mod tests {
     use crate::rpc::enums::PayloadKindEnum;
     use crate::rpc::errors::RpcErrorCodes;
     use crate::rpc::ocpp::CallType;
-    use crate::rpc::unit_test::call_type_test;
+    use crate::rpc::unit_test::calltype_test;
 
     #[test]
     fn test_deserialize_json_to_call() {
@@ -233,7 +233,7 @@ mod tests {
         // get ocpp message
         let ocpp_msg: CallType = serde_json::from_str(&bootnotificationrequest_json).unwrap();
 
-        let test = call_type_test(ocpp_msg);
+        let test = calltype_test(ocpp_msg);
 
         assert_eq!(test.is_ok(), true);
     }
@@ -254,7 +254,7 @@ mod tests {
         // get ocpp message
         let ocpp_msg: CallType = serde_json::from_str(&bootnotificationrequest_json).unwrap();
 
-        let test = call_type_test(ocpp_msg);
+        let test = calltype_test(ocpp_msg);
 
         assert_eq!(test.is_ok(), true);
     }
@@ -273,28 +273,28 @@ mod tests {
         // get ocpp message
         let ocpp_msg: CallType = serde_json::from_str(&bootnotificationrequest_json).unwrap();
 
-        let test = call_type_test(ocpp_msg);
+        let test = calltype_test(ocpp_msg);
 
         assert_eq!(test.is_ok(), true);
     }
 }
 
-pub fn call_type_test(ocpp_msg: CallType) -> Result<(), bool> {
-    if let CallType::Call(message_type_id, message_id, action, payload) = ocpp_msg {
+pub fn calltype_test(ocpp_msg: CallType) -> Result<(), bool> {
+    return if let CallType::Call(message_type_id, message_id, action, payload) = ocpp_msg {
         println!("Got Call:");
         println!("---------");
         println!("message type id : {message_type_id}");
         println!("message id      : {message_id}");
         println!("action          : {action}");
         println!("payload         : {payload}");
-        return Ok(());
+        Ok(())
     } else if let CallType::CallResult(message_type_id, message_id, payload) = ocpp_msg {
         println!("Got CallResult:");
         println!("---------");
         println!("message type id : {message_type_id}");
         println!("message id      : {message_id}");
         println!("payload         : {payload}");
-        return Ok(());
+        Ok(())
     } else if let CallType::CallError(
         message_type_id,
         message_id,
@@ -310,9 +310,9 @@ pub fn call_type_test(ocpp_msg: CallType) -> Result<(), bool> {
         println!("error             : {error_code}");
         println!("error description : {error_description}");
         println!("error details     : {error_details:?}");
-        return Ok(());
+        Ok(())
     } else {
         println!("Not a ocpp message");
-        return Err(false);
+        Err(false)
     }
 }
