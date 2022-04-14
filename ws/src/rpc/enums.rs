@@ -803,10 +803,3 @@ pub enum PayloadKindEnum {
     UnpublishFirmware(UnpublishFirmwareKind),
     UpdateFirmware(UpdateFirmwareKind),
 }
-
-pub enum CallTypeEnum {
-    Call(Call),
-    CallResult(CallResult),
-    CallError(CallError),
-    None,
-}
