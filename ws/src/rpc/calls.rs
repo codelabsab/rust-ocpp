@@ -20,7 +20,7 @@ pub enum OcppMessageType {
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct OCPPPayload {
+pub struct OcppPayload {
     payload: OcppPayloadKindEnum,
 }
 
@@ -44,7 +44,7 @@ pub struct Call {
     pub message_type_id: MessageTypeId,
     pub message_id: MessageId,
     pub action: OcppActionEnum,
-    pub payload: OCPPPayload,
+    pub payload: OcppPayload,
 }
 
 impl Call {
