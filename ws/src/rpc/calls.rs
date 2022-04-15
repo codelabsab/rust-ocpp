@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use super::enums::OcppPayloadKindEnum;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
@@ -11,7 +9,7 @@ use super::enums::OcppPayloadKindEnum;
 /// CallResult: [<MessageTypeId>, "<MessageId>", {<Payload>}]
 ///
 /// CallError: [<MessageTypeId>, "<MessageId>", "<errorCode>", "<errorDescription>", {<errorDetails>}]
-pub enum CallType {
+pub enum OcppMessageType {
     /// OCPP Call
     Call(usize, String, String, Value),
     /// OCPP Result
@@ -26,15 +24,15 @@ pub struct OCPPPayload {
     payload: OcppPayloadKindEnum,
 }
 
-impl OCPPPayload {
-    fn new(payload: String) -> Result<Self, String> {
-        let res = serde_json::from_str(&payload);
-        match res {
-            Ok(o) => Ok(Self { payload: o }),
-            _ => Err("Failed to parse".to_string()),
-        }
-    }
-}
+// impl OCPPPayload {
+//     fn new(payload: String) -> Result<Self, String> {
+//         let res = serde_json::from_str(&payload);
+//         match res {
+//             Ok(o) => Ok(Self { payload: o }),
+//             _ => Err("Failed to parse".to_string()),
+//         }
+//     }
+// }
 
 type MessageTypeId = usize;
 type MessageId = usize;

@@ -131,9 +131,6 @@ use rust_ocpp::v2_0_1::messages::unpublish_firmware::UnpublishFirmwareResponse;
 use rust_ocpp::v2_0_1::messages::update_firmware::UpdateFirmwareRequest;
 use rust_ocpp::v2_0_1::messages::update_firmware::UpdateFirmwareResponse;
 
-use super::call_error::CallError;
-use super::call_result::CallResult;
-
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Display)]
 #[serde(untagged)]
 pub enum AuthorizeKind {
