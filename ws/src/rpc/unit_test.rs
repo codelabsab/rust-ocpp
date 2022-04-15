@@ -17,7 +17,7 @@ mod tests {
     use rust_ocpp::v2_0_1::messages::heartbeat::HeartbeatResponse;
     use rust_ocpp::v2_0_1::messages::status_notification::StatusNotificationRequest;
 
-    use crate::rpc::calls::{Call, OcppMessageType};
+    use crate::rpc::calls::{OcppCall, OcppMessageType};
     use crate::rpc::enums::OcppActionEnum;
     use crate::rpc::errors::RpcErrorCodes;
     use crate::rpc::unit_test::calltype_test;

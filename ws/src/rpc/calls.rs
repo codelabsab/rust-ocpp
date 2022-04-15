@@ -40,14 +40,14 @@ type MessageId = usize;
 /// Call: [<MessageTypeId>, "<MessageId>", "<Action>", {<Payload>}]
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct Call {
+pub struct OcppCall {
     pub message_type_id: MessageTypeId,
     pub message_id: MessageId,
     pub action: OcppActionEnum,
     pub payload: OcppPayload,
 }
 
-impl Call {
+impl OcppCall {
     pub fn new(
         message_type_id: usize,
         message_id: String,
@@ -93,13 +93,13 @@ impl Call {
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 /// CallResult: [<MessageTypeId>, "<MessageId>", {<Payload>}]
-pub struct CallResult {
+pub struct OcppCallResult {
     pub message_type_id: usize,
     pub message_id: String,
     pub payload: serde_json::Value,
 }
 
-impl CallResult {
+impl OcppCallResult {
     pub fn new(message_type_id: usize, message_id: String, payload: serde_json::Value) -> Self {
         Self {
             message_type_id,
@@ -115,7 +115,7 @@ use serde_json::Value;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 /// CallError: [<MessageTypeId>, "<MessageId>", "<errorCode>", "<errorDescription>", {<errorDetails>}]
-pub struct CallError {
+pub struct OcppCallError {
     pub message_type_id: usize,
     pub message_id: String,
     pub error_code: String,
@@ -123,7 +123,7 @@ pub struct CallError {
     pub error_details: Option<Value>,
 }
 
-impl CallError {
+impl OcppCallError {
     pub fn new(
         message_type_id: usize,
         message_id: String,
