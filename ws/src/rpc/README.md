@@ -1,9 +1,25 @@
 # 4. RPC framework
 
-This module will implement stuff that is needed to implement a websocket
+This module implements the RPC part of the OCPP specification
+
+Incoming messages should contain either of the following:
 
 - Call
 - CallResult
 - CallError
 
-json_call_str = '[2,"19223201","BootNotification",{"reason": "PowerUp","chargingStation": {"model": "SingleSocketCharger","vendorName": "VendorX"}}]'
+A `Call` might look like this:
+
+```json
+[
+    2,
+    "19223201",
+    "BootNotification",
+    {
+        "reason": "PowerUp",
+        "chargingStation": {
+            "model": "SingleSocketCharger","vendorName": "VendorX"
+            }
+        }
+]
+```

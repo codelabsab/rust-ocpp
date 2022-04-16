@@ -733,7 +733,7 @@ impl FromStr for OcppActionEnum {
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(untagged)]
-pub enum OcppPayloadKindEnum {
+pub enum OcppPayload {
     Authorize(AuthorizeKind),
     BootNotification(BootNotificationKind),
     CancelReservation(CancelReservationKind),
