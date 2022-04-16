@@ -1,4 +1,4 @@
-use crate::rpc::calls::OcppMessageType;
+use crate::rpc::messages::OcppMessageType;
 
 /// tests
 #[cfg(test)]
@@ -17,9 +17,10 @@ mod tests {
     use rust_ocpp::v2_0_1::messages::heartbeat::HeartbeatResponse;
     use rust_ocpp::v2_0_1::messages::status_notification::StatusNotificationRequest;
 
-    use crate::rpc::calls::{OcppCall, OcppMessageType};
     use crate::rpc::enums::OcppActionEnum;
+    use crate::rpc::enums::OcppPayload;
     use crate::rpc::errors::RpcErrorCodes;
+    use crate::rpc::messages::{OcppCall, OcppMessageType};
 
     #[test]
     fn test_deserialize_json_to_call() {
@@ -38,18 +39,33 @@ mod tests {
             ]
         "#;
 
-        let authorizerequest_json =
-            r#"[2,"19223201","Authorize",{"id_token":"Token","type":"Central"}]"#;
+        let bnr = BootNotificationRequest {
+            reason: BootReasonEnumType::PowerUp,
+            charging_station: ChargingStationType {
+                model: "SingleSocketCharger".to_string(),
+                vendor_name: "VendorX".to_string(),
+                serial_number: None,
+                firmware_version: None,
+                modem: None,
+            },
+        };
+
+        let bootnotificationkind = crate::rpc::enums::BootNotificationKind::Request(bnr.to_owned());
+        let payload = OcppPayload::BootNotification(bootnotificationkind);
+
+        let call: OcppCall = OcppCall {
+            message_type_id: 2,
+            message_id: "19223201".to_string(),
+            action: OcppActionEnum::BootNotification,
+            payload: payload,
+        };
 
         let bootnotificationrequest: Result<OcppMessageType, _> =
             serde_json::from_str(bootnotificationrequest_json);
 
-        assert_eq!(bootnotificationrequest.is_ok(), true);
+        let bnr_json = serde_json::to_string(&bnr).unwrap();
 
-        let authorizerequest_call: Result<OcppMessageType, _> =
-            serde_json::from_str(authorizerequest_json);
-
-        assert_eq!(authorizerequest_call.is_ok(), true);
+        println!("{bnr_json}");
     }
 }
 

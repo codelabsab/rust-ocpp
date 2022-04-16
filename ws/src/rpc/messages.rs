@@ -1,7 +1,7 @@
 use crate::rpc::enums::{OcppActionEnum, OcppPayload};
 
 type OcppMessageTypeId = usize;
-type OcppMessageId = usize;
+type OcppMessageId = String;
 type OcppErrorCode = String;
 type OcppErrorDescription = String;
 type OcppErrorDetails = String;
