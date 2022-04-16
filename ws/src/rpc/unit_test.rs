@@ -51,6 +51,7 @@ mod tests {
 
         assert_eq!(authorizerequest_call.is_ok(), true);
     }
+}
 
 //     #[test]
 //     fn test_serialize_call_to_json() {
