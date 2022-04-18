@@ -41,17 +41,7 @@ async fn ws_bootnotificationrequest_test() {
         .expect("handshake");
 
     // Setup our test message that the client will send
-    let req = r#"
-    [
-        2,
-        "19223201",
-        "BootNotification",
-        {"reason": "PowerUp",
-        "chargingStation": {
-            "model": "SingleSocketCharger",
-            "vendorName": "VendorX"}
-        }
-    ]"#;
+    let req = r#"[2,"19223201","BootNotification",{"reason":"PowerUp","chargingStation":{"model":"SingleSocketCharger","vendorName":"VendorX"}}]"#;
 
     // client sends message
     client.send(Message::text(req)).await;
@@ -85,28 +75,31 @@ async fn ws_bootnotificationrequest_test() {
                 let call: Result<OcppCall, _> = ocpp_message_type.try_into();
                 match call {
                     Ok(ok_call) => {
-                        assert_eq!(ok_call.action, OcppActionEnum::BootNotification)
+                        // Do some more testing
+                        assert_eq!(ok_call.action, OcppActionEnum::BootNotification);
+                        assert_eq!(ok_call.message_type_id, 2);
+                        assert_eq!(serde_json::to_string(&ok_call).unwrap(), req);
                     }
-                    _ => {}
+                    _ => {
+                        panic!("Failed to parse Call")
+                    }
                 };
             }
-            OcppMessageType::CallResult(message_type_id, message_id, payload) => {}
+            OcppMessageType::CallResult(message_type_id, message_id, payload) => {
+                todo!()
+            }
             OcppMessageType::CallError(
                 message_type_id,
                 message_id,
                 error_code,
                 error_description,
                 error_details,
-            ) => {}
+            ) => {
+                todo!()
+            }
         },
-        Err(_) => {}
-    }
-
-    // // actual tests
-    // assert_eq!(reason, bnr.reason);
-    // assert_eq!(
-    //     charging_station_json,
-    //     json_res["chargingStation"].to_string()
-    // );
-    // assert_eq!(bnr.is_ok(), true);
+        Err(_) => {
+            panic!("Failed to parse Call")
+        }
+    };
 }
