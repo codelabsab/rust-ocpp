@@ -1,3 +1,5 @@
+use serde_json::Value;
+
 use crate::rpc::enums::{OcppActionEnum, OcppPayload};
 
 type OcppMessageTypeId = usize;
@@ -60,9 +62,9 @@ pub struct OcppCallError {
 #[serde(untagged)]
 pub enum OcppMessageType {
     /// OCPP Call
-    Call(OcppCall),
+    Call(usize, String, String, Value),
     /// OCPP Result
-    CallResult(OcppCallResult),
+    CallResult(usize, String, Value),
     /// OCPP Error
-    CallError(OcppCallError),
+    CallError(usize, String, String, String, Value),
 }
