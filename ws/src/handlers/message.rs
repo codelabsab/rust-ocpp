@@ -2,7 +2,7 @@ use futures::stream::SplitSink;
 use log::warn;
 use warp::ws::{Message, WebSocket};
 
-use crate::handlers::error::handle_error;
+use crate::{handlers::error::handle_error, rpc::messages::OcppMessageType};
 
 use super::response::handle_response;
 
@@ -17,7 +17,7 @@ use super::response::handle_response;
 */
 pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     // Skip any non-Text messages...
-    let _ = if let Ok(s) = msg.to_str() {
+    let msg = if let Ok(s) = msg.to_str() {
         s
     } else {
         warn!("Client sent non-text message");
@@ -30,17 +30,22 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
     };
 
     // serialize or die
-    // let payload: Payload = match serde_json::from_str(msg) {
-    //     Ok(o) => o,
-    //     Err(_) => {
-    //         handle_error(Message::text("failed to parse payload"), tx).await;
-    //         return;
-    //     }
-    // };
+    let ocpp_message: OcppMessageType = match serde_json::from_str(msg) {
+        Ok(o) => o,
+        Err(_) => {
+            handle_error(Message::text("failed to parse payload"), tx).await;
+            return;
+        }
+    };
 
-    handle_response(Message::text("online"), tx).await;
+    handle_response(
+        Message::text(serde_json::to_string(&ocpp_message).unwrap()),
+        tx,
+    )
+    .await;
 
     // what type of payload did we get?
+
     // match payload {
     //     // request?
     //     Payload::Request(message_type_id, message_id, action, payload) => {
