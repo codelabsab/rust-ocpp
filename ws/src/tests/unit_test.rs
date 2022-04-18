@@ -1,6 +1,9 @@
 use crate::{
     handlers::message::handle_message,
-    rpc::messages::{OcppCall, OcppMessageType},
+    rpc::{
+        enums::OcppActionEnum,
+        messages::{OcppCall, OcppMessageType},
+    },
 };
 use rust_ocpp::v2_0_1::datatypes::charging_station_type::ChargingStationType;
 use rust_ocpp::v2_0_1::messages::boot_notification::BootNotificationRequest;
@@ -78,14 +81,14 @@ async fn ws_bootnotificationrequest_test() {
 
     match bnr {
         Ok(ocpp_message_type) => match ocpp_message_type {
-            OcppMessageType::Call(message_type_id, message_id, action, payload) => {
-                let call = OcppCall {
-                    message_id,
-                    message_type_id,
-                    action,
-                    payload,
+            OcppMessageType::Call(_, _, _, _) => {
+                let call: Result<OcppCall, _> = ocpp_message_type.try_into();
+                match call {
+                    Ok(ok_call) => {
+                        assert_eq!(ok_call.action, OcppActionEnum::BootNotification)
+                    }
+                    _ => {}
                 };
-                assert_eq!(call.action.to_string(), "BootNotification".to_string());
             }
             OcppMessageType::CallResult(message_type_id, message_id, payload) => {}
             OcppMessageType::CallError(

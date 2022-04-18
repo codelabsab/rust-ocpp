@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use serde_json::Value;
 
 use crate::rpc::enums::{OcppActionEnum, OcppPayload};
@@ -16,6 +18,35 @@ pub struct OcppCall {
     pub message_id: OcppMessageId,
     pub action: OcppActionEnum,
     pub payload: OcppPayload,
+}
+
+impl TryFrom<OcppMessageType> for OcppCall {
+    type Error = &'static str;
+
+    fn try_from(msg: OcppMessageType) -> Result<Self, Self::Error> {
+        match msg {
+            OcppMessageType::Call(message_type_id, message_id, action, payload) => {
+                let action = if let Ok(o) = OcppActionEnum::from_str(&action) {
+                    o
+                } else {
+                    return Err("failed");
+                };
+                let payload: OcppPayload =
+                    if let Ok(p) = serde_json::from_value::<OcppPayload>(payload) {
+                        p
+                    } else {
+                        return Err("failed");
+                    };
+                Ok(OcppCall {
+                    message_type_id,
+                    message_id,
+                    action,
+                    payload,
+                })
+            }
+            _ => Err("failed"),
+        }
+    }
 }
 
 impl serde::Serialize for OcppCall {
