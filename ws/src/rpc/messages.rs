@@ -7,13 +7,28 @@ type OcppErrorDescription = String;
 type OcppErrorDetails = String;
 
 /// Call: [<MessageTypeId>, "<MessageId>", "<Action>", {<Payload>}]
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct OcppCall {
     pub message_type_id: OcppMessageTypeId,
     pub message_id: OcppMessageId,
     pub action: OcppActionEnum,
     pub payload: OcppPayload,
+}
+
+impl serde::Serialize for OcppCall {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        (
+            &self.message_type_id,
+            &self.message_id,
+            &self.action.to_string(),
+            &self.payload,
+        )
+            .serialize(serializer)
+    }
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
