@@ -1,9 +1,13 @@
+use crate::rpc::messages::OcppMessageType;
+
 /// tests
 #[cfg(test)]
 mod tests {
 
+    use std::str::FromStr;
+
     use chrono::Utc;
-    use serde_json::{self};
+    use serde_json;
 
     use rust_ocpp::v2_0_1::datatypes::charging_station_type::ChargingStationType;
     use rust_ocpp::v2_0_1::enumerations::boot_reason_enum_type::BootReasonEnumType;
@@ -15,45 +19,26 @@ mod tests {
     use rust_ocpp::v2_0_1::messages::heartbeat::HeartbeatResponse;
     use rust_ocpp::v2_0_1::messages::status_notification::StatusNotificationRequest;
 
-    use crate::rpc::call::Call;
-    use crate::rpc::call_error::CallError;
+    use crate::rpc::enums::BootNotificationKind;
+    use crate::rpc::enums::OcppActionEnum;
+    use crate::rpc::enums::OcppPayload;
     use crate::rpc::errors::RpcErrorCodes;
+    use crate::rpc::messages::{OcppCall, OcppMessageType};
+    use serde::Deserialize;
 
     #[test]
-    fn test_deserialize_json_to_call() {
-        let bootnotificationrequest_json = r#"
-            [
-                2,
-                "19223201",
-                "BootNotification",
-                {
-                    "reason": "PowerUp",
-                    "chargingStation": {
-                        "model": "SingleSocketCharger",
-                        "vendorName": "VendorX"
-                    }
-                }
-            ]
-        "#;
+    fn serialize_deserialize_json_comparison() {
+        let json = r#"[2,"19223201","BootNotification",{"chargingStation":{"model":"SingleSocketCharger","vendorName":"VendorX"},"reason":"PowerUp"}]"#;
 
-        let authorizerequest_json =
-            r#"[2,"19223201","Authorize",{"id_token":"Token","type":"Central"}]"#;
+        let ocpp_message = serde_json::from_str::<OcppMessageType>(&json).unwrap();
 
-        let bootnotificationrequest_call: Call =
-            serde_json::from_str(bootnotificationrequest_json).unwrap();
+        let back2json = serde_json::to_string(&ocpp_message).unwrap();
 
-        assert_eq!(
-            bootnotificationrequest_call.action,
-            "BootNotification".to_string()
-        );
-
-        let authorizerequest_call: Call = serde_json::from_str(authorizerequest_json).unwrap();
-
-        assert_eq!(authorizerequest_call.action, "Authorize".to_string());
+        assert_eq!(json, back2json);
     }
 
     #[test]
-    fn test_serialize_call_to_json() {
+    fn deserialize_call() {
         let bnr = BootNotificationRequest {
             reason: BootReasonEnumType::PowerUp,
             charging_station: ChargingStationType {
@@ -70,34 +55,6 @@ mod tests {
         let json = serde_json::to_string(&bnr).unwrap();
 
         println!("Serialized to {}", json);
-    }
-
-    #[test]
-    fn test_call_error() {
-        let error = CallError {
-            message_type_id: 4,
-            message_id: "19223201".to_string(),
-            error_code: "NotSupported".to_string(),
-            error_description: "SetDisplayMessageRequest not implemented".to_string(),
-            error_details: "{}".to_string(),
-        };
-
-        assert_eq!(error.message_type_id, 4, "Testing message_type_id");
-        assert_eq!(
-            error.message_id,
-            "19223201".to_string(),
-            "Testing message_id"
-        );
-        assert_eq!(
-            error.error_code,
-            "NotSupported".to_string(),
-            "Testing error_code"
-        );
-        assert_eq!(
-            error.error_details,
-            "{}".to_string(),
-            "Testing error_details"
-        );
     }
 
     // Testing all error codes are correct for RpcErrorCodes For OCPP 2.0.1
@@ -176,26 +133,25 @@ mod tests {
         // B01 - Cold Boot Charging Station
 
         // The Charging Station sends BootNotificationRequest to the CSMS.
-        let bootnotificationrequest_json = r#"
-            [
-                2,
-                "19223201",
-                "BootNotification",
-                {
-                    "reason": "PowerUp",
-                    "chargingStation": {
-                        "model": "SingleSocketCharger",
-                        "vendorName": "VendorX"
+        let call_with_bootnotification_request = r#"
+                [
+                    2,
+                    "19223201",
+                    "BootNotification",
+                    {
+                        "reason": "PowerUp",
+                        "chargingStation": {
+                            "model": "SingleSocketCharger",
+                            "vendorName": "VendorX"
+                        }
                     }
-                }
-            ]
-        "#;
+                ]
+            "#;
 
-        let call: Call = serde_json::from_str(bootnotificationrequest_json).unwrap();
+        let call: Result<OcppMessageType, _> =
+            serde_json::from_str(call_with_bootnotification_request);
 
-        let bn_req: BootNotificationRequest = serde_json::from_value(call.payload).unwrap();
-
-        assert_eq!(bn_req.reason, BootReasonEnumType::PowerUp);
+        assert_eq!(call.is_ok(), true);
 
         // The CSMS returns with BootNotificationResponse with the status Accepted.
         let bn_res = BootNotificationResponse {
@@ -234,5 +190,91 @@ mod tests {
 
         println!("heart beat request: {:?}", heart_beat_req);
         println!("heart beat response: {:?}", heart_beat_res);
+    }
+
+    #[test]
+    fn test_call() {
+        let bootnotificationrequest_json = r#"
+                [
+                    2,
+                    "19223201",
+                    "BootNotification",
+                    {
+                        "reason": "PowerUp",
+                        "chargingStation": {
+                            "model": "SingleSocketCharger",
+                            "vendorName": "VendorX"
+                        }
+                    }
+                ]
+            "#;
+        // get ocpp message
+        let ocpp_msg: Result<OcppMessageType, _> =
+            serde_json::from_str(&bootnotificationrequest_json);
+
+        println!("{ocpp_msg:?}");
+        assert_eq!(ocpp_msg.is_ok(), true);
+    }
+
+    #[test]
+    fn test_call_result() {
+        let bootnotificationrequest_json = r#"
+            [
+                3,
+                "19223201",
+                {
+                    "currentTime": "2013-02-01T20:53:32.486Z",
+                    "interval": 300,
+                    "status": "Accepted"
+                }
+            ]
+            "#;
+        // get ocpp message
+        let ocpp_msg: Result<OcppMessageType, _> =
+            serde_json::from_str(&bootnotificationrequest_json);
+
+        println!("{ocpp_msg:?}");
+        assert_eq!(ocpp_msg.is_ok(), true);
+    }
+
+    #[test]
+    fn test_call_error() {
+        let bootnotificationrequest_json = r#"
+            [
+                4,
+                "162376037",
+                "NotSupported",
+                "SetDisplayMessageRequest not implemented",
+                {}
+            ]
+            "#;
+        // get ocpp message
+        let ocpp_msg: Result<OcppMessageType, _> =
+            serde_json::from_str(&bootnotificationrequest_json);
+
+        assert_eq!(ocpp_msg.is_ok(), true);
+    }
+
+    #[test]
+    fn test_type_cast_to_call() {
+        let bootnotificationrequest_json = r#"
+                [
+                    2,
+                    "19223201",
+                    "BootNotification",
+                    {
+                        "reason": "PowerUp",
+                        "chargingStation": {
+                            "model": "SingleSocketCharger",
+                            "vendorName": "VendorX"
+                        }
+                    }
+                ]
+            "#;
+        // get ocpp message
+        let ocpp_msg: Result<OcppMessageType, _> =
+            serde_json::from_str(&bootnotificationrequest_json);
+
+        assert_eq!(ocpp_msg.is_ok(), true);
     }
 }
