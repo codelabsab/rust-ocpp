@@ -218,7 +218,7 @@ mod tests {
 
     #[test]
     fn test_call_result() {
-        let bootnotificationrequest_json = r#"
+        let callresult_json = r#"
             [
                 3,
                 "19223201",
@@ -230,8 +230,7 @@ mod tests {
             ]
             "#;
         // get ocpp message
-        let ocpp_msg: Result<OcppMessageType, _> =
-            serde_json::from_str(&bootnotificationrequest_json);
+        let ocpp_msg: Result<OcppMessageType, _> = serde_json::from_str(&callresult_json);
 
         println!("{ocpp_msg:?}");
         assert_eq!(ocpp_msg.is_ok(), true);
@@ -239,7 +238,7 @@ mod tests {
 
     #[test]
     fn test_call_error() {
-        let bootnotificationrequest_json = r#"
+        let callerror_json = r#"
             [
                 4,
                 "162376037",
@@ -249,8 +248,7 @@ mod tests {
             ]
             "#;
         // get ocpp message
-        let ocpp_msg: Result<OcppMessageType, _> =
-            serde_json::from_str(&bootnotificationrequest_json);
+        let ocpp_msg: Result<OcppMessageType, _> = serde_json::from_str(&callerror_json);
 
         assert_eq!(ocpp_msg.is_ok(), true);
     }
