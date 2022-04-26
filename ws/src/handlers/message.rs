@@ -1,19 +1,21 @@
 use futures::stream::SplitSink;
 use log::warn;
+use log::info;
+
 use warp::ws::{Message, WebSocket};
 
 use crate::{handlers::error::handle_error, rpc::messages::OcppMessageType};
+use crate::rpc::enums::OcppActionEnum;
+use crate::rpc::messages::{OcppCall, OcppCallError, OcppCallResult};
 
 use super::response::handle_response;
+
 
 /*
     The job of handle_message is to:
     Validate that:
         1. incoming transmission is of type text
-        2. text is deserializable to jsonValue
-        3. json data is of type array
-        4. validate that the array is of type Call
-    Cast to correct Call type
+        2. Cast to correct Call type
 */
 pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>) {
     // Skip any non-Text messages...
@@ -37,6 +39,52 @@ pub async fn handle_message(msg: Message, tx: &mut SplitSink<WebSocket, Message>
             return;
         }
     };
+
+    match ocpp_message {
+            OcppMessageType::Call(_, _, _, _) => {
+                let call: Result<OcppCall, _> = ocpp_message.clone().try_into();
+                match call {
+                    Ok(ok_call) => {
+                        // Do some more testing
+                        // assert_eq!(ok_call.action, OcppActionEnum::BootNotification);
+                        // assert_eq!(ok_call.message_type_id, 2);
+                        // assert_eq!(serde_json::to_string(&ok_call).unwrap(), req);
+                        match ok_call.action {
+                            OcppActionEnum::BootNotification => {
+                                // is new device ok?
+                                info!("New charging station booted");
+                            }
+                            _ => {}
+                        }
+                    }
+                    _ => {
+                        panic!("Failed to parse Call")
+                    }
+                };
+            }
+            OcppMessageType::CallResult(_, _, _) => {
+                let call_result: Result<OcppCallResult, _> = ocpp_message.clone().try_into();
+                match call_result {
+                    Ok(ok_callresult) => {
+                        info!("Got a CallResult: {ok_callresult:#?}");
+                    }
+                    _ => {
+                        panic!("Failed to parse CallResult")
+                    }
+                };
+            }
+            OcppMessageType::CallError(_, _, _, _, _) => {
+                let call_error: Result<OcppCallError, _> = ocpp_message.clone().try_into();
+                match call_error {
+                    Ok(ok_callerror) => {
+                        info!("Got a CallError: {ok_callerror:#?}");
+                    }
+                    _ => panic!("Failed to parse CallError"),
+                }
+            }
+        }
+
+
 
     handle_response(
         Message::text(serde_json::to_string(&ocpp_message).unwrap()),

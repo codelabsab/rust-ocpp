@@ -1,5 +1,3 @@
-use crate::rpc::messages::OcppMessageType;
-
 /// tests
 #[cfg(test)]
 mod tests {

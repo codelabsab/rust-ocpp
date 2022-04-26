@@ -52,20 +52,7 @@ async fn ws_call_test() {
     // convert to str and json
     let res = res.to_str().unwrap();
 
-    let json_res: serde_json::Value = serde_json::from_str(&res).unwrap();
-
-    // // some test cases to match response to
-    let reason = "PowerUp";
-    let charging_station = ChargingStationType {
-        serial_number: None,
-        model: "SingleSocketCharger".to_string(),
-        vendor_name: "VendorX".to_string(),
-        firmware_version: None,
-        modem: None,
-    };
-    let charging_station_json = serde_json::to_string(&charging_station).unwrap();
-
-    // // cast string to real BootNotificationRequest struct
+    // cast string to real BootNotificationRequest struct
     let bnr: Result<OcppMessageType, Error> = serde_json::from_str::<OcppMessageType>(&res);
 
     match bnr {
@@ -88,11 +75,11 @@ async fn ws_call_test() {
                 todo!()
             }
             OcppMessageType::CallError(
-                message_type_id,
-                message_id,
-                error_code,
-                error_description,
-                error_details,
+                _,
+                _,
+                _,
+                _,
+                _,
             ) => {
                 todo!()
             }
@@ -123,9 +110,7 @@ async fn ws_callresult_test() {
     // convert to str and json
     let res = res.to_str().unwrap();
 
-    let json_res: serde_json::Value = serde_json::from_str(&res).unwrap();
-
-    // // cast string to real BootNotificationRequest struct
+    // cast string to real BootNotificationRequest struct
     let bnr: Result<OcppMessageType, Error> = serde_json::from_str::<OcppMessageType>(&res);
 
     match bnr {
@@ -192,9 +177,7 @@ async fn ws_callerror_test() {
     // convert to str and json
     let res = res.to_str().unwrap();
 
-    let json_res: serde_json::Value = serde_json::from_str(&res).unwrap();
-
-    // // cast string to real BootNotificationRequest struct
+    // cast string to real BootNotificationRequest struct
     let bnr: Result<OcppMessageType, Error> = serde_json::from_str::<OcppMessageType>(&res);
 
     match bnr {
