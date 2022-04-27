@@ -18,4 +18,6 @@ demo implementation of ws server, not fully implemented
 
 # validation of implementation
 
-I'm currently working on validating the implementation using json schemas.
+[x] v2.0.1 validated
+
+[ ] v1.6 not valiated
