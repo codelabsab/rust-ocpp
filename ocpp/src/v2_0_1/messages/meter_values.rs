@@ -7,7 +7,7 @@ pub struct MeterValuesRequest {
     /// This contains a number (>0) designating an EVSE of the Charging Station. ‘0’ (zero) is used to designate the main power meter.
     pub evse_id: i64,
     /// The sampled meter values with timestamps.
-    pub meter_value: MeterValueType,
+    pub meter_value: Vec<MeterValueType>,
 }
 
 /// Sent by the CSMS to the Charging Station in response to a MeterValuesRequest.

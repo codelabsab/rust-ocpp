@@ -9,5 +9,5 @@ use super::sampled_value_type::SampledValueType;
 #[serde(rename_all = "camelCase")]
 pub struct MeterValueType {
     pub timestamp: DateTime<Utc>,
-    pub sampled_value: SampledValueType,
+    pub sampled_value: Vec<SampledValueType>,
 }
