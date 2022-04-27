@@ -6,7 +6,7 @@ use crate::v2_0_1::datatypes::clear_monitoring_result_type::ClearMonitoringResul
 #[serde(rename_all = "camelCase")]
 pub struct ClearVariableMonitoringRequest {
     /// List of the monitors to be cleared, identified by there Id.
-    pub id: i64,
+    pub id: Vec<i64>,
 }
 
 /// ClearVariableMonitoringResponse, sent by the Charging Station to the CSMS.
@@ -14,5 +14,5 @@ pub struct ClearVariableMonitoringRequest {
 #[serde(rename_all = "camelCase")]
 pub struct ClearVariableMonitoringResponse {
     /// List of result statuses per monitor.
-    pub clear_monitoring_result: ClearMonitoringResultType,
+    pub clear_monitoring_result: Vec<ClearMonitoringResultType>,
 }
