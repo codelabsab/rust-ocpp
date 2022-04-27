@@ -45,6 +45,7 @@ mod tests {
     };
     use chrono::Utc;
     use jsonschema::JSONSchema;
+    use crate::v2_0_1::messages::cost_updated::{CostUpdatedRequest, CostUpdatedResponse};
 
     #[test]
     fn validate_authorize_request() {
@@ -476,9 +477,43 @@ mod tests {
     }
 
     #[test]
-    fn validate_cost_updated_request() {}
+    fn validate_cost_updated_request() {
+        let test = CostUpdatedRequest {
+            total_cost: 0.0,
+            transaction_id: "".to_string()
+        };
+        let schema =
+            include_str!("../../../../schemas/ocpp/v2.0.1/CostUpdatedRequest.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_cost_updated_response() {}
+    fn validate_cost_updated_response() {
+        let test = CostUpdatedResponse {
+        };
+        let schema =
+            include_str!("../../../../schemas/ocpp/v2.0.1/CostUpdatedResponse.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
     fn validate_customer_information_request() {}
     #[test]
