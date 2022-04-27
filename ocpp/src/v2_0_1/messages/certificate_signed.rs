@@ -12,7 +12,7 @@ pub struct CertificateSignedRequest {
     /// CA certificates. In that case, the order of the bundle should follow the
     /// certificate chain, starting from the leaf certificate.
     ///
-    /// The Configuration Variable MaxCertificateChainSize can be used to limit the
+    /// The Configuration Variable `MaxCertificateChainSize` can be used to limit the
     ///  maximum size of this field.
     #[validate(length(min = 0, max = 10000))]
     pub certificate_chain: String,
