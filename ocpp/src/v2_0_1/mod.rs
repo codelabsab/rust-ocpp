@@ -17,3 +17,8 @@ pub mod messages;
 
 /// helper functions
 pub mod helpers;
+
+
+/// tests
+#[cfg(test)]
+pub mod tests;
