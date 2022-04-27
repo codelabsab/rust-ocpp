@@ -8,7 +8,7 @@ use crate::v2_0_1::datatypes::get_variable_result_type::GetVariableResultType;
 #[serde(rename_all = "camelCase")]
 pub struct GetVariablesRequest {
     /// List of requested variables.
-    pub get_variable_data: GetVariableDataType,
+    pub get_variable_data: Vec<GetVariableDataType>,
 }
 
 /// GetVariablesResponse, sent by the CSMS to the Charging Station in response to GetVariablesRequest.
