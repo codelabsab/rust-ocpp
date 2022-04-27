@@ -7,11 +7,78 @@ mod tests {
         BootNotificationRequest, BootNotificationResponse,
     };
     use chrono::Utc;
-    use jsonschema::is_valid;
+    use jsonschema::JSONSchema;
+    use crate::v2_0_1::datatypes::id_token_info_type::IdTokenInfoType;
+    use crate::v2_0_1::datatypes::id_token_type::IdTokenType;
+    use crate::v2_0_1::enumerations::authorization_status_enum_type::AuthorizationStatusEnumType;
+    use crate::v2_0_1::enumerations::id_token_enum_type::IdTokenEnumType;
+    use crate::v2_0_1::messages::authorize::{AuthorizeRequest, AuthorizeResponse};
 
     #[test]
-    fn schema_validation_test() {
-        let boot_notification_request = BootNotificationRequest {
+    fn validate_authorize_request() {
+        let test = AuthorizeRequest {
+            certificate: None,
+            id_token: IdTokenType {
+                id_token: "".to_string(),
+                kind: IdTokenEnumType::Central,
+                additional_info: None
+            },
+            iso_15118_certificate_hash_data: None
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v2.0.1/AuthorizeRequest.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema)
+            .expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!(
+                    "Instance path: {}", error.instance_path
+                );
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
+
+    #[test]
+    fn validate_authorize_response() {
+        let test = AuthorizeResponse {
+            certificate_status: None,
+            id_token_info: IdTokenInfoType {
+                status: AuthorizationStatusEnumType::Accepted,
+                cache_expiry_date_time: None,
+                charging_priority: None,
+                language1: None,
+                evse_id: None,
+                language2: None,
+                group_id_token: None,
+                personal_message: None
+            }
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v2.0.1/AuthorizeResponse.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema)
+            .expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!(
+                    "Instance path: {}", error.instance_path
+                );
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
+
+    #[test]
+    fn validate_bootnotification_request() {
+        let test = BootNotificationRequest {
             reason: BootReasonEnumType::PowerUp,
             charging_station: ChargingStationType {
                 model: "SingleSocketCharger".to_string(),
@@ -21,13 +88,27 @@ mod tests {
                 modem: None,
             },
         };
-
         let schema = include_str!("../../../../schemas/ocpp/v2.0.1/BootNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
-        let instance = serde_json::to_value(&boot_notification_request).unwrap();
-        assert!(is_valid(&schema, &instance));
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema)
+            .expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!(
+                    "Instance path: {}", error.instance_path
+                );
+            }
+        }
+        assert!(compiled.is_valid(&instance));
 
-        let boot_notification_response = BootNotificationResponse {
+    }
+
+    #[test]
+    fn validate_bootnotification_response() {
+        let test = BootNotificationResponse {
             current_time: Utc::now(),
             interval: 10,
             status: RegistrationStatusEnumType::Accepted,
@@ -36,7 +117,18 @@ mod tests {
 
         let schema = include_str!("../../../../schemas/ocpp/v2.0.1/BootNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
-        let instance = serde_json::to_value(&boot_notification_response).unwrap();
-        assert!(is_valid(&schema, &instance));
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema)
+            .expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!(
+                    "Instance path: {}", error.instance_path
+                );
+            }
+        }
+        assert!(compiled.is_valid(&instance));
     }
 }

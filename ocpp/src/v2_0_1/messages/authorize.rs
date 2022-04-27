@@ -1,8 +1,10 @@
 //! Authorize
+use validator::Validate;
+use crate::v2_0_1::datatypes::id_token_info_type::IdTokenInfoType;
+
 use crate::v2_0_1::datatypes::id_token_type::IdTokenType;
 use crate::v2_0_1::datatypes::ocsp_request_data_type::OCSPRequestDataType;
 use crate::v2_0_1::enumerations::authorize_certificate_status_enum_type::AuthorizeCertificateStatusEnumType;
-use validator::Validate;
 
 /// ´AuthorizeRequest`, sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Validate, Clone, Debug, PartialEq)]
@@ -29,5 +31,5 @@ pub struct AuthorizeResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub certificate_status: Option<AuthorizeCertificateStatusEnumType>,
     /// Contains information about authorization status, expiry and group id.
-    pub id_token: IdTokenType,
+    pub id_token_info: IdTokenInfoType,
 }
