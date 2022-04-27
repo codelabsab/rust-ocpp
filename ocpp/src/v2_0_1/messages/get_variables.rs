@@ -16,5 +16,5 @@ pub struct GetVariablesRequest {
 #[serde(rename_all = "camelCase")]
 pub struct GetVariablesResponse {
     /// List of requested variables and their values.
-    pub get_variable_result: GetVariableResultType,
+    pub get_variable_result: Vec<GetVariableResultType>,
 }
