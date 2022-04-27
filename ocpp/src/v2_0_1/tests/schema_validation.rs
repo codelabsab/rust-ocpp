@@ -11,8 +11,10 @@ mod tests {
     use crate::v2_0_1::datatypes::id_token_info_type::IdTokenInfoType;
     use crate::v2_0_1::datatypes::id_token_type::IdTokenType;
     use crate::v2_0_1::enumerations::authorization_status_enum_type::AuthorizationStatusEnumType;
+    use crate::v2_0_1::enumerations::cancel_reservation_status_enum_type::CancelReservationStatusEnumType;
     use crate::v2_0_1::enumerations::id_token_enum_type::IdTokenEnumType;
     use crate::v2_0_1::messages::authorize::{AuthorizeRequest, AuthorizeResponse};
+    use crate::v2_0_1::messages::cancel_reservation::{CancelReservationRequest, CancelReservationResponse};
 
     #[test]
     fn validate_authorize_request() {
@@ -116,6 +118,53 @@ mod tests {
         };
 
         let schema = include_str!("../../../../schemas/ocpp/v2.0.1/BootNotificationResponse.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema)
+            .expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!(
+                    "Instance path: {}", error.instance_path
+                );
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
+
+    #[test]
+    fn validate_cancelreservation_request() {
+        let test = CancelReservationRequest {
+            reservation_id: 0
+        };
+        let schema = include_str!("../../../../schemas/ocpp/v2.0.1/CancelReservationRequest.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema)
+            .expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!(
+                    "Instance path: {}", error.instance_path
+                );
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+
+    }
+
+    #[test]
+    fn validate_cancelreservation_response() {
+        let test = CancelReservationResponse {
+            status: CancelReservationStatusEnumType::Accepted,
+            status_info: None
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v2.0.1/CancelReservationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema)
