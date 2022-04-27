@@ -24,7 +24,7 @@ pub struct ChargingScheduleType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_charging_rate: Option<f64>,
     /// Required. List of ChargingSchedulePeriod elements defining maximum power or current usage over time. The maximum number of periods, that is supported by the Charging Station, if less than 1024, is set by device model variable SmartChargingCtrlr.PeriodsPerSchedule
-    pub charging_schedule_period: ChargingSchedulePeriodType,
+    pub charging_schedule_period: Vec<ChargingSchedulePeriodType>,
     /// Optional. Sales tariff associated with this charging schedule.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sales_tariff: Option<SalesTariffType>,

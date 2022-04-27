@@ -11,7 +11,7 @@ pub struct NotifyEventRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tbc: Option<bool>,
     pub seq_no: i64,
-    pub event_data: EventDataType,
+    pub event_data: Vec<EventDataType>,
 }
 
 /// Response to NotifyEventRequest. No fields are defined.
