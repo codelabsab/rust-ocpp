@@ -1,5 +1,9 @@
 # rust-ocpp
 
+[![crates.io](https://img.shields.io/crates/v/rust-ocpp.svg)](https://img.shields.io/crates/v/rust-ocpp)
+[![workflow](https://img.shields.io/github/workflow/status/codelabsab/rust-ocpp/Rust)](https://img.shields.io/github/workflow/status/codelabsab/rust-ocpp/Rust)
+
+
 this repo contains implementations of `ocpp`
 
 ## paths
