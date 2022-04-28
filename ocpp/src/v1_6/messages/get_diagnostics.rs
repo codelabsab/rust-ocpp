@@ -1,13 +1,13 @@
 use chrono::{DateTime, Utc};
 use validator::Validate;
 
+
 /// This contains the field definition of the GetDiagnostics.req PDU sent by the Central System to the Charge Point. See also Get Diagnostics
 #[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct GetDiagnosticsRequest {
     /// Required. This contains the location (directory) where the diagnostics file shall be uploaded to.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub location: Option<String>,
+    pub location: String,
     /// Optional. This specifies how many times Charge Point must try to upload the diagnostics before giving up. If this field is not present, it is left to Charge Point to decide how many times it wants to retry.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub retries: Option<i64>,
