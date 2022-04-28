@@ -9,7 +9,7 @@ pub struct ReportChargingProfilesRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tbc: Option<bool>,
     pub evse_id: i64,
-    pub charging_profile: ChargingProfileType,
+    pub charging_profile: Vec<ChargingProfileType>,
 }
 
 /// The ReportChargingProfilesResponse message is sent by the CSMS to the Charging Station in response to a ReportChargingProfilesRequest. No fields are defined.

@@ -10,7 +10,7 @@ use crate::v2_0_1::enumerations::set_variable_status_enum_type::SetVariableStatu
 pub struct SetVariableResultType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attribute_type: Option<AttributeEnumType>,
-    pub attribute_value: SetVariableStatusEnumType,
+    pub attribute_status: SetVariableStatusEnumType,
     pub component: ComponentType,
     pub variable: VariableType,
     #[serde(skip_serializing_if = "Option::is_none")]

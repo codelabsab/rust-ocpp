@@ -33,5 +33,5 @@ pub struct ChargingProfileType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction_id: Option<String>,
     /// Required. Schedule that contains limits for the available power or current over time. In order to support ISO 15118 schedule negotiation, it supports at most three schedules with associated tariff to choose from
-    pub charging_schedule: ChargingScheduleType,
+    pub charging_schedule: Vec<ChargingScheduleType>,
 }

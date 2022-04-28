@@ -6,6 +6,7 @@ use crate::v2_0_1::enumerations::reset_status_enum_type::ResetStatusEnumType;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct ResetRequest {
+    #[serde(rename = "type")]
     pub request_type: ResetEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evse_id: Option<i64>,

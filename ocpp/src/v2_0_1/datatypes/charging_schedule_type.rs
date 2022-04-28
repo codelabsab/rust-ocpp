@@ -1,5 +1,6 @@
 use chrono::DateTime;
 use chrono::Utc;
+use validator::Validate;
 
 use super::charging_schedule_period_type::ChargingSchedulePeriodType;
 use super::sales_tariff_type::SalesTariffType;
@@ -7,7 +8,7 @@ use crate::v2_0_1::enumerations::charging_rate_unit_enum_type::ChargingRateUnitE
 
 /// Charging schedule structure defines a list of charging periods, as used in: GetCompositeSchedule.conf and ChargingProfile.
 /// ChargingScheduleType is used by: Common:ChargingProfileType , NotifyChargingLimitRequest, NotifyEVChargingScheduleRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingScheduleType {
     /// Required. Identifies the ChargingSchedule.
@@ -24,6 +25,7 @@ pub struct ChargingScheduleType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_charging_rate: Option<f64>,
     /// Required. List of ChargingSchedulePeriod elements defining maximum power or current usage over time. The maximum number of periods, that is supported by the Charging Station, if less than 1024, is set by device model variable SmartChargingCtrlr.PeriodsPerSchedule
+    #[validate(length(min = 1))]
     pub charging_schedule_period: Vec<ChargingSchedulePeriodType>,
     /// Optional. Sales tariff associated with this charging schedule.
     #[serde(skip_serializing_if = "Option::is_none")]

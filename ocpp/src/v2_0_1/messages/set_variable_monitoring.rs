@@ -5,12 +5,12 @@ use crate::v2_0_1::datatypes::set_monitoring_result_type::SetMonitoringResultTyp
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SetVariableMonitoringRequest {
-    pub set_monitoring_data: SetMonitoringDataType,
+    pub set_monitoring_data: Vec<SetMonitoringDataType>,
 }
 
 /// This contains the field definition of the SetVariableMonitoringResponse PDU sent by the Charging Station to the CSMS in response to a SetVariableMonitoringRequest.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SetVariableMonitoringResponse {
-    pub set_monitoring_result: SetMonitoringResultType,
+    pub set_monitoring_result: Vec<SetMonitoringResultType>,
 }
