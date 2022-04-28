@@ -10,7 +10,7 @@ pub struct MeterValuesRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction_id: Option<i64>,
     /// Required. The sampled meter values with timestamps.
-    pub meter_value: MeterValue,
+    pub meter_value: Vec<MeterValue>,
 }
 
 /// This contains the field definition of the MeterValues.conf PDU sent by the Central System to the Charge Point in response to a MeterValuesRequest PDU. See also Meter Values

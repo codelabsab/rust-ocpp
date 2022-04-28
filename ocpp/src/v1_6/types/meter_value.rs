@@ -10,5 +10,5 @@ pub struct MeterValue {
     /// Required. Timestamp for measured value(s).
     pub timestamp: DateTime<Utc>,
     /// Required. One or more measured values
-    pub sampled_value: SampledValue,
+    pub sampled_value: Vec<SampledValue>,
 }

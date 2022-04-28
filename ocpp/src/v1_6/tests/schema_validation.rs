@@ -16,7 +16,15 @@ mod tests {
     use crate::v1_6::messages::get_configuration::{GetConfigurationRequest, GetConfigurationResponse};
     use crate::v1_6::messages::get_diagnostics::{GetDiagnosticsRequest, GetDiagnosticsResponse};
     use crate::v1_6::messages::get_local_list_version::{GetLocalListVersionRequest, GetLocalListVersionResponse};
-    use crate::v1_6::types::{AuthorizationStatus, AvailabilityStatus, AvailabilityType, CancelReservationStatus, ClearCacheStatus, ClearChargingProfileStatus, ConfigurationStatus, DataTransferStatus, DiagnosticsStatus, FirmwareStatus, GetCompositeScheduleStatus, IdTagInfo, RegistrationStatus};
+    use crate::v1_6::messages::heart_beat::{HeartbeatRequest, HeartbeatResponse};
+    use crate::v1_6::messages::meter_values::{MeterValuesRequest, MeterValuesResponse};
+    use crate::v1_6::messages::remote_start_transaction::{RemoteStartTransactionRequest, RemoteStartTransactionResponse};
+    use crate::v1_6::messages::remote_stop_transaction::{RemoteStopTransactionRequest, RemoteStopTransactionResponse};
+    use crate::v1_6::messages::reserve_now::{ReserveNowRequest, ReserveNowResponse};
+    use crate::v1_6::messages::reset::{ResetRequest, ResetResponse};
+    use crate::v1_6::messages::send_local_list::{SendLocalListRequest, SendLocalListResponse};
+    use crate::v1_6::messages::set_charging_profile::SetChargingProfileRequest;
+    use crate::v1_6::types::{AuthorizationStatus, AvailabilityStatus, AvailabilityType, CancelReservationStatus, ChargingProfile, ChargingProfileKindType, ChargingRateUnitType, ChargingSchedule, ChargingSchedulePeriod, ClearCacheStatus, ClearChargingProfileStatus, ConfigurationStatus, DataTransferStatus, DiagnosticsStatus, FirmwareStatus, GetCompositeScheduleStatus, IdTagInfo, MeterValue, RegistrationStatus, RemoteStartStopStatus, ReservationStatus, ResetRequestStatus, ResetResponseStatus, SampledValue, UpdateStatus, UpdateType};
 
     #[test]
     fn validate_authorize() {
@@ -578,37 +586,328 @@ mod tests {
         assert!(compiled.is_valid(&instance));
     }
     #[test]
-    fn validate_heartbeat() {}
+    fn validate_heartbeat() {
+        let test = HeartbeatRequest {
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/Heartbeat.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_heartbeat_response() {}
+    fn validate_heartbeat_response() {
+        let test = HeartbeatResponse {
+            current_time:Utc::now()
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/HeartbeatResponse.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_meter_values() {}
+    fn validate_meter_values() {
+        let test = MeterValuesRequest {
+            connector_id: 0,
+            transaction_id: None,
+            meter_value: vec![MeterValue { timestamp: Utc::now(), sampled_value: vec![SampledValue {
+                value: "".to_string(),
+                context: None,
+                format: None,
+                measurand: None,
+                phase: None,
+                location: None,
+                unit: None
+            }] }]
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/MeterValues.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_meter_values_response() {}
+    fn validate_meter_values_response() {
+        let test = MeterValuesResponse {
+
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/MeterValuesResponse.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_ocpp_1() {}
+    fn validate_remote_start_transaction() {
+        let test = RemoteStartTransactionRequest {
+            connector_id: None,
+            id_tag: "".to_string(),
+            charging_profile: None
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/RemoteStartTransaction.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_remote_start_transaction() {}
+    fn validate_remote_start_transaction_response() {
+        let test = RemoteStartTransactionResponse {
+            status: RemoteStartStopStatus::Accepted
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/RemoteStartTransactionResponse.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_remote_start_transaction_response() {}
+    fn validate_remote_stop_transaction() {
+        let test = RemoteStopTransactionRequest {
+            transaction_id: 0
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/RemoteStopTransaction.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_remote_stop_transaction() {}
+    fn validate_remote_stop_transaction_response() {
+        let test = RemoteStopTransactionResponse {
+            status: RemoteStartStopStatus::Accepted
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/RemoteStopTransactionResponse.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_remote_stop_transaction_response() {}
+    fn validate_reserve_now() {
+        let test = ReserveNowRequest {
+            connector_id: 0,
+            expiry_date: Utc::now(),
+            id_tag: "".to_string(),
+            parent_id_tag: None,
+            reservation_id: 0
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/ReserveNow.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_reserve_now() {}
+    fn validate_reserve_now_response() {
+        let test = ReserveNowResponse {
+            status: ReservationStatus::Accepted
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/ReserveNowResponse.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_reserve_now_response() {}
+    fn validate_reset() {
+        let test = ResetRequest {
+            kind: ResetRequestStatus::Hard
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/Reset.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_reset() {}
+    fn validate_reset_response() {
+        let test = ResetResponse {
+            status: ResetResponseStatus::Accepted
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/ResetResponse.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_reset_response() {}
+    fn validate_send_local_list() {
+        let test = SendLocalListRequest {
+            list_version: 0,
+            local_authorization_list: None,
+            update_type: UpdateType::Differential
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/SendLocalList.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_send_local_list() {}
+    fn validate_send_local_list_response() {
+        let test = SendLocalListResponse {
+            status: UpdateStatus::Accepted
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/SendLocalListResponse.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
-    fn validate_send_local_list_response() {}
-    #[test]
-    fn validate_set_charging_profile() {}
+    fn validate_set_charging_profile() {
+        let test = SetChargingProfileRequest {
+            connector_id: 0,
+            cs_charging_profiles: ChargingProfile {
+                charging_profile_id: 0,
+                transaction_id: None,
+                stack_level: 0,
+                charging_profile_purpose: Default::default(),
+                charging_profile_kind: ChargingProfileKindType::Absolute,
+                recurrency_kind: None,
+                valid_from: None,
+                valid_to: None,
+                charging_schedule: ChargingSchedule {
+                    duration: None,
+                    start_schedule: None,
+                    charging_rate_unit: ChargingRateUnitType::W,
+                    charging_schedule_period: vec![ChargingSchedulePeriod {
+                        start_period: 0,
+                        limit: 0.0,
+                        number_phases: None
+                    }],
+                    min_charging_rate: None
+                }
+            }
+        };
+
+        let schema = include_str!("../../../../schemas/ocpp/v1.6/json/SetChargingProfile.json");
+        let schema = serde_json::from_str(&schema).unwrap();
+        let instance = serde_json::to_value(&test).unwrap();
+        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
     fn validate_set_charging_profile_response() {}
     #[test]
