@@ -1,5 +1,4 @@
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
-#[serde(rename_all = "camelCase")]
 pub enum UnlockStatus {
     /// # From OCPP Specification
     /// Connector has successfully been unlocked.
