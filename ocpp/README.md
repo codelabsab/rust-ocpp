@@ -1,21 +1,12 @@
-# OCPP Library
+# rust-ocpp
 
 Libraries implemeting OCPP 1.6 and 2.0.1.
 
-Specification and schemas are stored under `docs/`
+The `rust-ocpp` libs implements the Open Charge Point Protocol
+used in charging stations. You can read more on the official [Open Charge Alliance](https://www.openchargealliance.org/) website.
+
+Both OCPP v1.6 and v2.0.1 are implemented and validated using the official json schemas from Open Charge Alliance.
 
 # crate
 
-https://crates.io/crates/rust-ocpp
-
-# docs
-
-https://docs.rs/rust-ocpp/latest/rust_ocpp/
-
-# Todo
-
-Validate implementation against schemas
-
-# Links
-
-[Open Charge Alliance](https://www.openchargealliance.org/)
+<https://crates.io/crates/rust-ocpp>
