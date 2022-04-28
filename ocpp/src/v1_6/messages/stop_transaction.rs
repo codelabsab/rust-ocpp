@@ -1,4 +1,4 @@
-use crate::v1_6::types::{IdTagInfo, MessageTrigger, MeterValue, Reason};
+use crate::v1_6::types::{IdTagInfo, MeterValue, Reason};
 
 use chrono::{DateTime, Utc};
 use validator::Validate;
@@ -32,9 +32,4 @@ pub struct StopTransactionResponse {
     /// Optional. This contains information about authorization status, expiry and parent id. It is optional, because a transaction may have been stopped without an identifier.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id_tag_info: Option<IdTagInfo>,
-    /// Required.
-    pub requested_message: MessageTrigger,
-    /// Optional. Only filled in when request applies to a specific connector.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub connector_id: Option<u64>,
 }
