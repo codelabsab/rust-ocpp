@@ -14,9 +14,7 @@ There is a basic implementation of a websockets-server in the `ws/` directory th
 
 ## repo structure
 
-`ocpp/` : librariy files for v1.6 and v2.0.1
-
-`ws/` : basic ws-server using ocpp v2.0.1
+`src/` : librariy files for v1.6 and v2.0.1
 
 `docs/` : official ocpp specification
 
