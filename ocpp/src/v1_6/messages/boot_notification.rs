@@ -91,6 +91,12 @@ pub struct BootNotificationRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(length(min = 1, max = 25))]
     pub meter_serial_number: Option<String>,
+
+    /// # From OCPP Specification
+    /// Optional. This contains the type of the main electrical meter of the Charge Point.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 1, max = 25))]
+    pub meter_type: Option<String>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]

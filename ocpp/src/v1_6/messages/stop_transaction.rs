@@ -22,7 +22,7 @@ pub struct StopTransactionRequest {
     pub reason: Option<Reason>,
     /// Optional. This contains transaction usage details relevant for billing purposes.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub transaction_data: Option<MeterValue>,
+    pub transaction_data: Option<Vec<MeterValue>>,
 }
 
 /// This contains the field definition of the TriggerMessage.req PDU sent by the Central System to the Charge Point. See also Trigger Message

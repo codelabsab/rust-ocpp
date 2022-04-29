@@ -84,7 +84,8 @@ mod tests {
             firmware_version: None,
             iccid: None,
             imsi: None,
-            meter_serial_number: None
+            meter_serial_number: None,
+            meter_type: None,
         };
 
         let schema = include_str!("../../../../schemas/ocpp/v1.6/json/BootNotification.json");
@@ -939,7 +940,7 @@ mod tests {
             connector_id: 0,
             id_tag: "".to_string(),
             meter_start: 0,
-            reservation_id: 0,
+            reservation_id: None,
             timestamp: Utc::now()
         };
 
