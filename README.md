@@ -10,8 +10,6 @@ Both OCPP v1.6 and v2.0.1 are implemented and validated using the official json 
 
 You can find the tests in `schema_validation.rs` for both `v.1.6` and `v2.0.1`
 
-There is a basic implementation of a websockets-server in the `ws/` directory that is a work in progress.
-
 ## repo structure
 
 `src/` : librariy files for v1.6 and v2.0.1
