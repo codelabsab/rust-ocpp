@@ -12,8 +12,8 @@ You can find the tests in `schema_validation.rs` for both `v.1.6` and `v2.0.1`
 
 ## repo structure
 
-`src/` : librariy files for v1.6 and v2.0.1
+`src/` : library files for v1.6 and v2.0.1
 
 `docs/` : official ocpp specification
 
-`schemas/` : jsonschemas draft 6 which is used to validate the implementation
+`schemas/` : json schemas which is used to validate the implementation
