@@ -9,7 +9,7 @@ pub struct GetConfigurationRequest {
     /// Optional. List of keys for which the configuration value is requested.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(length(min = 1, max = 50))]
-    pub key: Option<String>,
+    pub key: Option<Vec<String>>,
 }
 
 /// This contains the field definition of the GetConfiguration.conf PDU sent by Charge Point the to the Central System in response to a GetConfiguration.req. See also Get Configuration
@@ -18,9 +18,9 @@ pub struct GetConfigurationRequest {
 pub struct GetConfigurationResponse {
     /// Optional. List of requested or known keys
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub configuration_key: Option<KeyValue>,
+    pub configuration_key: Option<Vec<KeyValue>>,
     /// Optional. Requested keys that are unknown
     #[validate(length(min = 1, max = 50))]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub unknown_key: Option<String>,
+    pub unknown_key: Option<Vec<String>>,
 }

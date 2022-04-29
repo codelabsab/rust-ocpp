@@ -15,7 +15,8 @@ pub struct StartTransactionRequest {
     /// Required. This contains the meter value in Wh for the connector at start of the transaction.
     pub meter_start: i64,
     /// Optional. This contains the id of the reservation that terminates as a result of this transaction.
-    pub reservation_id: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reservation_id: Option<i64>,
     /// Required. This contains the date and time on which the transaction is started.
     pub timestamp: DateTime<Utc>,
 }
