@@ -65,12 +65,12 @@ mod tests {
     use crate::v1_6::types::{
         AuthorizationStatus, AvailabilityStatus, AvailabilityType, CancelReservationStatus,
         ChargePointErrorCode, ChargePointStatus, ChargingProfile, ChargingProfileKindType,
-        ChargingProfileStatus, ChargingRateUnitType, ChargingSchedule, ChargingSchedulePeriod,
-        ClearCacheStatus, ClearChargingProfileStatus, ConfigurationStatus, DataTransferStatus,
-        DiagnosticsStatus, FirmwareStatus, GetCompositeScheduleStatus, IdTagInfo, MessageTrigger,
-        MeterValue, RegistrationStatus, RemoteStartStopStatus, ReservationStatus,
-        ResetRequestStatus, ResetResponseStatus, SampledValue, TriggerMessageStatus, UnlockStatus,
-        UpdateStatus, UpdateType,
+        ChargingProfilePurposeType, ChargingProfileStatus, ChargingRateUnitType, ChargingSchedule,
+        ChargingSchedulePeriod, ClearCacheStatus, ClearChargingProfileStatus, ConfigurationStatus,
+        DataTransferStatus, DiagnosticsStatus, FirmwareStatus, GetCompositeScheduleStatus,
+        IdTagInfo, MessageTrigger, MeterValue, RegistrationStatus, RemoteStartStopStatus,
+        ReservationStatus, ResetRequestStatus, ResetResponseStatus, SampledValue,
+        TriggerMessageStatus, UnlockStatus, UpdateStatus, UpdateType,
     };
     use chrono::Utc;
     use jsonschema::JSONSchema;
@@ -98,8 +98,8 @@ mod tests {
     fn validate_authorize_response() {
         let test = AuthorizeResponse {
             id_tag_info: IdTagInfo {
-                expiry_date: None,
-                parent_id_tag: None,
+                expiry_date: Some(Utc::now()),
+                parent_id_tag: Some("".to_string()),
                 status: AuthorizationStatus::Accepted,
             },
         };
@@ -120,15 +120,15 @@ mod tests {
     #[test]
     fn validate_boot_notification() {
         let test = BootNotificationRequest {
-            charge_box_serial_number: None,
+            charge_box_serial_number: Some("".to_string()),
             charge_point_model: "".to_string(),
             charge_point_serial_number: None,
             charge_point_vendor: "".to_string(),
-            firmware_version: None,
-            iccid: None,
-            imsi: None,
-            meter_serial_number: None,
-            meter_type: None,
+            firmware_version: Some("".to_string()),
+            iccid: Some("".to_string()),
+            imsi: Some("".to_string()),
+            meter_serial_number: Some("".to_string()),
+            meter_type: Some("".to_string()),
         };
 
         let schema = include_str!("schemas/v1.6/json/BootNotification.json");
@@ -318,10 +318,10 @@ mod tests {
     #[test]
     fn validate_clear_charging_profile() {
         let test = ClearChargingProfileRequest {
-            id: None,
-            connector_id: None,
-            charging_profile_purpose: None,
-            stack_level: None,
+            id: Some(1),
+            connector_id: Some(1),
+            charging_profile_purpose: Some(ChargingProfilePurposeType::TxProfile),
+            stack_level: Some(1),
         };
 
         let schema = include_str!("schemas/v1.6/json/ClearChargingProfile.json");
@@ -359,9 +359,9 @@ mod tests {
     #[test]
     fn validate_data_transfer() {
         let test = DataTransferRequest {
-            vendor_string: "".to_string(),
-            message_id: None,
-            data: None,
+            vendor_string: "vendor_string".to_string(),
+            message_id: Some("message_id".to_string()),
+            data: Some("data".to_string()),
         };
 
         let schema = include_str!("schemas/v1.6/json/DataTransfer.json");
@@ -381,7 +381,7 @@ mod tests {
     fn validate_data_transfer_response() {
         let test = DataTransferResponse {
             status: DataTransferStatus::Accepted,
-            data: None,
+            data: Some("data".to_string()),
         };
 
         let schema = include_str!("schemas/v1.6/json/DataTransferResponse.json");
