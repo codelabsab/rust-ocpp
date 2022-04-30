@@ -1,6 +1,34 @@
-[workspace]
+[package]
+name = "rust-ocpp"
+description = "ocpp 1.6 and 2.0.1 libraries"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+version = "0.2.0"
+authors = ["Tommy Malmqvist <tommy.malmqvist@codelabs.se"]
+homepage = "https://codelabs.se/"
+repository = "https://github.com/codelabsab/rust-ocpp"
+edition = "2021"
+keywords = ["ocpp", "ev", "csms"]
+categories = ["accessibility", "data-structures", "embedded", "encoding", "web-programming::websocket"]
+publish = true
+exclude = ["docs/", "schemas/", "src/v2_0_1/tests", "src/v1_6/tests"]
 
-members = [
-    "ocpp",
-    "ws",
-]
+[badges]
+maintenance = { status = "experimental" }
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4.19", features = ["serde"] }
+rand = "0.8"
+uuid = { version = "1.0.0", features = ["v4"] }
+pretty_env_logger = "0.4.0"
+log = "0.4"
+validator = { version = "0.14", features = ["derive"] }
+regex = "1"
+
+[dev-dependencies]
+mockall = "0.11.0"
+jsonschema = "0.16.0"
