@@ -19,6 +19,3 @@ pub mod messages;
 pub mod helpers;
 
 
-/// tests
-#[cfg(test)]
-pub mod tests;

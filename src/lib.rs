@@ -14,3 +14,6 @@
 //! The [v2_0_1](v2_0_1) module contains the `ocpp 2.0.1` implementation
 pub mod v1_6;
 pub mod v2_0_1;
+/// tests
+#[cfg(test)]
+pub mod tests;

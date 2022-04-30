@@ -9,6 +9,3 @@ pub mod messages;
 
 /// types
 pub mod types;
-
-/// tests
-pub mod tests;

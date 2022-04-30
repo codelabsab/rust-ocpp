@@ -232,7 +232,7 @@ mod tests {
             iso_15118_certificate_hash_data: None,
         };
 
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/AuthorizeRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/AuthorizeRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -262,7 +262,7 @@ mod tests {
             },
         };
 
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/AuthorizeResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/AuthorizeResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -288,7 +288,7 @@ mod tests {
                 modem: None,
             },
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/BootNotificationRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/BootNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -311,7 +311,7 @@ mod tests {
             status_info: None,
         };
 
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/BootNotificationResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/BootNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -328,7 +328,7 @@ mod tests {
     #[test]
     fn validate_cancel_reservation_request() {
         let test = CancelReservationRequest { reservation_id: 0 };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/CancelReservationRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/CancelReservationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -349,7 +349,7 @@ mod tests {
             status_info: None,
         };
 
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/CancelReservationResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/CancelReservationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -369,7 +369,7 @@ mod tests {
             certificate_chain: "asd".to_string(),
             certificate_type: None,
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/CertificateSignedRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/CertificateSignedRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -390,7 +390,7 @@ mod tests {
             status_info: None,
         };
 
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/CertificateSignedResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/CertificateSignedResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -410,7 +410,7 @@ mod tests {
             operational_status: OperationalStatusEnumType::Inoperative,
             evse: None,
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/ChangeAvailabilityRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/ChangeAvailabilityRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -432,7 +432,7 @@ mod tests {
         };
 
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ChangeAvailabilityResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/ChangeAvailabilityResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -449,7 +449,7 @@ mod tests {
     #[test]
     fn validate_clear_cache_request() {
         let test = ClearCacheRequest {};
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/ClearCacheRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/ClearCacheRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -470,7 +470,7 @@ mod tests {
             status_info: None,
         };
 
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/ClearCacheResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/ClearCacheResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -491,7 +491,7 @@ mod tests {
             charging_profile_criteria: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ClearChargingProfileRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/ClearChargingProfileRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -513,7 +513,7 @@ mod tests {
         };
 
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ClearChargingProfileResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/ClearChargingProfileResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -531,7 +531,7 @@ mod tests {
     fn validate_clear_display_message_request() {
         let test = ClearDisplayMessageRequest { id: 0 };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ClearDisplayMessageRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/ClearDisplayMessageRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -553,7 +553,7 @@ mod tests {
         };
 
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ClearDisplayMessageResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/ClearDisplayMessageResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -574,7 +574,7 @@ mod tests {
             evse: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ClearedChargingLimitRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/ClearedChargingLimitRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -593,7 +593,7 @@ mod tests {
         let test = ClearedChargingLimitResponse {};
 
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ClearedChargingLimitResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/ClearedChargingLimitResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -611,7 +611,7 @@ mod tests {
     fn validate_clear_variable_monitoring_request() {
         let test = ClearVariableMonitoringRequest { id: vec![0] };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ClearVariableMonitoringRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/ClearVariableMonitoringRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -635,7 +635,7 @@ mod tests {
             }],
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ClearVariableMonitoringResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/ClearVariableMonitoringResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -655,7 +655,7 @@ mod tests {
             total_cost: 0.0,
             transaction_id: "".to_string(),
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/CostUpdatedRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/CostUpdatedRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -671,7 +671,7 @@ mod tests {
     #[test]
     fn validate_cost_updated_response() {
         let test = CostUpdatedResponse {};
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/CostUpdatedResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/CostUpdatedResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -695,7 +695,7 @@ mod tests {
             customer_certificate: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/CustomerInformationRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/CustomerInformationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -715,7 +715,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/CustomerInformationResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/CustomerInformationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -735,7 +735,7 @@ mod tests {
             data: "".to_string(),
             vendor_id: "".to_string(),
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/DataTransferRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/DataTransferRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -755,7 +755,7 @@ mod tests {
             data: "".to_string(),
             status_info: None,
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/DataTransferResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/DataTransferResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -778,7 +778,7 @@ mod tests {
                 serial_number: "".to_string(),
             },
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/DeleteCertificateRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/DeleteCertificateRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -797,7 +797,7 @@ mod tests {
             status: DeleteCertificateStatusEnumType::Accepted,
             status_info: None,
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/DeleteCertificateResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/DeleteCertificateResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -817,7 +817,7 @@ mod tests {
             request_id: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/FirmwareStatusNotificationRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/FirmwareStatusNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -834,7 +834,7 @@ mod tests {
     fn validate_firmware_status_notification_response() {
         let test = FirmwareStatusNotificationResponse {};
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/FirmwareStatusNotificationResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/FirmwareStatusNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -855,7 +855,7 @@ mod tests {
             exi_request: "".to_string(),
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/Get15118EVCertificateRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/Get15118EVCertificateRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -876,7 +876,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/Get15118EVCertificateResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/Get15118EVCertificateResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -895,7 +895,7 @@ mod tests {
             request_id: 0,
             report_base: ReportBaseEnumType::ConfigurationInventory,
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/GetBaseReportRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/GetBaseReportRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -914,7 +914,7 @@ mod tests {
             status: GenericDeviceModelStatusEnumType::Accepted,
             status_info: None,
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/GetBaseReportResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/GetBaseReportResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -939,7 +939,7 @@ mod tests {
             },
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetCertificateStatusRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/GetCertificateStatusRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -960,7 +960,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetCertificateStatusResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/GetCertificateStatusResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -986,7 +986,7 @@ mod tests {
             },
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetChargingProfilesRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/GetChargingProfilesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1006,7 +1006,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetChargingProfilesResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/GetChargingProfilesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1027,7 +1027,7 @@ mod tests {
             evse_id: 0,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetCompositeScheduleRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/GetCompositeScheduleRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1048,7 +1048,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetCompositeScheduleResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/GetCompositeScheduleResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1069,7 +1069,7 @@ mod tests {
             priority: None,
             state: None,
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/GetDisplayMessagesRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/GetDisplayMessagesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1089,7 +1089,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetDisplayMessagesResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/GetDisplayMessagesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1108,7 +1108,7 @@ mod tests {
             certificate_type: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetInstalledCertificateIdsRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/GetInstalledCertificateIdsRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1129,7 +1129,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetInstalledCertificateIdsResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/GetInstalledCertificateIdsResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1146,7 +1146,7 @@ mod tests {
     fn validate_get_local_list_version_request() {
         let test = GetLocalListVersionRequest {};
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetLocalListVersionRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/GetLocalListVersionRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1163,7 +1163,7 @@ mod tests {
     fn validate_get_local_list_version_response() {
         let test = GetLocalListVersionResponse { version_number: 0 };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetLocalListVersionResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/GetLocalListVersionResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1189,7 +1189,7 @@ mod tests {
                 latest_timestamp: None,
             },
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/GetLogRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/GetLogRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1209,7 +1209,7 @@ mod tests {
             filename: None,
             status_info: None,
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/GetLogResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/GetLogResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1230,7 +1230,7 @@ mod tests {
             component_variable: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetMonitoringReportRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/GetMonitoringReportRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1250,7 +1250,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetMonitoringReportResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/GetMonitoringReportResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1270,7 +1270,7 @@ mod tests {
             component_criteria: None,
             component_variable: None,
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/GetReportRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/GetReportRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1289,7 +1289,7 @@ mod tests {
             status: GenericDeviceModelStatusEnumType::Accepted,
             status_info: None,
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/GetReportResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/GetReportResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1308,7 +1308,7 @@ mod tests {
             transaction_id: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetTransactionStatusRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/GetTransactionStatusRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1328,7 +1328,7 @@ mod tests {
             messages_in_queue: false,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/GetTransactionStatusResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/GetTransactionStatusResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1357,7 +1357,7 @@ mod tests {
                 },
             }],
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/GetVariablesRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/GetVariablesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1389,7 +1389,7 @@ mod tests {
                 attribute_status_info: None,
             }],
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/GetVariablesResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/GetVariablesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1405,7 +1405,7 @@ mod tests {
     #[test]
     fn validate_heartbeat_request() {
         let test = HeartbeatRequest {};
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/HeartbeatRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/HeartbeatRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1423,7 +1423,7 @@ mod tests {
         let test = HeartbeatResponse {
             current_time: Utc::now(),
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/HeartbeatResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/HeartbeatResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1442,7 +1442,7 @@ mod tests {
             certificate_type: InstallCertificateUseEnumType::V2GRootCertificate,
             certificate: "".to_string(),
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/InstallCertificateRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/InstallCertificateRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1462,7 +1462,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/InstallCertificateResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/InstallCertificateResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1482,7 +1482,7 @@ mod tests {
             request_id: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/LogStatusNotificationRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/LogStatusNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1499,7 +1499,7 @@ mod tests {
     fn validate_log_status_notification_response() {
         let test = LogStatusNotificationResponse {};
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/LogStatusNotificationResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/LogStatusNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1529,7 +1529,7 @@ mod tests {
                 }],
             }],
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/MeterValuesRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/MeterValuesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1545,7 +1545,7 @@ mod tests {
     #[test]
     fn validate_meter_values_response() {
         let test = MeterValuesResponse {};
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/MeterValuesResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/MeterValuesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1569,7 +1569,7 @@ mod tests {
             charging_schedule: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyChargingLimitRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyChargingLimitRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1586,7 +1586,7 @@ mod tests {
     fn validate_notify_charging_limit_response() {
         let test = NotifyChargingLimitResponse {};
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyChargingLimitResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyChargingLimitResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1609,7 +1609,7 @@ mod tests {
             request_id: 0,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyCustomerInformationRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyCustomerInformationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1626,7 +1626,7 @@ mod tests {
     fn validate_notify_customer_information_response() {
         let test = NotifyCustomerInformationResponse {};
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyCustomerInformationResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyCustomerInformationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1647,7 +1647,7 @@ mod tests {
             message_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyDisplayMessagesRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyDisplayMessagesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1664,7 +1664,7 @@ mod tests {
     fn validate_notify_display_messages_response() {
         let test = NotifyDisplayMessagesResponse {};
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyDisplayMessagesResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyDisplayMessagesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1690,7 +1690,7 @@ mod tests {
             },
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyEVChargingNeedsRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyEVChargingNeedsRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1710,7 +1710,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyEVChargingNeedsResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyEVChargingNeedsResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1744,7 +1744,7 @@ mod tests {
             },
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyEVChargingScheduleRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyEVChargingScheduleRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1764,7 +1764,7 @@ mod tests {
             status_info: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyEVChargingScheduleResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyEVChargingScheduleResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1806,7 +1806,7 @@ mod tests {
                 },
             }],
         };
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/NotifyEventRequest.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/NotifyEventRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1822,7 +1822,7 @@ mod tests {
     #[test]
     fn validate_notify_event_response() {
         let test = NotifyEventResponse {};
-        let schema = include_str!("../../../schemas/ocpp/v2.0.1/NotifyEventResponse.json");
+        let schema = include_str!("schemas/ocpp/v2.0.1/NotifyEventResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1845,7 +1845,7 @@ mod tests {
             monitor: None,
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyMonitoringReportRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyMonitoringReportRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1862,7 +1862,7 @@ mod tests {
     fn validate_notify_monitoring_report_response() {
         let test = NotifyMonitoringReportResponse {};
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyMonitoringReportResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyMonitoringReportResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1885,7 +1885,7 @@ mod tests {
             report_data: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyReportRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyReportRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1903,7 +1903,7 @@ mod tests {
         let test = NotifyReportResponse {
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/NotifyReportResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/NotifyReportResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1926,7 +1926,7 @@ mod tests {
             retry_interval: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/PublishFirmwareRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/PublishFirmwareRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1946,7 +1946,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/PublishFirmwareResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/PublishFirmwareResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1967,7 +1967,7 @@ mod tests {
             request_id: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/PublishFirmwareStatusNotificationRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/PublishFirmwareStatusNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1985,7 +1985,7 @@ mod tests {
         let test = PublishFirmwareStatusNotificationResponse {
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/PublishFirmwareStatusNotificationResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/PublishFirmwareStatusNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2031,7 +2031,7 @@ mod tests {
             }]
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ReportChargingProfilesRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/ReportChargingProfilesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2049,7 +2049,7 @@ mod tests {
         let test = ReportChargingProfilesResponse {
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ReportChargingProfilesResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/ReportChargingProfilesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2076,7 +2076,7 @@ mod tests {
             group_id_token: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/RequestStartTransactionRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/RequestStartTransactionRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2097,7 +2097,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/RequestStartTransactionResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/RequestStartTransactionResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2116,7 +2116,7 @@ mod tests {
             transaction_id: "".to_string()
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/RequestStopTransactionRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/RequestStopTransactionRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2136,7 +2136,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/RequestStopTransactionResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/RequestStopTransactionResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2156,7 +2156,7 @@ mod tests {
             reservation_update_status: ReservationUpdateStatusEnumType::Expired
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ReservationStatusUpdateRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/ReservationStatusUpdateRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2174,7 +2174,7 @@ mod tests {
         let test = ReservationStatusUpdateResponse {
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ReservationStatusUpdateResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/ReservationStatusUpdateResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2202,7 +2202,7 @@ mod tests {
             group_id_token: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ReserveNowRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/ReserveNowRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2222,7 +2222,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ReserveNowResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/ReserveNowResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2242,7 +2242,7 @@ mod tests {
             evse_id: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ResetRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/ResetRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2262,7 +2262,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/ResetResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/ResetResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2283,7 +2283,7 @@ mod tests {
             tech_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SecurityEventNotificationRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/SecurityEventNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2301,7 +2301,7 @@ mod tests {
         let test = SecurityEventNotificationResponse {
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SecurityEventNotificationResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/SecurityEventNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2322,7 +2322,7 @@ mod tests {
             tech_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SendLocalListRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/SendLocalListRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2342,7 +2342,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SendLocalListResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/SendLocalListResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2385,7 +2385,7 @@ mod tests {
             }
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetChargingProfileRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/SetChargingProfileRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2405,7 +2405,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetChargingProfileResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/SetChargingProfileResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2437,7 +2437,7 @@ mod tests {
             }
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetDisplayMessageRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/SetDisplayMessageRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2457,7 +2457,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetDisplayMessageResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/SetDisplayMessageResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2476,7 +2476,7 @@ mod tests {
             monitoring_base: MonitoringBaseEnumType::All
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetMonitoringBaseRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/SetMonitoringBaseRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2496,7 +2496,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetMonitoringBaseResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/SetMonitoringBaseResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2515,7 +2515,7 @@ mod tests {
             severity: 0
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetMonitoringLevelRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/SetMonitoringLevelRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2535,7 +2535,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetMonitoringLevelResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/SetMonitoringLevelResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2564,7 +2564,7 @@ mod tests {
             }
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetNetworkProfileRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/SetNetworkProfileRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2584,7 +2584,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetNetworkProfileResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/SetNetworkProfileResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2615,7 +2615,7 @@ mod tests {
             }]
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetVariableMonitoringRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/SetVariableMonitoringRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2646,7 +2646,7 @@ mod tests {
             }]
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetVariableMonitoringResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/SetVariableMonitoringResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2674,7 +2674,7 @@ mod tests {
             }]
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetVariablesRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/SetVariablesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2703,7 +2703,7 @@ mod tests {
             }]
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SetVariablesResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/SetVariablesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2723,7 +2723,7 @@ mod tests {
             certificate_type: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SignCertificateRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/SignCertificateRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2743,7 +2743,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/SignCertificateResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/SignCertificateResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2765,7 +2765,7 @@ mod tests {
             connector_id: 0
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/StatusNotificationRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/StatusNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2783,7 +2783,7 @@ mod tests {
         let test = StatusNotificationResponse {
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/StatusNotificationResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/StatusNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2819,7 +2819,7 @@ mod tests {
             meter_value: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/TransactionEventRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/TransactionEventRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2841,7 +2841,7 @@ mod tests {
             updated_personal_message: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/TransactionEventResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/TransactionEventResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2861,7 +2861,7 @@ mod tests {
             evse: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/TriggerMessageRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/TriggerMessageRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2881,7 +2881,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/TriggerMessageResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/TriggerMessageResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2901,7 +2901,7 @@ mod tests {
             connector_id: 0
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/UnlockConnectorRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/UnlockConnectorRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2921,7 +2921,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/UnlockConnectorResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/UnlockConnectorResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2940,7 +2940,7 @@ mod tests {
             checksum: "".to_string()
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/UnpublishFirmwareRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/UnpublishFirmwareRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2959,7 +2959,7 @@ mod tests {
             status: UnpublishFirmwareStatusEnumType::DownloadOngoing
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/UnpublishFirmwareResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/UnpublishFirmwareResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2987,7 +2987,7 @@ mod tests {
             }
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/UpdateFirmwareRequest.json");
+            include_str!("schemas/ocpp/v2.0.1/UpdateFirmwareRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -3007,7 +3007,7 @@ mod tests {
             status_info: None
         };
         let schema =
-            include_str!("../../../schemas/ocpp/v2.0.1/UpdateFirmwareResponse.json");
+            include_str!("schemas/ocpp/v2.0.1/UpdateFirmwareResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");

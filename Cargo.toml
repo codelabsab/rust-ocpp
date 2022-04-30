@@ -11,7 +11,7 @@ edition = "2021"
 keywords = ["ocpp", "ev", "csms"]
 categories = ["accessibility", "data-structures", "embedded", "encoding", "web-programming::websocket"]
 publish = true
-exclude = ["docs/", "schemas/", "src/v2_0_1/tests", "src/v1_6/tests"]
+exclude = ["docs/", "src/tests"]
 
 [badges]
 maintenance = { status = "experimental" }
