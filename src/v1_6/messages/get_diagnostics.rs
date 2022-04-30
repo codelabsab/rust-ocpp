@@ -1,7 +1,6 @@
 use chrono::{DateTime, Utc};
 use validator::Validate;
 
-
 /// This contains the field definition of the GetDiagnostics.req PDU sent by the Central System to the Charge Point. See also Get Diagnostics
 #[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]

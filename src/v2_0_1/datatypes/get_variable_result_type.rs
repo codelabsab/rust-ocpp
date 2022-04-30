@@ -1,9 +1,9 @@
 use super::component_type::ComponentType;
+use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_0_1::datatypes::variable_type::VariableType;
 use crate::v2_0_1::enumerations::attribute_enum_type::AttributeEnumType;
 use crate::v2_0_1::enumerations::get_variable_status_enum_type::GetVariableStatusEnumType;
 use validator::Validate;
-use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
-use crate::v2_0_1::datatypes::variable_type::VariableType;
 
 /// Class to hold parameters for GetVariables request.
 /// GetVariableDataType is used by: GetVariablesRequest
@@ -19,5 +19,5 @@ pub struct GetVariableResultType {
     pub component: ComponentType,
     pub variable: VariableType,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attribute_status_info: Option<StatusInfoType>
+    pub attribute_status_info: Option<StatusInfoType>,
 }

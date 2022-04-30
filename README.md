@@ -15,3 +15,11 @@ You can find the tests in `schema_validation.rs` for both `v.1.6` and `v2.0.1`
 `src/` : library files for v1.6 and v2.0.1
 
 `docs/` : official ocpp specification
+
+# contribute
+
+Use `rustfmt` before you PR.
+
+## pre-commit
+
+pre-commit config is available. You can read more about it at [pre-commits](https://pre-commit.com) website.

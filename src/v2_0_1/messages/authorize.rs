@@ -1,6 +1,6 @@
 //! Authorize
-use validator::Validate;
 use crate::v2_0_1::datatypes::id_token_info_type::IdTokenInfoType;
+use validator::Validate;
 
 use crate::v2_0_1::datatypes::id_token_type::IdTokenType;
 use crate::v2_0_1::datatypes::ocsp_request_data_type::OCSPRequestDataType;

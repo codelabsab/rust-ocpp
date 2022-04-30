@@ -4,20 +4,30 @@ mod tests {
     use crate::v2_0_1::datatypes::charging_limit_type::ChargingLimitType;
     use crate::v2_0_1::datatypes::charging_needs_type::ChargingNeedsType;
     use crate::v2_0_1::datatypes::charging_profile_criterion_type::ChargingProfileCriterionType;
+    use crate::v2_0_1::datatypes::charging_profile_type::ChargingProfileType;
     use crate::v2_0_1::datatypes::charging_schedule_period_type::ChargingSchedulePeriodType;
     use crate::v2_0_1::datatypes::charging_schedule_type::ChargingScheduleType;
     use crate::v2_0_1::datatypes::charging_station_type::ChargingStationType;
     use crate::v2_0_1::datatypes::clear_monitoring_result_type::ClearMonitoringResultType;
     use crate::v2_0_1::datatypes::component_type::ComponentType;
     use crate::v2_0_1::datatypes::event_data_type::EventDataType;
+    use crate::v2_0_1::datatypes::firmware_type::FirmwareType;
     use crate::v2_0_1::datatypes::get_variable_data_type::GetVariableDataType;
     use crate::v2_0_1::datatypes::get_variable_result_type::GetVariableResultType;
     use crate::v2_0_1::datatypes::id_token_info_type::IdTokenInfoType;
     use crate::v2_0_1::datatypes::id_token_type::IdTokenType;
     use crate::v2_0_1::datatypes::log_parameters_type::LogParametersType;
+    use crate::v2_0_1::datatypes::message_content_type::MessageContentType;
+    use crate::v2_0_1::datatypes::message_info_type::MessageInfoType;
     use crate::v2_0_1::datatypes::meter_value_type::MeterValueType;
+    use crate::v2_0_1::datatypes::network_connection_profile_type::NetworkConnectionProfileType;
     use crate::v2_0_1::datatypes::ocsp_request_data_type::OCSPRequestDataType;
     use crate::v2_0_1::datatypes::sampled_value_type::SampledValueType;
+    use crate::v2_0_1::datatypes::set_monitoring_data_type::SetMonitoringDataType;
+    use crate::v2_0_1::datatypes::set_monitoring_result_type::SetMonitoringResultType;
+    use crate::v2_0_1::datatypes::set_variable_data_type::SetVariableDataType;
+    use crate::v2_0_1::datatypes::set_variable_result_type::SetVariableResultType;
+    use crate::v2_0_1::datatypes::transaction_type::TransactionType;
     use crate::v2_0_1::datatypes::variable_type::VariableType;
     use crate::v2_0_1::enumerations::authorization_status_enum_type::AuthorizationStatusEnumType;
     use crate::v2_0_1::enumerations::boot_reason_enum_type::BootReasonEnumType;
@@ -26,14 +36,19 @@ mod tests {
     use crate::v2_0_1::enumerations::certificate_signed_status_enum_type::CertificateSignedStatusEnumType;
     use crate::v2_0_1::enumerations::change_availability_status_enum_type::ChangeAvailabilityStatusEnumType;
     use crate::v2_0_1::enumerations::charging_limit_source_enum_type::ChargingLimitSourceEnumType;
+    use crate::v2_0_1::enumerations::charging_profile_kind_enum_type::ChargingProfileKindEnumType;
+    use crate::v2_0_1::enumerations::charging_profile_purpose_enum_type::ChargingProfilePurposeEnumType;
+    use crate::v2_0_1::enumerations::charging_profile_status_enum_type::ChargingProfileStatusEnumType;
     use crate::v2_0_1::enumerations::charging_rate_unit_enum_type::ChargingRateUnitEnumType;
     use crate::v2_0_1::enumerations::clear_cache_status_enum_type::ClearCacheStatusEnumType;
     use crate::v2_0_1::enumerations::clear_charging_profile_status_enum_type::ClearChargingProfileStatusEnumType;
     use crate::v2_0_1::enumerations::clear_message_status_enum_type::ClearMessageStatusEnumType;
     use crate::v2_0_1::enumerations::clear_monitoring_status_enum_type::ClearMonitoringStatusEnumType;
+    use crate::v2_0_1::enumerations::connector_status_enum_type::ConnectorStatusEnumType;
     use crate::v2_0_1::enumerations::customer_information_status_enum_type::CustomerInformationStatusEnumType;
     use crate::v2_0_1::enumerations::data_transfer_status_enum_type::DataTransferStatusEnumType;
     use crate::v2_0_1::enumerations::delete_certificate_status_enum_type::DeleteCertificateStatusEnumType;
+    use crate::v2_0_1::enumerations::display_message_status_enum_type::DisplayMessageStatusEnumType;
     use crate::v2_0_1::enumerations::energy_transfer_mode_enum_type::EnergyTransferModeEnumType;
     use crate::v2_0_1::enumerations::event_notification_enum_type::EventNotificationEnumType;
     use crate::v2_0_1::enumerations::event_trigger_enum_type::EventTriggerEnumType;
@@ -51,10 +66,36 @@ mod tests {
     use crate::v2_0_1::enumerations::iso15118ev_certificate_status_enum_type::Iso15118EVCertificateStatusEnumType;
     use crate::v2_0_1::enumerations::log_enum_type::LogEnumType;
     use crate::v2_0_1::enumerations::log_status_enum_type::LogStatusEnumType;
+    use crate::v2_0_1::enumerations::message_format_enum_type::MessageFormatEnumType;
+    use crate::v2_0_1::enumerations::message_priority_enum_type::MessagePriorityEnumType;
+    use crate::v2_0_1::enumerations::message_state_enum_type::MessageStateEnumType;
+    use crate::v2_0_1::enumerations::message_trigger_enum_type::MessageTriggerEnumType;
+    use crate::v2_0_1::enumerations::monitor_enum_type::MonitorEnumType;
+    use crate::v2_0_1::enumerations::monitoring_base_enum_type::MonitoringBaseEnumType;
     use crate::v2_0_1::enumerations::notify_ev_charging_needs_status_enum_type::NotifyEVChargingNeedsStatusEnumType;
+    use crate::v2_0_1::enumerations::ocpp_interface_enum_type::OCPPInterfaceEnumType;
+    use crate::v2_0_1::enumerations::ocpp_transport_enum_type::OCPPTransportEnumType;
+    use crate::v2_0_1::enumerations::ocpp_version_enum_type::OCPPVersionEnumType;
     use crate::v2_0_1::enumerations::operational_status_enum_type::OperationalStatusEnumType;
+    use crate::v2_0_1::enumerations::publish_firmware_status_enum_type::PublishFirmwareStatusEnumType;
     use crate::v2_0_1::enumerations::registration_status_enum_type::RegistrationStatusEnumType;
     use crate::v2_0_1::enumerations::report_base_enum_type::ReportBaseEnumType;
+    use crate::v2_0_1::enumerations::request_start_stop_status_enum_type::RequestStartStopStatusEnumType;
+    use crate::v2_0_1::enumerations::reservation_update_status_enum_type::ReservationUpdateStatusEnumType;
+    use crate::v2_0_1::enumerations::reserve_now_status_enum_type::ReserveNowStatusEnumType;
+    use crate::v2_0_1::enumerations::reset_enum_type::ResetEnumType;
+    use crate::v2_0_1::enumerations::reset_status_enum_type::ResetStatusEnumType;
+    use crate::v2_0_1::enumerations::send_local_list_status_enum_type::SendLocalListStatusEnumType;
+    use crate::v2_0_1::enumerations::set_monitoring_status_enum_type::SetMonitoringStatusEnumType;
+    use crate::v2_0_1::enumerations::set_network_profile_status_enum_type::SetNetworkProfileStatusEnumType;
+    use crate::v2_0_1::enumerations::set_variable_status_enum_type::SetVariableStatusEnumType;
+    use crate::v2_0_1::enumerations::transaction_event_enum_type::TransactionEventEnumType;
+    use crate::v2_0_1::enumerations::trigger_message_status_enum_type::TriggerMessageStatusEnumType;
+    use crate::v2_0_1::enumerations::trigger_reason_enum_type::TriggerReasonEnumType;
+    use crate::v2_0_1::enumerations::unlock_status_enum_type::UnlockStatusEnumType;
+    use crate::v2_0_1::enumerations::unpublish_firmware_status_enum_type::UnpublishFirmwareStatusEnumType;
+    use crate::v2_0_1::enumerations::update_enum_type::UpdateEnumType;
+    use crate::v2_0_1::enumerations::update_firmware_status_enum_type::UpdateFirmwareStatusEnumType;
     use crate::v2_0_1::enumerations::upload_log_status_enum_type::UploadLogStatusEnumType;
     use crate::v2_0_1::messages::authorize::{AuthorizeRequest, AuthorizeResponse};
     use crate::v2_0_1::messages::boot_notification::{
@@ -152,73 +193,68 @@ mod tests {
         NotifyMonitoringReportRequest, NotifyMonitoringReportResponse,
     };
     use crate::v2_0_1::messages::notify_report::{NotifyReportRequest, NotifyReportResponse};
-    use chrono::Utc;
-    use jsonschema::JSONSchema;
-    use crate::v2_0_1::datatypes::charging_profile_type::ChargingProfileType;
-    use crate::v2_0_1::datatypes::firmware_type::FirmwareType;
-    use crate::v2_0_1::datatypes::message_content_type::MessageContentType;
-    use crate::v2_0_1::datatypes::message_info_type::MessageInfoType;
-    use crate::v2_0_1::datatypes::network_connection_profile_type::NetworkConnectionProfileType;
-    use crate::v2_0_1::datatypes::set_monitoring_data_type::SetMonitoringDataType;
-    use crate::v2_0_1::datatypes::set_monitoring_result_type::SetMonitoringResultType;
-    use crate::v2_0_1::datatypes::set_variable_data_type::SetVariableDataType;
-    use crate::v2_0_1::datatypes::set_variable_result_type::SetVariableResultType;
-    use crate::v2_0_1::datatypes::transaction_type::TransactionType;
-    use crate::v2_0_1::enumerations::charging_profile_kind_enum_type::ChargingProfileKindEnumType;
-    use crate::v2_0_1::enumerations::charging_profile_purpose_enum_type::ChargingProfilePurposeEnumType;
-    use crate::v2_0_1::enumerations::charging_profile_status_enum_type::ChargingProfileStatusEnumType;
-    use crate::v2_0_1::enumerations::connector_status_enum_type::ConnectorStatusEnumType;
-    use crate::v2_0_1::enumerations::display_message_status_enum_type::DisplayMessageStatusEnumType;
-    use crate::v2_0_1::enumerations::message_format_enum_type::MessageFormatEnumType;
-    use crate::v2_0_1::enumerations::message_priority_enum_type::MessagePriorityEnumType;
-    use crate::v2_0_1::enumerations::message_state_enum_type::MessageStateEnumType;
-    use crate::v2_0_1::enumerations::message_trigger_enum_type::MessageTriggerEnumType;
-    use crate::v2_0_1::enumerations::monitor_enum_type::MonitorEnumType;
-    use crate::v2_0_1::enumerations::monitoring_base_enum_type::MonitoringBaseEnumType;
-    use crate::v2_0_1::enumerations::ocpp_interface_enum_type::OCPPInterfaceEnumType;
-    use crate::v2_0_1::enumerations::ocpp_transport_enum_type::OCPPTransportEnumType;
-    use crate::v2_0_1::enumerations::ocpp_version_enum_type::OCPPVersionEnumType;
-    use crate::v2_0_1::enumerations::publish_firmware_status_enum_type::PublishFirmwareStatusEnumType;
-    use crate::v2_0_1::enumerations::request_start_stop_status_enum_type::RequestStartStopStatusEnumType;
-    use crate::v2_0_1::enumerations::reservation_update_status_enum_type::ReservationUpdateStatusEnumType;
-    use crate::v2_0_1::enumerations::reserve_now_status_enum_type::ReserveNowStatusEnumType;
-    use crate::v2_0_1::enumerations::reset_enum_type::ResetEnumType;
-    use crate::v2_0_1::enumerations::reset_status_enum_type::ResetStatusEnumType;
-    use crate::v2_0_1::enumerations::send_local_list_status_enum_type::SendLocalListStatusEnumType;
-    use crate::v2_0_1::enumerations::set_monitoring_status_enum_type::SetMonitoringStatusEnumType;
-    use crate::v2_0_1::enumerations::set_network_profile_status_enum_type::SetNetworkProfileStatusEnumType;
-    use crate::v2_0_1::enumerations::set_variable_status_enum_type::SetVariableStatusEnumType;
-    use crate::v2_0_1::enumerations::transaction_event_enum_type::TransactionEventEnumType;
-    use crate::v2_0_1::enumerations::trigger_message_status_enum_type::TriggerMessageStatusEnumType;
-    use crate::v2_0_1::enumerations::trigger_reason_enum_type::TriggerReasonEnumType;
-    use crate::v2_0_1::enumerations::unlock_status_enum_type::UnlockStatusEnumType;
-    use crate::v2_0_1::enumerations::unpublish_firmware_status_enum_type::UnpublishFirmwareStatusEnumType;
-    use crate::v2_0_1::enumerations::update_enum_type::UpdateEnumType;
-    use crate::v2_0_1::enumerations::update_firmware_status_enum_type::UpdateFirmwareStatusEnumType;
-    use crate::v2_0_1::messages::publish_firmware::{PublishFirmwareRequest, PublishFirmwareResponse};
-    use crate::v2_0_1::messages::publish_firmware_status_notification::{PublishFirmwareStatusNotificationRequest, PublishFirmwareStatusNotificationResponse};
-    use crate::v2_0_1::messages::report_charging_profiles::{ReportChargingProfilesRequest, ReportChargingProfilesResponse};
-    use crate::v2_0_1::messages::request_start_transaction::{RequestStartTransactionRequest, RequestStartTransactionResponse};
-    use crate::v2_0_1::messages::request_stop_transaction::{RequestStopTransactionRequest, RequestStopTransactionResponse};
-    use crate::v2_0_1::messages::reservation_status_update::{ReservationStatusUpdateRequest, ReservationStatusUpdateResponse};
+    use crate::v2_0_1::messages::publish_firmware::{
+        PublishFirmwareRequest, PublishFirmwareResponse,
+    };
+    use crate::v2_0_1::messages::publish_firmware_status_notification::{
+        PublishFirmwareStatusNotificationRequest, PublishFirmwareStatusNotificationResponse,
+    };
+    use crate::v2_0_1::messages::report_charging_profiles::{
+        ReportChargingProfilesRequest, ReportChargingProfilesResponse,
+    };
+    use crate::v2_0_1::messages::request_start_transaction::{
+        RequestStartTransactionRequest, RequestStartTransactionResponse,
+    };
+    use crate::v2_0_1::messages::request_stop_transaction::{
+        RequestStopTransactionRequest, RequestStopTransactionResponse,
+    };
+    use crate::v2_0_1::messages::reservation_status_update::{
+        ReservationStatusUpdateRequest, ReservationStatusUpdateResponse,
+    };
     use crate::v2_0_1::messages::reserve_now::{ReserveNowRequest, ReserveNowResponse};
     use crate::v2_0_1::messages::reset::{ResetRequest, ResetResponse};
-    use crate::v2_0_1::messages::security_event_notification::{SecurityEventNotificationRequest, SecurityEventNotificationResponse};
+    use crate::v2_0_1::messages::security_event_notification::{
+        SecurityEventNotificationRequest, SecurityEventNotificationResponse,
+    };
     use crate::v2_0_1::messages::send_local_list::{SendLocalListRequest, SendLocalListResponse};
-    use crate::v2_0_1::messages::set_charging_profile::{SetChargingProfileRequest, SetChargingProfileResponse};
-    use crate::v2_0_1::messages::set_display_message::{SetDisplayMessageRequest, SetDisplayMessageResponse};
-    use crate::v2_0_1::messages::set_monitoring_base::{SetMonitoringBaseRequest, SetMonitoringBaseResponse};
-    use crate::v2_0_1::messages::set_monitoring_level::{SetMonitoringLevelRequest, SetMonitoringLevelResponse};
-    use crate::v2_0_1::messages::set_network_profile::{SetNetworkProfileRequest, SetNetworkProfileResponse};
-    use crate::v2_0_1::messages::set_variable_monitoring::{SetVariableMonitoringRequest, SetVariableMonitoringResponse};
+    use crate::v2_0_1::messages::set_charging_profile::{
+        SetChargingProfileRequest, SetChargingProfileResponse,
+    };
+    use crate::v2_0_1::messages::set_display_message::{
+        SetDisplayMessageRequest, SetDisplayMessageResponse,
+    };
+    use crate::v2_0_1::messages::set_monitoring_base::{
+        SetMonitoringBaseRequest, SetMonitoringBaseResponse,
+    };
+    use crate::v2_0_1::messages::set_monitoring_level::{
+        SetMonitoringLevelRequest, SetMonitoringLevelResponse,
+    };
+    use crate::v2_0_1::messages::set_network_profile::{
+        SetNetworkProfileRequest, SetNetworkProfileResponse,
+    };
+    use crate::v2_0_1::messages::set_variable_monitoring::{
+        SetVariableMonitoringRequest, SetVariableMonitoringResponse,
+    };
     use crate::v2_0_1::messages::set_variables::{SetVariablesRequest, SetVariablesResponse};
-    use crate::v2_0_1::messages::sign_certificate::{SignCertificateRequest, SignCertificateResponse};
-    use crate::v2_0_1::messages::status_notification::{StatusNotificationRequest, StatusNotificationResponse};
-    use crate::v2_0_1::messages::transaction_event::{TransactionEventRequest, TransactionEventResponse};
+    use crate::v2_0_1::messages::sign_certificate::{
+        SignCertificateRequest, SignCertificateResponse,
+    };
+    use crate::v2_0_1::messages::status_notification::{
+        StatusNotificationRequest, StatusNotificationResponse,
+    };
+    use crate::v2_0_1::messages::transaction_event::{
+        TransactionEventRequest, TransactionEventResponse,
+    };
     use crate::v2_0_1::messages::trigger_message::{TriggerMessageRequest, TriggerMessageResponse};
-    use crate::v2_0_1::messages::unlock_connector::{UnlockConnectorRequest, UnlockConnectorResponse};
-    use crate::v2_0_1::messages::unpublish_firmware::{UnpublishFirmwareRequest, UnpublishFirmwareResponse};
+    use crate::v2_0_1::messages::unlock_connector::{
+        UnlockConnectorRequest, UnlockConnectorResponse,
+    };
+    use crate::v2_0_1::messages::unpublish_firmware::{
+        UnpublishFirmwareRequest, UnpublishFirmwareResponse,
+    };
     use crate::v2_0_1::messages::update_firmware::{UpdateFirmwareRequest, UpdateFirmwareResponse};
+    use chrono::Utc;
+    use jsonschema::JSONSchema;
 
     #[test]
     fn validate_authorize_request() {
@@ -431,8 +467,7 @@ mod tests {
             status_info: None,
         };
 
-        let schema =
-            include_str!("schemas/v2.0.1/ChangeAvailabilityResponse.json");
+        let schema = include_str!("schemas/v2.0.1/ChangeAvailabilityResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -490,8 +525,7 @@ mod tests {
             charging_profile_id: None,
             charging_profile_criteria: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/ClearChargingProfileRequest.json");
+        let schema = include_str!("schemas/v2.0.1/ClearChargingProfileRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -512,8 +546,7 @@ mod tests {
             status_info: None,
         };
 
-        let schema =
-            include_str!("schemas/v2.0.1/ClearChargingProfileResponse.json");
+        let schema = include_str!("schemas/v2.0.1/ClearChargingProfileResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -530,8 +563,7 @@ mod tests {
     #[test]
     fn validate_clear_display_message_request() {
         let test = ClearDisplayMessageRequest { id: 0 };
-        let schema =
-            include_str!("schemas/v2.0.1/ClearDisplayMessageRequest.json");
+        let schema = include_str!("schemas/v2.0.1/ClearDisplayMessageRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -552,8 +584,7 @@ mod tests {
             status_info: None,
         };
 
-        let schema =
-            include_str!("schemas/v2.0.1/ClearDisplayMessageResponse.json");
+        let schema = include_str!("schemas/v2.0.1/ClearDisplayMessageResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -573,8 +604,7 @@ mod tests {
             charging_limit_source: ChargingLimitSourceEnumType::EMS,
             evse: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/ClearedChargingLimitRequest.json");
+        let schema = include_str!("schemas/v2.0.1/ClearedChargingLimitRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -592,8 +622,7 @@ mod tests {
     fn validate_cleared_charging_limit_response() {
         let test = ClearedChargingLimitResponse {};
 
-        let schema =
-            include_str!("schemas/v2.0.1/ClearedChargingLimitResponse.json");
+        let schema = include_str!("schemas/v2.0.1/ClearedChargingLimitResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -610,8 +639,7 @@ mod tests {
     #[test]
     fn validate_clear_variable_monitoring_request() {
         let test = ClearVariableMonitoringRequest { id: vec![0] };
-        let schema =
-            include_str!("schemas/v2.0.1/ClearVariableMonitoringRequest.json");
+        let schema = include_str!("schemas/v2.0.1/ClearVariableMonitoringRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -634,8 +662,7 @@ mod tests {
                 status_info: None,
             }],
         };
-        let schema =
-            include_str!("schemas/v2.0.1/ClearVariableMonitoringResponse.json");
+        let schema = include_str!("schemas/v2.0.1/ClearVariableMonitoringResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -694,8 +721,7 @@ mod tests {
             id_token: None,
             customer_certificate: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/CustomerInformationRequest.json");
+        let schema = include_str!("schemas/v2.0.1/CustomerInformationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -714,8 +740,7 @@ mod tests {
             status: CustomerInformationStatusEnumType::Accepted,
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/CustomerInformationResponse.json");
+        let schema = include_str!("schemas/v2.0.1/CustomerInformationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -816,8 +841,7 @@ mod tests {
             status: FirmwareStatusEnumType::Downloaded,
             request_id: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/FirmwareStatusNotificationRequest.json");
+        let schema = include_str!("schemas/v2.0.1/FirmwareStatusNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -833,8 +857,7 @@ mod tests {
     #[test]
     fn validate_firmware_status_notification_response() {
         let test = FirmwareStatusNotificationResponse {};
-        let schema =
-            include_str!("schemas/v2.0.1/FirmwareStatusNotificationResponse.json");
+        let schema = include_str!("schemas/v2.0.1/FirmwareStatusNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -854,8 +877,7 @@ mod tests {
             action: CertificateActionEnumType::Install,
             exi_request: "".to_string(),
         };
-        let schema =
-            include_str!("schemas/v2.0.1/Get15118EVCertificateRequest.json");
+        let schema = include_str!("schemas/v2.0.1/Get15118EVCertificateRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -875,8 +897,7 @@ mod tests {
             exi_response: "".to_string(),
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/Get15118EVCertificateResponse.json");
+        let schema = include_str!("schemas/v2.0.1/Get15118EVCertificateResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -938,8 +959,7 @@ mod tests {
                 responder_url: "".to_string(),
             },
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetCertificateStatusRequest.json");
+        let schema = include_str!("schemas/v2.0.1/GetCertificateStatusRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -959,8 +979,7 @@ mod tests {
             ocsp_result: None,
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetCertificateStatusResponse.json");
+        let schema = include_str!("schemas/v2.0.1/GetCertificateStatusResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -985,8 +1004,7 @@ mod tests {
                 charging_limit_source: None,
             },
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetChargingProfilesRequest.json");
+        let schema = include_str!("schemas/v2.0.1/GetChargingProfilesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1005,8 +1023,7 @@ mod tests {
             status: GetChargingProfileStatusEnumType::Accepted,
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetChargingProfilesResponse.json");
+        let schema = include_str!("schemas/v2.0.1/GetChargingProfilesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1026,8 +1043,7 @@ mod tests {
             charging_rate_unit: None,
             evse_id: 0,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetCompositeScheduleRequest.json");
+        let schema = include_str!("schemas/v2.0.1/GetCompositeScheduleRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1047,8 +1063,7 @@ mod tests {
             schedule: None,
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetCompositeScheduleResponse.json");
+        let schema = include_str!("schemas/v2.0.1/GetCompositeScheduleResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1088,8 +1103,7 @@ mod tests {
             status: GetDisplayMessagesStatusEnumType::Accepted,
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetDisplayMessagesResponse.json");
+        let schema = include_str!("schemas/v2.0.1/GetDisplayMessagesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1107,8 +1121,7 @@ mod tests {
         let test = GetInstalledCertificateIdsRequest {
             certificate_type: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetInstalledCertificateIdsRequest.json");
+        let schema = include_str!("schemas/v2.0.1/GetInstalledCertificateIdsRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1128,8 +1141,7 @@ mod tests {
             certificate_hash_data_chain: None,
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetInstalledCertificateIdsResponse.json");
+        let schema = include_str!("schemas/v2.0.1/GetInstalledCertificateIdsResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1145,8 +1157,7 @@ mod tests {
     #[test]
     fn validate_get_local_list_version_request() {
         let test = GetLocalListVersionRequest {};
-        let schema =
-            include_str!("schemas/v2.0.1/GetLocalListVersionRequest.json");
+        let schema = include_str!("schemas/v2.0.1/GetLocalListVersionRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1162,8 +1173,7 @@ mod tests {
     #[test]
     fn validate_get_local_list_version_response() {
         let test = GetLocalListVersionResponse { version_number: 0 };
-        let schema =
-            include_str!("schemas/v2.0.1/GetLocalListVersionResponse.json");
+        let schema = include_str!("schemas/v2.0.1/GetLocalListVersionResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1229,8 +1239,7 @@ mod tests {
             monitoring_criteria: None,
             component_variable: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetMonitoringReportRequest.json");
+        let schema = include_str!("schemas/v2.0.1/GetMonitoringReportRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1249,8 +1258,7 @@ mod tests {
             status: GenericDeviceModelStatusEnumType::Accepted,
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetMonitoringReportResponse.json");
+        let schema = include_str!("schemas/v2.0.1/GetMonitoringReportResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1307,8 +1315,7 @@ mod tests {
         let test = GetTransactionStatusRequest {
             transaction_id: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetTransactionStatusRequest.json");
+        let schema = include_str!("schemas/v2.0.1/GetTransactionStatusRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1327,8 +1334,7 @@ mod tests {
             ongoing_indicator: None,
             messages_in_queue: false,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/GetTransactionStatusResponse.json");
+        let schema = include_str!("schemas/v2.0.1/GetTransactionStatusResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1461,8 +1467,7 @@ mod tests {
             status: InstallCertificateStatusEnumType::Accepted,
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/InstallCertificateResponse.json");
+        let schema = include_str!("schemas/v2.0.1/InstallCertificateResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1481,8 +1486,7 @@ mod tests {
             status: UploadLogStatusEnumType::BadMessage,
             request_id: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/LogStatusNotificationRequest.json");
+        let schema = include_str!("schemas/v2.0.1/LogStatusNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1498,8 +1502,7 @@ mod tests {
     #[test]
     fn validate_log_status_notification_response() {
         let test = LogStatusNotificationResponse {};
-        let schema =
-            include_str!("schemas/v2.0.1/LogStatusNotificationResponse.json");
+        let schema = include_str!("schemas/v2.0.1/LogStatusNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1568,8 +1571,7 @@ mod tests {
             },
             charging_schedule: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyChargingLimitRequest.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyChargingLimitRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1585,8 +1587,7 @@ mod tests {
     #[test]
     fn validate_notify_charging_limit_response() {
         let test = NotifyChargingLimitResponse {};
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyChargingLimitResponse.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyChargingLimitResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1608,8 +1609,7 @@ mod tests {
             generated_at: Utc::now(),
             request_id: 0,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyCustomerInformationRequest.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyCustomerInformationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1625,8 +1625,7 @@ mod tests {
     #[test]
     fn validate_notify_customer_information_response() {
         let test = NotifyCustomerInformationResponse {};
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyCustomerInformationResponse.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyCustomerInformationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1646,8 +1645,7 @@ mod tests {
             tbc: None,
             message_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyDisplayMessagesRequest.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyDisplayMessagesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1663,8 +1661,7 @@ mod tests {
     #[test]
     fn validate_notify_display_messages_response() {
         let test = NotifyDisplayMessagesResponse {};
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyDisplayMessagesResponse.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyDisplayMessagesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1689,8 +1686,7 @@ mod tests {
                 dc_charging_parameters: None,
             },
         };
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyEVChargingNeedsRequest.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyEVChargingNeedsRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1709,8 +1705,7 @@ mod tests {
             status: NotifyEVChargingNeedsStatusEnumType::Accepted,
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyEVChargingNeedsResponse.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyEVChargingNeedsResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1743,8 +1738,7 @@ mod tests {
                 sales_tariff: None,
             },
         };
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyEVChargingScheduleRequest.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyEVChargingScheduleRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1763,8 +1757,7 @@ mod tests {
             status: GenericStatusEnumType::Accepted,
             status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyEVChargingScheduleResponse.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyEVChargingScheduleResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1844,8 +1837,7 @@ mod tests {
             generated_at: Utc::now(),
             monitor: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyMonitoringReportRequest.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyMonitoringReportRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1861,8 +1853,7 @@ mod tests {
     #[test]
     fn validate_notify_monitoring_report_response() {
         let test = NotifyMonitoringReportResponse {};
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyMonitoringReportResponse.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyMonitoringReportResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1882,10 +1873,9 @@ mod tests {
             tbc: None,
             seq_no: 0,
             generated_at: Utc::now(),
-            report_data: None
+            report_data: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyReportRequest.json");
+        let schema = include_str!("schemas/v2.0.1/NotifyReportRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1900,10 +1890,8 @@ mod tests {
     }
     #[test]
     fn validate_notify_report_response() {
-        let test = NotifyReportResponse {
-        };
-        let schema =
-            include_str!("schemas/v2.0.1/NotifyReportResponse.json");
+        let test = NotifyReportResponse {};
+        let schema = include_str!("schemas/v2.0.1/NotifyReportResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1923,10 +1911,9 @@ mod tests {
             retries: None,
             checksum: "".to_string(),
             request_id: 0,
-            retry_interval: None
+            retry_interval: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/PublishFirmwareRequest.json");
+        let schema = include_str!("schemas/v2.0.1/PublishFirmwareRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1943,10 +1930,9 @@ mod tests {
     fn validate_publish_firmware_response() {
         let test = PublishFirmwareResponse {
             status: GenericStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/PublishFirmwareResponse.json");
+        let schema = include_str!("schemas/v2.0.1/PublishFirmwareResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1964,10 +1950,9 @@ mod tests {
         let test = PublishFirmwareStatusNotificationRequest {
             status: PublishFirmwareStatusEnumType::Idle,
             location: None,
-            request_id: None
+            request_id: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/PublishFirmwareStatusNotificationRequest.json");
+        let schema = include_str!("schemas/v2.0.1/PublishFirmwareStatusNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -1982,10 +1967,8 @@ mod tests {
     }
     #[test]
     fn validate_publish_firmware_status_notification_response() {
-        let test = PublishFirmwareStatusNotificationResponse {
-        };
-        let schema =
-            include_str!("schemas/v2.0.1/PublishFirmwareStatusNotificationResponse.json");
+        let test = PublishFirmwareStatusNotificationResponse {};
+        let schema = include_str!("schemas/v2.0.1/PublishFirmwareStatusNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2008,7 +1991,8 @@ mod tests {
             charging_profile: vec![ChargingProfileType {
                 id: 0,
                 stack_level: 0,
-                charging_profile_purpose: ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
+                charging_profile_purpose:
+                    ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
                 charging_profile_kind: ChargingProfileKindEnumType::Absolute,
                 recurrency_kind: None,
                 valid_from: None,
@@ -2024,14 +2008,13 @@ mod tests {
                         start_period: 0,
                         limit: 0.0,
                         number_phases: None,
-                        phase_to_use: None
+                        phase_to_use: None,
                     }],
-                    sales_tariff: None
-                }]
-            }]
+                    sales_tariff: None,
+                }],
+            }],
         };
-        let schema =
-            include_str!("schemas/v2.0.1/ReportChargingProfilesRequest.json");
+        let schema = include_str!("schemas/v2.0.1/ReportChargingProfilesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2046,10 +2029,8 @@ mod tests {
     }
     #[test]
     fn validate_report_charging_profiles_response() {
-        let test = ReportChargingProfilesResponse {
-        };
-        let schema =
-            include_str!("schemas/v2.0.1/ReportChargingProfilesResponse.json");
+        let test = ReportChargingProfilesResponse {};
+        let schema = include_str!("schemas/v2.0.1/ReportChargingProfilesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2070,13 +2051,12 @@ mod tests {
             id_token: IdTokenType {
                 id_token: "".to_string(),
                 kind: IdTokenEnumType::Central,
-                additional_info: None
+                additional_info: None,
             },
             charging_profile: None,
-            group_id_token: None
+            group_id_token: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/RequestStartTransactionRequest.json");
+        let schema = include_str!("schemas/v2.0.1/RequestStartTransactionRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2094,10 +2074,9 @@ mod tests {
         let test = RequestStartTransactionResponse {
             status: RequestStartStopStatusEnumType::Accepted,
             transaction_id: None,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/RequestStartTransactionResponse.json");
+        let schema = include_str!("schemas/v2.0.1/RequestStartTransactionResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2113,10 +2092,9 @@ mod tests {
     #[test]
     fn validate_request_stop_transaction_request() {
         let test = RequestStopTransactionRequest {
-            transaction_id: "".to_string()
+            transaction_id: "".to_string(),
         };
-        let schema =
-            include_str!("schemas/v2.0.1/RequestStopTransactionRequest.json");
+        let schema = include_str!("schemas/v2.0.1/RequestStopTransactionRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2133,10 +2111,9 @@ mod tests {
     fn validate_request_stop_transaction_response() {
         let test = RequestStopTransactionResponse {
             status: RequestStartStopStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/RequestStopTransactionResponse.json");
+        let schema = include_str!("schemas/v2.0.1/RequestStopTransactionResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2153,10 +2130,9 @@ mod tests {
     fn validate_reservation_status_update_request() {
         let test = ReservationStatusUpdateRequest {
             reservation_id: 0,
-            reservation_update_status: ReservationUpdateStatusEnumType::Expired
+            reservation_update_status: ReservationUpdateStatusEnumType::Expired,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/ReservationStatusUpdateRequest.json");
+        let schema = include_str!("schemas/v2.0.1/ReservationStatusUpdateRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2171,10 +2147,8 @@ mod tests {
     }
     #[test]
     fn validate_reservation_status_update_response() {
-        let test = ReservationStatusUpdateResponse {
-        };
-        let schema =
-            include_str!("schemas/v2.0.1/ReservationStatusUpdateResponse.json");
+        let test = ReservationStatusUpdateResponse {};
+        let schema = include_str!("schemas/v2.0.1/ReservationStatusUpdateResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2197,12 +2171,11 @@ mod tests {
             id_token: IdTokenType {
                 id_token: "".to_string(),
                 kind: IdTokenEnumType::Central,
-                additional_info: None
+                additional_info: None,
             },
-            group_id_token: None
+            group_id_token: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/ReserveNowRequest.json");
+        let schema = include_str!("schemas/v2.0.1/ReserveNowRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2219,10 +2192,9 @@ mod tests {
     fn validate_reserve_now_response() {
         let test = ReserveNowResponse {
             status: ReserveNowStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/ReserveNowResponse.json");
+        let schema = include_str!("schemas/v2.0.1/ReserveNowResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2239,10 +2211,9 @@ mod tests {
     fn validate_reset_request() {
         let test = ResetRequest {
             request_type: ResetEnumType::Immediate,
-            evse_id: None
+            evse_id: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/ResetRequest.json");
+        let schema = include_str!("schemas/v2.0.1/ResetRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2259,10 +2230,9 @@ mod tests {
     fn validate_reset_response() {
         let test = ResetResponse {
             status: ResetStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/ResetResponse.json");
+        let schema = include_str!("schemas/v2.0.1/ResetResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2280,10 +2250,9 @@ mod tests {
         let test = SecurityEventNotificationRequest {
             kind: "".to_string(),
             timestamp: Utc::now(),
-            tech_info: None
+            tech_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SecurityEventNotificationRequest.json");
+        let schema = include_str!("schemas/v2.0.1/SecurityEventNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2298,10 +2267,8 @@ mod tests {
     }
     #[test]
     fn validate_security_event_notification_response() {
-        let test = SecurityEventNotificationResponse {
-        };
-        let schema =
-            include_str!("schemas/v2.0.1/SecurityEventNotificationResponse.json");
+        let test = SecurityEventNotificationResponse {};
+        let schema = include_str!("schemas/v2.0.1/SecurityEventNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2319,10 +2286,9 @@ mod tests {
         let test = SendLocalListRequest {
             version_number: 0,
             update_type: UpdateEnumType::Differential,
-            tech_info: None
+            tech_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SendLocalListRequest.json");
+        let schema = include_str!("schemas/v2.0.1/SendLocalListRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2339,10 +2305,9 @@ mod tests {
     fn validate_send_local_list_response() {
         let test = SendLocalListResponse {
             status: SendLocalListStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SendLocalListResponse.json");
+        let schema = include_str!("schemas/v2.0.1/SendLocalListResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2362,7 +2327,8 @@ mod tests {
             charging_profile: ChargingProfileType {
                 id: 0,
                 stack_level: 0,
-                charging_profile_purpose: ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
+                charging_profile_purpose:
+                    ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
                 charging_profile_kind: ChargingProfileKindEnumType::Absolute,
                 recurrency_kind: None,
                 valid_from: None,
@@ -2374,18 +2340,17 @@ mod tests {
                     duration: None,
                     charging_rate_unit: ChargingRateUnitEnumType::W,
                     min_charging_rate: None,
-                    charging_schedule_period: vec![ChargingSchedulePeriodType{
+                    charging_schedule_period: vec![ChargingSchedulePeriodType {
                         start_period: 0,
                         limit: 0.0,
                         number_phases: None,
-                        phase_to_use: None
+                        phase_to_use: None,
                     }],
-                    sales_tariff: None
-                }]
-            }
+                    sales_tariff: None,
+                }],
+            },
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetChargingProfileRequest.json");
+        let schema = include_str!("schemas/v2.0.1/SetChargingProfileRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2402,10 +2367,9 @@ mod tests {
     fn validate_set_charging_profile_response() {
         let test = SetChargingProfileResponse {
             status: ChargingProfileStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetChargingProfileResponse.json");
+        let schema = include_str!("schemas/v2.0.1/SetChargingProfileResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2431,13 +2395,12 @@ mod tests {
                 message: MessageContentType {
                     format: MessageFormatEnumType::ASCII,
                     language: None,
-                    content: "".to_string()
+                    content: "".to_string(),
                 },
-                display: None
-            }
+                display: None,
+            },
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetDisplayMessageRequest.json");
+        let schema = include_str!("schemas/v2.0.1/SetDisplayMessageRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2454,10 +2417,9 @@ mod tests {
     fn validate_set_display_message_response() {
         let test = SetDisplayMessageResponse {
             status: DisplayMessageStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetDisplayMessageResponse.json");
+        let schema = include_str!("schemas/v2.0.1/SetDisplayMessageResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2473,10 +2435,9 @@ mod tests {
     #[test]
     fn validate_set_monitoring_base_request() {
         let test = SetMonitoringBaseRequest {
-            monitoring_base: MonitoringBaseEnumType::All
+            monitoring_base: MonitoringBaseEnumType::All,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetMonitoringBaseRequest.json");
+        let schema = include_str!("schemas/v2.0.1/SetMonitoringBaseRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2493,10 +2454,9 @@ mod tests {
     fn validate_set_monitoring_base_response() {
         let test = SetMonitoringBaseResponse {
             status: GenericDeviceModelStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetMonitoringBaseResponse.json");
+        let schema = include_str!("schemas/v2.0.1/SetMonitoringBaseResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2511,11 +2471,8 @@ mod tests {
     }
     #[test]
     fn validate_set_monitoring_level_request() {
-        let test = SetMonitoringLevelRequest {
-            severity: 0
-        };
-        let schema =
-            include_str!("schemas/v2.0.1/SetMonitoringLevelRequest.json");
+        let test = SetMonitoringLevelRequest { severity: 0 };
+        let schema = include_str!("schemas/v2.0.1/SetMonitoringLevelRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2532,10 +2489,9 @@ mod tests {
     fn validate_set_monitoring_level_response() {
         let test = SetMonitoringLevelResponse {
             status: GenericStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetMonitoringLevelResponse.json");
+        let schema = include_str!("schemas/v2.0.1/SetMonitoringLevelResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2560,11 +2516,10 @@ mod tests {
                 security_profile: 0,
                 ocpp_interface: OCPPInterfaceEnumType::Wired0,
                 vpn: None,
-                apn: None
-            }
+                apn: None,
+            },
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetNetworkProfileRequest.json");
+        let schema = include_str!("schemas/v2.0.1/SetNetworkProfileRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2581,10 +2536,9 @@ mod tests {
     fn validate_set_network_profile_response() {
         let test = SetNetworkProfileResponse {
             status: SetNetworkProfileStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetNetworkProfileResponse.json");
+        let schema = include_str!("schemas/v2.0.1/SetNetworkProfileResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2609,13 +2563,15 @@ mod tests {
                 component: ComponentType {
                     name: "".to_string(),
                     instance: None,
-                    evse: None
+                    evse: None,
                 },
-                variable: VariableType { name: "".to_string(), instance: None }
-            }]
+                variable: VariableType {
+                    name: "".to_string(),
+                    instance: None,
+                },
+            }],
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetVariableMonitoringRequest.json");
+        let schema = include_str!("schemas/v2.0.1/SetVariableMonitoringRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2639,14 +2595,16 @@ mod tests {
                 component: ComponentType {
                     name: "".to_string(),
                     instance: None,
-                    evse: None
+                    evse: None,
                 },
-                variable: VariableType { name: "".to_string(), instance: None },
-                status_info: None
-            }]
+                variable: VariableType {
+                    name: "".to_string(),
+                    instance: None,
+                },
+                status_info: None,
+            }],
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetVariableMonitoringResponse.json");
+        let schema = include_str!("schemas/v2.0.1/SetVariableMonitoringResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2668,13 +2626,15 @@ mod tests {
                 component: ComponentType {
                     name: "".to_string(),
                     instance: None,
-                    evse: None
+                    evse: None,
                 },
-                variable: VariableType { name: "".to_string(), instance: None }
-            }]
+                variable: VariableType {
+                    name: "".to_string(),
+                    instance: None,
+                },
+            }],
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetVariablesRequest.json");
+        let schema = include_str!("schemas/v2.0.1/SetVariablesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2696,14 +2656,16 @@ mod tests {
                 component: ComponentType {
                     name: "".to_string(),
                     instance: None,
-                    evse: None
+                    evse: None,
                 },
-                variable: VariableType { name: "".to_string(), instance: None },
-                attribute_status_info: None
-            }]
+                variable: VariableType {
+                    name: "".to_string(),
+                    instance: None,
+                },
+                attribute_status_info: None,
+            }],
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SetVariablesResponse.json");
+        let schema = include_str!("schemas/v2.0.1/SetVariablesResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2720,10 +2682,9 @@ mod tests {
     fn validate_sign_certificate_request() {
         let test = SignCertificateRequest {
             csr: "".to_string(),
-            certificate_type: None
+            certificate_type: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SignCertificateRequest.json");
+        let schema = include_str!("schemas/v2.0.1/SignCertificateRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2740,10 +2701,9 @@ mod tests {
     fn validate_sign_certificate_response() {
         let test = SignCertificateResponse {
             status: GenericStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/SignCertificateResponse.json");
+        let schema = include_str!("schemas/v2.0.1/SignCertificateResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2762,10 +2722,9 @@ mod tests {
             timestamp: Utc::now(),
             connector_status: ConnectorStatusEnumType::Available,
             evse_id: 0,
-            connector_id: 0
+            connector_id: 0,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/StatusNotificationRequest.json");
+        let schema = include_str!("schemas/v2.0.1/StatusNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2780,10 +2739,8 @@ mod tests {
     }
     #[test]
     fn validate_status_notification_response() {
-        let test = StatusNotificationResponse {
-        };
-        let schema =
-            include_str!("schemas/v2.0.1/StatusNotificationResponse.json");
+        let test = StatusNotificationResponse {};
+        let schema = include_str!("schemas/v2.0.1/StatusNotificationResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2812,14 +2769,13 @@ mod tests {
                 charging_state: None,
                 time_spent_charging: None,
                 stopped_reason: None,
-                remote_start_id: None
+                remote_start_id: None,
             },
             id_token: None,
             evse: None,
-            meter_value: None
+            meter_value: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/TransactionEventRequest.json");
+        let schema = include_str!("schemas/v2.0.1/TransactionEventRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2838,10 +2794,9 @@ mod tests {
             total_cost: None,
             charging_priority: None,
             id_token_info: None,
-            updated_personal_message: None
+            updated_personal_message: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/TransactionEventResponse.json");
+        let schema = include_str!("schemas/v2.0.1/TransactionEventResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2858,10 +2813,9 @@ mod tests {
     fn validate_trigger_message_request() {
         let test = TriggerMessageRequest {
             requested_message: MessageTriggerEnumType::BootNotification,
-            evse: None
+            evse: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/TriggerMessageRequest.json");
+        let schema = include_str!("schemas/v2.0.1/TriggerMessageRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2878,10 +2832,9 @@ mod tests {
     fn validate_trigger_message_response() {
         let test = TriggerMessageResponse {
             status: TriggerMessageStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/TriggerMessageResponse.json");
+        let schema = include_str!("schemas/v2.0.1/TriggerMessageResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2898,10 +2851,9 @@ mod tests {
     fn validate_unlock_connector_request() {
         let test = UnlockConnectorRequest {
             evse_id: 0,
-            connector_id: 0
+            connector_id: 0,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/UnlockConnectorRequest.json");
+        let schema = include_str!("schemas/v2.0.1/UnlockConnectorRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2918,10 +2870,9 @@ mod tests {
     fn validate_unlock_connector_response() {
         let test = UnlockConnectorResponse {
             status: UnlockStatusEnumType::Unlocked,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/UnlockConnectorResponse.json");
+        let schema = include_str!("schemas/v2.0.1/UnlockConnectorResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2937,10 +2888,9 @@ mod tests {
     #[test]
     fn validate_unpublish_firmware_request() {
         let test = UnpublishFirmwareRequest {
-            checksum: "".to_string()
+            checksum: "".to_string(),
         };
-        let schema =
-            include_str!("schemas/v2.0.1/UnpublishFirmwareRequest.json");
+        let schema = include_str!("schemas/v2.0.1/UnpublishFirmwareRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2956,10 +2906,9 @@ mod tests {
     #[test]
     fn validate_unpublish_firmware_response() {
         let test = UnpublishFirmwareResponse {
-            status: UnpublishFirmwareStatusEnumType::DownloadOngoing
+            status: UnpublishFirmwareStatusEnumType::DownloadOngoing,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/UnpublishFirmwareResponse.json");
+        let schema = include_str!("schemas/v2.0.1/UnpublishFirmwareResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -2983,11 +2932,10 @@ mod tests {
                 retrieve_date_time: Utc::now(),
                 install_date_time: None,
                 signing_certificate: None,
-                signature: None
-            }
+                signature: None,
+            },
         };
-        let schema =
-            include_str!("schemas/v2.0.1/UpdateFirmwareRequest.json");
+        let schema = include_str!("schemas/v2.0.1/UpdateFirmwareRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
@@ -3004,10 +2952,9 @@ mod tests {
     fn validate_update_firmware_response() {
         let test = UpdateFirmwareResponse {
             status: UpdateFirmwareStatusEnumType::Accepted,
-            status_info: None
+            status_info: None,
         };
-        let schema =
-            include_str!("schemas/v2.0.1/UpdateFirmwareResponse.json");
+        let schema = include_str!("schemas/v2.0.1/UpdateFirmwareResponse.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = JSONSchema::compile(&schema).expect("A valid schema");
