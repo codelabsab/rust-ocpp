@@ -16,10 +16,8 @@ You can find the tests in `schema_validation.rs` for both `v.1.6` and `v2.0.1`
 
 `docs/` : official ocpp specification
 
-# contribute
+## contribute
 
 Use `rustfmt` before you PR.
 
-## pre-commit
-
-pre-commit config is available. You can read more about it at [pre-commits](https://pre-commit.com) website.
+pre-commit config is available. You can read more about it at [pre-commits](https://pre-commit.com) website and checkout their repo on [github](https://github.com/pre-commit/pre-commit)
