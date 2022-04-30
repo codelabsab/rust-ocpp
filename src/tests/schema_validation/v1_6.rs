@@ -68,7 +68,7 @@ mod tests {
         ChargingProfilePurposeType, ChargingProfileStatus, ChargingRateUnitType, ChargingSchedule,
         ChargingSchedulePeriod, ClearCacheStatus, ClearChargingProfileStatus, ConfigurationStatus,
         DataTransferStatus, DiagnosticsStatus, FirmwareStatus, GetCompositeScheduleStatus,
-        IdTagInfo, MessageTrigger, MeterValue, RegistrationStatus, RemoteStartStopStatus,
+        IdTagInfo, KeyValue, MessageTrigger, MeterValue, RegistrationStatus, RemoteStartStopStatus,
         ReservationStatus, ResetRequestStatus, ResetResponseStatus, SampledValue,
         TriggerMessageStatus, UnlockStatus, UpdateStatus, UpdateType,
     };
@@ -122,7 +122,7 @@ mod tests {
         let test = BootNotificationRequest {
             charge_box_serial_number: Some("".to_string()),
             charge_point_model: "".to_string(),
-            charge_point_serial_number: None,
+            charge_point_serial_number: Some("charge_point_serial".to_string()),
             charge_point_vendor: "".to_string(),
             firmware_version: Some("".to_string()),
             iccid: Some("".to_string()),
@@ -474,7 +474,7 @@ mod tests {
         let test = GetCompositeScheduleRequest {
             connector_id: 0,
             duration: 0,
-            charging_rate_unit: None,
+            charging_rate_unit: Some(ChargingRateUnitType::W),
         };
 
         let schema = include_str!("schemas/v1.6/json/GetCompositeSchedule.json");
@@ -494,9 +494,19 @@ mod tests {
     fn validate_get_composite_schedule_response() {
         let test = GetCompositeScheduleResponse {
             status: GetCompositeScheduleStatus::Accepted,
-            connector_id: None,
-            schedule_start: None,
-            charging_schedule: None,
+            connector_id: Some(1),
+            schedule_start: Some(Utc::now()),
+            charging_schedule: Some(ChargingSchedule {
+                duration: Some(1),
+                start_schedule: Some(Utc::now()),
+                charging_rate_unit: ChargingRateUnitType::W,
+                charging_schedule_period: vec![ChargingSchedulePeriod {
+                    start_period: 0,
+                    limit: 0.0,
+                    number_phases: Some(1),
+                }],
+                min_charging_rate: Some(1.0),
+            }),
         };
 
         let schema = include_str!("schemas/v1.6/json/GetCompositeScheduleResponse.json");
@@ -514,7 +524,9 @@ mod tests {
     }
     #[test]
     fn validate_get_configuration() {
-        let test = GetConfigurationRequest { key: None };
+        let test = GetConfigurationRequest {
+            key: Some(vec!["".to_string()]),
+        };
 
         let schema = include_str!("schemas/v1.6/json/GetConfiguration.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -532,8 +544,12 @@ mod tests {
     #[test]
     fn validate_get_configuration_response() {
         let test = GetConfigurationResponse {
-            configuration_key: None,
-            unknown_key: None,
+            configuration_key: Some(vec![KeyValue {
+                key: "".to_string(),
+                readonly: false,
+                value: Some("".to_string()),
+            }]),
+            unknown_key: Some(vec!["".to_string()]),
         };
 
         let schema = include_str!("schemas/v1.6/json/GetConfigurationResponse.json");
@@ -553,10 +569,10 @@ mod tests {
     fn validate_get_diagnostics() {
         let test = GetDiagnosticsRequest {
             location: "https://codelabs.se/".to_string(),
-            retries: None,
-            retry_interval: None,
-            start_time: None,
-            stop_time: None,
+            retries: Some(1),
+            retry_interval: Some(1),
+            start_time: Some(Utc::now()),
+            stop_time: Some(Utc::now()),
         };
 
         let schema = include_str!("schemas/v1.6/json/GetDiagnostics.json");
