@@ -10,7 +10,7 @@ use crate::v2_0_1::enumerations::message_state_enum_type::MessageStateEnumType;
 pub struct GetDisplayMessagesRequest {
     /// If provided the Charging Station shall returnDisplay Messages of the given ids. This field SHALL NOTcontain more ids than set inNumberOfDisplayMessages.maxLimit
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<i64>,
+    pub id: Option<Vec<i64>>,
     /// The Id of this request
     pub request_id: i64,
     /// If provided the Charging Station shall returnDisplay Messages with the given priority only

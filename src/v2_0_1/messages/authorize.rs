@@ -18,7 +18,7 @@ pub struct AuthorizeRequest {
     pub id_token: IdTokenType,
     /// Contains the information needed to verify the EV Contract Certificate via OCSP.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub iso_15118_certificate_hash_data: Option<OCSPRequestDataType>,
+    pub iso_15118_certificate_hash_data: Option<Vec<OCSPRequestDataType>>,
 }
 
 /// `AuthorizeResponse`, sent by the

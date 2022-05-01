@@ -10,5 +10,5 @@ pub struct IdTokenType {
     #[serde(rename = "type")]
     pub kind: IdTokenEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub additional_info: Option<AdditionalInfoType>,
+    pub additional_info: Option<Vec<AdditionalInfoType>>,
 }

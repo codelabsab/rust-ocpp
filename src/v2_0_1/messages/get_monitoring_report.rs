@@ -12,10 +12,10 @@ pub struct GetMonitoringReportRequest {
     pub request_id: i64,
     ///  This field contains criteria for components forwhich a monitoring report is requested.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub monitoring_criteria: Option<MonitoringCriterionEnumType>,
+    pub monitoring_criteria: Option<Vec<MonitoringCriterionEnumType>>,
     /// This field specifies the components andvariables for which a monitoring report is requested.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub component_variable: Option<ComponentVariableType>,
+    pub component_variable: Option<Vec<ComponentVariableType>>,
 }
 
 /// GetMonitoringReportResponse, sent by the Charging Station to the CSMS.

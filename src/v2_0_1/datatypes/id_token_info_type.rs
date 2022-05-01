@@ -18,7 +18,7 @@ pub struct IdTokenInfoType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language1: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub evse_id: Option<i64>,
+    pub evse_id: Option<Vec<i64>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language2: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]

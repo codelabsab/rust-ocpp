@@ -11,5 +11,5 @@ pub struct CertificateHashDataChainType {
     pub certificate_hash_data: CertificateHashDataType,
     /// Optional. Information to identify the child certificate(s).
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub child_certificate_hash_data: Option<CertificateHashDataType>,
+    pub child_certificate_hash_data: Option<Vec<CertificateHashDataType>>,
 }

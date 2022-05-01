@@ -10,7 +10,7 @@ use crate::v2_0_1::enumerations::get_display_messages_status_enum_type::GetDispl
 pub struct GetInstalledCertificateIdsRequest {
     /// Indicates the type of certificates requested.When omitted, all certificate types are requested.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub certificate_type: Option<GetCertificateIdUseEnumType>,
+    pub certificate_type: Option<Vec<GetCertificateIdUseEnumType>>,
 }
 
 /// Response to a GetInstalledCertificateIDsRequest.
@@ -21,7 +21,7 @@ pub struct GetInstalledCertificateIdsResponse {
     pub status: GetDisplayMessagesStatusEnumType,
     /// The Charging Station includes the Certificateinformation for each available certificate.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub certificate_hash_data_chain: Option<CertificateHashDataChainType>,
+    pub certificate_hash_data_chain: Option<Vec<CertificateHashDataChainType>>,
     /// Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,

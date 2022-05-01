@@ -16,8 +16,8 @@ pub struct ChargingProfileCriterionType {
     pub stack_level: Option<i64>,
     /// Optional. List of all the chargingProfileIds requested. Any ChargingProfile that matches one of these profiles will be reported. If omitted, the Charging Station SHALL not filter on chargingProfileId. This field SHALL NOT contain more ids than set in ChargingProfileEntries.maxLimit
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub charging_profile_id: Option<i64>,
+    pub charging_profile_id: Option<Vec<i64>>,
     /// Optional. For which charging limit sources, charging profiles SHALL be reported. If omitted, the Charging Station SHALL not filter on chargingLimitSource.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub charging_limit_source: Option<ChargingLimitSourceEnumType>,
+    pub charging_limit_source: Option<Vec<ChargingLimitSourceEnumType>>,
 }

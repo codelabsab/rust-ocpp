@@ -1,5 +1,7 @@
 #[cfg(test)]
 mod tests {
+    use crate::v2_0_1::datatypes::additional_info_type::AdditionalInfoType;
+    use crate::v2_0_1::datatypes::certificate_hash_data_chain_type::CertificateHashDataChainType;
     use crate::v2_0_1::datatypes::certificate_hash_data_type::CertificateHashDataType;
     use crate::v2_0_1::datatypes::charging_limit_type::ChargingLimitType;
     use crate::v2_0_1::datatypes::charging_needs_type::ChargingNeedsType;
@@ -8,9 +10,13 @@ mod tests {
     use crate::v2_0_1::datatypes::charging_schedule_period_type::ChargingSchedulePeriodType;
     use crate::v2_0_1::datatypes::charging_schedule_type::ChargingScheduleType;
     use crate::v2_0_1::datatypes::charging_station_type::ChargingStationType;
+    use crate::v2_0_1::datatypes::clear_charging_profile_type::ClearChargingProfileType;
     use crate::v2_0_1::datatypes::clear_monitoring_result_type::ClearMonitoringResultType;
     use crate::v2_0_1::datatypes::component_type::ComponentType;
+    use crate::v2_0_1::datatypes::component_variable_type::ComponentVariableType;
+    use crate::v2_0_1::datatypes::composite_schedule_type::CompositeScheduleType;
     use crate::v2_0_1::datatypes::event_data_type::EventDataType;
+    use crate::v2_0_1::datatypes::evse_type::EVSEType;
     use crate::v2_0_1::datatypes::firmware_type::FirmwareType;
     use crate::v2_0_1::datatypes::get_variable_data_type::GetVariableDataType;
     use crate::v2_0_1::datatypes::get_variable_result_type::GetVariableResultType;
@@ -20,6 +26,7 @@ mod tests {
     use crate::v2_0_1::datatypes::message_content_type::MessageContentType;
     use crate::v2_0_1::datatypes::message_info_type::MessageInfoType;
     use crate::v2_0_1::datatypes::meter_value_type::MeterValueType;
+    use crate::v2_0_1::datatypes::modem_type::ModemType;
     use crate::v2_0_1::datatypes::network_connection_profile_type::NetworkConnectionProfileType;
     use crate::v2_0_1::datatypes::ocsp_request_data_type::OCSPRequestDataType;
     use crate::v2_0_1::datatypes::sampled_value_type::SampledValueType;
@@ -27,6 +34,7 @@ mod tests {
     use crate::v2_0_1::datatypes::set_monitoring_result_type::SetMonitoringResultType;
     use crate::v2_0_1::datatypes::set_variable_data_type::SetVariableDataType;
     use crate::v2_0_1::datatypes::set_variable_result_type::SetVariableResultType;
+    use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
     use crate::v2_0_1::datatypes::transaction_type::TransactionType;
     use crate::v2_0_1::datatypes::variable_type::VariableType;
     use crate::v2_0_1::enumerations::authorization_status_enum_type::AuthorizationStatusEnumType;
@@ -34,6 +42,7 @@ mod tests {
     use crate::v2_0_1::enumerations::cancel_reservation_status_enum_type::CancelReservationStatusEnumType;
     use crate::v2_0_1::enumerations::certificate_action_enum_type::CertificateActionEnumType;
     use crate::v2_0_1::enumerations::certificate_signed_status_enum_type::CertificateSignedStatusEnumType;
+    use crate::v2_0_1::enumerations::certificate_signing_use_enum_type::CertificateSigningUseEnumType;
     use crate::v2_0_1::enumerations::change_availability_status_enum_type::ChangeAvailabilityStatusEnumType;
     use crate::v2_0_1::enumerations::charging_limit_source_enum_type::ChargingLimitSourceEnumType;
     use crate::v2_0_1::enumerations::charging_profile_kind_enum_type::ChargingProfileKindEnumType;
@@ -55,6 +64,7 @@ mod tests {
     use crate::v2_0_1::enumerations::firmware_status_enum_type::FirmwareStatusEnumType;
     use crate::v2_0_1::enumerations::generic_device_model_status_enum_type::GenericDeviceModelStatusEnumType;
     use crate::v2_0_1::enumerations::generic_status_enum_type::GenericStatusEnumType;
+    use crate::v2_0_1::enumerations::get_certificate_id_use_enum_type::GetCertificateIdUseEnumType;
     use crate::v2_0_1::enumerations::get_certificate_status_enum_type::GetCertificateStatusEnumType;
     use crate::v2_0_1::enumerations::get_charging_profile_status_enum_type::GetChargingProfileStatusEnumType;
     use crate::v2_0_1::enumerations::get_display_messages_status_enum_type::GetDisplayMessagesStatusEnumType;
@@ -72,6 +82,7 @@ mod tests {
     use crate::v2_0_1::enumerations::message_trigger_enum_type::MessageTriggerEnumType;
     use crate::v2_0_1::enumerations::monitor_enum_type::MonitorEnumType;
     use crate::v2_0_1::enumerations::monitoring_base_enum_type::MonitoringBaseEnumType;
+    use crate::v2_0_1::enumerations::monitoring_criterion_enum_type::MonitoringCriterionEnumType;
     use crate::v2_0_1::enumerations::notify_ev_charging_needs_status_enum_type::NotifyEVChargingNeedsStatusEnumType;
     use crate::v2_0_1::enumerations::ocpp_interface_enum_type::OCPPInterfaceEnumType;
     use crate::v2_0_1::enumerations::ocpp_transport_enum_type::OCPPTransportEnumType;
@@ -259,13 +270,22 @@ mod tests {
     #[test]
     fn validate_authorize_request() {
         let test = AuthorizeRequest {
-            certificate: None,
+            certificate: Some("".to_string()),
             id_token: IdTokenType {
                 id_token: "".to_string(),
                 kind: IdTokenEnumType::Central,
-                additional_info: None,
+                additional_info: Some(vec![AdditionalInfoType {
+                    additional_id_token: "".to_string(),
+                    kind: "".to_string(),
+                }]),
             },
-            iso_15118_certificate_hash_data: None,
+            iso_15118_certificate_hash_data: Some(vec![OCSPRequestDataType {
+                hash_algorithm: HashAlgorithmEnumType::SHA256,
+                issuer_name_hash: "".to_string(),
+                issuer_key_hash: "".to_string(),
+                serial_number: "".to_string(),
+                responder_url: "".to_string(),
+            }]),
         };
 
         let schema = include_str!("schemas/v2.0.1/AuthorizeRequest.json");
@@ -288,13 +308,24 @@ mod tests {
             certificate_status: None,
             id_token_info: IdTokenInfoType {
                 status: AuthorizationStatusEnumType::Accepted,
-                cache_expiry_date_time: None,
-                charging_priority: None,
-                language1: None,
-                evse_id: None,
-                language2: None,
-                group_id_token: None,
-                personal_message: None,
+                cache_expiry_date_time: Some(Utc::now()),
+                charging_priority: Some(1),
+                language1: Some("English".to_string()),
+                evse_id: Some(vec![1]),
+                language2: Some("Chinese".to_string()),
+                group_id_token: Some(IdTokenType {
+                    id_token: "".to_string(),
+                    kind: IdTokenEnumType::Central,
+                    additional_info: Some(vec![AdditionalInfoType {
+                        additional_id_token: "".to_string(),
+                        kind: "".to_string(),
+                    }]),
+                }),
+                personal_message: Some(MessageContentType {
+                    format: MessageFormatEnumType::ASCII,
+                    language: Some("Swedish".to_string()),
+                    content: "".to_string(),
+                }),
             },
         };
 
@@ -319,9 +350,12 @@ mod tests {
             charging_station: ChargingStationType {
                 model: "SingleSocketCharger".to_string(),
                 vendor_name: "VendorX".to_string(),
-                serial_number: None,
-                firmware_version: None,
-                modem: None,
+                serial_number: Some("serial_number".to_string()),
+                firmware_version: Some("firmware_version".to_string()),
+                modem: Some(ModemType {
+                    iccid: Some("iccid".to_string()),
+                    imsi: Some("imsi".to_string()),
+                }),
             },
         };
         let schema = include_str!("schemas/v2.0.1/BootNotificationRequest.json");
@@ -344,7 +378,10 @@ mod tests {
             current_time: Utc::now(),
             interval: 10,
             status: RegistrationStatusEnumType::Accepted,
-            status_info: None,
+            status_info: Some(StatusInfoType {
+                reason_code: "".to_string(),
+                additional_info: Some("additional_info".to_string()),
+            }),
         };
 
         let schema = include_str!("schemas/v2.0.1/BootNotificationResponse.json");
@@ -382,7 +419,10 @@ mod tests {
     fn validate_cancel_reservation_response() {
         let test = CancelReservationResponse {
             status: CancelReservationStatusEnumType::Accepted,
-            status_info: None,
+            status_info: Some(StatusInfoType {
+                reason_code: "".to_string(),
+                additional_info: Some("additional_info".to_string()),
+            }),
         };
 
         let schema = include_str!("schemas/v2.0.1/CancelReservationResponse.json");
@@ -402,8 +442,8 @@ mod tests {
     #[test]
     fn validate_certificate_signed_request() {
         let test = CertificateSignedRequest {
-            certificate_chain: "asd".to_string(),
-            certificate_type: None,
+            certificate_chain: "certificate_chain".to_string(),
+            certificate_type: Some(CertificateSigningUseEnumType::ChargingStationCertificate),
         };
         let schema = include_str!("schemas/v2.0.1/CertificateSignedRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -423,7 +463,10 @@ mod tests {
     fn validate_certificate_signed_response() {
         let test = CertificateSignedResponse {
             status: CertificateSignedStatusEnumType::Accepted,
-            status_info: None,
+            status_info: Some(StatusInfoType {
+                reason_code: "reason_code".to_string(),
+                additional_info: Some("additional_info".to_string()),
+            }),
         };
 
         let schema = include_str!("schemas/v2.0.1/CertificateSignedResponse.json");
@@ -444,7 +487,10 @@ mod tests {
     fn validate_change_availability_request() {
         let test = ChangeAvailabilityRequest {
             operational_status: OperationalStatusEnumType::Inoperative,
-            evse: None,
+            evse: Some(EVSEType {
+                id: 0,
+                connector_id: Some(1),
+            }),
         };
         let schema = include_str!("schemas/v2.0.1/ChangeAvailabilityRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -464,7 +510,10 @@ mod tests {
     fn validate_change_availability_response() {
         let test = ChangeAvailabilityResponse {
             status: ChangeAvailabilityStatusEnumType::Accepted,
-            status_info: None,
+            status_info: Some(StatusInfoType {
+                reason_code: "reason_code".to_string(),
+                additional_info: Some("additional_info".to_string()),
+            }),
         };
 
         let schema = include_str!("schemas/v2.0.1/ChangeAvailabilityResponse.json");
@@ -502,7 +551,10 @@ mod tests {
     fn validate_clear_cache_response() {
         let test = ClearCacheResponse {
             status: ClearCacheStatusEnumType::Accepted,
-            status_info: None,
+            status_info: Some(StatusInfoType {
+                reason_code: "reason_code".to_string(),
+                additional_info: Some("additional_info".to_string()),
+            }),
         };
 
         let schema = include_str!("schemas/v2.0.1/ClearCacheResponse.json");
@@ -522,8 +574,14 @@ mod tests {
     #[test]
     fn validate_clear_charging_profile_request() {
         let test = ClearChargingProfileRequest {
-            charging_profile_id: None,
-            charging_profile_criteria: None,
+            charging_profile_id: Some(1),
+            charging_profile_criteria: Some(ClearChargingProfileType {
+                evse_id: Some(1),
+                charging_profile_purpose: Some(
+                    ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
+                ),
+                stack_level: Some(1),
+            }),
         };
         let schema = include_str!("schemas/v2.0.1/ClearChargingProfileRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -543,7 +601,10 @@ mod tests {
     fn validate_clear_charging_profile_response() {
         let test = ClearChargingProfileResponse {
             status: ClearChargingProfileStatusEnumType::Accepted,
-            status_info: None,
+            status_info: Some(StatusInfoType {
+                reason_code: "reason_code".to_string(),
+                additional_info: Some("additional_info".to_string()),
+            }),
         };
 
         let schema = include_str!("schemas/v2.0.1/ClearChargingProfileResponse.json");
@@ -581,7 +642,10 @@ mod tests {
     fn validate_clear_display_message_response() {
         let test = ClearDisplayMessageResponse {
             status: ClearMessageStatusEnumType::Accepted,
-            status_info: None,
+            status_info: Some(StatusInfoType {
+                reason_code: "reason_code".to_string(),
+                additional_info: Some("additional_info".to_string()),
+            }),
         };
 
         let schema = include_str!("schemas/v2.0.1/ClearDisplayMessageResponse.json");
@@ -602,7 +666,7 @@ mod tests {
     fn validate_cleared_charging_limit_request() {
         let test = ClearedChargingLimitRequest {
             charging_limit_source: ChargingLimitSourceEnumType::EMS,
-            evse: None,
+            evse_id: Some(1),
         };
         let schema = include_str!("schemas/v2.0.1/ClearedChargingLimitRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -717,9 +781,18 @@ mod tests {
             request_id: 0,
             report: false,
             clear: false,
-            customer_identifier: None,
-            id_token: None,
-            customer_certificate: None,
+            customer_identifier: Some("customer_identifier".to_string()),
+            id_token: Some(IdTokenType {
+                id_token: "".to_string(),
+                kind: IdTokenEnumType::Central,
+                additional_info: None,
+            }),
+            customer_certificate: Some(CertificateHashDataType {
+                hash_algorithm: HashAlgorithmEnumType::SHA256,
+                issuer_name_hash: "issuer_name".to_string(),
+                issuer_key_hash: "issuer_key_hash".to_string(),
+                serial_number: "serial_number".to_string(),
+            }),
         };
         let schema = include_str!("schemas/v2.0.1/CustomerInformationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -756,9 +829,9 @@ mod tests {
     #[test]
     fn validate_data_transfer_request() {
         let test = DataTransferRequest {
-            message_id: None,
-            data: "".to_string(),
-            vendor_id: "".to_string(),
+            message_id: Some("message_id".to_string()),
+            data: "data".to_string(),
+            vendor_id: "vendor_id".to_string(),
         };
         let schema = include_str!("schemas/v2.0.1/DataTransferRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -839,7 +912,7 @@ mod tests {
     fn validate_firmware_status_notification_request() {
         let test = FirmwareStatusNotificationRequest {
             status: FirmwareStatusEnumType::Downloaded,
-            request_id: None,
+            request_id: Some(1),
         };
         let schema = include_str!("schemas/v2.0.1/FirmwareStatusNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -976,7 +1049,7 @@ mod tests {
     fn validate_get_certificate_status_response() {
         let test = GetCertificateStatusResponse {
             status: GetCertificateStatusEnumType::Accepted,
-            ocsp_result: None,
+            ocsp_result: Some("ocsp_result".to_string()),
             status_info: None,
         };
         let schema = include_str!("schemas/v2.0.1/GetCertificateStatusResponse.json");
@@ -996,12 +1069,14 @@ mod tests {
     fn validate_get_charging_profiles_request() {
         let test = GetChargingProfilesRequest {
             request_id: 0,
-            evse_id: None,
+            evse_id: Some(1),
             charging_profile: ChargingProfileCriterionType {
-                charging_profile_purpose: None,
-                stack_level: None,
-                charging_profile_id: None,
-                charging_limit_source: None,
+                charging_profile_purpose: Some(
+                    ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
+                ),
+                stack_level: Some(1),
+                charging_profile_id: Some(vec![1]),
+                charging_limit_source: Some(vec![ChargingLimitSourceEnumType::CSO]),
             },
         };
         let schema = include_str!("schemas/v2.0.1/GetChargingProfilesRequest.json");
@@ -1040,7 +1115,7 @@ mod tests {
     fn validate_get_composite_schedule_request() {
         let test = GetCompositeScheduleRequest {
             duration: 0,
-            charging_rate_unit: None,
+            charging_rate_unit: Some(ChargingRateUnitEnumType::W),
             evse_id: 0,
         };
         let schema = include_str!("schemas/v2.0.1/GetCompositeScheduleRequest.json");
@@ -1060,7 +1135,18 @@ mod tests {
     fn validate_get_composite_schedule_response() {
         let test = GetCompositeScheduleResponse {
             status: GenericStatusEnumType::Accepted,
-            schedule: None,
+            schedule: Some(CompositeScheduleType {
+                evse_id: 0,
+                duration: 0,
+                schedule_start: Utc::now(),
+                charging_rate_unit: ChargingRateUnitEnumType::W,
+                charging_schedule_period: vec![ChargingSchedulePeriodType {
+                    start_period: 0,
+                    limit: 0.0,
+                    number_phases: Some(1),
+                    phase_to_use: Some(1),
+                }],
+            }),
             status_info: None,
         };
         let schema = include_str!("schemas/v2.0.1/GetCompositeScheduleResponse.json");
@@ -1079,10 +1165,10 @@ mod tests {
     #[test]
     fn validate_get_display_messages_request() {
         let test = GetDisplayMessagesRequest {
-            id: None,
+            id: Some(vec![1]),
             request_id: 0,
-            priority: None,
-            state: None,
+            priority: Some(MessagePriorityEnumType::AlwaysFront),
+            state: Some(MessageStateEnumType::Charging),
         };
         let schema = include_str!("schemas/v2.0.1/GetDisplayMessagesRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -1119,7 +1205,7 @@ mod tests {
     #[test]
     fn validate_get_installed_certificate_ids_request() {
         let test = GetInstalledCertificateIdsRequest {
-            certificate_type: None,
+            certificate_type: Some(vec![GetCertificateIdUseEnumType::CSMSRootCertificate]),
         };
         let schema = include_str!("schemas/v2.0.1/GetInstalledCertificateIdsRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -1138,7 +1224,21 @@ mod tests {
     fn validate_get_installed_certificate_ids_response() {
         let test = GetInstalledCertificateIdsResponse {
             status: GetDisplayMessagesStatusEnumType::Accepted,
-            certificate_hash_data_chain: None,
+            certificate_hash_data_chain: Some(vec![CertificateHashDataChainType {
+                certificate_type: GetCertificateIdUseEnumType::V2GRootCertificate,
+                certificate_hash_data: CertificateHashDataType {
+                    hash_algorithm: HashAlgorithmEnumType::SHA256,
+                    issuer_name_hash: "issuer_name_hash".to_string(),
+                    issuer_key_hash: "issuer_key_hash".to_string(),
+                    serial_number: "serial_number".to_string(),
+                },
+                child_certificate_hash_data: Some(vec![CertificateHashDataType {
+                    hash_algorithm: HashAlgorithmEnumType::SHA256,
+                    issuer_name_hash: "issuer_name_hash".to_string(),
+                    issuer_key_hash: "issuer_key_hash".to_string(),
+                    serial_number: "serial_number".to_string(),
+                }]),
+            }]),
             status_info: None,
         };
         let schema = include_str!("schemas/v2.0.1/GetInstalledCertificateIdsResponse.json");
@@ -1191,12 +1291,12 @@ mod tests {
         let test = GetLogRequest {
             log_type: LogEnumType::DiagnosticsLog,
             request_id: 0,
-            retries: None,
-            retry_interval: None,
+            retries: Some(1),
+            retry_interval: Some(1),
             log: LogParametersType {
-                remote_location: "".to_string(),
-                oldest_timestamp: None,
-                latest_timestamp: None,
+                remote_location: "remote_location".to_string(),
+                oldest_timestamp: Some(Utc::now()),
+                latest_timestamp: Some(Utc::now()),
             },
         };
         let schema = include_str!("schemas/v2.0.1/GetLogRequest.json");
@@ -1216,7 +1316,7 @@ mod tests {
     fn validate_get_log_response() {
         let test = GetLogResponse {
             status: LogStatusEnumType::Accepted,
-            filename: None,
+            filename: Some("/filename".to_string()),
             status_info: None,
         };
         let schema = include_str!("schemas/v2.0.1/GetLogResponse.json");
@@ -1236,8 +1336,21 @@ mod tests {
     fn validate_get_monitoring_report_request() {
         let test = GetMonitoringReportRequest {
             request_id: 0,
-            monitoring_criteria: None,
-            component_variable: None,
+            monitoring_criteria: Some(vec![MonitoringCriterionEnumType::DeltaMonitoring]),
+            component_variable: Some(vec![ComponentVariableType {
+                component: ComponentType {
+                    name: "".to_string(),
+                    instance: Some("instance".to_string()),
+                    evse: Some(EVSEType {
+                        id: 0,
+                        connector_id: Some(1),
+                    }),
+                },
+                variable: Some(VariableType {
+                    name: "".to_string(),
+                    instance: Some("instance".to_string()),
+                }),
+            }]),
         };
         let schema = include_str!("schemas/v2.0.1/GetMonitoringReportRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();

@@ -12,5 +12,5 @@ pub struct CompositeScheduleType {
     pub duration: i64,
     pub schedule_start: DateTime<Utc>,
     pub charging_rate_unit: ChargingRateUnitEnumType,
-    pub charging_schedule_period: ChargingSchedulePeriodType,
+    pub charging_schedule_period: Vec<ChargingSchedulePeriodType>,
 }

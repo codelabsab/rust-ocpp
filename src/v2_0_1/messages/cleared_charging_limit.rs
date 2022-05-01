@@ -1,5 +1,4 @@
 //! ClearedChargingLimit
-use crate::v2_0_1::datatypes::evse_type::EVSEType;
 use crate::v2_0_1::enumerations::charging_limit_source_enum_type::ChargingLimitSourceEnumType;
 
 /// ClearedChargingLimitRequest, sent by the Charging Station to the CSMS
@@ -10,7 +9,7 @@ pub struct ClearedChargingLimitRequest {
     pub charging_limit_source: ChargingLimitSourceEnumType,
     /// EVSE Identifier.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub evse: Option<EVSEType>,
+    pub evse_id: Option<i32>,
 }
 
 /// ClearedChargingLimitResponse, sent by the CSMS to the Charging Station.
