@@ -2357,15 +2357,68 @@ mod tests {
     #[test]
     fn validate_request_start_transaction_request() {
         let test = RequestStartTransactionRequest {
-            evse_id: None,
+            evse_id: Some(0),
             remote_start_id: 0,
             id_token: IdTokenType {
-                id_token: "".to_string(),
+                id_token: "id_token".to_string(),
                 kind: IdTokenEnumType::Central,
-                additional_info: None,
+                additional_info: Some(vec![AdditionalInfoType {
+                    additional_id_token: "".to_string(),
+                    kind: "".to_string(),
+                }]),
             },
-            charging_profile: None,
-            group_id_token: None,
+            charging_profile: Some(ChargingProfileType {
+                id: 0,
+                stack_level: 0,
+                charging_profile_purpose:
+                    ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
+                charging_profile_kind: ChargingProfileKindEnumType::Absolute,
+                recurrency_kind: Some(RecurrencyKindEnumType::Daily),
+                valid_from: Some(Utc::now()),
+                valid_to: Some(Utc::now()),
+                transaction_id: Some("transaction_id".to_string()),
+                charging_schedule: vec![ChargingScheduleType {
+                    id: 0,
+                    start_schedule: Some(Utc::now()),
+                    duration: Some(1),
+                    charging_rate_unit: ChargingRateUnitEnumType::W,
+                    min_charging_rate: Some(0.1),
+                    charging_schedule_period: vec![ChargingSchedulePeriodType {
+                        start_period: 0,
+                        limit: 0.0,
+                        number_phases: Some(1),
+                        phase_to_use: Some(1),
+                    }],
+                    sales_tariff: Some(SalesTariffType {
+                        id: Some(1),
+                        sales_tariff_description: Some("".to_string()),
+                        num_e_price_levels: Some(2),
+                        sales_tariff_entry: vec![SalesTariffEntryType {
+                            e_price_level: Some(1),
+                            relative_time_interval: RelativeTimeIntervalType {
+                                start: 0,
+                                duration: 0,
+                            },
+                            consumption_cost: Some(vec![ConsumptionCostType {
+                                start_value: 0,
+                                cost: vec![CostType {
+                                    cost_kind: CostKindEnumType::CarbonDioxideEmission,
+                                    amount: 0,
+                                    amount_multiplier: Some(1),
+                                }],
+                            }]),
+                        }],
+                    }),
+                }],
+            }),
+            group_id_token: Some(IdTokenType {
+                id_token: "id_token".to_string(),
+                kind: IdTokenEnumType::Central,
+                additional_info: Some(vec![AdditionalInfoType {
+                    additional_id_token: "".to_string(),
+                    kind: "".to_string(),
+                }]),
+            }),
         };
         let schema = include_str!("schemas/v2.0.1/RequestStartTransactionRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
