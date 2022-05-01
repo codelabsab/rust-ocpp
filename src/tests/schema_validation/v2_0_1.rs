@@ -113,6 +113,7 @@ mod tests {
     use crate::v2_0_1::enumerations::phase_enum_type::PhaseEnumType;
     use crate::v2_0_1::enumerations::publish_firmware_status_enum_type::PublishFirmwareStatusEnumType;
     use crate::v2_0_1::enumerations::reading_context_enum_type::ReadingContextEnumType;
+    use crate::v2_0_1::enumerations::recurrency_kind_enum_type::RecurrencyKindEnumType;
     use crate::v2_0_1::enumerations::registration_status_enum_type::RegistrationStatusEnumType;
     use crate::v2_0_1::enumerations::report_base_enum_type::ReportBaseEnumType;
     use crate::v2_0_1::enumerations::request_start_stop_status_enum_type::RequestStartStopStatusEnumType;
@@ -1501,9 +1502,9 @@ mod tests {
     fn validate_get_variables_request() {
         let test = GetVariablesRequest {
             get_variable_data: vec![GetVariableDataType {
-                attribute_type: None,
+                attribute_type: Some(AttributeEnumType::MaxSet),
                 component: ComponentType {
-                    name: "".to_string(),
+                    name: "name".to_string(),
                     instance: None,
                     evse: None,
                 },
@@ -1542,7 +1543,10 @@ mod tests {
                     name: "".to_string(),
                     instance: None,
                 },
-                attribute_status_info: None,
+                attribute_status_info: Some(StatusInfoType {
+                    reason_code: "".to_string(),
+                    additional_info: None,
+                }),
             }],
         };
         let schema = include_str!("schemas/v2.0.1/GetVariablesResponse.json");
@@ -2078,7 +2082,7 @@ mod tests {
     fn validate_notify_monitoring_report_request() {
         let test = NotifyMonitoringReportRequest {
             request_id: 0,
-            tbc: None,
+            tbc: Some(true),
             seq_no: 0,
             generated_at: Utc::now(),
             monitor: Some(vec![MonitoringDataType {
@@ -2237,8 +2241,8 @@ mod tests {
     fn validate_publish_firmware_status_notification_request() {
         let test = PublishFirmwareStatusNotificationRequest {
             status: PublishFirmwareStatusEnumType::Idle,
-            location: None,
-            request_id: None,
+            location: Some(vec!["location".to_string()]),
+            request_id: Some(1),
         };
         let schema = include_str!("schemas/v2.0.1/PublishFirmwareStatusNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -2274,7 +2278,7 @@ mod tests {
         let test = ReportChargingProfilesRequest {
             request_id: 0,
             charging_limit_source: ChargingLimitSourceEnumType::EMS,
-            tbc: None,
+            tbc: Some(true),
             evse_id: 0,
             charging_profile: vec![ChargingProfileType {
                 id: 0,
@@ -2282,23 +2286,42 @@ mod tests {
                 charging_profile_purpose:
                     ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
                 charging_profile_kind: ChargingProfileKindEnumType::Absolute,
-                recurrency_kind: None,
-                valid_from: None,
-                valid_to: None,
-                transaction_id: None,
+                recurrency_kind: Some(RecurrencyKindEnumType::Daily),
+                valid_from: Some(Utc::now()),
+                valid_to: Some(Utc::now()),
+                transaction_id: Some("transaction_id".to_string()),
                 charging_schedule: vec![ChargingScheduleType {
                     id: 0,
-                    start_schedule: None,
-                    duration: None,
+                    start_schedule: Some(Utc::now()),
+                    duration: Some(1),
                     charging_rate_unit: ChargingRateUnitEnumType::W,
-                    min_charging_rate: None,
+                    min_charging_rate: Some(1.0),
                     charging_schedule_period: vec![ChargingSchedulePeriodType {
                         start_period: 0,
                         limit: 0.0,
-                        number_phases: None,
-                        phase_to_use: None,
+                        number_phases: Some(1),
+                        phase_to_use: Some(4),
                     }],
-                    sales_tariff: None,
+                    sales_tariff: Some(SalesTariffType {
+                        id: Some(1),
+                        sales_tariff_description: Some("sales_tariff_description".to_string()),
+                        num_e_price_levels: Some(1),
+                        sales_tariff_entry: vec![SalesTariffEntryType {
+                            e_price_level: Some(1),
+                            relative_time_interval: RelativeTimeIntervalType {
+                                start: 1,
+                                duration: 100,
+                            },
+                            consumption_cost: Some(vec![ConsumptionCostType {
+                                start_value: 0,
+                                cost: vec![CostType {
+                                    cost_kind: CostKindEnumType::CarbonDioxideEmission,
+                                    amount: 0,
+                                    amount_multiplier: Some(1),
+                                }],
+                            }]),
+                        }],
+                    }),
                 }],
             }],
         };

@@ -6,7 +6,7 @@ use crate::v2_0_1::enumerations::publish_firmware_status_enum_type::PublishFirmw
 pub struct PublishFirmwareStatusNotificationRequest {
     pub status: PublishFirmwareStatusEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub location: Option<String>,
+    pub location: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub request_id: Option<i64>,
 }
