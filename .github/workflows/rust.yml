@@ -8,6 +8,8 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  LLVM_PROFILE_FILE: "rust-ocpp-%p-%m.profraw"
+  RUSTFLAGS: "-Cinstrument-coverage"
 
 jobs:
   build:
@@ -15,7 +17,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: download grcov for code coverage
+        run: curl -L https://github.com/mozilla/grcov/releases/latest/download/grcov-x86_64-unknown-linux-gnu.tar.bz2 | tar jxf -
+      - name: install llvm tools preview
+        run: rustup component add llvm-tools-preview
       - name: Build
         run: cargo build --verbose
       - name: Run tests
-        run: cargo test --verbose
+        run: LLVM_PROFILE_FILE="your_name-%p-%m.profraw" cargo test --verbose
+      - name: Generate lcov.info for Code coverage
+        run: ./grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "/*" -o lcov.info
+      - name: Codecov
+        uses: codecov/codecov-action@v3.1.0
+        with:
+          files: ./lcov.info
