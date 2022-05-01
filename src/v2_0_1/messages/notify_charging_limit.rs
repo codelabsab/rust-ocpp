@@ -14,7 +14,7 @@ pub struct NotifyChargingLimitRequest {
     pub charging_limit: ChargingLimitType,
     /// Contains limits for the available power orcurrent over time, as set by the external source.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub charging_schedule: Option<ChargingScheduleType>,
+    pub charging_schedule: Option<Vec<ChargingScheduleType>>,
 }
 
 /// The NotifyChargingLimitResponse message is sent by the CSMS to the Charging Station in response to a NotifyChargingLimitsRequest. No fields are defined.

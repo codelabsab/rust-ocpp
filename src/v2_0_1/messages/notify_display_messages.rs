@@ -8,7 +8,7 @@ pub struct NotifyDisplayMessagesRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tbc: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub message_info: Option<MessageInfoType>,
+    pub message_info: Option<Vec<MessageInfoType>>,
 }
 
 /// The NotifyDisplayMessagesResponse message is sent by the CSMS to the Charging Station in response to a NotifyDisplayMessagesRequest. No fields are defined.

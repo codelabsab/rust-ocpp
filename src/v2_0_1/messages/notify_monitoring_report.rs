@@ -13,7 +13,7 @@ pub struct NotifyMonitoringReportRequest {
     pub seq_no: i64,
     pub generated_at: DateTime<Utc>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub monitor: Option<MonitoringDataType>,
+    pub monitor: Option<Vec<MonitoringDataType>>,
 }
 
 /// Response to a NotifyMonitoringRequest message. No fields are defined.

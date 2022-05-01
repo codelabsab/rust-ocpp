@@ -10,7 +10,7 @@ use super::variable_type::VariableType;
 pub struct ReportDataType {
     pub component: ComponentType,
     pub variable: VariableType,
-    pub variable_attribute: VariableAttributeType,
+    pub variable_attribute: Vec<VariableAttributeType>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub variable_characteristics: Option<VariableCharacteristicsType>,
 }

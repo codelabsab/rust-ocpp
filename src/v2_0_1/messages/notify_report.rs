@@ -13,7 +13,7 @@ pub struct NotifyReportRequest {
     pub seq_no: i64,
     pub generated_at: DateTime<Utc>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub report_data: Option<ReportDataType>,
+    pub report_data: Option<Vec<ReportDataType>>,
 }
 
 /// Response to a NotifyReportRequest message. No fields are defined.

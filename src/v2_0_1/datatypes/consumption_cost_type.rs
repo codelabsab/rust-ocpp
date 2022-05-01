@@ -5,5 +5,5 @@ use super::cost_type::CostType;
 #[serde(rename_all = "camelCase")]
 pub struct ConsumptionCostType {
     pub start_value: i64,
-    pub cost: CostType,
+    pub cost: Vec<CostType>,
 }

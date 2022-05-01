@@ -9,5 +9,5 @@ pub struct SalesTariffEntryType {
     pub e_price_level: Option<u64>,
     pub relative_time_interval: RelativeTimeIntervalType,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub consumption_cost: Option<ConsumptionCostType>,
+    pub consumption_cost: Option<Vec<ConsumptionCostType>>,
 }

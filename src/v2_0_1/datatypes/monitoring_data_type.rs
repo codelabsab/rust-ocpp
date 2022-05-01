@@ -9,5 +9,5 @@ use super::variable_type::VariableType;
 pub struct MonitoringDataType {
     pub component: ComponentType,
     pub variable: VariableType,
-    pub variable_monitoring: VariableMonitoringType,
+    pub variable_monitoring: Vec<VariableMonitoringType>,
 }
