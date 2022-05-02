@@ -32,7 +32,7 @@ pub struct TransactionEventRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evse: Option<EVSEType>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub meter_value: Option<MeterValueType>,
+    pub meter_value: Option<Vec<MeterValueType>>,
 }
 
 /// This contains the field definition of the TransactionEventResponse PDU sent by the CSMS to the Charging Station in response to a TransactionEventRequest.

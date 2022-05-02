@@ -2,7 +2,7 @@
 use super::{id_token_info_type::IdTokenInfoType, id_token_type::IdTokenType};
 
 /// Contains the identifier to use for authorization
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthorizationData {
     /// Required when UpdateType is Full. This contains information about
