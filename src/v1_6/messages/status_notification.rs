@@ -18,7 +18,7 @@ pub struct StatusNotificationRequest {
     /// Required. This contains the current status of the Charge Point.
     pub status: ChargePointStatus,
     /// Optional. The time for which the status is reported. If absent time of receipt of the message will be assumed.
-    pub timestamp: DateTime<Utc>,
+    pub timestamp: Option<DateTime<Utc>>,
     /// Optional. This identifies the vendor-specific implementation.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(length(min = 1, max = 255))]

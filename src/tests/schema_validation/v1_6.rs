@@ -1033,7 +1033,7 @@ mod tests {
             error_code: ChargePointErrorCode::ConnectorLockFailure,
             info: None,
             status: ChargePointStatus::Available,
-            timestamp: Utc::now(),
+            timestamp: Some(Utc::now()),
             vendor_id: None,
             vendor_error_code: None,
         };
