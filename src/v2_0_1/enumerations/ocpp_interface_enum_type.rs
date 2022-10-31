@@ -1,5 +1,6 @@
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum OCPPInterfaceEnumType {
+    #[default]
     Wired0,
     Wired1,
     Wired2,

@@ -4,7 +4,7 @@ use chrono::Utc;
 use crate::v2_0_1::datatypes::monitoring_data_type::MonitoringDataType;
 
 /// This contains the field definition of the NotifyMonitoringRequest PDU sent by the Charging Station to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyMonitoringReportRequest {
     pub request_id: i64,
@@ -17,6 +17,6 @@ pub struct NotifyMonitoringReportRequest {
 }
 
 /// Response to a NotifyMonitoringRequest message. No fields are defined.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyMonitoringReportResponse {}

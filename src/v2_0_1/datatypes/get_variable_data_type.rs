@@ -4,7 +4,7 @@ use crate::v2_0_1::enumerations::attribute_enum_type::AttributeEnumType;
 
 /// Class to hold parameters for GetVariables request.
 /// GetVariableDataType is used by: GetVariablesRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetVariableDataType {
     #[serde(skip_serializing_if = "Option::is_none")]

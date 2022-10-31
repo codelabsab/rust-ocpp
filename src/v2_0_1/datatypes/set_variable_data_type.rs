@@ -3,7 +3,7 @@ use super::variable_type::VariableType;
 use crate::v2_0_1::enumerations::attribute_enum_type::AttributeEnumType;
 
 /// SetVariableDataType is used by: SetVariablesRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SetVariableDataType {
     #[serde(skip_serializing_if = "Option::is_none")]

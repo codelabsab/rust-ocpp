@@ -4,7 +4,7 @@ use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::get_certificate_status_enum_type::GetCertificateStatusEnumType;
 
 /// GetCertificateStatusRequest, sent by the Charging Station to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetCertificateStatusRequest {
     /// Indicates the certificate of which the status isrequested.
@@ -12,7 +12,7 @@ pub struct GetCertificateStatusRequest {
 }
 
 /// GetCertificateStatusResponse, sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetCertificateStatusResponse {
     /// This indicates whether the charging stationwas able to retrieve the OCSP certificate status.

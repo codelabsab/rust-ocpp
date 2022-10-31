@@ -2,7 +2,7 @@ use chrono::DateTime;
 use chrono::Utc;
 
 /// This contains the field definition of the NotifyCustomerInformationRequest PDU sent by the Charging Station to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyCustomerInformationRequest {
     pub data: String,
@@ -14,6 +14,6 @@ pub struct NotifyCustomerInformationRequest {
 }
 
 /// The NotifyChargingLimitResponse message is sent by the CSMS to the Charging Station in response to a NotifyChargingLimitsRequest. No fields are defined.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyCustomerInformationResponse {}

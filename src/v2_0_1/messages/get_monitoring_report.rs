@@ -5,7 +5,7 @@ use crate::v2_0_1::enumerations::generic_device_model_status_enum_type::GenericD
 use crate::v2_0_1::enumerations::monitoring_criterion_enum_type::MonitoringCriterionEnumType;
 
 /// GetMonitoringReportRequest, sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetMonitoringReportRequest {
     /// The Id of the request.
@@ -19,7 +19,7 @@ pub struct GetMonitoringReportRequest {
 }
 
 /// GetMonitoringReportResponse, sent by the Charging Station to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetMonitoringReportResponse {
     /// This field indicates whether the ChargingStation was able to accept the request.

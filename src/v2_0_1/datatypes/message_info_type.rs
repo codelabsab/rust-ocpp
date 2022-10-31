@@ -8,7 +8,7 @@ use crate::v2_0_1::enumerations::message_state_enum_type::MessageStateEnumType;
 
 /// Contains message details, for a message to be displayed on a Charging Station.
 /// MessageInfoType is used by: SetDisplayMessageRequest , NotifyDisplayMessagesRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MessageInfoType {
     pub id: i64,

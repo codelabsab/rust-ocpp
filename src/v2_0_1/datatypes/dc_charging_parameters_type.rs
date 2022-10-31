@@ -1,7 +1,7 @@
 use validator::Validate;
 /// DCChargingParametersType is used by: Common:ChargingNeedsType
 // TODO: Does bulk_soc and full_soc really rename correctly?
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Validate)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Validate, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct DCChargingParametersType {
     pub ev_max_current: i64,

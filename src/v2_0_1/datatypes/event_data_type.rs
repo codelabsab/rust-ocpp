@@ -8,7 +8,7 @@ use crate::v2_0_1::enumerations::event_trigger_enum_type::EventTriggerEnumType;
 
 /// Class to report an event notification for a component-variable.
 /// EventDataType is used by: NotifyEventRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct EventDataType {
     pub event_id: i64,

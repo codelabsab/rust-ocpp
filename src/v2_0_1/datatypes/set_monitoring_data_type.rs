@@ -4,7 +4,7 @@ use crate::v2_0_1::enumerations::monitor_enum_type::MonitorEnumType;
 
 /// Class to hold parameters of SetVariableMonitoring request.
 /// SetMonitoringDataType is used by: SetVariableMonitoringRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SetMonitoringDataType {
     #[serde(skip_serializing_if = "Option::is_none")]

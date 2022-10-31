@@ -6,7 +6,7 @@ use validator::Validate;
 /// type of authorization to support multiple forms of identifiers.
 ///
 /// AdditionalInfoType is used by: [IdTokenType](`crate::v2_0_1::datatypes::id_token_type::IdTokenType`)
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct AdditionalInfoType {
     /// This field specifies the additional IdToken

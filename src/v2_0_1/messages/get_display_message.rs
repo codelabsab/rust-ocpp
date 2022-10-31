@@ -5,7 +5,7 @@ use crate::v2_0_1::enumerations::message_priority_enum_type::MessagePriorityEnum
 use crate::v2_0_1::enumerations::message_state_enum_type::MessageStateEnumType;
 
 /// GetCompositeScheduleRequest, sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetDisplayMessagesRequest {
     /// If provided the Charging Station shall returnDisplay Messages of the given ids. This field SHALL NOTcontain more ids than set inNumberOfDisplayMessages.maxLimit
@@ -22,7 +22,7 @@ pub struct GetDisplayMessagesRequest {
 }
 
 /// GetCompositeScheduleResponse, sent by the Charging Station to the CSMS in response to a GetCompositeScheduleRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetDisplayMessagesResponse {
     ///  Indicates if the Charging Station has DisplayMessages that match the request criteria in theGetDisplayMessagesRequest

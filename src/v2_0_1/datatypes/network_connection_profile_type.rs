@@ -6,7 +6,7 @@ use crate::v2_0_1::enumerations::ocpp_version_enum_type::OCPPVersionEnumType;
 
 /// The NetworkConnectionProfile defines the functional and technical parameters of a communication link.
 /// NetworkConnectionProfileType is used by: SetNetworkProfileRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct NetworkConnectionProfileType {
     pub ocpp_version: OCPPVersionEnumType,

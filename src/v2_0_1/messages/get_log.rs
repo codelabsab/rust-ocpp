@@ -7,7 +7,7 @@ use crate::v2_0_1::enumerations::log_status_enum_type::LogStatusEnumType;
 use validator::Validate;
 
 /// GetLogRequest, sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetLogRequest {
     /// This contains the type of log file that theCharging Station should send
@@ -25,7 +25,7 @@ pub struct GetLogRequest {
 }
 
 /// GetLogResponse, sent by the Charging Station to the CSMS in response to a GetLogRequest.
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GetLogResponse {
     /// This field indicates whether the ChargingStation was able to accept the request.

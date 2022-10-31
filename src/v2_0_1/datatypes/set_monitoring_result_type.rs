@@ -6,7 +6,7 @@ use crate::v2_0_1::enumerations::set_monitoring_status_enum_type::SetMonitoringS
 
 /// Class to hold result of SetVariableMonitoring request.
 /// SetMonitoringResultType is used by: SetVariableMonitoringResponse
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SetMonitoringResultType {
     #[serde(skip_serializing_if = "Option::is_none")]

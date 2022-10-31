@@ -1,5 +1,5 @@
 // DONE: FIX THIS
-#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Default)]
 pub enum MeasurandEnumType {
     #[serde(rename = "Current.Export")]
     CurrentExport,
@@ -9,6 +9,7 @@ pub enum MeasurandEnumType {
     CurrentOffered,
     #[serde(rename = "Energy.Active.Export.Register")]
     EnergyActiveExportRegister,
+    #[default]
     #[serde(rename = "Energy.Active.Import.Register")]
     EnergyActiveImportRegister,
     #[serde(rename = "Energy.Reactive.Export.Register")]

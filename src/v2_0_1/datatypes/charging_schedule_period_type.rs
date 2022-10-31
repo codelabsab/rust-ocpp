@@ -1,6 +1,6 @@
 /// Charging schedule period structure defines a time period in a charging schedule
 /// ChargingSchedulePeriodType is used by: Common:ChargingScheduleType , Common:CompositeScheduleType
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingSchedulePeriodType {
     /// Required. Start of the period, in seconds from the start of schedule. The value of StartPeriod also defines the stop time of the previous period.

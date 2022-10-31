@@ -2,7 +2,7 @@ use crate::v2_0_1::enumerations::hash_algorithm_enum_type::HashAlgorithmEnumType
 use validator::Validate;
 
 /// CertificateHashDataType is used by: Common:CertificateHashDataChainType , DeleteCertificateRequest , CustomerInformationRequest
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CertificateHashDataType {
     /// Required. Used algorithms for the hashes provided.

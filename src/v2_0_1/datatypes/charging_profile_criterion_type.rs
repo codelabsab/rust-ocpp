@@ -5,7 +5,7 @@ use crate::v2_0_1::enumerations::charging_profile_purpose_enum_type::ChargingPro
 /// A ChargingProfile consists of ChargingSchedule, describing the amount of power or current that can be delivered per time interval.
 ///
 /// ChargingProfileCriterionType is used by: get_charging_profiles [GetChargingProfilesRequest](`crate::v2_0_1::messages::get_charging_profiles::GetChargingProfilesRequest`)
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingProfileCriterionType {
     /// Optional. Defines the purpose of the schedule transferred by this profile

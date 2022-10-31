@@ -7,7 +7,7 @@ use crate::v2_0_1::datatypes::ocsp_request_data_type::OCSPRequestDataType;
 use crate::v2_0_1::enumerations::authorize_certificate_status_enum_type::AuthorizeCertificateStatusEnumType;
 
 /// ´AuthorizeRequest`, sent by the Charging Station to the CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Validate, Clone, Debug, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Clone, Debug, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthorizeRequest {
     /// The X.509 certificated presented by EV and encoded in PEM format.
@@ -23,7 +23,7 @@ pub struct AuthorizeRequest {
 
 /// `AuthorizeResponse`, sent by the
 /// CSMS to the Charging Station in response to an [`AuthorizeRequest`].
-#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthorizeResponse {
     /// Certificate status information. - if all certificates are valid: return
