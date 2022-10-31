@@ -1,7 +1,7 @@
 use super::{value_format::ValueFormat, Location, Measurand, Phase, ReadingContext, UnitOfMeasure};
 
 /// Single sampled value in MeterValues. Each value can be accompanied by optional fields.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct SampledValue {
     /// Required. Value as a “Raw” (decimal) number or “SignedData”. Field Type is “string” to allow for digitally signed data readings. Decimal numeric values are also acceptable to allow fractional values for measurands such as Temperature and Current.
     pub value: String,

@@ -23,7 +23,7 @@
 use crate::v1_6::types::UnlockStatus;
 use validator::Validate;
 
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct UnlockConnectorRequest {
     /// # From OCPP Specification
@@ -32,7 +32,7 @@ pub struct UnlockConnectorRequest {
     pub connector_id: u32,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct UnlockConnectorResponse {
     /// # From OCPP Specification

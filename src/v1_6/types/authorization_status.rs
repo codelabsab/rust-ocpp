@@ -1,7 +1,8 @@
 /// Status in a response to an AuthorizeRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum AuthorizationStatus {
     /// Identifier is allowed for charging.
+    #[default]
     Accepted,
     /// Identifier has been blocked. Not allowed for charging.
     Blocked,

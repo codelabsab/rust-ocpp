@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 use validator::Validate;
 
 /// This section contains the field definition of the StartTransaction.req PDU sent by the Charge Point to the Central System. See also Start Transaction
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct StartTransactionRequest {
     /// Required. This identifies which connector of the Charge Point is used.
@@ -22,7 +22,7 @@ pub struct StartTransactionRequest {
 }
 
 /// This contains the field definition of the StartTransaction.conf PDU sent by the Central System to the Charge Point in response to a StartTransaction.req PDU. See also Start Transaction
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct StartTransactionResponse {
     /// Required. This contains information about authorization status, expiry and parent id

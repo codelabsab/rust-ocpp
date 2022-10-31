@@ -2,7 +2,7 @@ use validator::Validate;
 
 use crate::v1_6::types::DataTransferStatus;
 
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct DataTransferRequest {
     #[serde(rename = "vendorId")]
@@ -15,7 +15,7 @@ pub struct DataTransferRequest {
     pub data: Option<String>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct DataTransferResponse {
     /// Required. This indicates the success or failure of the data transfer.

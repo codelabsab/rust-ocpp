@@ -1,7 +1,7 @@
 use crate::v1_6::types::{MessageTrigger, TriggerMessageStatus};
 
 /// This contains the field definition of the TriggerMessage.req PDU sent by the Central System to the Charge Point. See also Trigger Message
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct TriggerMessageRequest {
     /// Required.
@@ -12,7 +12,7 @@ pub struct TriggerMessageRequest {
 }
 
 /// This contains the field definition of the TriggerMessage.req PDU sent by the Central System to the Charge Point. See also Trigger Message
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct TriggerMessageResponse {
     /// Required. Indicates whether the Charge Point will send the requested notification or not.

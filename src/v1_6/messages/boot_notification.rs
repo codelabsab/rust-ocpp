@@ -42,7 +42,7 @@ use crate::v1_6::types::RegistrationStatus;
 use chrono::{DateTime, Utc};
 use validator::Validate;
 
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct BootNotificationRequest {
     /// # From OCPP Specification
@@ -99,7 +99,7 @@ pub struct BootNotificationRequest {
     pub meter_type: Option<String>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct BootNotificationResponse {
     /// # From OCPP Specification

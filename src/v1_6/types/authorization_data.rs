@@ -2,7 +2,7 @@ use super::IdTagInfo;
 use validator::Validate;
 
 /// Elements that constitute an entry of a Local Authorization List update.
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 pub struct AuthorizationData {
     /// Required. The identifier to which this authorization applies.
     #[validate(length(min = 1, max = 20))]

@@ -1,7 +1,8 @@
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum ConfigurationStatus {
     /// # From OCPP Specification
     /// Configuration key is supported and setting has been changed.
+    #[default]
     Accepted,
 
     /// # From OCPP Specification

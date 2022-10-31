@@ -4,7 +4,7 @@ use super::AuthorizationStatus;
 use validator::Validate;
 
 /// Contains status information about an identifier. It is returned in Authorize, Start Transaction and Stop Transaction responses. If expiryDate is not given, the status has no end date.
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct IdTagInfo {
     /// Optional. This contains the date at which idTag should be removed from the Authorization Cache.

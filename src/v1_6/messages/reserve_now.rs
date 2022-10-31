@@ -5,7 +5,7 @@ use validator::Validate;
 use crate::v1_6::types::ReservationStatus;
 
 /// This contains the field definition of the ReserveNow.req PDU sent by the Central System to the Charge Point. See also Reserve Now
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ReserveNowRequest {
     /// Required. This contains the id of the connector to be reserved. A value of 0 means that the reservation is not for a specific connector.
@@ -24,7 +24,7 @@ pub struct ReserveNowRequest {
 }
 
 /// This contains the field definitions of the RemoteStopTransactionResponse PDU sent from Charge Point to Central System. See also Remote Stop Transaction
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ReserveNowResponse {
     // Required. Status indicating whether Charge Point accepts the request to stop a transaction.

@@ -1,6 +1,7 @@
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum ChargingProfileKindType {
     /// Schedule periods are relative to a fixed point in time defined in the schedule.
+    #[default]
     Absolute,
     ///  The schedule restarts periodically at the first schedule period.
     Recurring,

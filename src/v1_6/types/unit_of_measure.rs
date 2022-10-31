@@ -1,7 +1,8 @@
 /// Status in TriggerMessageResponse
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum UnitOfMeasure {
     /// Watt-hours (energy). Default.
+    #[default]
     Wh,
     /// kiloWatt-hours (energy).
     #[serde(rename = "kWh")]
@@ -41,10 +42,4 @@ pub enum UnitOfMeasure {
     K,
     /// Percentage.
     Percent,
-}
-
-impl Default for UnitOfMeasure {
-    fn default() -> Self {
-        UnitOfMeasure::Wh
-    }
 }

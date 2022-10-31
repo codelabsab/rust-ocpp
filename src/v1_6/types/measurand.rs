@@ -1,5 +1,5 @@
 /// Allowable values of the optional "measurand" field of a Value element, as used in MeterValuesRequest and StopTransaction.req messages. Default value of "measurand" is always "Energy.Active.Import.Register"
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum Measurand {
     ///Instantaneous current flow from EV
     #[serde(rename = "Current.Export")]
@@ -14,6 +14,7 @@ pub enum Measurand {
     #[serde(rename = "Energy.Active.Export.Register")]
     EnergyActiveExportRegister,
     /// Numerical value read from the "active electrical energy" (Wh or kWh) register of the (most authoritative) electrical meter measuring energy imported (from the grid supply).
+    #[default]
     #[serde(rename = "Energy.Active.Import.Register")]
     EnergyActiveImportRegister,
     ///  Numerical value read from the "reactive electrical energy" (VARh or kVARh) register of the (most authoritative) electrical meter measuring energy exported (to the grid).

@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 use validator::Validate;
 
 /// This contains the field definition of the StatusNotification.req PDU sent by the Charge Point to the Central System. See also Status Notification
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct StatusNotificationRequest {
     /// Required. The id of the connector for which the status is reported. Id '0' (zero) is used if the status is for the Charge Point main controller.
@@ -30,7 +30,7 @@ pub struct StatusNotificationRequest {
 }
 
 /// This contains the field definition of the StartTransaction.conf PDU sent by the Central System to the Charge Point in response to a StartTransaction.req PDU. See also Start Transaction
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct StatusNotificationResponse {
     // This contains the field definition of the StatusNotification.conf PDU sent by the Central System to the Charge Point in response to an StatusNotification.req PDU. See also Status Notification No fields are defined.

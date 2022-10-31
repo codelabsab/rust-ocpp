@@ -1,5 +1,5 @@
 /// Status of a firmware download as reported in FirmwareStatusNotificationRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum FirmwareStatus {
     /// New firmware has been downloaded by Charge Point.
     Downloaded,
@@ -8,6 +8,7 @@ pub enum FirmwareStatus {
     /// Firmware is being downloaded.
     Downloading,
     /// Charge Point is not performing firmware update related tasks. Status Idle SHALL only be used as in a FirmwareStatusNotificationRequest that was triggered by a TriggerMessageRequest
+    #[default]
     Idle,
     /// Installation of new firmware has failed.
     InstallationFailed,
