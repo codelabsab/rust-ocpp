@@ -5,7 +5,7 @@ use crate::v2_0_1::enumerations::attribute_enum_type::AttributeEnumType;
 use crate::v2_0_1::enumerations::set_variable_status_enum_type::SetVariableStatusEnumType;
 
 /// SetVariableResultType is used by: SetVariablesResponse
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SetVariableResultType {
     #[serde(skip_serializing_if = "Option::is_none")]

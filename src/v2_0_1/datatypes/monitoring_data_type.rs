@@ -4,7 +4,7 @@ use super::variable_type::VariableType;
 
 /// Class to hold parameters of SetVariableMonitoring request.
 /// MonitoringDataType is used by: NotifyMonitoringReportRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MonitoringDataType {
     pub component: ComponentType,

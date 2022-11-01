@@ -4,7 +4,7 @@ use super::{
     ChargingProfileKindType, ChargingProfilePurposeType, ChargingSchedule, RecurrencyKindType,
 };
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingProfile {
     pub charging_profile_id: i64,

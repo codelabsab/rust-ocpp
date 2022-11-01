@@ -3,7 +3,7 @@
 /// EV AC charging parameters
 ///
 /// ACChargingParametersType is used by: [ChargingNeedsType](`crate::v2_0_1::datatypes::charging_needs_type::ChargingNeedsType`)
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ACChargingParametersType {
     /// Amount of energy requested (in Wh). This includes energy required for preconditioning.

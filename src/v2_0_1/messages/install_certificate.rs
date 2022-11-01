@@ -7,7 +7,7 @@ use crate::v2_0_1::enumerations::install_certificate_use_enum_type::InstallCerti
 use validator::Validate;
 
 /// Used by the CSMS to request installation of a certificate on a Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct InstallCertificateRequest {
     /// Indicates the certificate type that is sent.
@@ -18,7 +18,7 @@ pub struct InstallCertificateRequest {
 }
 
 /// The response to a InstallCertificateRequest, sent by the Charging Station to the CSMS
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct InstallCertificateResponse {
     /// Charging Station indicates if installation wassuccessful.

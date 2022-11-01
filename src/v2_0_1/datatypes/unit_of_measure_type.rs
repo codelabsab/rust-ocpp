@@ -1,6 +1,6 @@
 /// Represents a UnitOfMeasure with a multiplier
 /// UnitOfMeasureType is used by: Common:SampledValueType
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct UnitOfMeasureType {
     #[serde(skip_serializing_if = "Option::is_none")]

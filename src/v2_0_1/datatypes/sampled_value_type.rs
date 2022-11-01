@@ -8,7 +8,7 @@ use crate::v2_0_1::enumerations::reading_context_enum_type::ReadingContextEnumTy
 /// Single sampled value in MeterValues. Each value can be accompanied by optional fields.
 /// To save on mobile data usage, default values of all of the optional fields are such that. The value without any additional fields will be interpreted, as a register reading of active import energy in Wh (Watt-hour) units.
 /// SampledValueType is used by: Common:MeterValueType
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SampledValueType {
     pub value: f64,

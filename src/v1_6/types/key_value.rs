@@ -1,7 +1,7 @@
 /// Contains information about a specific configuration key. It is returned in GetConfigurationResponse
 use validator::Validate;
 
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 pub struct KeyValue {
     /// Required.
     #[validate(length(min = 1, max = 50))]

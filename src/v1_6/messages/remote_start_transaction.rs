@@ -3,7 +3,7 @@ use validator::Validate;
 use crate::v1_6::types::{ChargingProfile, RemoteStartStopStatus};
 
 /// This contains the field definitions of the RemoteStartTransactionRequest PDU sent to Charge Point by Central System. See also Remote Start Transaction
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoteStartTransactionRequest {
     /// Optional. Number of the connector on which to start the transaction. connectorId SHALL be > 0
@@ -18,7 +18,7 @@ pub struct RemoteStartTransactionRequest {
 }
 
 /// This contains the field definitions of the RemoteStartTransaction.conf PDU sent from Charge Point to Central System. See also Remote Start Transaction
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct RemoteStartTransactionResponse {
     // Required. Status indicating whether Charge Point accepts the request to start a transaction.

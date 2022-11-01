@@ -1,7 +1,8 @@
 /// Type of update for a SendLocalListRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum UpdateStatus {
     /// Local Authorization List successfully updated.
+    #[default]
     Accepted,
     /// Failed to update the Local Authorization List.
     Failed,

@@ -19,7 +19,7 @@ use crate::v2_0_1::enumerations::boot_reason_enum_type::BootReasonEnumType;
 use crate::v2_0_1::enumerations::registration_status_enum_type::RegistrationStatusEnumType;
 
 /// `BootNotificationRequest`, sent by the Charging Station to the CSMS when booting.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct BootNotificationRequest {
     /// This contains the reason for sending this message to the CSMS.
@@ -29,7 +29,7 @@ pub struct BootNotificationRequest {
 }
 
 /// `BootNotificationResponse`, sent by the CSMS to the Charging Station in response to a [`BootNotificationRequest`].
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct BootNotificationResponse {
     /// This contains the CSMS’s current time.

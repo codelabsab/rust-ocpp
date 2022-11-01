@@ -7,7 +7,7 @@ use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::customer_information_status_enum_type::CustomerInformationStatusEnumType;
 
 /// CustomerInformationRequest, sent by the CSMS to the Charging Station
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CustomerInformationRequest {
     /// The Id of the request
@@ -35,7 +35,7 @@ pub struct CustomerInformationRequest {
 }
 
 /// CustomerInformationResponse
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CustomerInformationResponse {
     /// Indicates whether the request was accepted.

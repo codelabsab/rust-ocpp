@@ -8,7 +8,7 @@ use crate::v2_0_1::enumerations::recurrency_kind_enum_type::RecurrencyKindEnumTy
 use validator::Validate;
 /// A ChargingProfile consists of ChargingSchedule, describing the amount of power or current that can be delivered per time interval
 /// ChargingProfileType is used by: RequestStartTransactionRequest , SetChargingProfileRequest , ReportChargingProfilesRequest
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingProfileType {
     /// Required. Id of ChargingProfile.

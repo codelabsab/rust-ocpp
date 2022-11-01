@@ -1,5 +1,5 @@
 /// Values of the context field of a value in SampledValue.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum ReadingContext {
     /// Value taken at start of interruption.
     #[serde(rename = "Interruption.Begin")]
@@ -8,6 +8,7 @@ pub enum ReadingContext {
     #[serde(rename = "Interruption.End")]
     InterruptionEnd,
     /// Value for any other situations.
+    #[default]
     Other,
     /// Value taken at clock aligned interval.
     #[serde(rename = "Sample.Clock")]

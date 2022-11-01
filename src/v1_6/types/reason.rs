@@ -1,5 +1,5 @@
 /// Reason for stopping a transaction in StopTransactionRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum Reason {
     /// The transaction was stopped because of the authorization status in a StartTransaction.conf
     DeAuthorized,
@@ -12,6 +12,7 @@ pub enum Reason {
     /// Stopped locally on request of the user at the Charge Point. This is a regular termination of a transaction. Examples: presenting an RFID tag, pressing a button to stop.
     Local,
     /// Any other reason.
+    #[default]
     Other,
     /// Complete loss of power.
     PowerLoss,

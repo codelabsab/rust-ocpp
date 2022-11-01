@@ -12,7 +12,7 @@ use validator::Validate;
 /// this network is not available, a different network is used.
 ///
 /// If you specify `UseOnlyPreferredNetwork` and this network is not available, the modem will not dial in
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct APNType {
     /// The Access Point Name as an URL

@@ -1,6 +1,6 @@
 /// Represent a signed version of the meter value.
 /// SignedMeterValueType is used by: Common:SampledValueType
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SignedMeterValueType {
     pub signed_meter_data: String,

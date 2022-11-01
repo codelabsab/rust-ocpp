@@ -3,7 +3,7 @@ use validator::Validate;
 
 /// This dataType is based on dataTypes from ISO 15118-2.
 /// SalesTariffType is used by: Common:ChargingScheduleType
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Validate)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Validate, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SalesTariffType {
     #[serde(skip_serializing_if = "Option::is_none")]

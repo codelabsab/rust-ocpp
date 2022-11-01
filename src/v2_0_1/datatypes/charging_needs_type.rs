@@ -8,7 +8,7 @@ use crate::v2_0_1::enumerations::energy_transfer_mode_enum_type::EnergyTransferM
 /// ChargingNeedsType
 ///
 /// ChargingNeedsType is used by: [NotifyEVChargingNeedsRequest](`crate::v2_0_1::messages::notify_ev_charging_needs::NotifyEVChargingNeedsRequest`)
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingNeedsType {
     /// Mode of energy transfer requested by the EV.

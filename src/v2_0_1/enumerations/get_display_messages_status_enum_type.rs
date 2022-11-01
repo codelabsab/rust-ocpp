@@ -1,5 +1,6 @@
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum GetDisplayMessagesStatusEnumType {
+    #[default]
     Accepted,
     Unknown,
 }

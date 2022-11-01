@@ -1,4 +1,4 @@
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum ReasonEnumType {
     DeAuthorized,
     EmergencyStop,
@@ -9,6 +9,7 @@ pub enum ReasonEnumType {
     Local,
     LocalOutOfCredit,
     MasterPass,
+    #[default]
     Other,
     OvercurrentFault,
     PowerLoss,

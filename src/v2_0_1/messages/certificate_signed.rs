@@ -5,7 +5,7 @@ use crate::v2_0_1::enumerations::certificate_signing_use_enum_type::CertificateS
 use validator::Validate;
 
 /// `CertificateSignedRequest`, sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CertificateSignedRequest {
     /// The signed PEM encoded X.509 certificate. This can also contain the necessary sub
@@ -27,7 +27,7 @@ pub struct CertificateSignedRequest {
 }
 
 /// `CertificateSignedResponse`, sent by the Charging Station to the CSMS in response to a [`CertificateSignedRequest`].
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CertificateSignedResponse {
     /// Returns whether certificate signing has been accepted, otherwise rejected.

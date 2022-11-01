@@ -5,7 +5,7 @@ use super::variable_type::VariableType;
 
 /// Class to report components, variables and variable attributes and characteristics.
 /// ReportDataType is used by: NotifyReportRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ReportDataType {
     pub component: ComponentType,

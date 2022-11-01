@@ -8,7 +8,7 @@ use crate::v2_0_1::enumerations::charging_rate_unit_enum_type::ChargingRateUnitE
 
 /// Charging schedule structure defines a list of charging periods, as used in: GetCompositeSchedule.conf and ChargingProfile.
 /// ChargingScheduleType is used by: Common:ChargingProfileType , NotifyChargingLimitRequest, NotifyEVChargingScheduleRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Validate)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Validate, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingScheduleType {
     /// Required. Identifies the ChargingSchedule.

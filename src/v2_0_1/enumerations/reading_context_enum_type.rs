@@ -1,9 +1,10 @@
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum ReadingContextEnumType {
     #[serde(rename = "Interruption.Begin")]
     InterruptionBegin,
     #[serde(rename = "Interruption.End")]
     InterruptionEnd,
+    #[default]
     Other,
     #[serde(rename = "Sample.Clock")]
     SampleClock,

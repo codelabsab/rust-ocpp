@@ -4,7 +4,7 @@ use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::delete_certificate_status_enum_type::DeleteCertificateStatusEnumType;
 
 /// Used by the CSMS to request deletion of an installed certificate on a Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct DeleteCertificateRequest {
     /// Indicates the certificate of which deletion isrequested.
@@ -12,7 +12,7 @@ pub struct DeleteCertificateRequest {
 }
 
 /// Response to a DeleteCertificateRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct DeleteCertificateResponse {
     /// Charging Station indicates if it can process the request.

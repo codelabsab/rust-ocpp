@@ -7,7 +7,7 @@ use crate::v2_0_1::enumerations::connector_enum_type::ConnectorEnumType;
 use crate::v2_0_1::enumerations::reserve_now_status_enum_type::ReserveNowStatusEnumType;
 
 /// This contains the field definitions of the RequestStopTransactionRequest PDU sent to Charging Station by CSMS.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ReserveNowRequest {
     pub id: i64,
@@ -22,7 +22,7 @@ pub struct ReserveNowRequest {
 }
 
 /// This contains the field definition of the ReserveNowResponse PDU sent by the Charging Station to the CSMS in response toReserveNowRequest PDU.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ReserveNowResponse {
     pub status: ReserveNowStatusEnumType,

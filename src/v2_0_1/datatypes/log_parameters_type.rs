@@ -3,7 +3,7 @@ use chrono::Utc;
 
 /// Generic class for the configuration of logging entries.
 /// LogParametersType is used by: GetLogRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct LogParametersType {
     pub remote_location: String,

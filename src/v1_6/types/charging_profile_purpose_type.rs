@@ -24,19 +24,13 @@
     20The final schedule constraints that apply to a transaction are determined by merging the profiles with purposes
     ChargePointMaxProfile with the profile TxProfile or the TxDefaultProfile
 */
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum ChargingProfilePurposeType {
     /// Configuration for the maximum power or current available for an entire Charge Point.
     ChargePointMaxProfile,
     /// Default profile *that can be configured in the Charge Point. When a new transaction is started, this profile SHALL be used, unless it was a transaction that was started by a RemoteStartTransaction.req with a ChargeProfile that is accepted by the Charge Point.
+    #[default]
     TxDefaultProfile,
     /// Profile with constraints to be imposed by the Charge Point on the current transaction, or on a new transaction when this is started via a RemoteStartTransaction.req with a ChargeProfile. A profile with this purpose SHALL cease to be valid when the transaction terminates.
     TxProfile,
-}
-
-// TODO: Not sure this is how to set Default for Enum. Got from https://users.rust-lang.org/t/derive-default-for-enum-non-only-struct/44046/7
-impl Default for ChargingProfilePurposeType {
-    fn default() -> Self {
-        ChargingProfilePurposeType::TxDefaultProfile
-    }
 }

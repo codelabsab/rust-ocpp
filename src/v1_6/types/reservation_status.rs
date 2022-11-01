@@ -1,7 +1,8 @@
 /// Status in ReserveNowResponse
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum ReservationStatus {
     /// Reservation has been made.
+    #[default]
     Accepted,
     /// Reservation has not been made, because connectors or specified connector are in a faulted state.
     Faulted,

@@ -3,14 +3,14 @@ use crate::v2_0_1::enumerations::generic_device_model_status_enum_type::GenericD
 use crate::v2_0_1::enumerations::monitoring_base_enum_type::MonitoringBaseEnumType;
 
 /// This contains the field definition of the SetMonitoringLevelRequest PDU sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SetMonitoringBaseRequest {
     pub monitoring_base: MonitoringBaseEnumType,
 }
 
 /// This contains the field definition of the SetMonitoringBaseResponse PDU sent by the Charging Station to the CSMS in response to a SetMonitoringBaseRequest.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SetMonitoringBaseResponse {
     pub status: GenericDeviceModelStatusEnumType,

@@ -11,7 +11,7 @@ use crate::v2_0_1::enumerations::iso15118ev_certificate_status_enum_type::Iso151
 ///
 /// NOTE:
 /// This message is based on CertificateInstallationReq Res from ISO 15118 2.
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Get15118EVCertificateRequest {
     /// Schema version currently used for the 15118 session between EV and Charging Station. Needed for parsing of the EXI stream by the CSMS.
@@ -30,7 +30,7 @@ pub struct Get15118EVCertificateRequest {
 /// Containing the status and optionally new certificate.
 ///
 /// NOTE: This message is based on CertificateInstallationReq Res from ISO 15118-2.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Get15118EVCertificateResponse {
     /// Indicates whether the message was processed properly.

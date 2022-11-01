@@ -233,7 +233,7 @@ pub const CONNECTOR_SWITCH_3_TO_1_PHASE_SUPPORTED: &str = "ConnectorSwitch3to1Ph
 /// Maximum number of Charging profiles installed at a time
 pub const MAX_CHARGING_PROFILES_INSTALLED: &str = "MaxChargingProfilesInstalled";
 
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 pub struct ChangeConfigurationRequest {
     #[validate(length(min = 1, max = 50))]
     pub key: String,
@@ -241,7 +241,7 @@ pub struct ChangeConfigurationRequest {
     pub value: String,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
 pub struct ChangeConfigurationResponse {
     pub status: ConfigurationStatus,
 }

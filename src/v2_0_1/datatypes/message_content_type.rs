@@ -2,7 +2,7 @@ use crate::v2_0_1::enumerations::message_format_enum_type::MessageFormatEnumType
 
 /// Contains message details, for a message to be displayed on a Charging Station.
 /// MessageContentType is used by: Common:IdTokenInfoType , Common:MessageInfoType , TransactionEventResponse
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MessageContentType {
     pub format: MessageFormatEnumType,

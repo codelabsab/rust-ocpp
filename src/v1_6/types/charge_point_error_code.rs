@@ -1,5 +1,5 @@
 /// Charge Point status reported in StatusNotification.req.
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum ChargePointErrorCode {
     /// Failure to lock or unlock connector.
     ConnectorLockFailure,
@@ -14,6 +14,7 @@ pub enum ChargePointErrorCode {
     /// The authorization information received from the Central System is in conflict with the LocalAuthorizationList.
     LocalListConflict,
     /// No error to report.
+    #[default]
     NoError,
     /// Other type of error. More information in vendorErrorCode.
     OtherError,
