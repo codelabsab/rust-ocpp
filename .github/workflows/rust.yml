@@ -2,11 +2,11 @@ name: Rust
 
 on:
   push:
+    paths:
+      - '**.rs'
     branches: [main]
   pull_request:
     branches: [main]
-  paths:
-    - '**.rs'
 
 env:
   CARGO_TERM_COLOR: always
