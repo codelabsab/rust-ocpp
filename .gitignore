@@ -1,7 +1,6 @@
 ocpp/target
 target
 **/target
-Cargo.lock
 .DS_Store
 .vscode
 **/.idea
