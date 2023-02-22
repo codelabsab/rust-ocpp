@@ -1,7 +1,7 @@
 # rust-ocpp
 
 [![crates.io](https://img.shields.io/crates/v/rust-ocpp.svg)](https://crates.io/crates/rust-ocpp)
-[![workflow](https://img.shields.io/github/workflow/status/codelabsab/rust-ocpp/Rust)](https://github.com/codelabsab/rust-ocpp/actions)
+[![workflow](https://img.shields.io/github/actions/workflow/status/codelabsab/rust-ocpp/rust.yml)](https://github.com/codelabsab/rust-ocpp/actions)
 [![codecov](https://codecov.io/gh/codelabsab/rust-ocpp/branch/main/graph/badge.svg?token=23C458RC3S)](https://codecov.io/gh/codelabsab/rust-ocpp)
 
 The `rust-ocpp` libs implements the Open Charge Point Protocol
