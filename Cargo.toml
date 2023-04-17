@@ -3,7 +3,7 @@ name = "rust-ocpp"
 description = "ocpp 1.6 and 2.0.1 libraries"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["Tommy Malmqvist <tommy.malmqvist@codelabs.se"]
 homepage = "https://codelabs.se/"
 repository = "https://github.com/codelabsab/rust-ocpp"
@@ -31,4 +31,4 @@ regex = "1"
 
 [dev-dependencies]
 mockall = "0.11.3"
-jsonschema = "0.16"
+jsonschema = "0.17.0"
