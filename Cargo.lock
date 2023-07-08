@@ -1076,12 +1076,44 @@ dependencies = [
 
 [[package]]
 name = "rust-ocpp"
-version = "0.2.3"
+version = "0.3.0"
 dependencies = [
  "chrono",
  "jsonschema",
  "log",
  "mockall",
+ "pretty_env_logger",
+ "rand",
+ "regex",
+ "rust_ocpp_v1_6",
+ "rust_ocpp_v2_0_1",
+ "serde",
+ "serde_json",
+ "uuid",
+ "validator",
+]
+
+[[package]]
+name = "rust_ocpp_v1_6"
+version = "0.3.0"
+dependencies = [
+ "chrono",
+ "log",
+ "pretty_env_logger",
+ "rand",
+ "regex",
+ "serde",
+ "serde_json",
+ "uuid",
+ "validator",
+]
+
+[[package]]
+name = "rust_ocpp_v2_0_1"
+version = "0.3.0"
+dependencies = [
+ "chrono",
+ "log",
  "pretty_env_logger",
  "rand",
  "regex",
