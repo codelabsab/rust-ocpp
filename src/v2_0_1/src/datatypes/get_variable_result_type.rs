@@ -1,0 +1,23 @@
+use super::component_type::ComponentType;
+use crate::datatypes::status_info_type::StatusInfoType;
+use crate::datatypes::variable_type::VariableType;
+use crate::enumerations::attribute_enum_type::AttributeEnumType;
+use crate::enumerations::get_variable_status_enum_type::GetVariableStatusEnumType;
+use validator::Validate;
+
+/// Class to hold parameters for GetVariables request.
+/// GetVariableDataType is used by: GetVariablesRequest
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Validate, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct GetVariableResultType {
+    pub attribute_status: GetVariableStatusEnumType,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attribute_type: Option<AttributeEnumType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 0, max = 2500))]
+    pub attribute_value: Option<String>,
+    pub component: ComponentType,
+    pub variable: VariableType,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attribute_status_info: Option<StatusInfoType>,
+}
