@@ -5,21 +5,25 @@
 [![codecov](https://codecov.io/gh/codelabsab/rust-ocpp/branch/main/graph/badge.svg?token=23C458RC3S)](https://codecov.io/gh/codelabsab/rust-ocpp)
 
 The `rust-ocpp` libs implements the Open Charge Point Protocol
-used in charging stations. You can read more on the official [Open Charge Alliance](https://www.openchargealliance.org/) website.
+used in charging stations. You can read more on the official [Open Charge Alliance](https://www.openchargealliance.org/)
+website.
 
 Both OCPP v1.6 and v2.0.1 are implemented and validated using the official json schemas from Open Charge Alliance.
 
 You can find the tests in `schema_validation.rs` for both `v.1.6` and `v2.0.1`
 
-## repo structure
+## Repo structure
 
-`src/` : library files for v1.6 and v2.0.1
+`src/` : Library files for v1.6 and v2.0.1. Each version resides in a separate directory and is treated as an individual
+crate.
 
 `docs/` : official ocpp specification
 
 ## How to Use
 
+
 Add `rust-ocpp` as a dependency in your `Cargo.toml`. It will default to version `2.0.1`
+
 
 ```toml
 [dependencies]
@@ -162,4 +166,5 @@ Additionally, adhere to the existing testing conventions and follow the code sty
 
 Use `rustfmt` before you PR.
 
-pre-commit config is available. You can read more about it at [pre-commits](https://pre-commit.com) website and checkout their repo on [github](https://github.com/pre-commit/pre-commit)
+pre-commit config is available. You can read more about it at [pre-commits](https://pre-commit.com) website and checkout
+their repo on [github](https://github.com/pre-commit/pre-commit)
