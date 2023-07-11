@@ -3,11 +3,11 @@ name: Rust
 on:
   push:
     paths:
-      - '**.rs'
+      - "**.rs"
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch: {}  
+  workflow_dispatch: {}
 
 env:
   CARGO_TERM_COLOR: always
@@ -25,9 +25,9 @@ jobs:
       - name: install llvm tools preview
         run: rustup component add llvm-tools-preview
       - name: Build
-        run: cargo build --verbose
+        run: cargo build --verbose --all-features
       - name: Run tests
-        run: LLVM_PROFILE_FILE="your_name-%p-%m.profraw" cargo test --verbose
+        run: LLVM_PROFILE_FILE="your_name-%p-%m.profraw" cargo test --verbose --all-features
       - name: Generate lcov.info for Code coverage
         run: ./grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "/*" -o lcov.info
       - name: Codecov
