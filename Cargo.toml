@@ -21,10 +21,11 @@ default = ["v2_0_1"]
 v1_6 = []
 v2_0_1 = []
 
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+rust_ocpp_v1_6 = { version = "0.3.0", path = "./src/v1_6", optional = true }
+rust_ocpp_v2_0_1 = { version = "0.3.0", path = "./src/v2_0_1", optional = true }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 chrono = { version = "0.4.22", default-features = false, features = ["serde", "clock"] }
@@ -37,4 +38,4 @@ regex = "1"
 
 [dev-dependencies]
 mockall = "0.11.3"
-jsonschema = "0.16"
+jsonschema = "0.17.0"
