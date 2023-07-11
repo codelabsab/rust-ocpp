@@ -23,21 +23,21 @@ Add `rust-ocpp` as a dependency in your `Cargo.toml`. It will default to version
 
 ```toml
 [dependencies]
-rust-ocpp = "0.3.0"
+rust-ocpp = "0.3.1"
 ```
 
 To use `1.6` you need to specify a protocol version with a feature flag:
 
 ```toml
 [dependencies]
-rust-ocpp = { version = "0.3.0", features = ["v1_6"] }
+rust-ocpp = { version = "0.3.1", features = ["v1_6"] }
 ```
 
 or use both versions
 
 ```toml
 [dependencies]
-rust-ocpp = { version = "0.3.0", features = ["v2_0_1", "v1_6"] }
+rust-ocpp = { version = "0.3.1", features = ["v2_0_1", "v1_6"] }
 ```
 
 ## How to Build
