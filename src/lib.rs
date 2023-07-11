@@ -12,8 +12,10 @@
 //!
 //! # v2_0_1
 //! The [v2_0_1](v2_0_1) module contains the `ocpp 2.0.1` implementation
+/// tests
+#[cfg(test)]
+pub mod tests;
 #[cfg(feature = "v1_6")]
-extern crate rust_ocpp_v1_6 as v1_6;
-
+pub mod v1_6;
 #[cfg(feature = "v2_0_1")]
-extern crate rust_ocpp_v2_0_1 as v2_0_1;
+pub mod v2_0_1;
