@@ -17,7 +17,148 @@ You can find the tests in `schema_validation.rs` for both `v.1.6` and `v2.0.1`
 
 `docs/` : official ocpp specification
 
-## contribute
+## How to Use
+
+Add `rust-ocpp` as a dependency in your `Cargo.toml`. It will default to version `2.0.1`
+
+```toml
+[dependencies]
+rust-ocpp = "0.3.0"
+```
+
+To use `1.6` you need to specify a protocol version with a feature flag:
+
+```toml
+[dependencies]
+rust-ocpp = { version = "0.3.0", features = ["v1_6"] }
+```
+
+or use both versions
+
+```toml
+[dependencies]
+rust-ocpp = { version = "0.3.0", features = ["v2_0_1", "v1_6"] }
+```
+
+## How to Build
+
+To build the `rust-ocpp` library, you need to have Rust and Cargo installed on your system. You can install them by
+following the instructions provided at the official [Rust website](https://www.rust-lang.org/tools/install).
+
+Once you have Rust and Cargo installed, you can build the library using the following steps:
+
+1. Clone the `rust-ocpp` repository:
+
+   ```bash
+   git clone https://github.com/codelabsab/rust-ocpp.git
+   ```
+
+2. Change into the `rust-ocpp` directory:
+
+   ```bash
+   cd rust-ocpp
+   ```
+
+3. Build the library using Cargo:
+
+   ```bash
+   cargo build
+   ```
+
+   This command will compile the library and its dependencies. If the build is successful, you will find the compiled
+   artifacts in the `target/debug` directory.
+
+4. Run the tests:
+
+   ```bash
+   cargo test
+   ```
+
+   This command will execute the tests for both OCPP versions. If all tests pass, it means that the library is
+   functioning correctly.
+
+5. Build a specific version:
+
+   To build a specific version of `rust-ocpp`, you can use the appropriate feature flag when running the build command.
+   For example, to build `v1_6`:
+
+   ```bash
+   cargo build --features v1_6
+   ```
+
+   To build `v2_0_1`:
+
+   ```bash
+   cargo build --features v2_0_1
+   ```
+
+6. (Optional) Build for release:
+
+   If you want to build the library for release, with optimizations enabled, you can use the following command:
+
+   ```bash
+   cargo build --release
+   ```
+
+   The release build will produce optimized artifacts in the `target/release` directory.
+
+7. (Optional) Install the library:
+
+   If you want to install the library globally on your system, you can use the following command:
+
+   ```bash
+   cargo install --path .
+   ```
+
+   This command will compile the library and its dependencies and install it in the Cargo binary directory, so you can
+   use it as a dependency in other projects.
+
+That's it! You have successfully built the `rust-ocpp` library. If you encounter any issues during the build process,
+please check the project's issue tracker on GitHub or open a new issue for assistance.
+
+## Testing
+
+`rust-ocpp` provides testing against json schemas for both OCPP v1.6 and v2.0.1 versions. To run the tests, you can use
+Cargo's built-in test runner.
+
+### Running Tests
+
+To run the tests for a specific version, use the appropriate feature flag when running the tests.
+
+For OCPP v1.6 tests:
+
+```bash
+cargo test --features v1_6
+```
+
+For OCPP v2.0.1 tests:
+
+```bash
+cargo test --features v2_0_1
+```
+
+To run all tests:
+
+```bash
+cargo test --all-features
+```
+
+### Test Coverage
+
+The test coverage for rust-ocpp is measured using Codecov. You can find the current test coverage report
+on [codecov](https://codecov.io/gh/codelabsab/rust-ocpp).
+
+### Contributing to Tests
+
+Contributions to the test suite are very much appreciated. If you encounter any bugs, discover edge cases, or have ideas
+for
+additional test cases, feel free to open an issue or submit a pull request.
+We will be happy to review and incorporate your contributions.
+
+Please ensure that you run the tests and maintain or improve the overall test coverage before submitting any changes.
+Additionally, adhere to the existing testing conventions and follow the code style guidelines to maintain consistency.
+
+## Contribute
 
 Use `rustfmt` before you PR.
 

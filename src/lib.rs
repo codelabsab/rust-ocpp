@@ -15,5 +15,7 @@
 /// tests
 #[cfg(test)]
 pub mod tests;
+#[cfg(feature = "v1_6")]
 pub mod v1_6;
+#[cfg(feature = "v2_0_1")]
 pub mod v2_0_1;
