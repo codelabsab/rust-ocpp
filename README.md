@@ -59,19 +59,20 @@ Once you have Rust and Cargo installed, you can build the library using the foll
    cd rust-ocpp
    ```
 
-3. Build the library using Cargo:
+3. Build the library using Cargo for both `1.6` and `2.0.1`:
 
    ```bash
-   cargo build
+   cargo build --all-features
    ```
 
    This command will compile the library and its dependencies. If the build is successful, you will find the compiled
    artifacts in the `target/debug` directory.
 
-4. Run the tests:
+4. Run the tests on both versions:
 
    ```bash
-   cargo test
+   cargo test --all-features
+
    ```
 
    This command will execute the tests for both OCPP versions. If all tests pass, it means that the library is
@@ -97,7 +98,7 @@ Once you have Rust and Cargo installed, you can build the library using the foll
    If you want to build the library for release, with optimizations enabled, you can use the following command:
 
    ```bash
-   cargo build --release
+   cargo build --features v2_0_1 --release
    ```
 
    The release build will produce optimized artifacts in the `target/release` directory.
@@ -140,7 +141,13 @@ cargo test --features v2_0_1
 To run all tests:
 
 ```bash
-cargo test --all-features
+cargo test
+```
+
+or for a specific version
+
+```bash
+cargo test --features v1_6
 ```
 
 ### Test Coverage
