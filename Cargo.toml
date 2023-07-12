@@ -3,7 +3,7 @@ name = "rust-ocpp"
 description = "ocpp 1.6 and 2.0.1 libraries"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["Tommy Malmqvist <tommy.malmqvist@codelabs.se"]
 homepage = "https://codelabs.se/"
 repository = "https://github.com/codelabsab/rust-ocpp"
@@ -12,6 +12,9 @@ keywords = ["ocpp", "ev", "csms"]
 categories = ["accessibility", "data-structures", "embedded", "encoding", "web-programming::websocket"]
 publish = true
 exclude = ["docs/", "src/tests"]
+
+[package.metadata.docs.rs]
+all-features = true
 
 [badges]
 maintenance = { status = "experimental" }
