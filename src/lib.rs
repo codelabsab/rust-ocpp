@@ -1,3 +1,4 @@
+#![cfg_attr(not(feature = "std"), no_std)]
 //! # rust-ocpp
 //!
 //! `rust-ocpp` is a collection of data types and enums specified by the Open Charge Point Protocol
@@ -13,7 +14,7 @@
 //! # v2_0_1
 //! The [v2_0_1](v2_0_1) module contains the `ocpp 2.0.1` implementation
 /// tests
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 pub mod tests;
 #[cfg(feature = "v1_6")]
 pub mod v1_6;

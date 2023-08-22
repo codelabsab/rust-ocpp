@@ -20,16 +20,17 @@ all-features = true
 maintenance = { status = "experimental" }
 
 [features]
-default = ["v2_0_1"]
+default = ["std", "v2_0_1"]
 v1_6 = []
 v2_0_1 = []
+std = ["serde/std", "serde_json/std"]
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+serde = { version = "1", default-features = false, features = ["derive"] }
+serde_json = { version = "1", default-features = false }
 chrono = { version = "0.4.22", default-features = false, features = ["serde", "clock"] }
 rand = "0.8"
 uuid = { version = "1", features = ["v4"] }
