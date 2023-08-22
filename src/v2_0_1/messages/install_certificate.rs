@@ -4,6 +4,7 @@ use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::install_certificate_status_enum_type::InstallCertificateStatusEnumType;
 use crate::v2_0_1::enumerations::install_certificate_use_enum_type::InstallCertificateUseEnumType;
 
+#[cfg(feature = "std")]
 use validator::Validate;
 
 /// Used by the CSMS to request installation of a certificate on a Charging Station.
@@ -14,7 +15,7 @@ pub struct InstallCertificateRequest<'a> {
     /// Indicates the certificate type that is sent.
     pub certificate_type: InstallCertificateUseEnumType,
     /// A PEM encoded X.509 certificate.
-    #[validate(length(min = 0, max = 5500))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 5500)))]
     pub certificate: &'a str,
 }
 

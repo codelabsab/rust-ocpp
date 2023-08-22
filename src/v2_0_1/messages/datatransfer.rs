@@ -1,4 +1,5 @@
 //! DataTransfer
+#[cfg(feature = "std")]
 use validator::Validate;
 
 use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
@@ -10,13 +11,13 @@ use crate::v2_0_1::enumerations::data_transfer_status_enum_type::DataTransferSta
 #[serde(rename_all = "camelCase")]
 pub struct DataTransferRequest<'a> {
     /// May be used to indicate a specific message or implementation.
-    #[validate(length(min = 0, max = 50))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 50)))]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message_id: Option<&'a str>,
     /// Data without specified length or format. This needs to be decided by both parties (Open to implementation).
     pub data: &'a str,
     /// This identifies the Vendor specific     implementation
-    #[validate(length(min = 0, max = 255))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 255)))]
     pub vendor_id: &'a str,
 }
 

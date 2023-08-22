@@ -1,3 +1,4 @@
+#[cfg(feature = "std")]
 use validator::Validate;
 
 use crate::v1_6::types::{ChargingProfile, RemoteStartStopStatus};
@@ -11,7 +12,7 @@ pub struct RemoteStartTransactionRequest<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub connector_id: Option<u64>,
     /// Required. The identifier that Charge Point must use to start a transaction.
-    #[validate(length(min = 1, max = 20))]
+    #[cfg_attr(feature="std", validate(length(min = 1, max = 20)))]
     pub id_tag: &'a str, // IdToken, should this be a type?
     /// Optional. Charging Profile to be used by the Charge Point for the requested transaction. ChargingProfilePurpose MUST be set to TxProfile
     #[serde(skip_serializing_if = "Option::is_none")]

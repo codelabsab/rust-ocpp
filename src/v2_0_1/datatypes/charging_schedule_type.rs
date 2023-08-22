@@ -1,5 +1,6 @@
 use chrono::DateTime;
 use chrono::Utc;
+#[cfg(feature = "std")]
 use validator::Validate;
 
 use super::charging_schedule_period_type::ChargingSchedulePeriodType;
@@ -26,7 +27,7 @@ pub struct ChargingScheduleType<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_charging_rate: Option<f64>,
     /// Required. List of ChargingSchedulePeriod elements defining maximum power or current usage over time. The maximum number of periods, that is supported by the Charging Station, if less than 1024, is set by device model variable SmartChargingCtrlr.PeriodsPerSchedule
-    #[validate(length(min = 1))]
+    #[cfg_attr(feature="std", validate(length(min = 1)))]
     pub charging_schedule_period: Vec<ChargingSchedulePeriodType>,
     /// Optional. Sales tariff associated with this charging schedule.
     #[serde(skip_serializing_if = "Option::is_none",borrow)]

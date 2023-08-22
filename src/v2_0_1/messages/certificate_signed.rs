@@ -2,6 +2,7 @@
 use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::certificate_signed_status_enum_type::CertificateSignedStatusEnumType;
 use crate::v2_0_1::enumerations::certificate_signing_use_enum_type::CertificateSigningUseEnumType;
+#[cfg(feature = "std")]
 use validator::Validate;
 
 /// `CertificateSignedRequest`, sent by the CSMS to the Charging Station.
@@ -15,7 +16,7 @@ pub struct CertificateSignedRequest<'a> {
     ///
     /// The Configuration Variable `MaxCertificateChainSize` can be used to limit the
     ///  maximum size of this field.
-    #[validate(length(min = 0, max = 10000))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 10000)))]
     pub certificate_chain: &'a str,
     /// Indicates the type of the signed certificate that is returned. When omitted the
     ///  certificate is used for both the 15118 connection (if implemented) and the

@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+#[cfg(feature = "std")]
 use validator::Validate;
 
 /// This contains the field definition of the UpdateFirmware.req PDU sent by the Central System to the Charge Point. See also Update Firmware

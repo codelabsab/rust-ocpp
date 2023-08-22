@@ -1,3 +1,4 @@
+#[cfg(feature = "std")]
 use validator::Validate;
 
 use crate::v1_6::types::KeyValue;
@@ -9,7 +10,7 @@ use crate::v1_6::types::KeyValue;
 pub struct GetConfigurationRequest<'a> {
     /// Optional. List of keys for which the configuration value is requested.
     #[serde(skip_serializing_if = "Option::is_none",borrow)]
-    #[validate(length(min = 1, max = 50))]
+    #[cfg_attr(feature="std", validate(length(min = 1, max = 50)))]
     pub key: Option<Vec<&'a str>>,
 }
 
@@ -22,7 +23,7 @@ pub struct GetConfigurationResponse<'a> {
     #[serde(skip_serializing_if = "Option::is_none",borrow)]
     pub configuration_key: Option<Vec<KeyValue<'a>>>,
     /// Optional. Requested keys that are unknown
-    #[validate(length(min = 1, max = 50))]
+    #[cfg_attr(feature="std", validate(length(min = 1, max = 50)))]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub unknown_key: Option<Vec<&'a str>>,
 }

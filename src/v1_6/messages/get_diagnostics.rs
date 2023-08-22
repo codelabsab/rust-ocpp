@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+#[cfg(feature = "std")]
 use validator::Validate;
 
 /// This contains the field definition of the GetDiagnostics.req PDU sent by the Central System to the Charge Point. See also Get Diagnostics
@@ -28,7 +29,7 @@ pub struct GetDiagnosticsRequest<'a> {
 #[serde(rename_all = "camelCase")]
 pub struct GetDiagnosticsResponse<'a> {
     /// Optional. This contains the name of the file with diagnostic information that will be uploaded. This field is not present when no diagnostic information is vailable.
-    #[validate(length(min = 1, max = 255))]
+    #[cfg_attr(feature="std", validate(length(min = 1, max = 255)))]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_name: Option<&'a str>,
 }

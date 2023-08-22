@@ -1,4 +1,5 @@
 //! CustomerInformation
+#[cfg(feature = "std")]
 use validator::Validate;
 
 use crate::v2_0_1::datatypes::certificate_hash_data_type::CertificateHashDataType;
@@ -22,7 +23,7 @@ pub struct CustomerInformationRequest<'a> {
     /// This field contains a custom identifier other than IdToken and Certificate.
     ///  One of the possible identifiers (customerIdentifier, customerIdToken or
     /// customerCertificate) should be in the request message.
-    #[validate(length(min = 0, max = 64))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 64)))]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub customer_identifier: Option<&'a str>,
     /// The IdToken of the customer this request refers to. One of the possible identifiers

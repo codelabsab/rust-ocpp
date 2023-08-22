@@ -1,4 +1,5 @@
 use crate::v1_6::types::IdTagInfo;
+#[cfg(feature = "std")]
 use validator::Validate;
 
 // # From OCPP Specification

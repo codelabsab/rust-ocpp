@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 
+#[cfg(feature = "std")]
 use validator::Validate;
 
 use crate::v1_6::types::ReservationStatus;
@@ -14,10 +15,10 @@ pub struct ReserveNowRequest<'a> {
     /// Required. This contains the date and time when the reservation ends.
     pub expiry_date: DateTime<Utc>,
     /// Required. The identifier for which the Charge Point has to reserve a connector.
-    #[validate(length(min = 1, max = 20))]
+    #[cfg_attr(feature="std", validate(length(min = 1, max = 20)))]
     pub id_tag: &'a str, // IdToken, should this be a type?
     /// Optional. The parent idTag.
-    #[validate(length(min = 1, max = 20))]
+    #[cfg_attr(feature="std", validate(length(min = 1, max = 20)))]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parent_id_tag: Option<&'a str>, // IdToken, shoult this be a type?
     /// Required. Unique id for this reservation.

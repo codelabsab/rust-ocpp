@@ -21,6 +21,7 @@
 //! not for unlocking a connector access door.
 
 use crate::v1_6::types::UnlockStatus;
+#[cfg(feature = "std")]
 use validator::Validate;
 
 #[cfg_attr(feature="std", derive(Validate))]
@@ -29,7 +30,7 @@ use validator::Validate;
 pub struct UnlockConnectorRequest {
     /// # From OCPP Specification
     /// Required. This contains the identifier of the connector to be unlocked.
-    #[validate(range(min = 0, max = 20))]
+    #[cfg_attr(feature="std", validate(range(min = 0, max = 20)))]
     pub connector_id: u32,
 }
 

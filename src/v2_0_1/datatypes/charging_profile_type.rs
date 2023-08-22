@@ -5,6 +5,7 @@ use super::charging_schedule_type::ChargingScheduleType;
 use crate::v2_0_1::enumerations::charging_profile_kind_enum_type::ChargingProfileKindEnumType;
 use crate::v2_0_1::enumerations::charging_profile_purpose_enum_type::ChargingProfilePurposeEnumType;
 use crate::v2_0_1::enumerations::recurrency_kind_enum_type::RecurrencyKindEnumType;
+#[cfg(feature = "std")]
 use validator::Validate;
 /// A ChargingProfile consists of ChargingSchedule, describing the amount of power or current that can be delivered per time interval
 /// ChargingProfileType is used by: RequestStartTransactionRequest , SetChargingProfileRequest , ReportChargingProfilesRequest
@@ -30,7 +31,7 @@ pub struct ChargingProfileType<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub valid_to: Option<DateTime<Utc>>,
     /// Optional. SHALL only be included if ChargingProfilePurpose is set to TxProfile. The transactionId is used to match the profile to a specific transaction
-    #[validate(length(min = 0, max = 36))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 36)))]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction_id: Option<&'a str>,
     /// Required. Schedule that contains limits for the available power or current over time. In order to support ISO 15118 schedule negotiation, it supports at most three schedules with associated tariff to choose from

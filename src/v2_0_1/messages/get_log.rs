@@ -4,6 +4,7 @@ use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::log_enum_type::LogEnumType;
 use crate::v2_0_1::enumerations::log_status_enum_type::LogStatusEnumType;
 
+#[cfg(feature = "std")]
 use validator::Validate;
 
 /// GetLogRequest, sent by the CSMS to the Charging Station.
@@ -33,7 +34,7 @@ pub struct GetLogResponse<'a> {
     /// This field indicates whether the ChargingStation was able to accept the request.
     pub status: LogStatusEnumType,
     /// This contains the name of the log file that willbe uploaded. This field is not present when no logginginformation is available.
-    #[validate(length(min = 0, max = 255))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 255)))]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub filename: Option<&'a str>,
     /// Detailed status information.

@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+#[cfg(feature = "std")]
 use validator::Validate;
 
 #[cfg_attr(feature="std", derive(Validate))]

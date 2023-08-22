@@ -23,7 +23,7 @@ maintenance = { status = "experimental" }
 default = ["std", "v2_0_1"]
 v1_6 = []
 v2_0_1 = []
-std = ["serde/std", "serde_json/std"]
+std = ["dep:validator", "serde/std", "serde_json/std"]
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -36,7 +36,7 @@ rand = "0.8"
 uuid = { version = "1", features = ["v4"] }
 pretty_env_logger = "0.4.0"
 log = "0.4"
-validator = { version = "0.16.0", features = ["derive"] }
+validator = { version = "0.16.0", features = ["derive"], optional = true }
 regex = "1"
 
 [dev-dependencies]

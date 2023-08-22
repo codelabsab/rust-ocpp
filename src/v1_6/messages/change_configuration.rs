@@ -1,4 +1,5 @@
 use crate::v1_6::types::ConfigurationStatus;
+#[cfg(feature = "std")]
 use validator::Validate;
 
 pub const CHANGE_CONFIGURATION_ACTION: &str = "ChangeConfiguration";
@@ -236,9 +237,9 @@ pub const MAX_CHARGING_PROFILES_INSTALLED: &str = "MaxChargingProfilesInstalled"
 #[cfg_attr(feature="std", derive(Validate))]
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct ChangeConfigurationRequest<'a> {
-    #[validate(length(min = 1, max = 50))]
+    #[cfg_attr(feature="std", validate(length(min = 1, max = 50)))]
     pub key: &'a str,
-    #[validate(length(min = 1, max = 500))]
+    #[cfg_attr(feature="std", validate(length(min = 1, max = 500)))]
     pub value: &'a str,
 }
 

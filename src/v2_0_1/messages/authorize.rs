@@ -1,5 +1,6 @@
 //! Authorize
 use crate::v2_0_1::datatypes::id_token_info_type::IdTokenInfoType;
+#[cfg(feature = "std")]
 use validator::Validate;
 
 use crate::v2_0_1::datatypes::id_token_type::IdTokenType;
@@ -12,7 +13,7 @@ use crate::v2_0_1::enumerations::authorize_certificate_status_enum_type::Authori
 #[serde(rename_all = "camelCase")]
 pub struct AuthorizeRequest<'a> {
     /// The X.509 certificated presented by EV and encoded in PEM format.
-    #[validate(length(min = 0, max = 5500))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 5500)))]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub certificate: Option<&'a str>,
     /// This contains the identifier that needs to be authorized.

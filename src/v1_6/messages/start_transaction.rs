@@ -1,6 +1,7 @@
 use crate::v1_6::types::IdTagInfo;
 
 use chrono::{DateTime, Utc};
+#[cfg(feature = "std")]
 use validator::Validate;
 
 /// This section contains the field definition of the StartTransaction.req PDU sent by the Charge Point to the Central System. See also Start Transaction
@@ -11,7 +12,7 @@ pub struct StartTransactionRequest<'a> {
     /// Required. This identifies which connector of the Charge Point is used.
     pub connector_id: u64,
     /// Required. This contains the identifier for which a transaction has to be started.
-    #[validate(length(min = 1, max = 20))]
+    #[cfg_attr(feature="std", validate(length(min = 1, max = 20)))]
     pub id_tag: &'a str, // IdToken, should this be a type?
     /// Required. This contains the meter value in Wh for the connector at start of the transaction.
     pub meter_start: i64,

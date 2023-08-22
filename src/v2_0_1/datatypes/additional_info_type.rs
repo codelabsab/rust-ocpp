@@ -1,5 +1,7 @@
 //! Contains a case insensitive identifier to use for the authorization and the type of authorization to support multiple forms of identifiers.
+#[cfg(feature = "std")]
 use crate::v2_0_1::helpers::validator::validate_identifier_string;
+#[cfg(feature = "std")]
 use validator::Validate;
 
 /// Contains a case insensitive identifier to use for the authorization and the
@@ -11,10 +13,10 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct AdditionalInfoType<'a> {
     /// This field specifies the additional IdToken
-    #[validate(length(min = 0, max = 36), custom = "validate_identifier_string")]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 36), custom = "validate_identifier_string"))]
     pub additional_id_token: &'a str,
     /// This defines the type of the additionalIdToken. This is a custom type, so the implementation needs to be agreed upon by all involved parties.
-    #[validate(length(min = 0, max = 50))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 50)))]
     #[serde(rename = "type")]
     pub kind: &'a str,
 }

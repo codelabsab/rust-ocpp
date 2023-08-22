@@ -1,4 +1,5 @@
 use crate::v1_6::types::{ChargingProfilePurposeType, ClearChargingProfileStatus};
+#[cfg(feature = "std")]
 use validator::Validate;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
