@@ -5,8 +5,8 @@ use chrono::Utc;
 /// LogParametersType is used by: GetLogRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct LogParametersType {
-    pub remote_location: String,
+pub struct LogParametersType<'a> {
+    pub remote_location: &'a str,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub oldest_timestamp: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]

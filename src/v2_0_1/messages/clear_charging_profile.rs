@@ -23,10 +23,10 @@ pub struct ClearChargingProfileRequest {
 ///  in response to a [`ClearChargingProfileRequest`].
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ClearChargingProfileResponse {
+pub struct ClearChargingProfileResponse<'a> {
     /// Indicates if the Charging Station was able to execute the request.
     pub status: ClearChargingProfileStatusEnumType,
     /// Detailed status information.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

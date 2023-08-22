@@ -7,7 +7,8 @@ use super::sampled_value_type::SampledValueType;
 /// MeterValueType is used by: MeterValuesRequest , TransactionEventRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct MeterValueType {
+pub struct MeterValueType<'a> {
     pub timestamp: DateTime<Utc>,
-    pub sampled_value: Vec<SampledValueType>,
+    #[serde(borrow)]
+    pub sampled_value: Vec<SampledValueType<'a>>,
 }

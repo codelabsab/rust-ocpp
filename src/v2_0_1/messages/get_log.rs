@@ -9,7 +9,7 @@ use validator::Validate;
 /// GetLogRequest, sent by the CSMS to the Charging Station.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetLogRequest {
+pub struct GetLogRequest<'a> {
     /// This contains the type of log file that theCharging Station should send
     pub log_type: LogEnumType,
     /// The Id of this request
@@ -21,20 +21,22 @@ pub struct GetLogRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub retry_interval: Option<i64>,
     /// This field specifies the requested log and thelocation to which the log should be sent.
-    pub log: LogParametersType,
+    #[serde(borrow)]
+    pub log: LogParametersType<'a>,
 }
 
 /// GetLogResponse, sent by the Charging Station to the CSMS in response to a GetLogRequest.
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature="std", derive(Validate))]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetLogResponse {
+pub struct GetLogResponse<'a> {
     /// This field indicates whether the ChargingStation was able to accept the request.
     pub status: LogStatusEnumType,
     /// This contains the name of the log file that willbe uploaded. This field is not present when no logginginformation is available.
     #[validate(length(min = 0, max = 255))]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub filename: Option<String>,
+    pub filename: Option<&'a str>,
     /// Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    pub status_info: Option<StatusInfoType<'a>>,
 }

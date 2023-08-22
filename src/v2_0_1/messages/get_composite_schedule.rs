@@ -20,13 +20,13 @@ pub struct GetCompositeScheduleRequest {
 /// GetCompositeScheduleResponse, sent by the Charging Station to the CSMS in response to a GetCompositeScheduleRequest.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetCompositeScheduleResponse {
+pub struct GetCompositeScheduleResponse<'a> {
     /// The Charging Station will indicate if it was ableto process the request
     pub status: GenericStatusEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
     /// This field contains the calculated compositeschedule. It may only be omitted when this messagecontains status Rejected
     pub schedule: Option<CompositeScheduleType>,
     /// Detailed status information
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

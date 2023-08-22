@@ -2,11 +2,12 @@ use chrono::{DateTime, Utc};
 use validator::Validate;
 
 /// This contains the field definition of the UpdateFirmware.req PDU sent by the Central System to the Charge Point. See also Update Firmware
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature="std", derive(Validate))]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct UpdateFirmwareRequest {
+pub struct UpdateFirmwareRequest<'a> {
     /// Required. This contains a string containing a URI pointing to a location from which to retrieve the firmware.
-    pub location: String,
+    pub location: &'a str,
     /// Optional. This specifies how many times Charge Point must try to download the firmware before giving up. If this field is not present, it is left to Charge Point to decide how many times it wants to retry.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub retries: Option<i64>,

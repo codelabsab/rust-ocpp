@@ -5,13 +5,13 @@ use chrono::Utc;
 /// FirmwareType is used by: UpdateFirmwareRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct FirmwareType {
-    pub location: String,
+pub struct FirmwareType<'a> {
+    pub location: &'a str,
     pub retrieve_date_time: DateTime<Utc>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub install_date_time: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub signing_certificate: Option<String>,
+    pub signing_certificate: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub signature: Option<String>,
+    pub signature: Option<&'a str>,
 }

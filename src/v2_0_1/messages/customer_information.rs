@@ -7,9 +7,10 @@ use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::customer_information_status_enum_type::CustomerInformationStatusEnumType;
 
 /// CustomerInformationRequest, sent by the CSMS to the Charging Station
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature="std", derive(Validate))]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct CustomerInformationRequest {
+pub struct CustomerInformationRequest<'a> {
     /// The Id of the request
     pub request_id: i64,
     /// Flag indicating whether the Charging Station should return NotifyCustomerInformationRequest
@@ -23,24 +24,24 @@ pub struct CustomerInformationRequest {
     /// customerCertificate) should be in the request message.
     #[validate(length(min = 0, max = 64))]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub customer_identifier: Option<String>,
+    pub customer_identifier: Option<&'a str>,
     /// The IdToken of the customer this request refers to. One of the possible identifiers
     /// (customerIdentifier, customerIdToken or customerCertificate) should be in the request message.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id_token: Option<IdTokenType>,
+    pub id_token: Option<IdTokenType<'a>>,
     /// The Certificate of the customer this request refers to. One of the possible identifiers
     /// (customerIdentifier, customerIdToken or customerCertificate) should be in the request message.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub customer_certificate: Option<CertificateHashDataType>,
+    pub customer_certificate: Option<CertificateHashDataType<'a>>,
 }
 
 /// CustomerInformationResponse
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct CustomerInformationResponse {
+pub struct CustomerInformationResponse<'a> {
     /// Indicates whether the request was accepted.
     pub status: CustomerInformationStatusEnumType,
     /// Detailed status information.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

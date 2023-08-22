@@ -7,10 +7,11 @@ use super::variable_type::VariableType;
 /// ReportDataType is used by: NotifyReportRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ReportDataType {
-    pub component: ComponentType,
-    pub variable: VariableType,
-    pub variable_attribute: Vec<VariableAttributeType>,
+pub struct ReportDataType<'a> {
+    #[serde(borrow)]
+    pub component: ComponentType<'a>,
+    pub variable: VariableType<'a>,
+    pub variable_attribute: Vec<VariableAttributeType<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub variable_characteristics: Option<VariableCharacteristicsType>,
+    pub variable_characteristics: Option<VariableCharacteristicsType<'a>>,
 }

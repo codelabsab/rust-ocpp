@@ -2,9 +2,9 @@ use super::{value_format::ValueFormat, Location, Measurand, Phase, ReadingContex
 
 /// Single sampled value in MeterValues. Each value can be accompanied by optional fields.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
-pub struct SampledValue {
+pub struct SampledValue<'a> {
     /// Required. Value as a “Raw” (decimal) number or “SignedData”. Field Type is “string” to allow for digitally signed data readings. Decimal numeric values are also acceptable to allow fractional values for measurands such as Temperature and Current.
-    pub value: String,
+    pub value: &'a str,
     /// Optional. Type of detail value: start, end or sample. Default = “Sample.Periodic”
     #[serde(skip_serializing_if = "Option::is_none")]
     pub context: Option<ReadingContext>,

@@ -3,13 +3,14 @@ use crate::v2_0_1::enumerations::charging_limit_source_enum_type::ChargingLimitS
 /// Reports charging profiles installed in the Charging Station, as requested via a GetChargingProfilesRequest message. The charging profile report can be split over multiple ReportChargingProfilesRequest messages, this can be because charging profiles for different charging sources need to be reported, or because there is just to much data for one message.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ReportChargingProfilesRequest {
+pub struct ReportChargingProfilesRequest<'a> {
     pub request_id: i64,
     pub charging_limit_source: ChargingLimitSourceEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tbc: Option<bool>,
     pub evse_id: i64,
-    pub charging_profile: Vec<ChargingProfileType>,
+    #[serde(borrow)]
+    pub charging_profile: Vec<ChargingProfileType<'a>>,
 }
 
 /// The ReportChargingProfilesResponse message is sent by the CSMS to the Charging Station in response to a ReportChargingProfilesRequest. No fields are defined.

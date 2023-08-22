@@ -6,24 +6,25 @@ use crate::v2_0_1::enumerations::request_start_stop_status_enum_type::RequestSta
 /// This contains the field definitions of the RequestStartTransactionRequest PDU sent to Charging Station by CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct RequestStartTransactionRequest {
+pub struct RequestStartTransactionRequest<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evse_id: Option<i64>,
     pub remote_start_id: i64,
-    pub id_token: IdTokenType,
+    #[serde(borrow)]
+    pub id_token: IdTokenType<'a>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub charging_profile: Option<ChargingProfileType>,
+    pub charging_profile: Option<ChargingProfileType<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub group_id_token: Option<IdTokenType>,
+    pub group_id_token: Option<IdTokenType<'a>>,
 }
 
 /// This contains the field definitions of the RequestStartTransactionResponse PDU sent from Charging Station to CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct RequestStartTransactionResponse {
+pub struct RequestStartTransactionResponse<'a> {
     pub status: RequestStartStopStatusEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub transaction_id: Option<String>,
+    pub transaction_id: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    pub status_info: Option<StatusInfoType<'a>>,
 }

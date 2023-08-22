@@ -9,23 +9,24 @@ use crate::v2_0_1::enumerations::reserve_now_status_enum_type::ReserveNowStatusE
 /// This contains the field definitions of the RequestStopTransactionRequest PDU sent to Charging Station by CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ReserveNowRequest {
+pub struct ReserveNowRequest<'a> {
     pub id: i64,
     pub expiry_date_time: DateTime<Utc>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub connector_type: Option<ConnectorEnumType>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evse_id: Option<i64>,
-    pub id_token: IdTokenType,
+    #[serde(borrow)]
+    pub id_token: IdTokenType<'a>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub group_id_token: Option<IdTokenType>,
+    pub group_id_token: Option<IdTokenType<'a>>,
 }
 
 /// This contains the field definition of the ReserveNowResponse PDU sent by the Charging Station to the CSMS in response toReserveNowRequest PDU.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ReserveNowResponse {
+pub struct ReserveNowResponse<'a> {
     pub status: ReserveNowStatusEnumType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

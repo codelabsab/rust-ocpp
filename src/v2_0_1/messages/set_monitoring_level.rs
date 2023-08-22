@@ -10,8 +10,8 @@ pub struct SetMonitoringLevelRequest {
 /// This contains the field definition of the SetMonitoringLevelResponse PDU sent by the Charging Station to the CSMS in response to a SetMonitoringLevelRequest.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct SetMonitoringLevelResponse {
+pub struct SetMonitoringLevelResponse<'a> {
     pub status: GenericStatusEnumType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

@@ -11,18 +11,19 @@ use crate::v2_0_1::enumerations::iso15118ev_certificate_status_enum_type::Iso151
 ///
 /// NOTE:
 /// This message is based on CertificateInstallationReq Res from ISO 15118 2.
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature="std", derive(Validate))]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct Get15118EVCertificateRequest {
+pub struct Get15118EVCertificateRequest<'a> {
     /// Schema version currently used for the 15118 session between EV and Charging Station. Needed for parsing of the EXI stream by the CSMS.
     #[validate(length(min = 0, max = 50))]
     #[serde(rename = "iso15118SchemaVersion")]
-    pub iso_15118_schema_version: String,
+    pub iso_15118_schema_version: &'a str,
     /// Defines whether certificate needs to be installed or updated.
     pub action: CertificateActionEnumType,
     /// Raw CertificateInstallationReq request from EV, Base64 encoded.
     #[validate(length(min = 0, max = 5600))]
-    pub exi_request: String,
+    pub exi_request: &'a str,
 }
 
 /// Get15118EVCertificateResponse, Response message from CSMS to Charging Station.
@@ -32,12 +33,12 @@ pub struct Get15118EVCertificateRequest {
 /// NOTE: This message is based on CertificateInstallationReq Res from ISO 15118-2.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct Get15118EVCertificateResponse {
+pub struct Get15118EVCertificateResponse<'a> {
     /// Indicates whether the message was processed properly.
     pub status: Iso15118EVCertificateStatusEnumType,
     /// Raw CertificateInstallationRes response for the EV, Base64 encoded.
-    pub exi_response: String,
+    pub exi_response: &'a str,
     /// Detailed status information
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    pub status_info: Option<StatusInfoType<'a>>,
 }

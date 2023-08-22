@@ -303,21 +303,21 @@ mod tests {
     #[test]
     fn validate_authorize_request() {
         let test = AuthorizeRequest {
-            certificate: Some("".to_string()),
+            certificate: Some(""),
             id_token: IdTokenType {
-                id_token: "".to_string(),
+                id_token: "",
                 kind: IdTokenEnumType::Central,
                 additional_info: Some(vec![AdditionalInfoType {
-                    additional_id_token: "more than 5 characters".to_string(),
-                    kind: "".to_string(),
+                    additional_id_token: "more than 5 characters",
+                    kind: "",
                 }]),
             },
             iso_15118_certificate_hash_data: Some(vec![OCSPRequestDataType {
                 hash_algorithm: HashAlgorithmEnumType::SHA256,
-                issuer_name_hash: "".to_string(),
-                issuer_key_hash: "".to_string(),
-                serial_number: "".to_string(),
-                responder_url: "".to_string(),
+                issuer_name_hash: "",
+                issuer_key_hash: "",
+                serial_number: "",
+                responder_url: "",
             }]),
         };
 
@@ -343,21 +343,21 @@ mod tests {
                 status: AuthorizationStatusEnumType::Accepted,
                 cache_expiry_date_time: Some(Utc::now()),
                 charging_priority: Some(1),
-                language1: Some("English".to_string()),
+                language1: Some("English"),
                 evse_id: Some(vec![1]),
-                language2: Some("Chinese".to_string()),
+                language2: Some("Chinese"),
                 group_id_token: Some(IdTokenType {
-                    id_token: "".to_string(),
+                    id_token: "",
                     kind: IdTokenEnumType::Central,
                     additional_info: Some(vec![AdditionalInfoType {
-                        additional_id_token: "".to_string(),
-                        kind: "".to_string(),
+                        additional_id_token: "",
+                        kind: "",
                     }]),
                 }),
                 personal_message: Some(MessageContentType {
                     format: MessageFormatEnumType::ASCII,
-                    language: Some("Swedish".to_string()),
-                    content: "".to_string(),
+                    language: Some("Swedish"),
+                    content: "",
                 }),
             },
         };
@@ -381,13 +381,13 @@ mod tests {
         let test = BootNotificationRequest {
             reason: BootReasonEnumType::PowerUp,
             charging_station: ChargingStationType {
-                model: "SingleSocketCharger".to_string(),
-                vendor_name: "VendorX".to_string(),
-                serial_number: Some("serial_number".to_string()),
-                firmware_version: Some("firmware_version".to_string()),
+                model: "SingleSocketCharger",
+                vendor_name: "VendorX",
+                serial_number: Some("serial_number"),
+                firmware_version: Some("firmware_version"),
                 modem: Some(ModemType {
-                    iccid: Some("iccid".to_string()),
-                    imsi: Some("imsi".to_string()),
+                    iccid: Some("iccid"),
+                    imsi: Some("imsi"),
                 }),
             },
         };
@@ -412,8 +412,8 @@ mod tests {
             interval: 10,
             status: RegistrationStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("additional_info".to_string()),
+                reason_code: "",
+                additional_info: Some("additional_info"),
             }),
         };
 
@@ -453,8 +453,8 @@ mod tests {
         let test = CancelReservationResponse {
             status: CancelReservationStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("additional_info".to_string()),
+                reason_code: "",
+                additional_info: Some("additional_info"),
             }),
         };
 
@@ -475,7 +475,7 @@ mod tests {
     #[test]
     fn validate_certificate_signed_request() {
         let test = CertificateSignedRequest {
-            certificate_chain: "certificate_chain".to_string(),
+            certificate_chain: "certificate_chain",
             certificate_type: Some(CertificateSigningUseEnumType::ChargingStationCertificate),
         };
         let schema = include_str!("schemas/v2.0.1/CertificateSignedRequest.json");
@@ -497,8 +497,8 @@ mod tests {
         let test = CertificateSignedResponse {
             status: CertificateSignedStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "reason_code".to_string(),
-                additional_info: Some("additional_info".to_string()),
+                reason_code: "reason_code",
+                additional_info: Some("additional_info"),
             }),
         };
 
@@ -544,8 +544,8 @@ mod tests {
         let test = ChangeAvailabilityResponse {
             status: ChangeAvailabilityStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "reason_code".to_string(),
-                additional_info: Some("additional_info".to_string()),
+                reason_code: "reason_code",
+                additional_info: Some("additional_info"),
             }),
         };
 
@@ -585,8 +585,8 @@ mod tests {
         let test = ClearCacheResponse {
             status: ClearCacheStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "reason_code".to_string(),
-                additional_info: Some("additional_info".to_string()),
+                reason_code: "reason_code",
+                additional_info: Some("additional_info"),
             }),
         };
 
@@ -635,8 +635,8 @@ mod tests {
         let test = ClearChargingProfileResponse {
             status: ClearChargingProfileStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "reason_code".to_string(),
-                additional_info: Some("additional_info".to_string()),
+                reason_code: "reason_code",
+                additional_info: Some("additional_info"),
             }),
         };
 
@@ -676,8 +676,8 @@ mod tests {
         let test = ClearDisplayMessageResponse {
             status: ClearMessageStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "reason_code".to_string(),
-                additional_info: Some("additional_info".to_string()),
+                reason_code: "reason_code",
+                additional_info: Some("additional_info"),
             }),
         };
 
@@ -757,8 +757,8 @@ mod tests {
                 status: ClearMonitoringStatusEnumType::Accepted,
                 id: 0,
                 status_info: Some(StatusInfoType {
-                    reason_code: "".to_string(),
-                    additional_info: Some("".to_string()),
+                    reason_code: "",
+                    additional_info: Some(""),
                 }),
             }],
         };
@@ -780,7 +780,7 @@ mod tests {
     fn validate_cost_updated_request() {
         let test = CostUpdatedRequest {
             total_cost: 0.0,
-            transaction_id: "".to_string(),
+            transaction_id: "",
         };
         let schema = include_str!("schemas/v2.0.1/CostUpdatedRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -817,20 +817,20 @@ mod tests {
             request_id: 0,
             report: false,
             clear: false,
-            customer_identifier: Some("customer_identifier".to_string()),
+            customer_identifier: Some("customer_identifier"),
             id_token: Some(IdTokenType {
-                id_token: "".to_string(),
+                id_token: "",
                 kind: IdTokenEnumType::Central,
                 additional_info: Some(vec![AdditionalInfoType {
-                    additional_id_token: "additional_id_token".to_string(),
-                    kind: "type".to_string(),
+                    additional_id_token: "additional_id_token",
+                    kind: "type",
                 }]),
             }),
             customer_certificate: Some(CertificateHashDataType {
                 hash_algorithm: HashAlgorithmEnumType::SHA256,
-                issuer_name_hash: "issuer_name".to_string(),
-                issuer_key_hash: "issuer_key_hash".to_string(),
-                serial_number: "serial_number".to_string(),
+                issuer_name_hash: "issuer_name",
+                issuer_key_hash: "issuer_key_hash",
+                serial_number: "serial_number",
             }),
         };
         let schema = include_str!("schemas/v2.0.1/CustomerInformationRequest.json");
@@ -851,8 +851,8 @@ mod tests {
         let test = CustomerInformationResponse {
             status: CustomerInformationStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/CustomerInformationResponse.json");
@@ -871,9 +871,9 @@ mod tests {
     #[test]
     fn validate_data_transfer_request() {
         let test = DataTransferRequest {
-            message_id: Some("message_id".to_string()),
-            data: "data".to_string(),
-            vendor_id: "vendor_id".to_string(),
+            message_id: Some("message_id"),
+            data: "data",
+            vendor_id: "vendor_id",
         };
         let schema = include_str!("schemas/v2.0.1/DataTransferRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -892,10 +892,10 @@ mod tests {
     fn validate_data_transfer_response() {
         let test = DataTransferResponse {
             status: DataTransferStatusEnumType::Accepted,
-            data: "".to_string(),
+            data: "",
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/DataTransferResponse.json");
@@ -916,9 +916,9 @@ mod tests {
         let test = DeleteCertificateRequest {
             certificate_hash_data: CertificateHashDataType {
                 hash_algorithm: HashAlgorithmEnumType::SHA256,
-                issuer_name_hash: "".to_string(),
-                issuer_key_hash: "".to_string(),
-                serial_number: "".to_string(),
+                issuer_name_hash: "",
+                issuer_key_hash: "",
+                serial_number: "",
             },
         };
         let schema = include_str!("schemas/v2.0.1/DeleteCertificateRequest.json");
@@ -939,8 +939,8 @@ mod tests {
         let test = DeleteCertificateResponse {
             status: DeleteCertificateStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/DeleteCertificateResponse.json");
@@ -994,9 +994,9 @@ mod tests {
     #[test]
     fn validate_get15118ev_certificate_request() {
         let test = Get15118EVCertificateRequest {
-            iso_15118_schema_version: "".to_string(),
+            iso_15118_schema_version: "",
             action: CertificateActionEnumType::Install,
-            exi_request: "".to_string(),
+            exi_request: "",
         };
         let schema = include_str!("schemas/v2.0.1/Get15118EVCertificateRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -1015,10 +1015,10 @@ mod tests {
     fn validate_get15118ev_certificate_response() {
         let test = Get15118EVCertificateResponse {
             status: Iso15118EVCertificateStatusEnumType::Accepted,
-            exi_response: "".to_string(),
+            exi_response: "",
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/Get15118EVCertificateResponse.json");
@@ -1058,8 +1058,8 @@ mod tests {
         let test = GetBaseReportResponse {
             status: GenericDeviceModelStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/GetBaseReportResponse.json");
@@ -1080,10 +1080,10 @@ mod tests {
         let test = GetCertificateStatusRequest {
             ocsp_request_data: OCSPRequestDataType {
                 hash_algorithm: HashAlgorithmEnumType::SHA256,
-                issuer_name_hash: "".to_string(),
-                issuer_key_hash: "".to_string(),
-                serial_number: "".to_string(),
-                responder_url: "".to_string(),
+                issuer_name_hash: "",
+                issuer_key_hash: "",
+                serial_number: "",
+                responder_url: "",
             },
         };
         let schema = include_str!("schemas/v2.0.1/GetCertificateStatusRequest.json");
@@ -1103,10 +1103,10 @@ mod tests {
     fn validate_get_certificate_status_response() {
         let test = GetCertificateStatusResponse {
             status: GetCertificateStatusEnumType::Accepted,
-            ocsp_result: Some("ocsp_result".to_string()),
+            ocsp_result: Some("ocsp_result"),
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/GetCertificateStatusResponse.json");
@@ -1154,8 +1154,8 @@ mod tests {
         let test = GetChargingProfilesResponse {
             status: GetChargingProfileStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/GetChargingProfilesResponse.json");
@@ -1208,8 +1208,8 @@ mod tests {
                 }],
             }),
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/GetCompositeScheduleResponse.json");
@@ -1251,8 +1251,8 @@ mod tests {
         let test = GetDisplayMessagesResponse {
             status: GetDisplayMessagesStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/GetDisplayMessagesResponse.json");
@@ -1294,20 +1294,20 @@ mod tests {
                 certificate_type: GetCertificateIdUseEnumType::V2GRootCertificate,
                 certificate_hash_data: CertificateHashDataType {
                     hash_algorithm: HashAlgorithmEnumType::SHA256,
-                    issuer_name_hash: "issuer_name_hash".to_string(),
-                    issuer_key_hash: "issuer_key_hash".to_string(),
-                    serial_number: "serial_number".to_string(),
+                    issuer_name_hash: "issuer_name_hash",
+                    issuer_key_hash: "issuer_key_hash",
+                    serial_number: "serial_number",
                 },
                 child_certificate_hash_data: Some(vec![CertificateHashDataType {
                     hash_algorithm: HashAlgorithmEnumType::SHA256,
-                    issuer_name_hash: "issuer_name_hash".to_string(),
-                    issuer_key_hash: "issuer_key_hash".to_string(),
-                    serial_number: "serial_number".to_string(),
+                    issuer_name_hash: "issuer_name_hash",
+                    issuer_key_hash: "issuer_key_hash",
+                    serial_number: "serial_number",
                 }]),
             }]),
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/GetInstalledCertificateIdsResponse.json");
@@ -1363,7 +1363,7 @@ mod tests {
             retries: Some(1),
             retry_interval: Some(1),
             log: LogParametersType {
-                remote_location: "remote_location".to_string(),
+                remote_location: "remote_location",
                 oldest_timestamp: Some(Utc::now()),
                 latest_timestamp: Some(Utc::now()),
             },
@@ -1385,10 +1385,10 @@ mod tests {
     fn validate_get_log_response() {
         let test = GetLogResponse {
             status: LogStatusEnumType::Accepted,
-            filename: Some("/filename".to_string()),
+            filename: Some("/filename"),
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/GetLogResponse.json");
@@ -1411,16 +1411,16 @@ mod tests {
             monitoring_criteria: Some(vec![MonitoringCriterionEnumType::DeltaMonitoring]),
             component_variable: Some(vec![ComponentVariableType {
                 component: ComponentType {
-                    name: "".to_string(),
-                    instance: Some("instance".to_string()),
+                    name: "",
+                    instance: Some("instance"),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(1),
                     }),
                 },
                 variable: Some(VariableType {
-                    name: "".to_string(),
-                    instance: Some("instance".to_string()),
+                    name: "",
+                    instance: Some("instance"),
                 }),
             }]),
         };
@@ -1442,8 +1442,8 @@ mod tests {
         let test = GetMonitoringReportResponse {
             status: GenericDeviceModelStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/GetMonitoringReportResponse.json");
@@ -1466,16 +1466,16 @@ mod tests {
             component_criteria: Some(vec![ComponentCriterionEnumType::Active]),
             component_variable: Some(vec![ComponentVariableType {
                 component: ComponentType {
-                    name: "name".to_string(),
-                    instance: Some("instance".to_string()),
+                    name: "name",
+                    instance: Some("instance"),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(1),
                     }),
                 },
                 variable: Some(VariableType {
-                    name: "name".to_string(),
-                    instance: Some("instance".to_string()),
+                    name: "name",
+                    instance: Some("instance"),
                 }),
             }]),
         };
@@ -1497,8 +1497,8 @@ mod tests {
         let test = GetReportResponse {
             status: GenericDeviceModelStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/GetReportResponse.json");
@@ -1517,7 +1517,7 @@ mod tests {
     #[test]
     fn validate_get_transaction_status_request() {
         let test = GetTransactionStatusRequest {
-            transaction_id: Some("transaction_id".to_string()),
+            transaction_id: Some("transaction_id"),
         };
         let schema = include_str!("schemas/v2.0.1/GetTransactionStatusRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -1557,16 +1557,16 @@ mod tests {
             get_variable_data: vec![GetVariableDataType {
                 attribute_type: Some(AttributeEnumType::MaxSet),
                 component: ComponentType {
-                    name: "name".to_string(),
-                    instance: Some("instance".to_string()),
+                    name: "name",
+                    instance: Some("instance"),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(1),
                     }),
                 },
                 variable: VariableType {
-                    name: "name".to_string(),
-                    instance: Some("instance".to_string()),
+                    name: "name",
+                    instance: Some("instance"),
                 },
             }],
         };
@@ -1589,22 +1589,22 @@ mod tests {
             get_variable_result: vec![GetVariableResultType {
                 attribute_status: GetVariableStatusEnumType::Accepted,
                 attribute_type: Some(AttributeEnumType::Actual),
-                attribute_value: Some("attribute_value".to_string()),
+                attribute_value: Some("attribute_value"),
                 component: ComponentType {
-                    name: "name".to_string(),
-                    instance: Some("".to_string()),
+                    name: "name",
+                    instance: Some(""),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(0),
                     }),
                 },
                 variable: VariableType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                 },
                 attribute_status_info: Some(StatusInfoType {
-                    reason_code: "".to_string(),
-                    additional_info: Some("".to_string()),
+                    reason_code: "",
+                    additional_info: Some(""),
                 }),
             }],
         };
@@ -1659,7 +1659,7 @@ mod tests {
     fn validate_install_certificate_request() {
         let test = InstallCertificateRequest {
             certificate_type: InstallCertificateUseEnumType::V2GRootCertificate,
-            certificate: "".to_string(),
+            certificate: "",
         };
         let schema = include_str!("schemas/v2.0.1/InstallCertificateRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -1679,8 +1679,8 @@ mod tests {
         let test = InstallCertificateResponse {
             status: InstallCertificateStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/InstallCertificateResponse.json");
@@ -1744,13 +1744,13 @@ mod tests {
                     phase: Some(PhaseEnumType::L1),
                     location: Some(LocationEnumType::Body),
                     signed_meter_value: Some(SignedMeterValueType {
-                        signed_meter_data: "signed_meter_data".to_string(),
-                        signing_method: "signing_method".to_string(),
-                        encoding_method: "encoding_method".to_string(),
-                        public_key: "public_key".to_string(),
+                        signed_meter_data: "signed_meter_data",
+                        signing_method: "signing_method",
+                        encoding_method: "encoding_method",
+                        public_key: "public_key",
                     }),
                     unit_of_measure: Some(UnitOfMeasureType {
-                        unit: Some("unit".to_string()),
+                        unit: Some("unit"),
                         multiplier: Some(1),
                     }),
                 }],
@@ -1807,7 +1807,7 @@ mod tests {
                 }],
                 sales_tariff: Some(SalesTariffType {
                     id: Some(0),
-                    sales_tariff_description: Some("sales_tariff_description".to_string()),
+                    sales_tariff_description: Some("sales_tariff_description"),
                     num_e_price_levels: Some(0),
                     sales_tariff_entry: vec![SalesTariffEntryType {
                         e_price_level: Some(0),
@@ -1859,7 +1859,7 @@ mod tests {
     #[test]
     fn validate_notify_customer_information_request() {
         let test = NotifyCustomerInformationRequest {
-            data: "".to_string(),
+            data: "",
             tbc: Some(false),
             seq_no: 0,
             generated_at: Utc::now(),
@@ -1905,15 +1905,15 @@ mod tests {
                 state: MessageStateEnumType::Charging,
                 start_date_time: Some(Utc::now()),
                 end_date_time: Some(Utc::now()),
-                transaction_id: Some("transaction_id".to_string()),
+                transaction_id: Some("transaction_id"),
                 message: MessageContentType {
                     format: MessageFormatEnumType::ASCII,
-                    language: Some("Swedish".to_string()),
-                    content: "".to_string(),
+                    language: Some("Swedish"),
+                    content: "",
                 },
                 display: Some(ComponentType {
-                    name: "name".to_string(),
-                    instance: Some("instance".to_string()),
+                    name: "name",
+                    instance: Some("instance"),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(1),
@@ -1994,8 +1994,8 @@ mod tests {
         let test = NotifyEVChargingNeedsResponse {
             status: NotifyEVChargingNeedsStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/NotifyEVChargingNeedsResponse.json");
@@ -2030,7 +2030,7 @@ mod tests {
                 }],
                 sales_tariff: Some(SalesTariffType {
                     id: Some(0),
-                    sales_tariff_description: Some("sales_tariff_description".to_string()),
+                    sales_tariff_description: Some("sales_tariff_description"),
                     num_e_price_levels: Some(0),
                     sales_tariff_entry: vec![SalesTariffEntryType {
                         e_price_level: Some(0),
@@ -2068,8 +2068,8 @@ mod tests {
         let test = NotifyEVChargingScheduleResponse {
             status: GenericStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/NotifyEVChargingScheduleResponse.json");
@@ -2096,24 +2096,24 @@ mod tests {
                 timestamp: Utc::now(),
                 trigger: EventTriggerEnumType::Alerting,
                 cause: Some(0),
-                actual_value: "".to_string(),
-                tech_code: Some("tech_code".to_string()),
-                tech_info: Some("tech_info".to_string()),
+                actual_value: "",
+                tech_code: Some("tech_code"),
+                tech_info: Some("tech_info"),
                 cleared: Some(false),
-                transaction_id: Some("transaction_id".to_string()),
+                transaction_id: Some("transaction_id"),
                 variable_monitoring_id: Some(0),
                 event_notification_type: EventNotificationEnumType::HardWiredNotification,
                 component: ComponentType {
-                    name: "".to_string(),
-                    instance: Some("instance".to_string()),
+                    name: "",
+                    instance: Some("instance"),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(0),
                     }),
                 },
                 variable: VariableType {
-                    name: "".to_string(),
-                    instance: Some("instance".to_string()),
+                    name: "",
+                    instance: Some("instance"),
                 },
             }],
         };
@@ -2155,16 +2155,16 @@ mod tests {
             generated_at: Utc::now(),
             monitor: Some(vec![MonitoringDataType {
                 component: ComponentType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(0),
                     }),
                 },
                 variable: VariableType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                 },
                 variable_monitoring: vec![VariableMonitoringType {
                     id: 0,
@@ -2213,30 +2213,30 @@ mod tests {
             generated_at: Utc::now(),
             report_data: Some(vec![ReportDataType {
                 component: ComponentType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(0),
                     }),
                 },
                 variable: VariableType {
-                    name: "name".to_string(),
-                    instance: Some("".to_string()),
+                    name: "name",
+                    instance: Some(""),
                 },
                 variable_attribute: vec![VariableAttributeType {
                     kind: Some(AttributeEnumType::Actual),
-                    value: Some("value".to_string()),
+                    value: Some("value"),
                     mutability: Some(MutabilityEnumType::ReadOnly),
                     persistent: Some(false),
                     constant: Some(false),
                 }],
                 variable_characteristics: Some(VariableCharacteristicsType {
-                    unit: Some("unit".to_string()),
+                    unit: Some("unit"),
                     data_type: DataEnumType::String,
                     min_limit: Some(0.0),
                     max_limit: Some(0.0),
-                    values_list: Some("values_list".to_string()),
+                    values_list: Some("values_list"),
                     supports_monitoring: false,
                 }),
             }]),
@@ -2273,9 +2273,9 @@ mod tests {
     #[test]
     fn validate_publish_firmware_request() {
         let test = PublishFirmwareRequest {
-            location: "".to_string(),
+            location: "",
             retries: Some(0),
-            checksum: "checksum".to_string(),
+            checksum: "checksum",
             request_id: 0,
             retry_interval: Some(0),
         };
@@ -2297,8 +2297,8 @@ mod tests {
         let test = PublishFirmwareResponse {
             status: GenericStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/PublishFirmwareResponse.json");
@@ -2318,7 +2318,7 @@ mod tests {
     fn validate_publish_firmware_status_notification_request() {
         let test = PublishFirmwareStatusNotificationRequest {
             status: PublishFirmwareStatusEnumType::Idle,
-            location: Some(vec!["location".to_string()]),
+            location: Some(vec!["location"]),
             request_id: Some(1),
         };
         let schema = include_str!("schemas/v2.0.1/PublishFirmwareStatusNotificationRequest.json");
@@ -2366,7 +2366,7 @@ mod tests {
                 recurrency_kind: Some(RecurrencyKindEnumType::Daily),
                 valid_from: Some(Utc::now()),
                 valid_to: Some(Utc::now()),
-                transaction_id: Some("transaction_id".to_string()),
+                transaction_id: Some("transaction_id"),
                 charging_schedule: vec![ChargingScheduleType {
                     id: 0,
                     start_schedule: Some(Utc::now()),
@@ -2381,7 +2381,7 @@ mod tests {
                     }],
                     sales_tariff: Some(SalesTariffType {
                         id: Some(1),
-                        sales_tariff_description: Some("sales_tariff_description".to_string()),
+                        sales_tariff_description: Some("sales_tariff_description"),
                         num_e_price_levels: Some(1),
                         sales_tariff_entry: vec![SalesTariffEntryType {
                             e_price_level: Some(1),
@@ -2437,11 +2437,11 @@ mod tests {
             evse_id: Some(0),
             remote_start_id: 0,
             id_token: IdTokenType {
-                id_token: "id_token".to_string(),
+                id_token: "id_token",
                 kind: IdTokenEnumType::Central,
                 additional_info: Some(vec![AdditionalInfoType {
-                    additional_id_token: "".to_string(),
-                    kind: "".to_string(),
+                    additional_id_token: "",
+                    kind: "",
                 }]),
             },
             charging_profile: Some(ChargingProfileType {
@@ -2453,7 +2453,7 @@ mod tests {
                 recurrency_kind: Some(RecurrencyKindEnumType::Daily),
                 valid_from: Some(Utc::now()),
                 valid_to: Some(Utc::now()),
-                transaction_id: Some("transaction_id".to_string()),
+                transaction_id: Some("transaction_id"),
                 charging_schedule: vec![ChargingScheduleType {
                     id: 0,
                     start_schedule: Some(Utc::now()),
@@ -2468,7 +2468,7 @@ mod tests {
                     }],
                     sales_tariff: Some(SalesTariffType {
                         id: Some(1),
-                        sales_tariff_description: Some("".to_string()),
+                        sales_tariff_description: Some(""),
                         num_e_price_levels: Some(2),
                         sales_tariff_entry: vec![SalesTariffEntryType {
                             e_price_level: Some(1),
@@ -2489,11 +2489,11 @@ mod tests {
                 }],
             }),
             group_id_token: Some(IdTokenType {
-                id_token: "id_token".to_string(),
+                id_token: "id_token",
                 kind: IdTokenEnumType::Central,
                 additional_info: Some(vec![AdditionalInfoType {
-                    additional_id_token: "".to_string(),
-                    kind: "".to_string(),
+                    additional_id_token: "",
+                    kind: "",
                 }]),
             }),
         };
@@ -2514,10 +2514,10 @@ mod tests {
     fn validate_request_start_transaction_response() {
         let test = RequestStartTransactionResponse {
             status: RequestStartStopStatusEnumType::Accepted,
-            transaction_id: Some("".to_string()),
+            transaction_id: Some(""),
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/RequestStartTransactionResponse.json");
@@ -2536,7 +2536,7 @@ mod tests {
     #[test]
     fn validate_request_stop_transaction_request() {
         let test = RequestStopTransactionRequest {
-            transaction_id: "".to_string(),
+            transaction_id: "",
         };
         let schema = include_str!("schemas/v2.0.1/RequestStopTransactionRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -2556,8 +2556,8 @@ mod tests {
         let test = RequestStopTransactionResponse {
             status: RequestStartStopStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/RequestStopTransactionResponse.json");
@@ -2616,19 +2616,19 @@ mod tests {
             connector_type: Some(ConnectorEnumType::CCCS1),
             evse_id: Some(0),
             id_token: IdTokenType {
-                id_token: "".to_string(),
+                id_token: "",
                 kind: IdTokenEnumType::Central,
                 additional_info: Some(vec![AdditionalInfoType {
-                    additional_id_token: "".to_string(),
-                    kind: "".to_string(),
+                    additional_id_token: "",
+                    kind: "",
                 }]),
             },
             group_id_token: Some(IdTokenType {
-                id_token: "".to_string(),
+                id_token: "",
                 kind: IdTokenEnumType::Central,
                 additional_info: Some(vec![AdditionalInfoType {
-                    additional_id_token: "".to_string(),
-                    kind: "".to_string(),
+                    additional_id_token: "",
+                    kind: "",
                 }]),
             }),
         };
@@ -2650,8 +2650,8 @@ mod tests {
         let test = ReserveNowResponse {
             status: ReserveNowStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/ReserveNowResponse.json");
@@ -2691,8 +2691,8 @@ mod tests {
         let test = ResetResponse {
             status: ResetStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/ResetResponse.json");
@@ -2711,9 +2711,9 @@ mod tests {
     #[test]
     fn validate_security_event_notification_request() {
         let test = SecurityEventNotificationRequest {
-            kind: "".to_string(),
+            kind: "",
             timestamp: Utc::now(),
-            tech_info: Some("".to_string()),
+            tech_info: Some(""),
         };
         let schema = include_str!("schemas/v2.0.1/SecurityEventNotificationRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -2754,29 +2754,29 @@ mod tests {
                     status: AuthorizationStatusEnumType::Accepted,
                     cache_expiry_date_time: Some(Utc::now()),
                     charging_priority: Some(0),
-                    language1: Some("lang1".to_string()),
+                    language1: Some("lang1"),
                     evse_id: Some(vec![1, 2, 3]),
-                    language2: Some("lang2".to_string()),
+                    language2: Some("lang2"),
                     group_id_token: Some(IdTokenType {
-                        id_token: "id_token".to_string(),
+                        id_token: "id_token",
                         kind: IdTokenEnumType::Central,
                         additional_info: Some(vec![AdditionalInfoType {
-                            additional_id_token: "additional_id_token".to_string(),
-                            kind: "type".to_string(),
+                            additional_id_token: "additional_id_token",
+                            kind: "type",
                         }]),
                     }),
                     personal_message: Some(MessageContentType {
                         format: MessageFormatEnumType::ASCII,
-                        language: Some("English".to_string()),
-                        content: "Hello, world!".to_string(),
+                        language: Some("English"),
+                        content: "Hello, world!",
                     }),
                 }),
                 id_token: IdTokenType {
-                    id_token: "".to_string(),
+                    id_token: "",
                     kind: IdTokenEnumType::Central,
                     additional_info: Some(vec![AdditionalInfoType {
-                        additional_id_token: "additional_id_token".to_string(),
-                        kind: "type".to_string(),
+                        additional_id_token: "additional_id_token",
+                        kind: "type",
                     }]),
                 },
             }]),
@@ -2799,8 +2799,8 @@ mod tests {
         let test = SendLocalListResponse {
             status: SendLocalListStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/SendLocalListResponse.json");
@@ -2829,7 +2829,7 @@ mod tests {
                 recurrency_kind: Some(RecurrencyKindEnumType::Daily),
                 valid_from: Some(Utc::now()),
                 valid_to: Some(Utc::now()),
-                transaction_id: Some("".to_string()),
+                transaction_id: Some(""),
                 charging_schedule: vec![ChargingScheduleType {
                     id: 0,
                     start_schedule: Some(Utc::now()),
@@ -2844,7 +2844,7 @@ mod tests {
                     }],
                     sales_tariff: Some(SalesTariffType {
                         id: Some(0),
-                        sales_tariff_description: Some("".to_string()),
+                        sales_tariff_description: Some(""),
                         num_e_price_levels: Some(0),
                         sales_tariff_entry: vec![SalesTariffEntryType {
                             e_price_level: Some(0),
@@ -2883,8 +2883,8 @@ mod tests {
         let test = SetChargingProfileResponse {
             status: ChargingProfileStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/SetChargingProfileResponse.json");
@@ -2909,15 +2909,15 @@ mod tests {
                 state: MessageStateEnumType::Charging,
                 start_date_time: Some(Utc::now()),
                 end_date_time: Some(Utc::now()),
-                transaction_id: Some("".to_string()),
+                transaction_id: Some(""),
                 message: MessageContentType {
                     format: MessageFormatEnumType::ASCII,
-                    language: Some("lang".to_string()),
-                    content: "".to_string(),
+                    language: Some("lang"),
+                    content: "",
                 },
                 display: Some(ComponentType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(0),
@@ -2943,8 +2943,8 @@ mod tests {
         let test = SetDisplayMessageResponse {
             status: DisplayMessageStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/SetDisplayMessageResponse.json");
@@ -2983,8 +2983,8 @@ mod tests {
         let test = SetMonitoringBaseResponse {
             status: GenericDeviceModelStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/SetMonitoringBaseResponse.json");
@@ -3021,8 +3021,8 @@ mod tests {
         let test = SetMonitoringLevelResponse {
             status: GenericStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/SetMonitoringLevelResponse.json");
@@ -3045,24 +3045,24 @@ mod tests {
             connection_data: NetworkConnectionProfileType {
                 ocpp_version: OCPPVersionEnumType::OCPP12,
                 ocpp_transport: OCPPTransportEnumType::JSON,
-                ocpp_csms_url: "".to_string(),
+                ocpp_csms_url: "",
                 message_timeout: 0,
                 security_profile: 0,
                 ocpp_interface: OCPPInterfaceEnumType::Wired0,
                 vpn: Some(VPNType {
-                    server: "server".to_string(),
-                    user: "user".to_string(),
-                    group: Some("group".to_string()),
-                    password: "password".to_string(),
-                    key: "key".to_string(),
+                    server: "server",
+                    user: "user",
+                    group: Some("group"),
+                    password: "password",
+                    key: "key",
                     kind: VPNEnumType::IKEv2,
                 }),
                 apn: Some(APNType {
-                    apn: "apn".to_string(),
-                    apn_user_name: Some("apn_user_name".to_string()),
-                    apn_password: Some("apn_password".to_string()),
+                    apn: "apn",
+                    apn_user_name: Some("apn_user_name"),
+                    apn_password: Some("apn_password"),
                     sim_pin: Some(1),
-                    preferred_network: Some("6chars".to_string()),
+                    preferred_network: Some("6chars"),
                     use_only_preferred_network: Some(false),
                     apn_authentication: APNAuthenticationEnumType::CHAP,
                 }),
@@ -3086,8 +3086,8 @@ mod tests {
         let test = SetNetworkProfileResponse {
             status: SetNetworkProfileStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/SetNetworkProfileResponse.json");
@@ -3113,16 +3113,16 @@ mod tests {
                 kind: MonitorEnumType::UpperThreshold,
                 severity: 0,
                 component: ComponentType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(0),
                     }),
                 },
                 variable: VariableType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                 },
             }],
         };
@@ -3148,20 +3148,20 @@ mod tests {
                 kind: MonitorEnumType::UpperThreshold,
                 severity: 0,
                 component: ComponentType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(0),
                     }),
                 },
                 variable: VariableType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                 },
                 status_info: Some(StatusInfoType {
-                    reason_code: "".to_string(),
-                    additional_info: Some("".to_string()),
+                    reason_code: "",
+                    additional_info: Some(""),
                 }),
             }],
         };
@@ -3183,18 +3183,18 @@ mod tests {
         let test = SetVariablesRequest {
             set_variable_data: vec![SetVariableDataType {
                 attribute_type: Some(AttributeEnumType::Actual),
-                attribute_value: "".to_string(),
+                attribute_value: "",
                 component: ComponentType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(0),
                     }),
                 },
                 variable: VariableType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                 },
             }],
         };
@@ -3218,20 +3218,20 @@ mod tests {
                 attribute_type: Some(AttributeEnumType::Actual),
                 attribute_status: SetVariableStatusEnumType::Accepted,
                 component: ComponentType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                     evse: Some(EVSEType {
                         id: 0,
                         connector_id: Some(0),
                     }),
                 },
                 variable: VariableType {
-                    name: "".to_string(),
-                    instance: Some("".to_string()),
+                    name: "",
+                    instance: Some(""),
                 },
                 attribute_status_info: Some(StatusInfoType {
-                    reason_code: "".to_string(),
-                    additional_info: Some("".to_string()),
+                    reason_code: "",
+                    additional_info: Some(""),
                 }),
             }],
         };
@@ -3251,7 +3251,7 @@ mod tests {
     #[test]
     fn validate_sign_certificate_request() {
         let test = SignCertificateRequest {
-            csr: "".to_string(),
+            csr: "",
             certificate_type: Some(CertificateSigningUseEnumType::ChargingStationCertificate),
         };
         let schema = include_str!("schemas/v2.0.1/SignCertificateRequest.json");
@@ -3272,8 +3272,8 @@ mod tests {
         let test = SignCertificateResponse {
             status: GenericStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/SignCertificateResponse.json");
@@ -3338,18 +3338,18 @@ mod tests {
             cable_max_current: Some(0),
             reservation_id: Some(0),
             transaction_info: TransactionType {
-                transaction_id: "".to_string(),
+                transaction_id: "",
                 charging_state: Some(ChargingStateEnumType::Charging),
                 time_spent_charging: Some(0),
                 stopped_reason: Some(ReasonEnumType::DeAuthorized),
                 remote_start_id: Some(0),
             },
             id_token: Some(IdTokenType {
-                id_token: "".to_string(),
+                id_token: "",
                 kind: IdTokenEnumType::Central,
                 additional_info: Some(vec![AdditionalInfoType {
-                    additional_id_token: "".to_string(),
-                    kind: "".to_string(),
+                    additional_id_token: "",
+                    kind: "",
                 }]),
             }),
             evse: Some(EVSEType {
@@ -3365,13 +3365,13 @@ mod tests {
                     phase: Some(PhaseEnumType::L1),
                     location: Some(LocationEnumType::Body),
                     signed_meter_value: Some(SignedMeterValueType {
-                        signed_meter_data: "signed_meter_data".to_string(),
-                        signing_method: "signing_method".to_string(),
-                        encoding_method: "encoding_method".to_string(),
-                        public_key: "public_key".to_string(),
+                        signed_meter_data: "signed_meter_data",
+                        signing_method: "signing_method",
+                        encoding_method: "encoding_method",
+                        public_key: "public_key",
                     }),
                     unit_of_measure: Some(UnitOfMeasureType {
-                        unit: Some("unit".to_string()),
+                        unit: Some("unit"),
                         multiplier: Some(0),
                     }),
                 }],
@@ -3399,27 +3399,27 @@ mod tests {
                 status: AuthorizationStatusEnumType::Accepted,
                 cache_expiry_date_time: Some(Utc::now()),
                 charging_priority: Some(0),
-                language1: Some("".to_string()),
+                language1: Some(""),
                 evse_id: Some(vec![1]),
-                language2: Some("".to_string()),
+                language2: Some(""),
                 group_id_token: Some(IdTokenType {
-                    id_token: "".to_string(),
+                    id_token: "",
                     kind: IdTokenEnumType::Central,
                     additional_info: Some(vec![AdditionalInfoType {
-                        additional_id_token: "additional_id_token".to_string(),
-                        kind: "type".to_string(),
+                        additional_id_token: "additional_id_token",
+                        kind: "type",
                     }]),
                 }),
                 personal_message: Some(MessageContentType {
                     format: MessageFormatEnumType::ASCII,
-                    language: Some("language".to_string()),
-                    content: "content".to_string(),
+                    language: Some("language"),
+                    content: "content",
                 }),
             }),
             updated_personal_message: Some(MessageContentType {
                 format: MessageFormatEnumType::ASCII,
-                language: Some("language".to_string()),
-                content: "content".to_string(),
+                language: Some("language"),
+                content: "content",
             }),
         };
         let schema = include_str!("schemas/v2.0.1/TransactionEventResponse.json");
@@ -3462,8 +3462,8 @@ mod tests {
         let test = TriggerMessageResponse {
             status: TriggerMessageStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/TriggerMessageResponse.json");
@@ -3503,8 +3503,8 @@ mod tests {
         let test = UnlockConnectorResponse {
             status: UnlockStatusEnumType::Unlocked,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/UnlockConnectorResponse.json");
@@ -3523,7 +3523,7 @@ mod tests {
     #[test]
     fn validate_unpublish_firmware_request() {
         let test = UnpublishFirmwareRequest {
-            checksum: "".to_string(),
+            checksum: "",
         };
         let schema = include_str!("schemas/v2.0.1/UnpublishFirmwareRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
@@ -3563,11 +3563,11 @@ mod tests {
             retry_interval: Some(0),
             request_id: 0,
             firmware: FirmwareType {
-                location: "".to_string(),
+                location: "",
                 retrieve_date_time: Utc::now(),
                 install_date_time: Some(Utc::now()),
-                signing_certificate: Some("signing_certificate".to_string()),
-                signature: Some("signature".to_string()),
+                signing_certificate: Some("signing_certificate"),
+                signature: Some("signature"),
             },
         };
         let schema = include_str!("schemas/v2.0.1/UpdateFirmwareRequest.json");
@@ -3588,8 +3588,8 @@ mod tests {
         let test = UpdateFirmwareResponse {
             status: UpdateFirmwareStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "".to_string(),
-                additional_info: Some("".to_string()),
+                reason_code: "",
+                additional_info: Some(""),
             }),
         };
         let schema = include_str!("schemas/v2.0.1/UpdateFirmwareResponse.json");

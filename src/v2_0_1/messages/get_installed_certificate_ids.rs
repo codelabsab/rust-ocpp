@@ -16,13 +16,13 @@ pub struct GetInstalledCertificateIdsRequest {
 /// Response to a GetInstalledCertificateIDsRequest.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetInstalledCertificateIdsResponse {
+pub struct GetInstalledCertificateIdsResponse<'a> {
     /// Charging Station indicates if it can process therequest
     pub status: GetDisplayMessagesStatusEnumType,
     /// The Charging Station includes the Certificateinformation for each available certificate.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub certificate_hash_data_chain: Option<Vec<CertificateHashDataChainType>>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub certificate_hash_data_chain: Option<Vec<CertificateHashDataChainType<'a>>>,
     /// Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    pub status_info: Option<StatusInfoType<'a>>,
 }

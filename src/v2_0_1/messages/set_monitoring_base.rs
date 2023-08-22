@@ -12,8 +12,8 @@ pub struct SetMonitoringBaseRequest {
 /// This contains the field definition of the SetMonitoringBaseResponse PDU sent by the Charging Station to the CSMS in response to a SetMonitoringBaseRequest.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct SetMonitoringBaseResponse {
+pub struct SetMonitoringBaseResponse<'a> {
     pub status: GenericDeviceModelStatusEnumType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

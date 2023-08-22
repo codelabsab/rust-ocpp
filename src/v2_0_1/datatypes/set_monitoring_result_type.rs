@@ -8,15 +8,16 @@ use crate::v2_0_1::enumerations::set_monitoring_status_enum_type::SetMonitoringS
 /// SetMonitoringResultType is used by: SetVariableMonitoringResponse
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct SetMonitoringResultType {
+pub struct SetMonitoringResultType<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<i64>,
     pub status: SetMonitoringStatusEnumType,
     #[serde(rename = "type")]
     pub kind: MonitorEnumType,
     pub severity: u8,
-    pub component: ComponentType,
-    pub variable: VariableType,
+    #[serde(borrow)]
+    pub component: ComponentType<'a>,
+    pub variable: VariableType<'a>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    pub status_info: Option<StatusInfoType<'a>>,
 }

@@ -21,17 +21,18 @@ use crate::v2_0_1::enumerations::registration_status_enum_type::RegistrationStat
 /// `BootNotificationRequest`, sent by the Charging Station to the CSMS when booting.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct BootNotificationRequest {
+pub struct BootNotificationRequest<'a> {
     /// This contains the reason for sending this message to the CSMS.
     pub reason: BootReasonEnumType,
     /// Identifies the Charging Station.
-    pub charging_station: ChargingStationType,
+    #[serde(borrow)]
+    pub charging_station: ChargingStationType<'a>,
 }
 
 /// `BootNotificationResponse`, sent by the CSMS to the Charging Station in response to a [`BootNotificationRequest`].
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct BootNotificationResponse {
+pub struct BootNotificationResponse<'a> {
     /// This contains the CSMS’s current time.
     pub current_time: DateTime<Utc>,
     /// When [status](BootNotificationResponse::status) is Accepted, this contains the
@@ -43,17 +44,17 @@ pub struct BootNotificationResponse {
     /// This contains whether the Charging Station has been registered within the CSMS.
     pub status: RegistrationStatusEnumType,
     /// Detailed status information.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }
 
-impl fmt::Display for BootNotificationRequest {
+impl<'a> fmt::Display for BootNotificationRequest<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
     }
 }
 
-impl fmt::Display for BootNotificationResponse {
+impl<'a> fmt::Display for BootNotificationResponse<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
     }

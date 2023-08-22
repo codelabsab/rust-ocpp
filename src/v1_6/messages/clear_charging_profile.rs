@@ -14,7 +14,8 @@ pub struct ClearChargingProfileRequest {
     pub stack_level: Option<i64>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature="std", derive(Validate))]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct ClearChargingProfileResponse {
     /// This contains the field definition of the ClearChargingProfile.conf PDU sent by the Charge Point to the Central
     /// System in response to a ClearChargingProfile.req PDU. See also Clear Charging Profile

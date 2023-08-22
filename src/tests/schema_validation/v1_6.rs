@@ -78,7 +78,7 @@ mod tests {
     #[test]
     fn validate_authorize() {
         let test = AuthorizeRequest {
-            id_tag: "".to_string(),
+            id_tag: "",
         };
 
         let schema = include_str!("schemas/v1.6/json/Authorize.json");
@@ -99,7 +99,7 @@ mod tests {
         let test = AuthorizeResponse {
             id_tag_info: IdTagInfo {
                 expiry_date: Some(Utc::now()),
-                parent_id_tag: Some("".to_string()),
+                parent_id_tag: Some(""),
                 status: AuthorizationStatus::Accepted,
             },
         };
@@ -120,15 +120,15 @@ mod tests {
     #[test]
     fn validate_boot_notification() {
         let test = BootNotificationRequest {
-            charge_box_serial_number: Some("".to_string()),
-            charge_point_model: "".to_string(),
-            charge_point_serial_number: Some("charge_point_serial".to_string()),
-            charge_point_vendor: "".to_string(),
-            firmware_version: Some("".to_string()),
-            iccid: Some("".to_string()),
-            imsi: Some("".to_string()),
-            meter_serial_number: Some("".to_string()),
-            meter_type: Some("".to_string()),
+            charge_box_serial_number: Some(""),
+            charge_point_model: "",
+            charge_point_serial_number: Some("charge_point_serial"),
+            charge_point_vendor: "",
+            firmware_version: Some(""),
+            iccid: Some(""),
+            imsi: Some(""),
+            meter_serial_number: Some(""),
+            meter_type: Some(""),
         };
 
         let schema = include_str!("schemas/v1.6/json/BootNotification.json");
@@ -243,8 +243,8 @@ mod tests {
     #[test]
     fn validate_change_configuration() {
         let test = ChangeConfigurationRequest {
-            key: "".to_string(),
-            value: "".to_string(),
+            key: "",
+            value: "",
         };
 
         let schema = include_str!("schemas/v1.6/json/ChangeConfiguration.json");
@@ -359,9 +359,9 @@ mod tests {
     #[test]
     fn validate_data_transfer() {
         let test = DataTransferRequest {
-            vendor_string: "vendor_string".to_string(),
-            message_id: Some("message_id".to_string()),
-            data: Some("data".to_string()),
+            vendor_string: "vendor_string",
+            message_id: Some("message_id"),
+            data: Some("data"),
         };
 
         let schema = include_str!("schemas/v1.6/json/DataTransfer.json");
@@ -381,7 +381,7 @@ mod tests {
     fn validate_data_transfer_response() {
         let test = DataTransferResponse {
             status: DataTransferStatus::Accepted,
-            data: Some("data".to_string()),
+            data: Some("data"),
         };
 
         let schema = include_str!("schemas/v1.6/json/DataTransferResponse.json");
@@ -525,7 +525,7 @@ mod tests {
     #[test]
     fn validate_get_configuration() {
         let test = GetConfigurationRequest {
-            key: Some(vec!["".to_string()]),
+            key: Some(vec![""]),
         };
 
         let schema = include_str!("schemas/v1.6/json/GetConfiguration.json");
@@ -545,11 +545,11 @@ mod tests {
     fn validate_get_configuration_response() {
         let test = GetConfigurationResponse {
             configuration_key: Some(vec![KeyValue {
-                key: "".to_string(),
+                key: "",
                 readonly: false,
-                value: Some("".to_string()),
+                value: Some(""),
             }]),
-            unknown_key: Some(vec!["".to_string()]),
+            unknown_key: Some(vec![""]),
         };
 
         let schema = include_str!("schemas/v1.6/json/GetConfigurationResponse.json");
@@ -568,7 +568,7 @@ mod tests {
     #[test]
     fn validate_get_diagnostics() {
         let test = GetDiagnosticsRequest {
-            location: "https://codelabs.se/".to_string(),
+            location: "https://codelabs.se/",
             retries: Some(1),
             retry_interval: Some(1),
             start_time: Some(Utc::now()),
@@ -683,7 +683,7 @@ mod tests {
             meter_value: vec![MeterValue {
                 timestamp: Utc::now(),
                 sampled_value: vec![SampledValue {
-                    value: "".to_string(),
+                    value: "",
                     context: None,
                     format: None,
                     measurand: None,
@@ -728,7 +728,7 @@ mod tests {
     fn validate_remote_start_transaction() {
         let test = RemoteStartTransactionRequest {
             connector_id: None,
-            id_tag: "".to_string(),
+            id_tag: "",
             charging_profile: None,
         };
 
@@ -805,7 +805,7 @@ mod tests {
         let test = ReserveNowRequest {
             connector_id: 0,
             expiry_date: Utc::now(),
-            id_tag: "".to_string(),
+            id_tag: "",
             parent_id_tag: None,
             reservation_id: 0,
         };
@@ -983,7 +983,7 @@ mod tests {
     fn validate_start_transaction() {
         let test = StartTransactionRequest {
             connector_id: 0,
-            id_tag: "".to_string(),
+            id_tag: "",
             meter_start: 0,
             reservation_id: None,
             timestamp: Utc::now(),
@@ -1193,7 +1193,7 @@ mod tests {
     #[test]
     fn validate_update_firmware() {
         let test = UpdateFirmwareRequest {
-            location: "https://codelabs.se".to_string(),
+            location: "https://codelabs.se",
             retries: None,
             retrieve_date: Utc::now(),
             retry_interval: None,

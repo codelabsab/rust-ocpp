@@ -9,20 +9,20 @@ use crate::v2_0_1::enumerations::authorization_status_enum_type::AuthorizationSt
 /// IdTokenInfoType is used by: Common:AuthorizationData , AuthorizeResponse , TransactionEventResponse
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct IdTokenInfoType {
+pub struct IdTokenInfoType<'a> {
     pub status: AuthorizationStatusEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cache_expiry_date_time: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_priority: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub language1: Option<String>,
+    pub language1: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evse_id: Option<Vec<i64>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub language2: Option<String>,
+    pub language2: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub group_id_token: Option<IdTokenType>,
+    pub group_id_token: Option<IdTokenType<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub personal_message: Option<MessageContentType>,
+    pub personal_message: Option<MessageContentType<'a>>,
 }

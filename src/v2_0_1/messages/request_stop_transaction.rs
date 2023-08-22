@@ -4,15 +4,15 @@ use crate::v2_0_1::enumerations::request_start_stop_status_enum_type::RequestSta
 /// This contains the field definitions of the RequestStopTransactionRequest PDU sent to Charging Station by CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct RequestStopTransactionRequest {
-    pub transaction_id: String,
+pub struct RequestStopTransactionRequest<'a> {
+    pub transaction_id: &'a str,
 }
 
 /// This contains the field definitions of the RequestStopTransactionResponse PDU sent from Charging Station to CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct RequestStopTransactionResponse {
+pub struct RequestStopTransactionResponse<'a> {
     pub status: RequestStartStopStatusEnumType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

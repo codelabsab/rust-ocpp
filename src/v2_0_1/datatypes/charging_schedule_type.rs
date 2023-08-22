@@ -8,9 +8,10 @@ use crate::v2_0_1::enumerations::charging_rate_unit_enum_type::ChargingRateUnitE
 
 /// Charging schedule structure defines a list of charging periods, as used in: GetCompositeSchedule.conf and ChargingProfile.
 /// ChargingScheduleType is used by: Common:ChargingProfileType , NotifyChargingLimitRequest, NotifyEVChargingScheduleRequest
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Validate, Default)]
+#[cfg_attr(feature="std", derive(Validate))]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ChargingScheduleType {
+pub struct ChargingScheduleType<'a> {
     /// Required. Identifies the ChargingSchedule.
     pub id: i64,
     /// Optional. Starting point of an absolute schedule. If absent the schedule will be relative to start of charging
@@ -28,6 +29,6 @@ pub struct ChargingScheduleType {
     #[validate(length(min = 1))]
     pub charging_schedule_period: Vec<ChargingSchedulePeriodType>,
     /// Optional. Sales tariff associated with this charging schedule.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub sales_tariff: Option<SalesTariffType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub sales_tariff: Option<SalesTariffType<'a>>,
 }

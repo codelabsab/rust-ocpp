@@ -6,8 +6,9 @@ use super::variable_type::VariableType;
 /// MonitoringDataType is used by: NotifyMonitoringReportRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct MonitoringDataType {
-    pub component: ComponentType,
-    pub variable: VariableType,
+pub struct MonitoringDataType<'a> {
+    #[serde(borrow)]
+    pub component: ComponentType<'a>,
+    pub variable: VariableType<'a>,
     pub variable_monitoring: Vec<VariableMonitoringType>,
 }

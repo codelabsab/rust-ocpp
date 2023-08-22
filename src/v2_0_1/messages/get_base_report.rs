@@ -17,10 +17,10 @@ pub struct GetBaseReportRequest {
 /// Response to a DeleteCertificateRequest.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetBaseReportResponse {
+pub struct GetBaseReportResponse<'a> {
     /// This indicates whether the Charging Station is able to accept this request.
     pub status: GenericDeviceModelStatusEnumType,
     /// Detailed status information.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

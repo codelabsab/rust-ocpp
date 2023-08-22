@@ -3,11 +3,12 @@ use crate::v2_0_1::datatypes::meter_value_type::MeterValueType;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct MeterValuesRequest {
+pub struct MeterValuesRequest<'a> {
     /// This contains a number (>0) designating an EVSE of the Charging Station. ‘0’ (zero) is used to designate the main power meter.
     pub evse_id: i64,
     /// The sampled meter values with timestamps.
-    pub meter_value: Vec<MeterValueType>,
+    #[serde(borrow)]
+    pub meter_value: Vec<MeterValueType<'a>>,
 }
 
 /// Sent by the CSMS to the Charging Station in response to a MeterValuesRequest.

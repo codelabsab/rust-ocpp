@@ -18,10 +18,10 @@ pub struct ChangeAvailabilityRequest {
 /// `ChangeAvailabilityResponse`, sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ChangeAvailabilityResponse {
+pub struct ChangeAvailabilityResponse<'a> {
     /// This indicates whether the Charging Station is able to perform the availability change.
     pub status: ChangeAvailabilityStatusEnumType,
     /// Detailed status information.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

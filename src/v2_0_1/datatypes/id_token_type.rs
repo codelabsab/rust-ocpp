@@ -5,10 +5,10 @@ use crate::v2_0_1::enumerations::id_token_enum_type::IdTokenEnumType;
 /// IdTokenType is used by: Common:AuthorizationData , Common:IdTokenInfoType , RequestStartTransactionRequest, AuthorizeRequest , TransactionEventRequest , ReserveNowRequest , CustomerInformationRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct IdTokenType {
-    pub id_token: String,
+pub struct IdTokenType<'a> {
+    pub id_token: &'a str,
     #[serde(rename = "type")]
     pub kind: IdTokenEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub additional_info: Option<Vec<AdditionalInfoType>>,
+    pub additional_info: Option<Vec<AdditionalInfoType<'a>>>,
 }

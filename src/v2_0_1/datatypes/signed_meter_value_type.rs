@@ -2,9 +2,9 @@
 /// SignedMeterValueType is used by: Common:SampledValueType
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct SignedMeterValueType {
-    pub signed_meter_data: String,
-    pub signing_method: String,
-    pub encoding_method: String,
-    pub public_key: String,
+pub struct SignedMeterValueType<'a> {
+    pub signed_meter_data: &'a str,
+    pub signing_method: &'a str,
+    pub encoding_method: &'a str,
+    pub public_key: &'a str,
 }

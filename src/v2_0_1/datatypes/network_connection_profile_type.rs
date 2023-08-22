@@ -8,15 +8,15 @@ use crate::v2_0_1::enumerations::ocpp_version_enum_type::OCPPVersionEnumType;
 /// NetworkConnectionProfileType is used by: SetNetworkProfileRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct NetworkConnectionProfileType {
+pub struct NetworkConnectionProfileType<'a> {
     pub ocpp_version: OCPPVersionEnumType,
     pub ocpp_transport: OCPPTransportEnumType,
-    pub ocpp_csms_url: String,
+    pub ocpp_csms_url: &'a str,
     pub message_timeout: i64,
     pub security_profile: i64,
     pub ocpp_interface: OCPPInterfaceEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub vpn: Option<VPNType>,
+    pub vpn: Option<VPNType<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub apn: Option<APNType>,
+    pub apn: Option<APNType<'a>>,
 }

@@ -5,12 +5,12 @@ use crate::v2_0_1::enumerations::mutability_enum_type::MutabilityEnumType;
 /// VariableAttributeType is used by: NotifyReportRequest.ReportDataType
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct VariableAttributeType {
+pub struct VariableAttributeType<'a> {
     #[serde(rename = "type")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub kind: Option<AttributeEnumType>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub value: Option<String>,
+    pub value: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mutability: Option<MutabilityEnumType>,
     #[serde(skip_serializing_if = "Option::is_none")]

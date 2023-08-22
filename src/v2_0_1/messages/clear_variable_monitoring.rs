@@ -12,7 +12,8 @@ pub struct ClearVariableMonitoringRequest {
 /// ClearVariableMonitoringResponse, sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ClearVariableMonitoringResponse {
+pub struct ClearVariableMonitoringResponse<'a> {
     /// List of result statuses per monitor.
-    pub clear_monitoring_result: Vec<ClearMonitoringResultType>,
+    #[serde(borrow)]
+    pub clear_monitoring_result: Vec<ClearMonitoringResultType<'a>>,
 }

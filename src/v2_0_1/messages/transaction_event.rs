@@ -13,7 +13,7 @@ use crate::v2_0_1::enumerations::trigger_reason_enum_type::TriggerReasonEnumType
 /// Sent by the Charging Station to the CSMS to request that the Certificate Authority signs the public key into a certificate.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct TransactionEventRequest {
+pub struct TransactionEventRequest<'a> {
     pub event_type: TransactionEventEnumType,
     pub timestamp: DateTime<Utc>,
     pub trigger_reason: TriggerReasonEnumType,
@@ -26,25 +26,26 @@ pub struct TransactionEventRequest {
     pub cable_max_current: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reservation_id: Option<i64>,
-    pub transaction_info: TransactionType,
+    #[serde(borrow)]
+    pub transaction_info: TransactionType<'a>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id_token: Option<IdTokenType>,
+    pub id_token: Option<IdTokenType<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evse: Option<EVSEType>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub meter_value: Option<Vec<MeterValueType>>,
+    pub meter_value: Option<Vec<MeterValueType<'a>>>,
 }
 
 /// This contains the field definition of the TransactionEventResponse PDU sent by the CSMS to the Charging Station in response to a TransactionEventRequest.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct TransactionEventResponse {
+pub struct TransactionEventResponse<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub total_cost: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_priority: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub id_token_info: Option<IdTokenInfoType<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id_token_info: Option<IdTokenInfoType>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub updated_personal_message: Option<MessageContentType>,
+    pub updated_personal_message: Option<MessageContentType<'a>>,
 }
