@@ -23,14 +23,13 @@ maintenance = { status = "experimental" }
 default = ["std", "v2_0_1"]
 v1_6 = []
 v2_0_1 = []
-std = ["dep:validator", "serde/std", "serde_json/std"]
+std = ["dep:validator", "serde/std"]
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 serde = { version = "1", default-features = false, features = ["derive"] }
-serde_json = { version = "1", default-features = false }
 chrono = { version = "0.4.22", default-features = false, features = ["serde", "clock"] }
 rand = "0.8"
 uuid = { version = "1", features = ["v4"] }
@@ -42,3 +41,4 @@ regex = "1"
 [dev-dependencies]
 mockall = "0.11.3"
 jsonschema = "0.16"
+serde_json = { version = "1" }
