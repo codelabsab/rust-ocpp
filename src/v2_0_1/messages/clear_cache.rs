@@ -10,10 +10,10 @@ pub struct ClearCacheRequest {}
 /// `ClearCacheResponse`, sent by the Charging Station to the CSMS in response to a [`ClearCacheRequest`].
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ClearCacheResponse {
+pub struct ClearCacheResponse<'a> {
     /// Accepted if the Charging Station has executed the request, otherwise rejected.
     pub status: ClearCacheStatusEnumType,
     /// Detailed status information.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

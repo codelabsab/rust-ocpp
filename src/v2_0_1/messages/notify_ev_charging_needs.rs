@@ -16,8 +16,8 @@ pub struct NotifyEVChargingNeedsRequest {
 /// Response to a [`NotifyEVChargingNeedsRequest`]
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct NotifyEVChargingNeedsResponse {
+pub struct NotifyEVChargingNeedsResponse<'a> {
     pub status: NotifyEVChargingNeedsStatusEnumType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

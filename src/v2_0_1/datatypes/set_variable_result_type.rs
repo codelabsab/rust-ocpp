@@ -7,12 +7,13 @@ use crate::v2_0_1::enumerations::set_variable_status_enum_type::SetVariableStatu
 /// SetVariableResultType is used by: SetVariablesResponse
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct SetVariableResultType {
+pub struct SetVariableResultType<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attribute_type: Option<AttributeEnumType>,
     pub attribute_status: SetVariableStatusEnumType,
-    pub component: ComponentType,
-    pub variable: VariableType,
+    #[serde(borrow)]
+    pub component: ComponentType<'a>,
+    pub variable: VariableType<'a>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub attribute_status_info: Option<StatusInfoType>,
+    pub attribute_status_info: Option<StatusInfoType<'a>>,
 }

@@ -16,10 +16,10 @@ pub struct ClearDisplayMessageRequest {
 /// ClearDisplayMessageResponse, sent by the Charging Station to the CSMS in a response to a [`ClearDisplayMessageRequest`].
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ClearDisplayMessageResponse {
+pub struct ClearDisplayMessageResponse<'a> {
     /// Returns whether the Charging Station has been able to remove the message.
     pub status: ClearMessageStatusEnumType,
     /// Detailed status information.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

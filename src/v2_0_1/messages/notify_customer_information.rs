@@ -4,8 +4,8 @@ use chrono::Utc;
 /// This contains the field definition of the NotifyCustomerInformationRequest PDU sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct NotifyCustomerInformationRequest {
-    pub data: String,
+pub struct NotifyCustomerInformationRequest<'a> {
+    pub data: &'a str,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tbc: Option<bool>,
     pub seq_no: i64,

@@ -2,9 +2,9 @@
 /// ModemType is used by: BootNotificationRequest.ChargingStationType
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ModemType {
+pub struct ModemType<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub iccid: Option<String>,
+    pub iccid: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub imsi: Option<String>,
+    pub imsi: Option<&'a str>,
 }

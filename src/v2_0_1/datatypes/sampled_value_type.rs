@@ -10,7 +10,7 @@ use crate::v2_0_1::enumerations::reading_context_enum_type::ReadingContextEnumTy
 /// SampledValueType is used by: Common:MeterValueType
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct SampledValueType {
+pub struct SampledValueType<'a> {
     pub value: f64,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub context: Option<ReadingContextEnumType>,
@@ -20,8 +20,8 @@ pub struct SampledValueType {
     pub phase: Option<PhaseEnumType>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub location: Option<LocationEnumType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub signed_meter_value: Option<SignedMeterValueType<'a>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub signed_meter_value: Option<SignedMeterValueType>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub unit_of_measure: Option<UnitOfMeasureType>,
+    pub unit_of_measure: Option<UnitOfMeasureType<'a>>,
 }

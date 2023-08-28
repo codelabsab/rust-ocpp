@@ -10,7 +10,7 @@ use crate::v2_0_1::enumerations::message_state_enum_type::MessageStateEnumType;
 /// MessageInfoType is used by: SetDisplayMessageRequest , NotifyDisplayMessagesRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct MessageInfoType {
+pub struct MessageInfoType<'a> {
     pub id: i64,
     pub priority: MessagePriorityEnumType,
     pub state: MessageStateEnumType,
@@ -19,8 +19,8 @@ pub struct MessageInfoType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_date_time: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub transaction_id: Option<String>,
-    pub message: MessageContentType,
+    pub transaction_id: Option<&'a str>,
+    pub message: MessageContentType<'a>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub display: Option<ComponentType>,
+    pub display: Option<ComponentType<'a>>,
 }

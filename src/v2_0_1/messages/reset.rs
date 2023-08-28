@@ -15,8 +15,8 @@ pub struct ResetRequest {
 /// This contains the field definition of the ResetResponse PDU sent by the Charging Station to the CSMS in response to ResetRequest.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ResetResponse {
+pub struct ResetResponse<'a> {
     pub status: ResetStatusEnumType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }

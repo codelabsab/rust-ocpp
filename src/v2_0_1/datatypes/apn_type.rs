@@ -1,5 +1,6 @@
 //! Collection of configuration data needed to make a data-connection over a cellular network
 use crate::v2_0_1::enumerations::apn_authentication_enum_type::APNAuthenticationEnumType;
+#[cfg(feature = "std")]
 use validator::Validate;
 
 /// Collection of configuration data needed to make a data-connection over a cellular network
@@ -12,27 +13,28 @@ use validator::Validate;
 /// this network is not available, a different network is used.
 ///
 /// If you specify `UseOnlyPreferredNetwork` and this network is not available, the modem will not dial in
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature="std", derive(Validate))]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct APNType {
+pub struct APNType<'a> {
     /// The Access Point Name as an URL
-    #[validate(length(min = 0, max = 512))]
-    pub apn: String,
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 512)))]
+    pub apn: &'a str,
     /// APN username
-    #[validate(length(min = 0, max = 20))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 20)))]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub apn_user_name: Option<String>,
+    pub apn_user_name: Option<&'a str>,
     /// APN Password.
-    #[validate(length(min = 0, max = 20))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 20)))]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub apn_password: Option<String>,
+    pub apn_password: Option<&'a str>,
     /// SIM card pin code.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sim_pin: Option<i64>,
     /// Preferred network, written as MCC and MNC concatenated. See note.
-    #[validate(length(min = 0, max = 6))]
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 6)))]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub preferred_network: Option<String>,
+    pub preferred_network: Option<&'a str>,
     /// Default: false. Use only the preferred Network, do not dial in when not available. See Note
     #[serde(skip_serializing_if = "Option::is_none")]
     pub use_only_preferred_network: Option<bool>,

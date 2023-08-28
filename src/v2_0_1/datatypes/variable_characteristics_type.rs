@@ -4,15 +4,15 @@ use crate::v2_0_1::enumerations::data_enum_type::DataEnumType;
 /// VariableCharacteristicsType is used by: NotifyReportRequest.ReportDataType
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct VariableCharacteristicsType {
+pub struct VariableCharacteristicsType<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub unit: Option<String>,
+    pub unit: Option<&'a str>,
     pub data_type: DataEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_limit: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub max_limit: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub values_list: Option<String>,
+    pub values_list: Option<&'a str>,
     pub supports_monitoring: bool,
 }

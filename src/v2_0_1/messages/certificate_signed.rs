@@ -2,20 +2,22 @@
 use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::certificate_signed_status_enum_type::CertificateSignedStatusEnumType;
 use crate::v2_0_1::enumerations::certificate_signing_use_enum_type::CertificateSigningUseEnumType;
+#[cfg(feature = "std")]
 use validator::Validate;
 
 /// `CertificateSignedRequest`, sent by the CSMS to the Charging Station.
-#[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature="std", derive(Validate))]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct CertificateSignedRequest {
+pub struct CertificateSignedRequest<'a> {
     /// The signed PEM encoded X.509 certificate. This can also contain the necessary sub
     /// CA certificates. In that case, the order of the bundle should follow the
     /// certificate chain, starting from the leaf certificate.
     ///
     /// The Configuration Variable `MaxCertificateChainSize` can be used to limit the
     ///  maximum size of this field.
-    #[validate(length(min = 0, max = 10000))]
-    pub certificate_chain: String,
+    #[cfg_attr(feature="std", validate(length(min = 0, max = 10000)))]
+    pub certificate_chain: &'a str,
     /// Indicates the type of the signed certificate that is returned. When omitted the
     ///  certificate is used for both the 15118 connection (if implemented) and the
     /// Charging Station to CSMS connection. This field is required when a typeOfCertificate
@@ -29,10 +31,10 @@ pub struct CertificateSignedRequest {
 /// `CertificateSignedResponse`, sent by the Charging Station to the CSMS in response to a [`CertificateSignedRequest`].
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct CertificateSignedResponse {
+pub struct CertificateSignedResponse<'a> {
     /// Returns whether certificate signing has been accepted, otherwise rejected.
     pub status: CertificateSignedStatusEnumType,
     /// Detailed status information.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
+    #[serde(skip_serializing_if = "Option::is_none",borrow)]
+    pub status_info: Option<StatusInfoType<'a>>,
 }
