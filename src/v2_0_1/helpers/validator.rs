@@ -1,12 +1,9 @@
+use std::sync::OnceLock;
+
+use regex::Regex;
 use validator::ValidationError;
 
-/// Sorted list of characters allowed in `identifierString`.
-pub const ALLOWED_CHARACTERS: [char; 71] = [
-    '*', '+', '-', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', '=', '@', 'A', 'B',
-    'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
-    'V', 'W', 'X', 'Y', 'Z', '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '|',
-];
+static REGEX: OnceLock<Regex> = OnceLock::new();
 
 /// Helper function to validate identifierString
 ///
@@ -14,13 +11,15 @@ pub const ALLOWED_CHARACTERS: [char; 71] = [
 /// This is a case-insensitive dataType and can only contain characters from the following
 /// character set: `a-z`, `A-Z`, `0-9`, `'*'`, `'-'`, `'_'`, `'='`, `':'`, `'+'`, `'|'`, `'@'`, `'.'`
 pub fn validate_identifier_string(s: &str) -> Result<(), ValidationError> {
-    for c in s.chars() {
-        if !ALLOWED_CHARACTERS.contains(&c) {
-            return Err(ValidationError::new("Not a valid identifierString"));
-        }
-    }
+    // regex for identifierString as defined by the specification
+    let res = REGEX
+        .get_or_init(|| Regex::new(r"^[a-zA-Z0-9*+=:|@._-]+$").unwrap())
+        .is_match(s);
 
-    Ok(())
+    match res {
+        true => Ok(()),
+        false => Err(ValidationError::new("Not a valid identifierString")),
+    }
 }
 
 #[cfg(test)]
