@@ -496,7 +496,7 @@ mod tests {
             status: GetCompositeScheduleStatus::Accepted,
             connector_id: Some(1),
             schedule_start: Some(Utc::now()),
-            charging_schedule: Some(ChargingSchedule {
+            charging_schedule: Some(ChargingSchedule::<100> {
                 duration: Some(1),
                 start_schedule: Some(Utc::now()),
                 charging_rate_unit: ChargingRateUnitType::W,
@@ -524,7 +524,7 @@ mod tests {
     }
     #[test]
     fn validate_get_configuration() {
-        let test = GetConfigurationRequest {
+        let test = GetConfigurationRequest::<100> {
             key: Some(vec![""]),
         };
 
@@ -543,7 +543,7 @@ mod tests {
     }
     #[test]
     fn validate_get_configuration_response() {
-        let test = GetConfigurationResponse {
+        let test = GetConfigurationResponse::<100, 100> {
             configuration_key: Some(vec![KeyValue {
                 key: "",
                 readonly: false,
@@ -677,7 +677,7 @@ mod tests {
     }
     #[test]
     fn validate_meter_values() {
-        let test = MeterValuesRequest {
+        let test = MeterValuesRequest::<100, 100> {
             connector_id: 0,
             transaction_id: None,
             meter_value: vec![MeterValue {
@@ -726,7 +726,7 @@ mod tests {
     }
     #[test]
     fn validate_remote_start_transaction() {
-        let test = RemoteStartTransactionRequest {
+        let test = RemoteStartTransactionRequest::<100> {
             connector_id: None,
             id_tag: "",
             charging_profile: None,
@@ -882,7 +882,7 @@ mod tests {
     }
     #[test]
     fn validate_send_local_list() {
-        let test = SendLocalListRequest {
+        let test = SendLocalListRequest::<100> {
             list_version: 0,
             local_authorization_list: None,
             update_type: UpdateType::Differential,
@@ -933,7 +933,7 @@ mod tests {
                 recurrency_kind: None,
                 valid_from: None,
                 valid_to: None,
-                charging_schedule: ChargingSchedule {
+                charging_schedule: ChargingSchedule::<100> {
                     duration: None,
                     start_schedule: None,
                     charging_rate_unit: ChargingRateUnitType::W,
@@ -1070,7 +1070,7 @@ mod tests {
     }
     #[test]
     fn validate_stop_transaction() {
-        let test = StopTransactionRequest {
+        let test = StopTransactionRequest::<100, 100> {
             id_tag: None,
             meter_stop: 0,
             timestamp: Utc::now(),

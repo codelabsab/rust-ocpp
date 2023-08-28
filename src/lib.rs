@@ -15,6 +15,8 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
+#![feature(generic_arg_infer)]
+
 /// tests
 #[cfg(all(test, feature = "std"))]
 pub mod tests;

@@ -302,9 +302,9 @@ mod tests {
 
     #[test]
     fn validate_authorize_request() {
-        let test = AuthorizeRequest {
+        let test = AuthorizeRequest::<_, 100> {
             certificate: Some(""),
-            id_token: IdTokenType {
+            id_token: IdTokenType::<100> {
                 id_token: "",
                 kind: IdTokenEnumType::Central,
                 additional_info: Some(vec![AdditionalInfoType {
@@ -337,7 +337,7 @@ mod tests {
 
     #[test]
     fn validate_authorize_response() {
-        let test = AuthorizeResponse {
+        let test = AuthorizeResponse::<100, _> {
             certificate_status: Some(AuthorizeCertificateStatusEnumType::Accepted),
             id_token_info: IdTokenInfoType {
                 status: AuthorizationStatusEnumType::Accepted,
@@ -346,7 +346,7 @@ mod tests {
                 language1: Some("English"),
                 evse_id: Some(vec![1]),
                 language2: Some("Chinese"),
-                group_id_token: Some(IdTokenType {
+                group_id_token: Some(IdTokenType::<100> {
                     id_token: "",
                     kind: IdTokenEnumType::Central,
                     additional_info: Some(vec![AdditionalInfoType {
@@ -735,7 +735,7 @@ mod tests {
 
     #[test]
     fn validate_clear_variable_monitoring_request() {
-        let test = ClearVariableMonitoringRequest { id: vec![0] };
+        let test = ClearVariableMonitoringRequest::<100> { id: vec![0] };
         let schema = include_str!("schemas/v2.0.1/ClearVariableMonitoringRequest.json");
         let schema = serde_json::from_str(&schema).unwrap();
         let instance = serde_json::to_value(&test).unwrap();
@@ -752,7 +752,7 @@ mod tests {
 
     #[test]
     fn validate_clear_variable_monitoring_response() {
-        let test = ClearVariableMonitoringResponse {
+        let test = ClearVariableMonitoringResponse::<100> {
             clear_monitoring_result: vec![ClearMonitoringResultType {
                 status: ClearMonitoringStatusEnumType::Accepted,
                 id: 0,
@@ -813,7 +813,7 @@ mod tests {
     }
     #[test]
     fn validate_customer_information_request() {
-        let test = CustomerInformationRequest {
+        let test = CustomerInformationRequest::<100> {
             request_id: 0,
             report: false,
             clear: false,
@@ -1124,7 +1124,7 @@ mod tests {
     }
     #[test]
     fn validate_get_charging_profiles_request() {
-        let test = GetChargingProfilesRequest {
+        let test = GetChargingProfilesRequest::<100, 100> {
             request_id: 0,
             evse_id: Some(1),
             charging_profile: ChargingProfileCriterionType {
@@ -1195,7 +1195,7 @@ mod tests {
     fn validate_get_composite_schedule_response() {
         let test = GetCompositeScheduleResponse {
             status: GenericStatusEnumType::Accepted,
-            schedule: Some(CompositeScheduleType {
+            schedule: Some(CompositeScheduleType::<100> {
                 evse_id: 0,
                 duration: 0,
                 schedule_start: Utc::now(),
@@ -1227,7 +1227,7 @@ mod tests {
     }
     #[test]
     fn validate_get_display_messages_request() {
-        let test = GetDisplayMessagesRequest {
+        let test = GetDisplayMessagesRequest::<100> {
             id: Some(vec![1]),
             request_id: 0,
             priority: Some(MessagePriorityEnumType::AlwaysFront),
@@ -1270,7 +1270,7 @@ mod tests {
     }
     #[test]
     fn validate_get_installed_certificate_ids_request() {
-        let test = GetInstalledCertificateIdsRequest {
+        let test = GetInstalledCertificateIdsRequest::<100> {
             certificate_type: Some(vec![GetCertificateIdUseEnumType::CSMSRootCertificate]),
         };
         let schema = include_str!("schemas/v2.0.1/GetInstalledCertificateIdsRequest.json");
@@ -1288,7 +1288,7 @@ mod tests {
     }
     #[test]
     fn validate_get_installed_certificate_ids_response() {
-        let test = GetInstalledCertificateIdsResponse {
+        let test = GetInstalledCertificateIdsResponse::<100, 100> {
             status: GetDisplayMessagesStatusEnumType::Accepted,
             certificate_hash_data_chain: Some(vec![CertificateHashDataChainType {
                 certificate_type: GetCertificateIdUseEnumType::V2GRootCertificate,
@@ -1406,7 +1406,7 @@ mod tests {
     }
     #[test]
     fn validate_get_monitoring_report_request() {
-        let test = GetMonitoringReportRequest {
+        let test = GetMonitoringReportRequest::<100, 100> {
             request_id: 0,
             monitoring_criteria: Some(vec![MonitoringCriterionEnumType::DeltaMonitoring]),
             component_variable: Some(vec![ComponentVariableType {
@@ -1461,7 +1461,7 @@ mod tests {
     }
     #[test]
     fn validate_get_report_request() {
-        let test = GetReportRequest {
+        let test = GetReportRequest::<100, 100> {
             request_id: 0,
             component_criteria: Some(vec![ComponentCriterionEnumType::Active]),
             component_variable: Some(vec![ComponentVariableType {
@@ -1553,7 +1553,7 @@ mod tests {
     }
     #[test]
     fn validate_get_variables_request() {
-        let test = GetVariablesRequest {
+        let test = GetVariablesRequest::<100> {
             get_variable_data: vec![GetVariableDataType {
                 attribute_type: Some(AttributeEnumType::MaxSet),
                 component: ComponentType {
@@ -1585,7 +1585,7 @@ mod tests {
     }
     #[test]
     fn validate_get_variables_response() {
-        let test = GetVariablesResponse {
+        let test = GetVariablesResponse::<100> {
             get_variable_result: vec![GetVariableResultType {
                 attribute_status: GetVariableStatusEnumType::Accepted,
                 attribute_type: Some(AttributeEnumType::Actual),
@@ -1733,7 +1733,7 @@ mod tests {
     }
     #[test]
     fn validate_meter_values_request() {
-        let test = MeterValuesRequest {
+        let test = MeterValuesRequest::<100, 100> {
             evse_id: 0,
             meter_value: vec![MeterValueType {
                 timestamp: Utc::now(),
@@ -1787,7 +1787,7 @@ mod tests {
     }
     #[test]
     fn validate_notify_charging_limit_request() {
-        let test = NotifyChargingLimitRequest {
+        let test = NotifyChargingLimitRequest::<100, 100, 100, 100, 100> {
             evse_id: Some(0),
             charging_limit: ChargingLimitType {
                 charging_limit_source: ChargingLimitSourceEnumType::EMS,
@@ -1805,7 +1805,7 @@ mod tests {
                     number_phases: Some(0),
                     phase_to_use: Some(0),
                 }],
-                sales_tariff: Some(SalesTariffType {
+                sales_tariff: Some(SalesTariffType::<100, 100, 100> {
                     id: Some(0),
                     sales_tariff_description: Some("sales_tariff_description"),
                     num_e_price_levels: Some(0),
@@ -1896,7 +1896,7 @@ mod tests {
     }
     #[test]
     fn validate_notify_display_messages_request() {
-        let test = NotifyDisplayMessagesRequest {
+        let test = NotifyDisplayMessagesRequest::<100> {
             request_id: 0,
             tbc: Some(false),
             message_info: Some(vec![MessageInfoType {
@@ -2013,7 +2013,7 @@ mod tests {
     }
     #[test]
     fn validate_notify_ev_charging_schedule_request() {
-        let test = NotifyEVChargingScheduleRequest {
+        let test = NotifyEVChargingScheduleRequest::<100, 100, 100, 100> {
             time_base: Utc::now(),
             evse_id: 0,
             charging_schedule: ChargingScheduleType {
@@ -2028,7 +2028,7 @@ mod tests {
                     number_phases: Some(0),
                     phase_to_use: Some(0),
                 }],
-                sales_tariff: Some(SalesTariffType {
+                sales_tariff: Some(SalesTariffType::<100, 100, 100> {
                     id: Some(0),
                     sales_tariff_description: Some("sales_tariff_description"),
                     num_e_price_levels: Some(0),
@@ -2087,7 +2087,7 @@ mod tests {
     }
     #[test]
     fn validate_notify_event_request() {
-        let test = NotifyEventRequest {
+        let test = NotifyEventRequest::<100> {
             generated_at: Utc::now(),
             tbc: Some(false),
             seq_no: 0,
@@ -2148,7 +2148,7 @@ mod tests {
     }
     #[test]
     fn validate_notify_monitoring_report_request() {
-        let test = NotifyMonitoringReportRequest {
+        let test = NotifyMonitoringReportRequest::<100, 100> {
             request_id: 0,
             tbc: Some(true),
             seq_no: 0,
@@ -2206,7 +2206,7 @@ mod tests {
     }
     #[test]
     fn validate_notify_report_request() {
-        let test = NotifyReportRequest {
+        let test = NotifyReportRequest::<100, 100> {
             request_id: 0,
             tbc: Some(false),
             seq_no: 0,
@@ -2316,7 +2316,7 @@ mod tests {
     }
     #[test]
     fn validate_publish_firmware_status_notification_request() {
-        let test = PublishFirmwareStatusNotificationRequest {
+        let test = PublishFirmwareStatusNotificationRequest::<100> {
             status: PublishFirmwareStatusEnumType::Idle,
             location: Some(vec!["location"]),
             request_id: Some(1),
@@ -2352,7 +2352,7 @@ mod tests {
     }
     #[test]
     fn validate_report_charging_profiles_request() {
-        let test = ReportChargingProfilesRequest {
+        let test = ReportChargingProfilesRequest::<100,100,100,100,100,100>  {
             request_id: 0,
             charging_limit_source: ChargingLimitSourceEnumType::EMS,
             tbc: Some(true),
@@ -2379,7 +2379,7 @@ mod tests {
                         number_phases: Some(1),
                         phase_to_use: Some(4),
                     }],
-                    sales_tariff: Some(SalesTariffType {
+                    sales_tariff: Some(SalesTariffType::<100,100,100> {
                         id: Some(1),
                         sales_tariff_description: Some("sales_tariff_description"),
                         num_e_price_levels: Some(1),
@@ -2433,7 +2433,7 @@ mod tests {
     }
     #[test]
     fn validate_request_start_transaction_request() {
-        let test = RequestStartTransactionRequest {
+        let test = RequestStartTransactionRequest::<100, 100, 100, 100, 100, 100> {
             evse_id: Some(0),
             remote_start_id: 0,
             id_token: IdTokenType {
@@ -2610,7 +2610,7 @@ mod tests {
     }
     #[test]
     fn validate_reserve_now_request() {
-        let test = ReserveNowRequest {
+        let test = ReserveNowRequest::<100> {
             id: 0,
             expiry_date_time: Utc::now(),
             connector_type: Some(ConnectorEnumType::CCCS1),
@@ -2746,7 +2746,7 @@ mod tests {
     }
     #[test]
     fn validate_send_local_list_request() {
-        let test = SendLocalListRequest {
+        let test = SendLocalListRequest::<100, 100, 100> {
             version_number: 0,
             update_type: UpdateEnumType::Differential,
             local_authorization_list: Some(vec![AuthorizationData {
@@ -2818,7 +2818,7 @@ mod tests {
     }
     #[test]
     fn validate_set_charging_profile_request() {
-        let test = SetChargingProfileRequest {
+        let test = SetChargingProfileRequest::<100, 100, 100, 100, 100> {
             evse_id: 0,
             charging_profile: ChargingProfileType {
                 id: 0,
@@ -3105,7 +3105,7 @@ mod tests {
     }
     #[test]
     fn validate_set_variable_monitoring_request() {
-        let test = SetVariableMonitoringRequest {
+        let test = SetVariableMonitoringRequest::<100> {
             set_monitoring_data: vec![SetMonitoringDataType {
                 id: Some(0),
                 transaction: Some(false),
@@ -3141,7 +3141,7 @@ mod tests {
     }
     #[test]
     fn validate_set_variable_monitoring_response() {
-        let test = SetVariableMonitoringResponse {
+        let test = SetVariableMonitoringResponse::<100> {
             set_monitoring_result: vec![SetMonitoringResultType {
                 id: Some(0),
                 status: SetMonitoringStatusEnumType::Accepted,
@@ -3180,7 +3180,7 @@ mod tests {
     }
     #[test]
     fn validate_set_variables_request() {
-        let test = SetVariablesRequest {
+        let test = SetVariablesRequest::<100> {
             set_variable_data: vec![SetVariableDataType {
                 attribute_type: Some(AttributeEnumType::Actual),
                 attribute_value: "",
@@ -3213,7 +3213,7 @@ mod tests {
     }
     #[test]
     fn validate_set_variables_response() {
-        let test = SetVariablesResponse {
+        let test = SetVariablesResponse::<100> {
             set_variable_result: vec![SetVariableResultType {
                 attribute_type: Some(AttributeEnumType::Actual),
                 attribute_status: SetVariableStatusEnumType::Accepted,
@@ -3328,7 +3328,7 @@ mod tests {
     }
     #[test]
     fn validate_transaction_event_request() {
-        let test = TransactionEventRequest {
+        let test = TransactionEventRequest::<100, 100, 100> {
             event_type: TransactionEventEnumType::Ended,
             timestamp: Utc::now(),
             trigger_reason: TriggerReasonEnumType::Authorized,
@@ -3392,7 +3392,7 @@ mod tests {
     }
     #[test]
     fn validate_transaction_event_response() {
-        let test = TransactionEventResponse {
+        let test = TransactionEventResponse::<100,100> {
             total_cost: Some(0.0),
             charging_priority: Some(0),
             id_token_info: Some(IdTokenInfoType {
