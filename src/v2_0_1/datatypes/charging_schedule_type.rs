@@ -6,13 +6,17 @@ use validator::Validate;
 use super::charging_schedule_period_type::ChargingSchedulePeriodType;
 use super::sales_tariff_type::SalesTariffType;
 use crate::v2_0_1::enumerations::charging_rate_unit_enum_type::ChargingRateUnitEnumType;
+use crate::Vec;
 
 /// Charging schedule structure defines a list of charging periods, as used in: GetCompositeSchedule.conf and ChargingProfile.
 /// ChargingScheduleType is used by: Common:ChargingProfileType , NotifyChargingLimitRequest, NotifyEVChargingScheduleRequest
 #[cfg_attr(feature="std", derive(Validate))]
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ChargingScheduleType<'a> {
+pub struct ChargingScheduleType<'a,
+    const N_SALES_TARIFF_ENTRIES: usize, const N_TARIFF_CONSUMPTION_COSTS: usize,
+    const N_COSTS_PER_TARIFF_CONS_COST: usize, const N_CHARGING_SCHEDULE_PERIODS: usize>
+{
     /// Required. Identifies the ChargingSchedule.
     pub id: i64,
     /// Optional. Starting point of an absolute schedule. If absent the schedule will be relative to start of charging
@@ -28,8 +32,8 @@ pub struct ChargingScheduleType<'a> {
     pub min_charging_rate: Option<f64>,
     /// Required. List of ChargingSchedulePeriod elements defining maximum power or current usage over time. The maximum number of periods, that is supported by the Charging Station, if less than 1024, is set by device model variable SmartChargingCtrlr.PeriodsPerSchedule
     #[cfg_attr(feature="std", validate(length(min = 1)))]
-    pub charging_schedule_period: Vec<ChargingSchedulePeriodType>,
+    pub charging_schedule_period: Vec<ChargingSchedulePeriodType, N_CHARGING_SCHEDULE_PERIODS>,
     /// Optional. Sales tariff associated with this charging schedule.
     #[serde(skip_serializing_if = "Option::is_none",borrow)]
-    pub sales_tariff: Option<SalesTariffType<'a>>,
+    pub sales_tariff: Option<SalesTariffType<'a, N_SALES_TARIFF_ENTRIES, N_TARIFF_CONSUMPTION_COSTS, N_COSTS_PER_TARIFF_CONS_COST>>,
 }

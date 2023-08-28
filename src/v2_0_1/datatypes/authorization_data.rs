@@ -4,7 +4,7 @@ use super::{id_token_info_type::IdTokenInfoType, id_token_type::IdTokenType};
 /// Contains the identifier to use for authorization
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct AuthorizationData<'a> {
+pub struct AuthorizationData<'a, const N_EVSE_IDS: usize, const TOKEN_N_ADDITIONAL_INFOS: usize> {
     /// Required when UpdateType is Full. This contains information about
     /// authorization status, expiry and group id. For a Differential update
     ///  the following applies: If this element is present, then this entry
@@ -12,7 +12,7 @@ pub struct AuthorizationData<'a> {
     /// element is absent, the entry for this IdToken in the Local
     /// Authorization List SHALL be deleted.
     #[serde(skip_serializing_if = "Option::is_none",borrow)]
-    pub id_token_info: Option<IdTokenInfoType<'a>>,
+    pub id_token_info: Option<IdTokenInfoType<'a, N_EVSE_IDS, TOKEN_N_ADDITIONAL_INFOS>>,
     /// This contains the identifier which needs to be stored for authorization.
-    pub id_token: IdTokenType<'a>,
+    pub id_token: IdTokenType<'a, TOKEN_N_ADDITIONAL_INFOS>,
 }

@@ -18,7 +18,7 @@ pub struct GetCompositeScheduleRequest {
 /// This contains the field definition of the GetCompositeSchedule.conf PDU sent by the Charge Point to the Central System in response to a GetCompositeSchedule.req PDU. See also Get Composite Schedule
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetCompositeScheduleResponse {
+pub struct GetCompositeScheduleResponse<const N_CHARGING_SCHEDULE_PERIODS: usize> {
     /// Required. Status of the request. The Charge Point will indicate if it was able to process the request
     pub status: GetCompositeScheduleStatus,
     /// Optional. The charging schedule contained in this notification applies to a Connector.
@@ -29,5 +29,5 @@ pub struct GetCompositeScheduleResponse {
     pub schedule_start: Option<DateTime<Utc>>,
     /// Optional. Planned Composite Charging Schedule, the energy consumption over time. Always relative to ScheduleStart. If status is "Rejected", this field may be absent.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub charging_schedule: Option<ChargingSchedule>,
+    pub charging_schedule: Option<ChargingSchedule<N_CHARGING_SCHEDULE_PERIODS>>,
 }

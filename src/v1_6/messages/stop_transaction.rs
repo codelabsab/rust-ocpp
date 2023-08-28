@@ -1,4 +1,5 @@
 use crate::v1_6::types::{IdTagInfo, MeterValue, Reason};
+use crate::Vec;
 
 use chrono::{DateTime, Utc};
 #[cfg(feature = "std")]
@@ -8,7 +9,7 @@ use validator::Validate;
 #[cfg_attr(feature="std", derive(Validate))]
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct StopTransactionRequest<'a> {
+pub struct StopTransactionRequest<'a, const N_TXN_DATA: usize, const N_METER_VALUES_PER_TXN: usize> {
     /// Required.
     #[cfg_attr(feature="std", validate(length(min = 1, max = 20)))]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -24,7 +25,7 @@ pub struct StopTransactionRequest<'a> {
     pub reason: Option<Reason>,
     /// Optional. This contains transaction usage details relevant for billing purposes.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub transaction_data: Option<Vec<MeterValue<'a>>>,
+    pub transaction_data: Option<Vec<MeterValue<'a, N_METER_VALUES_PER_TXN>, N_TXN_DATA>>,
 }
 
 /// This contains the field definition of the TriggerMessage.req PDU sent by the Central System to the Charge Point. See also Trigger Message

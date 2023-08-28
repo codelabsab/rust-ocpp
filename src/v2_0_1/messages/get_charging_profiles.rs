@@ -10,14 +10,14 @@ use crate::v2_0_1::enumerations::get_charging_profile_status_enum_type::GetCharg
 /// reported by the Charging Station via ReportChargingProfilesRequest messages.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetChargingProfilesRequest {
+pub struct GetChargingProfilesRequest<const N_CHARGING_PROFILE_IDS: usize, const N_CHARGING_LIMIT_SOURCES: usize> {
     /// Reference identification that is to be used bythe Charging Station in theReportChargingProfilesRequest when provided
     pub request_id: i64,
     /// For which EVSE installed charging profilesSHALL be reported. If 0, only charging profiles installedon the Charging Station itself (the grid connection)SHALL be reported. If omitted, all installed chargingprofiles SHALL be reported
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evse_id: Option<i64>,
     /// Specifies the charging profile
-    pub charging_profile: ChargingProfileCriterionType,
+    pub charging_profile: ChargingProfileCriterionType<N_CHARGING_PROFILE_IDS, N_CHARGING_LIMIT_SOURCES>,
 }
 
 /// This contains the field definition of the GetChargingProfilesResponse PDU sent by the Charging Station to the CSMS in response to a GetChargingProfilesRequest.

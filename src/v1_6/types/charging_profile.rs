@@ -6,7 +6,7 @@ use super::{
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ChargingProfile {
+pub struct ChargingProfile<const CHARGING_SCHEDULE_SIZE: usize> {
     pub charging_profile_id: i64,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction_id: Option<i64>,
@@ -19,5 +19,5 @@ pub struct ChargingProfile {
     pub valid_from: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub valid_to: Option<DateTime<Utc>>,
-    pub charging_schedule: ChargingSchedule,
+    pub charging_schedule: ChargingSchedule<CHARGING_SCHEDULE_SIZE>,
 }
