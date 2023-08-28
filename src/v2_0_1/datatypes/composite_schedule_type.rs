@@ -8,7 +8,7 @@ use crate::Vec;
 /// CompositeScheduleType is used by: GetCompositeScheduleResponse
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct CompositeScheduleType<const N_CHARGING_SCHEDULE_PERIODS: usize> {
+pub struct CompositeScheduleType<const N_CHARGING_SCHEDULE_PERIODS: usize = { crate::N_CHARGING_SCHEDULE_PERIODS }> {
     pub evse_id: i64,
     pub duration: i64,
     pub schedule_start: DateTime<Utc>,

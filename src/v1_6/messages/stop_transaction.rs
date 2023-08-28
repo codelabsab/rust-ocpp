@@ -9,7 +9,7 @@ use validator::Validate;
 #[cfg_attr(feature="std", derive(Validate))]
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct StopTransactionRequest<'a, const N_TXN_DATA: usize, const N_METER_VALUES_PER_TXN: usize> {
+pub struct StopTransactionRequest<'a, const N_TXN_DATA: usize = { crate::N_TXN_DATA }, const N_METER_VALUES_PER_TXN: usize = { crate::N_METER_VALUES_PER_TXN }> {
     /// Required.
     #[cfg_attr(feature="std", validate(length(min = 1, max = 20)))]
     #[serde(skip_serializing_if = "Option::is_none")]

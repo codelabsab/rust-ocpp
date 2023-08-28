@@ -5,7 +5,7 @@ use crate::Vec;
 /// CertificateHashDataChainType is used by: GetInstalledCertificateIdsResponse
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct CertificateHashDataChainType<'a, const N_CERTIFICATE_HASHES: usize> {
+pub struct CertificateHashDataChainType<'a, const N_CERTIFICATE_HASHES: usize = { crate::N_CERTIFICATE_HASHES }> {
     /// Required. Indicates the type of the requested certificate(s).
     pub certificate_type: GetCertificateIdUseEnumType,
     /// Required. Information to identify a certificate

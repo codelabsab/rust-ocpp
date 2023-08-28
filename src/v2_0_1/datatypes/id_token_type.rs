@@ -6,7 +6,7 @@ use crate::Vec;
 /// IdTokenType is used by: Common:AuthorizationData , Common:IdTokenInfoType , RequestStartTransactionRequest, AuthorizeRequest , TransactionEventRequest , ReserveNowRequest , CustomerInformationRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct IdTokenType<'a, const N_ADDITIONAL_INFOS: usize> {
+pub struct IdTokenType<'a, const N_ADDITIONAL_INFOS: usize = { crate::ID_TOKEN_TYPE_N_ADDITIONAL_INFOS }> {
     pub id_token: &'a str,
     #[serde(rename = "type")]
     pub kind: IdTokenEnumType,

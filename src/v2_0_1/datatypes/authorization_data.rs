@@ -4,7 +4,7 @@ use super::{id_token_info_type::IdTokenInfoType, id_token_type::IdTokenType};
 /// Contains the identifier to use for authorization
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct AuthorizationData<'a, const N_EVSE_IDS: usize, const TOKEN_N_ADDITIONAL_INFOS: usize> {
+pub struct AuthorizationData<'a, const N_EVSE_IDS: usize = { crate::N_EVSE_IDS }, const TOKEN_N_ADDITIONAL_INFOS: usize = { crate::TOKEN_N_ADDITIONAL_INFOS }> {
     /// Required when UpdateType is Full. This contains information about
     /// authorization status, expiry and group id. For a Differential update
     ///  the following applies: If this element is present, then this entry

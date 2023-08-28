@@ -7,7 +7,7 @@ use crate::v1_6::types::{ChargingProfile, RemoteStartStopStatus};
 #[cfg_attr(feature="std", derive(Validate))]
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct RemoteStartTransactionRequest<'a, const CHARGING_SCHEDULE_SIZE: usize> {
+pub struct RemoteStartTransactionRequest<'a, const CHARGING_SCHEDULE_SIZE: usize = { crate::CHARGING_SCHEDULE_SIZE }> {
     /// Optional. Number of the connector on which to start the transaction. connectorId SHALL be > 0
     #[serde(skip_serializing_if = "Option::is_none")]
     pub connector_id: Option<u64>,

@@ -8,7 +8,7 @@ use crate::Vec;
 /// ReportDataType is used by: NotifyReportRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ReportDataType<'a, const N_VARIABLE_ATTRIBUTES: usize> {
+pub struct ReportDataType<'a, const N_VARIABLE_ATTRIBUTES: usize = { crate::N_VARIABLE_ATTRIBUTES }> {
     #[serde(borrow)]
     pub component: ComponentType<'a>,
     pub variable: VariableType<'a>,

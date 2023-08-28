@@ -8,7 +8,7 @@ use crate::Vec;
 #[cfg_attr(feature="std", derive(Validate))]
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetConfigurationRequest<'a, const N_KEYS: usize> {
+pub struct GetConfigurationRequest<'a, const N_KEYS: usize = { crate::N_KEYS }> {
     /// Optional. List of keys for which the configuration value is requested.
     #[serde(skip_serializing_if = "Option::is_none",borrow)]
     #[cfg_attr(feature="std", validate(length(min = 1, max = 50)))]
@@ -19,7 +19,7 @@ pub struct GetConfigurationRequest<'a, const N_KEYS: usize> {
 #[cfg_attr(feature="std", derive(Validate))]
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetConfigurationResponse<'a, const N_CONF_KEYS: usize, const N_UNKNOWN_KEYS: usize> {
+pub struct GetConfigurationResponse<'a, const N_CONF_KEYS: usize = { crate::N_CONF_KEYS }, const N_UNKNOWN_KEYS: usize = { crate::N_UNKNOWN_KEYS }> {
     /// Optional. List of requested or known keys
     #[serde(skip_serializing_if = "Option::is_none",borrow)]
     pub configuration_key: Option<Vec<KeyValue<'a>, N_CONF_KEYS>>,

@@ -4,7 +4,7 @@ use crate::Vec;
 /// This contains the field definition of the MeterValues.req PDU sent by the Charge Point to the Central System. See also Meter Values
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct MeterValuesRequest<'a, const N_METER_VALUES: usize, const N_SAMPLED_VALUES_PER_METER: usize> {
+pub struct MeterValuesRequest<'a, const N_METER_VALUES: usize = { crate::N_METER_VALUES }, const N_SAMPLED_VALUES_PER_METER: usize = { crate::N_SAMPLED_VALUES_PER_METER }> {
     /// Required. This contains a number (>0) designating a connector of the Charge Point.‘0’ (zero) is used to designate the main powermeter.
     pub connector_id: u64,
     /// Optional. The transaction to which these meter samples are related.

@@ -10,7 +10,7 @@ use crate::Vec;
 /// IdTokenInfoType is used by: Common:AuthorizationData , AuthorizeResponse , TransactionEventResponse
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct IdTokenInfoType<'a, const N_EVSE_IDS: usize, const TOKEN_N_ADDITIONAL_INFOS: usize> {
+pub struct IdTokenInfoType<'a, const N_EVSE_IDS: usize = { crate::N_EVSE_IDS }, const TOKEN_N_ADDITIONAL_INFOS: usize = { crate:: TOKEN_N_ADDITIONAL_INFOS }> {
     pub status: AuthorizationStatusEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cache_expiry_date_time: Option<DateTime<Utc>>,

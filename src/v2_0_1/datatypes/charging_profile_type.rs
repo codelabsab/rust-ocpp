@@ -15,9 +15,9 @@ use validator::Validate;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingProfileType<'a,
-    const N_SALES_TARIFF_ENTRIES: usize, const N_TARIFF_CONSUMPTION_COSTS: usize,
-    const N_COSTS_PER_TARIFF_CONS_COST: usize, const N_CHARGING_SCHEDULE_PERIODS: usize,
-    const N_CHARGING_SCHEDULES: usize>
+    const N_SALES_TARIFF_ENTRIES: usize = { crate::N_SALES_TARIFF_ENTRIES }, const N_TARIFF_CONSUMPTION_COSTS: usize = { crate::N_TARIFF_CONSUMPTION_COSTS },
+    const N_COSTS_PER_TARIFF_CONS_COST: usize = { crate::N_COSTS_PER_TARIFF_CONS_COST }, const N_CHARGING_SCHEDULE_PERIODS: usize = { crate::N_CHARGING_SCHEDULE_PERIODS },
+    const N_CHARGING_SCHEDULES: usize = { crate::N_CHARGING_SCHEDULES }>
 {
     /// Required. Id of ChargingProfile.
     pub id: i64,

@@ -8,7 +8,7 @@ use crate::Vec;
 /// ChargingProfileCriterionType is used by: get_charging_profiles [GetChargingProfilesRequest](`crate::v2_0_1::messages::get_charging_profiles::GetChargingProfilesRequest`)
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct ChargingProfileCriterionType<const N_CHARGING_PROFILE_IDS: usize, const N_CHARGING_LIMIT_SOURCES: usize> {
+pub struct ChargingProfileCriterionType<const N_CHARGING_PROFILE_IDS: usize = { crate::N_CHARGING_PROFILE_IDS }, const N_CHARGING_LIMIT_SOURCES: usize = { crate::N_CHARGING_LIMIT_SOURCES }> {
     /// Optional. Defines the purpose of the schedule transferred by this profile
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_profile_purpose: Option<ChargingProfilePurposeEnumType>,

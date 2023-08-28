@@ -8,7 +8,7 @@ use crate::Vec;
 /// MeterValueType is used by: MeterValuesRequest , TransactionEventRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct MeterValueType<'a, const N_SAMPLED_VALUES: usize> {
+pub struct MeterValueType<'a, const N_SAMPLED_VALUES: usize = { crate::N_SAMPLED_VALUES }> {
     pub timestamp: DateTime<Utc>,
     #[serde(borrow)]
     pub sampled_value: Vec<SampledValueType<'a>, N_SAMPLED_VALUES>,

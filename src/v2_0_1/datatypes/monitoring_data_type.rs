@@ -7,7 +7,7 @@ use crate::Vec;
 /// MonitoringDataType is used by: NotifyMonitoringReportRequest
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct MonitoringDataType<'a, const N_VARIABLE_MONITORINGS: usize> {
+pub struct MonitoringDataType<'a, const N_VARIABLE_MONITORINGS: usize = { crate::N_VARIABLE_MONITORINGS }> {
     #[serde(borrow)]
     pub component: ComponentType<'a>,
     pub variable: VariableType<'a>,

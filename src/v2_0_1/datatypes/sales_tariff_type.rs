@@ -10,9 +10,9 @@ use validator::Validate;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SalesTariffType<'a,
-    const N_SALES_TARIFF_ENTRIES: usize,
-    const N_TARIFF_CONSUMPTION_COSTS: usize,
-    const N_COSTS_PER_TARIFF_CONS_COST: usize>
+    const N_SALES_TARIFF_ENTRIES: usize = { crate::N_SALES_TARIFF_ENTRIES },
+    const N_TARIFF_CONSUMPTION_COSTS: usize = { crate::N_TARIFF_CONSUMPTION_COSTS },
+    const N_COSTS_PER_TARIFF_CONS_COST: usize = { crate::N_COSTS_PER_TARIFF_CONS_COST }>
 {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<u64>,

@@ -18,7 +18,7 @@ pub struct GetCompositeScheduleRequest {
 /// This contains the field definition of the GetCompositeSchedule.conf PDU sent by the Charge Point to the Central System in response to a GetCompositeSchedule.req PDU. See also Get Composite Schedule
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetCompositeScheduleResponse<const N_CHARGING_SCHEDULE_PERIODS: usize> {
+pub struct GetCompositeScheduleResponse<const N_CHARGING_SCHEDULE_PERIODS: usize = { crate::N_CHARGING_SCHEDULE_PERIODS }> {
     /// Required. Status of the request. The Charge Point will indicate if it was able to process the request
     pub status: GetCompositeScheduleStatus,
     /// Optional. The charging schedule contained in this notification applies to a Connector.
