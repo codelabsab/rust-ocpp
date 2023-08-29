@@ -13,7 +13,7 @@ static REGEX: OnceLock<Regex> = OnceLock::new();
 pub fn validate_identifier_string(s: &str) -> Result<(), ValidationError> {
     // regex for identifierString as defined by the specification
     let res = REGEX
-        .get_or_init(|| Regex::new(r"^[a-zA-Z0-9*+=:|@._-]+$").unwrap())
+        .get_or_init(|| Regex::new(r"^[a-zA-Z0-9*+=:|@._-]*$").unwrap())
         .is_match(s);
 
     match res {
