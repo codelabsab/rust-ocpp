@@ -10,7 +10,7 @@ use crate::v2_0_1::enumerations::set_monitoring_status_enum_type::SetMonitoringS
 #[serde(rename_all = "camelCase")]
 pub struct SetMonitoringResultType {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<i64>,
+    pub id: Option<i32>,
     pub status: SetMonitoringStatusEnumType,
     #[serde(rename = "type")]
     pub kind: MonitorEnumType,

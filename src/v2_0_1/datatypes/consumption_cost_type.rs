@@ -4,6 +4,6 @@ use super::cost_type::CostType;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ConsumptionCostType {
-    pub start_value: i64,
+    pub start_value: i32,
     pub cost: Vec<CostType>,
 }

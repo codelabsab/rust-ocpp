@@ -8,9 +8,9 @@ pub struct NotifyCustomerInformationRequest {
     pub data: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tbc: Option<bool>,
-    pub seq_no: i64,
+    pub seq_no: i32,
     pub generated_at: DateTime<Utc>,
-    pub request_id: i64,
+    pub request_id: i32,
 }
 
 /// The NotifyChargingLimitResponse message is sent by the CSMS to the Charging Station in response to a NotifyChargingLimitsRequest. No fields are defined.

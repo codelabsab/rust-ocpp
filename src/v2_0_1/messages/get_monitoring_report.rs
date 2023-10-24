@@ -9,7 +9,7 @@ use crate::v2_0_1::enumerations::monitoring_criterion_enum_type::MonitoringCrite
 #[serde(rename_all = "camelCase")]
 pub struct GetMonitoringReportRequest {
     /// The Id of the request.
-    pub request_id: i64,
+    pub request_id: i32,
     ///  This field contains criteria for components forwhich a monitoring report is requested.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub monitoring_criteria: Option<Vec<MonitoringCriterionEnumType>>,

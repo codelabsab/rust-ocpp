@@ -5,7 +5,7 @@ use crate::v1_6::types::RemoteStartStopStatus;
 #[serde(rename_all = "camelCase")]
 pub struct RemoteStopTransactionRequest {
     /// Required. The identifier of the transaction which Charge Point is requested to stop.
-    pub transaction_id: i64,
+    pub transaction_id: i32,
 }
 
 /// This contains the field definitions of the RemoteStopTransactionResponse PDU sent from Charge Point to Central System. See also Remote Stop Transaction

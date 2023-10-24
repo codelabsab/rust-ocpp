@@ -6,7 +6,7 @@ use crate::v2_0_1::enumerations::set_network_profile_status_enum_type::SetNetwor
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SetNetworkProfileRequest {
-    pub configuration_slot: i64,
+    pub configuration_slot: i32,
     pub connection_data: NetworkConnectionProfileType,
 }
 

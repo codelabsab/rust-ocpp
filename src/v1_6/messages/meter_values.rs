@@ -8,7 +8,7 @@ pub struct MeterValuesRequest {
     pub connector_id: u64,
     /// Optional. The transaction to which these meter samples are related.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub transaction_id: Option<i64>,
+    pub transaction_id: Option<i32>,
     /// Required. The sampled meter values with timestamps.
     pub meter_value: Vec<MeterValue>,
 }

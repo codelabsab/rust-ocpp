@@ -11,7 +11,7 @@ use crate::v2_0_1::enumerations::customer_information_status_enum_type::Customer
 #[serde(rename_all = "camelCase")]
 pub struct CustomerInformationRequest {
     /// The Id of the request
-    pub request_id: i64,
+    pub request_id: i32,
     /// Flag indicating whether the Charging Station should return NotifyCustomerInformationRequest
     ///  messages containing information about the customer referred to.
     pub report: bool,

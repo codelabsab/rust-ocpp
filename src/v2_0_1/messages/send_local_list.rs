@@ -7,7 +7,7 @@ use crate::v2_0_1::enumerations::update_enum_type::UpdateEnumType;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SendLocalListRequest {
-    pub version_number: i64,
+    pub version_number: i32,
     pub update_type: UpdateEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub local_authorization_list: Option<Vec<AuthorizationData>>,

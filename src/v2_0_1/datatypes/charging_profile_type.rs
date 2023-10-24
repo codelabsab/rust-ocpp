@@ -12,9 +12,9 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct ChargingProfileType {
     /// Required. Id of ChargingProfile.
-    pub id: i64,
+    pub id: i32,
     /// Required. Value determining level in hierarchy stack of profiles. Higher values have precedence over lower values. Lowest level is 0.
-    pub stack_level: i64,
+    pub stack_level: i32,
     /// Required. Defines the purpose of the schedule transferred by this profile
     pub charging_profile_purpose: ChargingProfilePurposeEnumType,
     /// Required. Indicates the kind of schedule.

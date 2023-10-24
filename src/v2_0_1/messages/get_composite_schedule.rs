@@ -9,12 +9,12 @@ use crate::v2_0_1::enumerations::generic_status_enum_type::GenericStatusEnumType
 #[serde(rename_all = "camelCase")]
 pub struct GetCompositeScheduleRequest {
     /// Length of the requested schedule in seconds
-    pub duration: i64,
+    pub duration: i32,
     /// Can be used to force a power or current profile
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_rate_unit: Option<ChargingRateUnitEnumType>,
     /// The ID of the EVSE for which the schedule isrequested. When evseid=0, the Charging Station willcalculate the expected consumption for the gridconnection.
-    pub evse_id: i64,
+    pub evse_id: i32,
 }
 
 /// GetCompositeScheduleResponse, sent by the Charging Station to the CSMS in response to a GetCompositeScheduleRequest.

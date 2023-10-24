@@ -5,8 +5,8 @@ use crate::v2_0_1::enumerations::unlock_status_enum_type::UnlockStatusEnumType;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct UnlockConnectorRequest {
-    pub evse_id: i64,
-    pub connector_id: i64,
+    pub evse_id: i32,
+    pub connector_id: i32,
 }
 
 /// This contains the field definition of the UnlockConnectorResponse PDU sent by the Charging Station to the CSMS in response to an UnlockConnectorRequest.

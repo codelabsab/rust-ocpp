@@ -11,7 +11,7 @@ pub struct SalesTariffType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sales_tariff_description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub num_e_price_levels: Option<i64>,
+    pub num_e_price_levels: Option<i32>,
     #[validate(length(min = 1, max = 1024))]
     pub sales_tariff_entry: Vec<SalesTariffEntryType>,
 }

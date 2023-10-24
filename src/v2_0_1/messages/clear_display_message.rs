@@ -10,7 +10,7 @@ use crate::v2_0_1::enumerations::clear_message_status_enum_type::ClearMessageSta
 #[serde(rename_all = "camelCase")]
 pub struct ClearDisplayMessageRequest {
     /// Id of the message that SHALL be removed from the Charging Station
-    pub id: i64,
+    pub id: i32,
 }
 
 /// ClearDisplayMessageResponse, sent by the Charging Station to the CSMS in a response to a [`ClearDisplayMessageRequest`].

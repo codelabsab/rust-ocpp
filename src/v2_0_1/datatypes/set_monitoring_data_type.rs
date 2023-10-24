@@ -8,7 +8,7 @@ use crate::v2_0_1::enumerations::monitor_enum_type::MonitorEnumType;
 #[serde(rename_all = "camelCase")]
 pub struct SetMonitoringDataType {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<i64>,
+    pub id: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction: Option<bool>,
     pub value: f64,

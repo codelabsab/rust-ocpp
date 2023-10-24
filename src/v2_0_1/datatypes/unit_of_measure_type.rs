@@ -6,5 +6,5 @@ pub struct UnitOfMeasureType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub unit: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub multiplier: Option<i64>,
+    pub multiplier: Option<i32>,
 }

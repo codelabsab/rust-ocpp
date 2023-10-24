@@ -7,10 +7,10 @@ use crate::v2_0_1::enumerations::update_firmware_status_enum_type::UpdateFirmwar
 #[serde(rename_all = "camelCase")]
 pub struct UpdateFirmwareRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub retries: Option<i64>,
+    pub retries: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub retry_interval: Option<i64>,
-    pub request_id: i64,
+    pub retry_interval: Option<i32>,
+    pub request_id: i32,
     pub firmware: FirmwareType,
 }
 

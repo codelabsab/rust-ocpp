@@ -12,10 +12,10 @@ use crate::v2_0_1::enumerations::get_charging_profile_status_enum_type::GetCharg
 #[serde(rename_all = "camelCase")]
 pub struct GetChargingProfilesRequest {
     /// Reference identification that is to be used bythe Charging Station in theReportChargingProfilesRequest when provided
-    pub request_id: i64,
+    pub request_id: i32,
     /// For which EVSE installed charging profilesSHALL be reported. If 0, only charging profiles installedon the Charging Station itself (the grid connection)SHALL be reported. If omitted, all installed chargingprofiles SHALL be reported
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub evse_id: Option<i64>,
+    pub evse_id: Option<i32>,
     /// Specifies the charging profile
     pub charging_profile: ChargingProfileCriterionType,
 }

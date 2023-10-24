@@ -10,7 +10,7 @@ use crate::v2_0_1::enumerations::generic_status_enum_type::GenericStatusEnumType
 #[serde(rename_all = "camelCase")]
 pub struct NotifyEVChargingScheduleRequest {
     pub time_base: DateTime<Utc>,
-    pub evse_id: i64,
+    pub evse_id: i32,
     pub charging_schedule: ChargingScheduleType,
 }
 

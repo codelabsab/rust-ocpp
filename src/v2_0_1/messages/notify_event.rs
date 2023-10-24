@@ -10,7 +10,7 @@ pub struct NotifyEventRequest {
     pub generated_at: DateTime<Utc>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tbc: Option<bool>,
-    pub seq_no: i64,
+    pub seq_no: i32,
     pub event_data: Vec<EventDataType>,
 }
 

@@ -28,7 +28,7 @@ pub struct APNType {
     pub apn_password: Option<String>,
     /// SIM card pin code.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub sim_pin: Option<i64>,
+    pub sim_pin: Option<i32>,
     /// Preferred network, written as MCC and MNC concatenated. See note.
     #[validate(length(min = 0, max = 6))]
     #[serde(skip_serializing_if = "Option::is_none")]

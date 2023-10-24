@@ -10,5 +10,5 @@ pub struct GetLocalListVersionRequest {
 #[serde(rename_all = "camelCase")]
 pub struct GetLocalListVersionResponse {
     /// Required. This contains the current version number of the local authorization list in the Charge Point.
-    pub list_version: i64,
+    pub list_version: i32,
 }

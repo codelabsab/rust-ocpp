@@ -10,7 +10,7 @@ pub struct FirmwareStatusNotificationRequest {
     /// The request id that was provided in the UpdateFirmwareRequest that started this firmware update.
     /// This field is mandatory, unless the message was triggered by a TriggerMessageRequest AND there is no firmware update ongoing.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub request_id: Option<i64>,
+    pub request_id: Option<i32>,
 }
 
 /// FirmwareStatusNotificationResponse, sent by the CSMS to the Charging Station in response to a FirmwareStatusNotificationRequest.

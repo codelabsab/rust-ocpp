@@ -13,7 +13,7 @@ use crate::v2_0_1::enumerations::clear_charging_profile_status_enum_type::ClearC
 pub struct ClearChargingProfileRequest {
     /// The Id of the charging profile to clear.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub charging_profile_id: Option<i64>,
+    pub charging_profile_id: Option<i32>,
     /// Specifies the charging profile.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_profile_criteria: Option<ClearChargingProfileType>,

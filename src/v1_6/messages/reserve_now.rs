@@ -20,7 +20,7 @@ pub struct ReserveNowRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parent_id_tag: Option<String>, // IdToken, shoult this be a type?
     /// Required. Unique id for this reservation.
-    pub reservation_id: i64,
+    pub reservation_id: i32,
 }
 
 /// This contains the field definitions of the RemoteStopTransactionResponse PDU sent from Charge Point to Central System. See also Remote Stop Transaction

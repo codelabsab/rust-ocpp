@@ -4,7 +4,7 @@ use crate::v2_0_1::enumerations::reservation_update_status_enum_type::Reservatio
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ReservationStatusUpdateRequest {
-    pub reservation_id: i64,
+    pub reservation_id: i32,
     pub reservation_update_status: ReservationUpdateStatusEnumType,
 }
 

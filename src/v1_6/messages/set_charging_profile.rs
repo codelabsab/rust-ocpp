@@ -5,7 +5,7 @@ use crate::v1_6::types::{ChargingProfile, ChargingProfileStatus};
 #[serde(rename_all = "camelCase")]
 pub struct SetChargingProfileRequest {
     /// Required. The connector to which the charging profile applies. If connectorId = 0, the message contains an overall limit for the Charge Point.
-    pub connector_id: i64,
+    pub connector_id: i32,
     /// Required. The charging profile to be set at the Charge Point.
     #[serde(rename = "csChargingProfiles")]
     pub cs_charging_profiles: ChargingProfile,

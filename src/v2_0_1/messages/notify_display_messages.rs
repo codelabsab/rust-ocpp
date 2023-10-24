@@ -4,7 +4,7 @@ use crate::v2_0_1::datatypes::message_info_type::MessageInfoType;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyDisplayMessagesRequest {
-    pub request_id: i64,
+    pub request_id: i32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tbc: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]

@@ -10,7 +10,7 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct GetReportRequest {
     /// The Id of the request.
-    pub request_id: i64,
+    pub request_id: i32,
     /// This field contains criteria for components forwhich a report is requested.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(length(min = 0, max = 4))]

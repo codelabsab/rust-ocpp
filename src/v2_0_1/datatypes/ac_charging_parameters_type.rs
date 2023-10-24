@@ -7,11 +7,11 @@
 #[serde(rename_all = "camelCase")]
 pub struct ACChargingParametersType {
     /// Amount of energy requested (in Wh). This includes energy required for preconditioning.
-    pub energy_amount: i64,
+    pub energy_amount: i32,
     /// Minimum current (amps) supported by theelectric vehicle (per phase).
-    pub ev_min_current: i64,
+    pub ev_min_current: i32,
     /// Maximum current (amps) supported by the electric vehicle (per phase). Includes cable capacity.
-    pub ev_max_current: i64,
+    pub ev_max_current: i32,
     /// Maximum voltage supported by the electric vehicle
-    pub ev_max_voltage: i64,
+    pub ev_max_voltage: i32,
 }
