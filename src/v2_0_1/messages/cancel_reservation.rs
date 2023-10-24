@@ -7,7 +7,7 @@ use crate::v2_0_1::enumerations::cancel_reservation_status_enum_type::CancelRese
 #[serde(rename_all = "camelCase")]
 pub struct CancelReservationRequest {
     /// Id of the reservation to cancel.
-    pub reservation_id: i64,
+    pub reservation_id: i32,
 }
 
 /// `CancelReservationResponse`, sent by the Charging Station to the CSMS in response to a [`CancelReservationRequest`]

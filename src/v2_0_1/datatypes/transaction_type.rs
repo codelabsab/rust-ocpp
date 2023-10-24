@@ -9,9 +9,9 @@ pub struct TransactionType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_state: Option<ChargingStateEnumType>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub time_spent_charging: Option<i64>,
+    pub time_spent_charging: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stopped_reason: Option<ReasonEnumType>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub remote_start_id: Option<i64>,
+    pub remote_start_id: Option<i32>,
 }

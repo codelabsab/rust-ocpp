@@ -11,7 +11,7 @@ use crate::v2_0_1::enumerations::message_state_enum_type::MessageStateEnumType;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MessageInfoType {
-    pub id: i64,
+    pub id: i32,
     pub priority: MessagePriorityEnumType,
     pub state: MessageStateEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]

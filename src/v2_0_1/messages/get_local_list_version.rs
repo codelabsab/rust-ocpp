@@ -10,5 +10,5 @@ pub struct GetLocalListVersionRequest {}
 #[serde(rename_all = "camelCase")]
 pub struct GetLocalListVersionResponse {
     /// This contains the current version number of thelocal authorization list in the Charging Station
-    pub version_number: i64,
+    pub version_number: i32,
 }

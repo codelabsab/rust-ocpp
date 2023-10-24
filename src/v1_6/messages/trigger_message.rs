@@ -8,7 +8,7 @@ pub struct TriggerMessageRequest {
     pub requested_message: MessageTrigger,
     /// Optional. Only filled in when request applies to a specific connector.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub connector_id: Option<u64>,
+    pub connector_id: Option<u32>,
 }
 
 /// This contains the field definition of the TriggerMessage.req PDU sent by the Central System to the Charge Point. See also Trigger Message

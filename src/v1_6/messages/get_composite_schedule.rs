@@ -7,9 +7,9 @@ use crate::v1_6::types::{ChargingRateUnitType, ChargingSchedule, GetCompositeSch
 #[serde(rename_all = "camelCase")]
 pub struct GetCompositeScheduleRequest {
     /// Required. The ID of the Connector for which the schedule is requested. When ConnectorId=0, the Charge Point will calculate the expected consumption for the grid connection.
-    pub connector_id: i64,
+    pub connector_id: i32,
     /// Required. Time in seconds. length of requested schedule
-    pub duration: i64,
+    pub duration: i32,
     /// Optional. Can be used to force a power or current profile
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_rate_unit: Option<ChargingRateUnitType>,
@@ -23,7 +23,7 @@ pub struct GetCompositeScheduleResponse {
     pub status: GetCompositeScheduleStatus,
     /// Optional. The charging schedule contained in this notification applies to a Connector.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub connector_id: Option<i64>,
+    pub connector_id: Option<i32>,
     /// Optional. Time. Periods contained in the charging profile are relative to this point in time. If status is "Rejected", this field may be absent.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub schedule_start: Option<DateTime<Utc>>,

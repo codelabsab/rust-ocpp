@@ -17,15 +17,15 @@ pub struct TransactionEventRequest {
     pub event_type: TransactionEventEnumType,
     pub timestamp: DateTime<Utc>,
     pub trigger_reason: TriggerReasonEnumType,
-    pub seq_no: i64,
+    pub seq_no: i32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offline: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub number_of_phases_used: Option<i64>,
+    pub number_of_phases_used: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cable_max_current: Option<i64>,
+    pub cable_max_current: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reservation_id: Option<i64>,
+    pub reservation_id: Option<i32>,
     pub transaction_info: TransactionType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id_token: Option<IdTokenType>,
@@ -40,9 +40,9 @@ pub struct TransactionEventRequest {
 #[serde(rename_all = "camelCase")]
 pub struct TransactionEventResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub total_cost: Option<f64>,
+    pub total_cost: Option<f32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub charging_priority: Option<i64>,
+    pub charging_priority: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id_token_info: Option<IdTokenInfoType>,
     #[serde(skip_serializing_if = "Option::is_none")]

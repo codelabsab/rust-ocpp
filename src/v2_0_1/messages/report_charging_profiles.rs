@@ -4,11 +4,11 @@ use crate::v2_0_1::enumerations::charging_limit_source_enum_type::ChargingLimitS
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ReportChargingProfilesRequest {
-    pub request_id: i64,
+    pub request_id: i32,
     pub charging_limit_source: ChargingLimitSourceEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tbc: Option<bool>,
-    pub evse_id: i64,
+    pub evse_id: i32,
     pub charging_profile: Vec<ChargingProfileType>,
 }
 

@@ -11,7 +11,7 @@ use crate::v2_0_1::enumerations::reading_context_enum_type::ReadingContextEnumTy
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SampledValueType {
-    pub value: f64,
+    pub value: f32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub context: Option<ReadingContextEnumType>,
     #[serde(skip_serializing_if = "Option::is_none")]

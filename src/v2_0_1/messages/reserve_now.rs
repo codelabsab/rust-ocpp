@@ -10,12 +10,12 @@ use crate::v2_0_1::enumerations::reserve_now_status_enum_type::ReserveNowStatusE
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ReserveNowRequest {
-    pub id: i64,
+    pub id: i32,
     pub expiry_date_time: DateTime<Utc>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub connector_type: Option<ConnectorEnumType>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub evse_id: Option<i64>,
+    pub evse_id: Option<i32>,
     pub id_token: IdTokenType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub group_id_token: Option<IdTokenType>,

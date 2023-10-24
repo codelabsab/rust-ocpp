@@ -8,15 +8,15 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct StartTransactionRequest {
     /// Required. This identifies which connector of the Charge Point is used.
-    pub connector_id: u64,
+    pub connector_id: u32,
     /// Required. This contains the identifier for which a transaction has to be started.
     #[validate(length(min = 1, max = 20))]
     pub id_tag: String, // IdToken, should this be a type?
     /// Required. This contains the meter value in Wh for the connector at start of the transaction.
-    pub meter_start: i64,
+    pub meter_start: i32,
     /// Optional. This contains the id of the reservation that terminates as a result of this transaction.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub reservation_id: Option<i64>,
+    pub reservation_id: Option<i32>,
     /// Required. This contains the date and time on which the transaction is started.
     pub timestamp: DateTime<Utc>,
 }
@@ -28,5 +28,5 @@ pub struct StartTransactionResponse {
     /// Required. This contains information about authorization status, expiry and parent id
     pub id_tag_info: IdTagInfo,
     /// Required. This contains the transaction id supplied by the Central System.
-    pub transaction_id: i64,
+    pub transaction_id: i32,
 }

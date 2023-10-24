@@ -7,10 +7,10 @@ use crate::v2_0_1::datatypes::monitoring_data_type::MonitoringDataType;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyMonitoringReportRequest {
-    pub request_id: i64,
+    pub request_id: i32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tbc: Option<bool>,
-    pub seq_no: i64,
+    pub seq_no: i32,
     pub generated_at: DateTime<Utc>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub monitor: Option<Vec<MonitoringDataType>>,

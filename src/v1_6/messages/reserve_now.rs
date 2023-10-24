@@ -9,7 +9,7 @@ use crate::v1_6::types::ReservationStatus;
 #[serde(rename_all = "camelCase")]
 pub struct ReserveNowRequest {
     /// Required. This contains the id of the connector to be reserved. A value of 0 means that the reservation is not for a specific connector.
-    pub connector_id: u64,
+    pub connector_id: u32,
     /// Required. This contains the date and time when the reservation ends.
     pub expiry_date: DateTime<Utc>,
     /// Required. The identifier for which the Charge Point has to reserve a connector.
@@ -20,7 +20,7 @@ pub struct ReserveNowRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parent_id_tag: Option<String>, // IdToken, shoult this be a type?
     /// Required. Unique id for this reservation.
-    pub reservation_id: i64,
+    pub reservation_id: i32,
 }
 
 /// This contains the field definitions of the RemoteStopTransactionResponse PDU sent from Charge Point to Central System. See also Remote Stop Transaction

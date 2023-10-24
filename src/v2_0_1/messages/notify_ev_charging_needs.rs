@@ -8,8 +8,8 @@ use crate::v2_0_1::enumerations::notify_ev_charging_needs_status_enum_type::Noti
 #[serde(rename_all = "camelCase")]
 pub struct NotifyEVChargingNeedsRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_schedule_tuples: Option<i64>,
-    pub evse_id: i64,
+    pub max_schedule_tuples: Option<i32>,
+    pub evse_id: i32,
     pub charging_needs: ChargingNeedsType,
 }
 

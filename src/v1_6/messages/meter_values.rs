@@ -5,10 +5,10 @@ use crate::v1_6::types::MeterValue;
 #[serde(rename_all = "camelCase")]
 pub struct MeterValuesRequest {
     /// Required. This contains a number (>0) designating a connector of the Charge Point.‘0’ (zero) is used to designate the main powermeter.
-    pub connector_id: u64,
+    pub connector_id: u32,
     /// Optional. The transaction to which these meter samples are related.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub transaction_id: Option<i64>,
+    pub transaction_id: Option<i32>,
     /// Required. The sampled meter values with timestamps.
     pub meter_value: Vec<MeterValue>,
 }

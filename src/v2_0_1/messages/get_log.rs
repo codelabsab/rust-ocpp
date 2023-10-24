@@ -13,13 +13,13 @@ pub struct GetLogRequest {
     /// This contains the type of log file that theCharging Station should send
     pub log_type: LogEnumType,
     /// The Id of this request
-    pub request_id: i64,
+    pub request_id: i32,
     /// This specifies how many times the ChargingStation must try to upload the log before giving up. If thisfield is not present, it is left to Charging Station to decidehow many times it wants to retry
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub retries: Option<i64>,
+    pub retries: Option<i32>,
     /// The interval in seconds after which a retry maybe attempted. If this field is not present, it is left toCharging Station to decide how long to wait between attempts
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub retry_interval: Option<i64>,
+    pub retry_interval: Option<i32>,
     /// This field specifies the requested log and thelocation to which the log should be sent.
     pub log: LogParametersType,
 }

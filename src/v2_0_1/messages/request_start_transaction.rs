@@ -8,8 +8,8 @@ use crate::v2_0_1::enumerations::request_start_stop_status_enum_type::RequestSta
 #[serde(rename_all = "camelCase")]
 pub struct RequestStartTransactionRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub evse_id: Option<i64>,
-    pub remote_start_id: i64,
+    pub evse_id: Option<i32>,
+    pub remote_start_id: i32,
     pub id_token: IdTokenType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_profile: Option<ChargingProfileType>,

@@ -7,11 +7,11 @@ use crate::v2_0_1::enumerations::generic_status_enum_type::GenericStatusEnumType
 pub struct PublishFirmwareRequest {
     pub location: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub retries: Option<i64>,
+    pub retries: Option<i32>,
     pub checksum: String,
-    pub request_id: i64,
+    pub request_id: i32,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub retry_interval: Option<i64>,
+    pub retry_interval: Option<i32>,
 }
 
 /// This contains the field definition of the PublishFirmwareResponse PDU sent by the Local Controller to the CSMS in response to a PublishFirmwareRequest.

@@ -12,8 +12,8 @@ pub struct NetworkConnectionProfileType {
     pub ocpp_version: OCPPVersionEnumType,
     pub ocpp_transport: OCPPTransportEnumType,
     pub ocpp_csms_url: String,
-    pub message_timeout: i64,
-    pub security_profile: i64,
+    pub message_timeout: i32,
+    pub security_profile: i32,
     pub ocpp_interface: OCPPInterfaceEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub vpn: Option<VPNType>,

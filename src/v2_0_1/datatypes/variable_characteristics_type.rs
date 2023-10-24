@@ -9,9 +9,9 @@ pub struct VariableCharacteristicsType {
     pub unit: Option<String>,
     pub data_type: DataEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub min_limit: Option<f64>,
+    pub min_limit: Option<f32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_limit: Option<f64>,
+    pub max_limit: Option<f32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub values_list: Option<String>,
     pub supports_monitoring: bool,

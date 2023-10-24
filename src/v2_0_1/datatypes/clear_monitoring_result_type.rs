@@ -8,7 +8,7 @@ pub struct ClearMonitoringResultType {
     /// Required. Result of the clear request for this monitor, identified by its Id.
     pub status: ClearMonitoringStatusEnumType,
     /// Required. Id of the monitor of which a clear was requested.
-    pub id: i64,
+    pub id: i32,
     /// Optional. Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,

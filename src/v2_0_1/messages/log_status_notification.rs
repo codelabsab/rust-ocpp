@@ -9,7 +9,7 @@ pub struct LogStatusNotificationRequest {
     pub status: UploadLogStatusEnumType,
     /// The request id that was provided in GetLogRequest that started this log upload. This field is mandatory, unless the message was triggered by a TriggerMessageRequest AND there is no log upload ongoing.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub request_id: Option<i64>,
+    pub request_id: Option<i32>,
 }
 
 /// LogStatusNotificationResponse, sent by the CSMS to the Charging Station in response to LogStatusNotificationRequest. No fields are defined.

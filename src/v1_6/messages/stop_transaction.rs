@@ -12,11 +12,11 @@ pub struct StopTransactionRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id_tag: Option<String>, // IdToken, should this be a type?
     /// Optional. Only filled in when request applies to a specific connector.
-    pub meter_stop: i64,
+    pub meter_stop: i32,
     /// Required. This contains the date and time on which the transaction is stopped.
     pub timestamp: DateTime<Utc>,
     /// Required. This contains the transaction-id as received by the StartTransactionResponse
-    pub transaction_id: i64,
+    pub transaction_id: i32,
     /// Optional. This contains the reason why the transaction was stopped. MAY only be omitted when the Reason is "Local".
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reason: Option<Reason>,

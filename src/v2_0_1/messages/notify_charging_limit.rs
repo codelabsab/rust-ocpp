@@ -9,7 +9,7 @@ use crate::v2_0_1::datatypes::charging_schedule_type::ChargingScheduleType;
 pub struct NotifyChargingLimitRequest {
     /// The charging schedule contained in thisnotification applies to an EVSE. evseId must be > 0.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub evse_id: Option<i64>,
+    pub evse_id: Option<i32>,
     /// This contains the source of the charging limitand whether it is grid critical.
     pub charging_limit: ChargingLimitType,
     /// Contains limits for the available power orcurrent over time, as set by the external source.

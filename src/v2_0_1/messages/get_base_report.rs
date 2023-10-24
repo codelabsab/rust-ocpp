@@ -9,7 +9,7 @@ use crate::v2_0_1::enumerations::report_base_enum_type::ReportBaseEnumType;
 #[serde(rename_all = "camelCase")]
 pub struct GetBaseReportRequest {
     /// The Id of the request.
-    pub request_id: i64,
+    pub request_id: i32,
     /// This field specifies the report base.
     pub report_base: ReportBaseEnumType,
 }
