@@ -11,7 +11,7 @@ pub struct SetMonitoringDataType {
     pub id: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction: Option<bool>,
-    pub value: f64,
+    pub value: f32,
     #[serde(rename = "type")]
     pub kind: MonitorEnumType,
     pub severity: u8,

@@ -40,7 +40,7 @@ pub struct TransactionEventRequest {
 #[serde(rename_all = "camelCase")]
 pub struct TransactionEventResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub total_cost: Option<f64>,
+    pub total_cost: Option<f32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_priority: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]

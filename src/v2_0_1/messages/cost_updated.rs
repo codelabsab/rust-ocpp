@@ -8,7 +8,7 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct CostUpdatedRequest {
     /// Current total cost, based on the information known by the CSMS, of the transaction including taxes. In the currency configured with the configuration Variable: [Currency]
-    pub total_cost: f64,
+    pub total_cost: f32,
     /// Transaction Id of the transaction the current cost are asked for.
     #[validate(length(min = 0, max = 36))]
     pub transaction_id: String,
