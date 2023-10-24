@@ -10,7 +10,7 @@ pub struct ChargingProfile {
     pub charging_profile_id: i32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction_id: Option<i32>,
-    pub stack_level: u64,
+    pub stack_level: u32,
     pub charging_profile_purpose: ChargingProfilePurposeType,
     pub charging_profile_kind: ChargingProfileKindType,
     #[serde(skip_serializing_if = "Option::is_none")]

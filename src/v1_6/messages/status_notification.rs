@@ -8,7 +8,7 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct StatusNotificationRequest {
     /// Required. The id of the connector for which the status is reported. Id '0' (zero) is used if the status is for the Charge Point main controller.
-    pub connector_id: u64,
+    pub connector_id: u32,
     /// Required. This contains the error code reported by the Charge Point.
     pub error_code: ChargePointErrorCode, // IdToken, should this be a type?
     /// Optional. Additional free format information related to the error.

@@ -6,7 +6,7 @@ use super::relative_time_interval_type::RelativeTimeIntervalType;
 #[serde(rename_all = "camelCase")]
 pub struct SalesTariffEntryType {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub e_price_level: Option<u64>,
+    pub e_price_level: Option<u32>,
     pub relative_time_interval: RelativeTimeIntervalType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub consumption_cost: Option<Vec<ConsumptionCostType>>,

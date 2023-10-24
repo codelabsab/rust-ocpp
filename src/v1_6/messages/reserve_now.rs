@@ -9,7 +9,7 @@ use crate::v1_6::types::ReservationStatus;
 #[serde(rename_all = "camelCase")]
 pub struct ReserveNowRequest {
     /// Required. This contains the id of the connector to be reserved. A value of 0 means that the reservation is not for a specific connector.
-    pub connector_id: u64,
+    pub connector_id: u32,
     /// Required. This contains the date and time when the reservation ends.
     pub expiry_date: DateTime<Utc>,
     /// Required. The identifier for which the Charge Point has to reserve a connector.

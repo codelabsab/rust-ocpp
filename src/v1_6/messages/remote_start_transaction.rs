@@ -8,7 +8,7 @@ use crate::v1_6::types::{ChargingProfile, RemoteStartStopStatus};
 pub struct RemoteStartTransactionRequest {
     /// Optional. Number of the connector on which to start the transaction. connectorId SHALL be > 0
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub connector_id: Option<u64>,
+    pub connector_id: Option<u32>,
     /// Required. The identifier that Charge Point must use to start a transaction.
     #[validate(length(min = 1, max = 20))]
     pub id_tag: String, // IdToken, should this be a type?

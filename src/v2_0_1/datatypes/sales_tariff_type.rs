@@ -7,7 +7,7 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct SalesTariffType {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<u64>,
+    pub id: Option<u32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sales_tariff_description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]

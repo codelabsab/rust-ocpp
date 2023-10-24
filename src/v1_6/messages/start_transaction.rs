@@ -8,7 +8,7 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct StartTransactionRequest {
     /// Required. This identifies which connector of the Charge Point is used.
-    pub connector_id: u64,
+    pub connector_id: u32,
     /// Required. This contains the identifier for which a transaction has to be started.
     #[validate(length(min = 1, max = 20))]
     pub id_tag: String, // IdToken, should this be a type?
