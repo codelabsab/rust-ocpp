@@ -31,6 +31,6 @@ jobs:
       - name: Generate lcov.info for Code coverage
         run: ./grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "/*" -o lcov.info
       - name: Codecov
-        uses: codecov/codecov-action@v3.1.0
+        uses: codecov/codecov-action@v4.2.0
         with:
           files: ./lcov.info
