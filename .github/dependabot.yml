@@ -9,7 +9,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    versioning-strategy: "increase-if-necessary"
 
   - package-ecosystem: "github-actions"
     directory: "/"
