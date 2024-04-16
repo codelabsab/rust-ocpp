@@ -2,8 +2,11 @@ name: Build, Test and Publish
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
+    paths:
+      - "**.rs"
+  pull_request:
+    branches: [main]
     paths:
       - "**.rs"
   workflow_dispatch:
@@ -12,6 +15,8 @@ on:
         description: "Version to publish"
         required: false
         default: "0.4.3"
+    paths:
+      - "**.rs"
 
 env:
   CARGO_TERM_COLOR: always
