@@ -1,0 +1,66 @@
+name: Build, Test and Publish
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "**.rs"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish"
+        required: false
+        default: "0.4.3"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install latest nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          components: llvm-tools-preview
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --all-features --verbose
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: target
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+      - name: Run tests
+        run: LLVM_PROFILE_FILE="your_name-%p-%m.profraw" cargo test --verbose --all-features
+      - name: download grcov for code coverage
+        run: curl -L https://github.com/mozilla/grcov/releases/latest/download/grcov-x86_64-unknown-linux-gnu.tar.bz2 | tar jxf -
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+      - uses: katyo/publish-crates@v2
+        with:
+          registry-token: ${{ secrets.CARGO_TOKEN }}
