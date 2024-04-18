@@ -1,0 +1,40 @@
+name: Build, Test and Publish
+
+on:
+  workflow_dispatch: {}
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-test-publish:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+    steps:
+      # build
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          components: llvm-tools-preview, cling, rustfmt
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --all-features --verbose
+
+      # test
+      - name: Run tests
+        run: LLVM_PROFILE_FILE="your_name-%p-%m.profraw" cargo test --verbose --all-features
+      - name: download grcov for code coverage
+        run: curl -L https://github.com/mozilla/grcov/releases/latest/download/grcov-x86_64-unknown-linux-gnu.tar.bz2 | tar jxf -
+      - name: Codecov
+        uses: codecov/codecov-action@v4.3.0
+        with:
+          files: ./lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      # publish
+      - uses: katyo/publish-crates@v2
+        with:
+          registry-token: ${{ secrets.CARGO_TOKEN }}
