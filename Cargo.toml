@@ -16,9 +16,6 @@ exclude = ["docs/", "src/tests"]
 [package.metadata.docs.rs]
 all-features = true
 
-[badges]
-maintenance = { status = "experimental" }
-
 [features]
 default = ["v2_0_1"]
 v1_6 = []
