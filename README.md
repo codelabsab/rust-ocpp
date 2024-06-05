@@ -19,25 +19,25 @@ You can find the tests in `schema_validation.rs` for both `v.1.6` and `v2.0.1`
 
 ## How to Use
 
-Add `rust-ocpp` as a dependency in your `Cargo.toml`. It will default to version `2.0.1`
+Add `rust-ocpp` as a dependency in your `Cargo.toml`. It will default to version `2.0.1` of OCPP.
 
 ```toml
 [dependencies]
-rust-ocpp = "0.3.1"
+rust-ocpp = "1.0"
 ```
 
 To use `1.6` you need to specify a protocol version with a feature flag:
 
 ```toml
 [dependencies]
-rust-ocpp = { version = "0.3.1", features = ["v1_6"] }
+rust-ocpp = { version = "1.0", features = ["v1_6"] }
 ```
 
 or use both versions
 
 ```toml
 [dependencies]
-rust-ocpp = { version = "0.3.1", features = ["v2_0_1", "v1_6"] }
+rust-ocpp = { version = "1.0", features = ["v2_0_1", "v1_6"] }
 ```
 
 ## How to Build
