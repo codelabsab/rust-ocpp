@@ -199,7 +199,7 @@ pub const LOCAL_AUTH_LIST_ENABLED: &str = "LocalAuthListEnabled";
 
 /// # From OCPP Specification
 /// Maximum number of identifications that can be stored in the Local Authorization List
-pub const LOCAL_AUTH_LIST_MAX_LENGTH: &str = "LocalAuthListEnabled";
+pub const LOCAL_AUTH_LIST_MAX_LENGTH: &str = "LocalAuthListMaxLength";
 
 /// # From OCPP Specification
 /// Maximum number of identifications that can be send in a single SendLocalList.req
