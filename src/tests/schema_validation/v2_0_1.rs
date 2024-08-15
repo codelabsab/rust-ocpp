@@ -93,6 +93,7 @@ mod tests {
     use crate::v2_0_1::enumerations::get_certificate_status_enum_type::GetCertificateStatusEnumType;
     use crate::v2_0_1::enumerations::get_charging_profile_status_enum_type::GetChargingProfileStatusEnumType;
     use crate::v2_0_1::enumerations::get_display_messages_status_enum_type::GetDisplayMessagesStatusEnumType;
+    use crate::v2_0_1::enumerations::get_installed_certificate_status_enum_type::GetInstalledCertificateStatusEnumType;
     use crate::v2_0_1::enumerations::get_variable_status_enum_type::GetVariableStatusEnumType;
     use crate::v2_0_1::enumerations::hash_algorithm_enum_type::HashAlgorithmEnumType;
     use crate::v2_0_1::enumerations::id_token_enum_type::IdTokenEnumType;
@@ -1289,7 +1290,7 @@ mod tests {
     #[test]
     fn validate_get_installed_certificate_ids_response() {
         let test = GetInstalledCertificateIdsResponse {
-            status: GetDisplayMessagesStatusEnumType::Accepted,
+            status: GetInstalledCertificateStatusEnumType::Accepted,
             certificate_hash_data_chain: Some(vec![CertificateHashDataChainType {
                 certificate_type: GetCertificateIdUseEnumType::V2GRootCertificate,
                 certificate_hash_data: CertificateHashDataType {
