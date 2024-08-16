@@ -976,7 +976,7 @@ dependencies = [
 
 [[package]]
 name = "rust-ocpp"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "chrono",
  "jsonschema",
