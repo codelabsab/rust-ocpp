@@ -85,3 +85,4 @@ pub use self::unit_of_measure::UnitOfMeasure;
 pub use self::unlock_status::UnlockStatus;
 pub use self::update_status::UpdateStatus;
 pub use self::update_type::UpdateType;
+pub use self::value_format::ValueFormat;
