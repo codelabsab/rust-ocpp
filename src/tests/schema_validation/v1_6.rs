@@ -74,6 +74,7 @@ mod tests {
     };
     use chrono::Utc;
     use jsonschema::JSONSchema;
+    use rust_decimal_macros::dec;
 
     #[test]
     fn validate_authorize() {
@@ -502,10 +503,10 @@ mod tests {
                 charging_rate_unit: ChargingRateUnitType::W,
                 charging_schedule_period: vec![ChargingSchedulePeriod {
                     start_period: 0,
-                    limit: 0.0,
+                    limit: dec!(0.0),
                     number_phases: Some(1),
                 }],
-                min_charging_rate: Some(1.0),
+                min_charging_rate: Some(dec!(1.0)),
             }),
         };
 
@@ -939,7 +940,7 @@ mod tests {
                     charging_rate_unit: ChargingRateUnitType::W,
                     charging_schedule_period: vec![ChargingSchedulePeriod {
                         start_period: 0,
-                        limit: 0.0,
+                        limit: dec!(0.0),
                         number_phases: None,
                     }],
                     min_charging_rate: None,

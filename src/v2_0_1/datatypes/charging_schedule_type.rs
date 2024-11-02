@@ -1,5 +1,6 @@
 use chrono::DateTime;
 use chrono::Utc;
+use rust_decimal::Decimal;
 use validator::Validate;
 
 use super::charging_schedule_period_type::ChargingSchedulePeriodType;
@@ -23,7 +24,8 @@ pub struct ChargingScheduleType {
     pub charging_rate_unit: ChargingRateUnitEnumType,
     /// Optional. Minimum charging rate supported by the EV. The unit of measure is defined by the chargingRateUnit. This parameter is intended to be used by a local smart charging algorithm to optimize the power allocation for in the case a charging process is inefficient at lower charging rates. Accepts at most one digit fraction (e.g. 8.1)
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub min_charging_rate: Option<f32>,
+    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+    pub min_charging_rate: Option<Decimal>,
     /// Required. List of ChargingSchedulePeriod elements defining maximum power or current usage over time. The maximum number of periods, that is supported by the Charging Station, if less than 1024, is set by device model variable SmartChargingCtrlr.PeriodsPerSchedule
     #[validate(length(min = 1))]
     pub charging_schedule_period: Vec<ChargingSchedulePeriodType>,
