@@ -300,6 +300,7 @@ mod tests {
     use crate::v2_0_1::messages::update_firmware::{UpdateFirmwareRequest, UpdateFirmwareResponse};
     use chrono::Utc;
     use jsonschema::JSONSchema;
+    use rust_decimal_macros::dec;
 
     #[test]
     fn validate_authorize_request() {
@@ -780,7 +781,7 @@ mod tests {
     #[test]
     fn validate_cost_updated_request() {
         let test = CostUpdatedRequest {
-            total_cost: 0.0,
+            total_cost: dec!(0.0),
             transaction_id: "".to_string(),
         };
         let schema = include_str!("schemas/v2.0.1/CostUpdatedRequest.json");
@@ -1203,7 +1204,7 @@ mod tests {
                 charging_rate_unit: ChargingRateUnitEnumType::W,
                 charging_schedule_period: vec![ChargingSchedulePeriodType {
                     start_period: 0,
-                    limit: 0.0,
+                    limit: dec!(0.0),
                     number_phases: Some(1),
                     phase_to_use: Some(1),
                 }],
@@ -1739,7 +1740,7 @@ mod tests {
             meter_value: vec![MeterValueType {
                 timestamp: Utc::now(),
                 sampled_value: vec![SampledValueType {
-                    value: 0.0,
+                    value: dec!(0.0),
                     context: Some(ReadingContextEnumType::SampleClock),
                     measurand: Some(MeasurandEnumType::CurrentExport),
                     phase: Some(PhaseEnumType::L1),
@@ -1799,10 +1800,10 @@ mod tests {
                 start_schedule: Some(Utc::now()),
                 duration: Some(10),
                 charging_rate_unit: ChargingRateUnitEnumType::W,
-                min_charging_rate: Some(10.0),
+                min_charging_rate: Some(dec!(10.0)),
                 charging_schedule_period: vec![ChargingSchedulePeriodType {
                     start_period: 0,
-                    limit: 0.0,
+                    limit: dec!(0.0),
                     number_phases: Some(0),
                     phase_to_use: Some(0),
                 }],
@@ -2022,10 +2023,10 @@ mod tests {
                 start_schedule: Some(Utc::now()),
                 duration: Some(0),
                 charging_rate_unit: ChargingRateUnitEnumType::W,
-                min_charging_rate: Some(0.0),
+                min_charging_rate: Some(dec!(0.0)),
                 charging_schedule_period: vec![ChargingSchedulePeriodType {
                     start_period: 0,
-                    limit: 0.0,
+                    limit: dec!(0.0),
                     number_phases: Some(0),
                     phase_to_use: Some(0),
                 }],
@@ -2170,7 +2171,7 @@ mod tests {
                 variable_monitoring: vec![VariableMonitoringType {
                     id: 0,
                     transaction: false,
-                    value: 0.0,
+                    value: dec!(0.0),
                     kind: MonitorEnumType::UpperThreshold,
                     severity: 0,
                 }],
@@ -2235,8 +2236,8 @@ mod tests {
                 variable_characteristics: Some(VariableCharacteristicsType {
                     unit: Some("unit".to_string()),
                     data_type: DataEnumType::String,
-                    min_limit: Some(0.0),
-                    max_limit: Some(0.0),
+                    min_limit: Some(dec!(0.0)),
+                    max_limit: Some(dec!(0.0)),
                     values_list: Some("values_list".to_string()),
                     supports_monitoring: false,
                 }),
@@ -2373,10 +2374,10 @@ mod tests {
                     start_schedule: Some(Utc::now()),
                     duration: Some(1),
                     charging_rate_unit: ChargingRateUnitEnumType::W,
-                    min_charging_rate: Some(1.0),
+                    min_charging_rate: Some(dec!(1.0)),
                     charging_schedule_period: vec![ChargingSchedulePeriodType {
                         start_period: 0,
-                        limit: 0.0,
+                        limit: dec!(0.0),
                         number_phases: Some(1),
                         phase_to_use: Some(4),
                     }],
@@ -2460,10 +2461,10 @@ mod tests {
                     start_schedule: Some(Utc::now()),
                     duration: Some(1),
                     charging_rate_unit: ChargingRateUnitEnumType::W,
-                    min_charging_rate: Some(0.1),
+                    min_charging_rate: Some(dec!(0.1)),
                     charging_schedule_period: vec![ChargingSchedulePeriodType {
                         start_period: 0,
-                        limit: 0.0,
+                        limit: dec!(0.0),
                         number_phases: Some(1),
                         phase_to_use: Some(1),
                     }],
@@ -2836,10 +2837,10 @@ mod tests {
                     start_schedule: Some(Utc::now()),
                     duration: Some(0),
                     charging_rate_unit: ChargingRateUnitEnumType::W,
-                    min_charging_rate: Some(0.0),
+                    min_charging_rate: Some(dec!(0.0)),
                     charging_schedule_period: vec![ChargingSchedulePeriodType {
                         start_period: 0,
-                        limit: 0.0,
+                        limit: dec!(0.0),
                         number_phases: Some(0),
                         phase_to_use: Some(0),
                     }],
@@ -3110,7 +3111,7 @@ mod tests {
             set_monitoring_data: vec![SetMonitoringDataType {
                 id: Some(0),
                 transaction: Some(false),
-                value: 0.0,
+                value: dec!(0.0),
                 kind: MonitorEnumType::UpperThreshold,
                 severity: 0,
                 component: ComponentType {
@@ -3360,7 +3361,7 @@ mod tests {
             meter_value: Some(vec![MeterValueType {
                 timestamp: Utc::now(),
                 sampled_value: vec![SampledValueType {
-                    value: 0.0,
+                    value: dec!(0.0),
                     context: Some(ReadingContextEnumType::InterruptionBegin),
                     measurand: Some(MeasurandEnumType::CurrentExport),
                     phase: Some(PhaseEnumType::L1),
@@ -3394,7 +3395,7 @@ mod tests {
     #[test]
     fn validate_transaction_event_response() {
         let test = TransactionEventResponse {
-            total_cost: Some(0.0),
+            total_cost: Some(dec!(0.0)),
             charging_priority: Some(0),
             id_token_info: Some(IdTokenInfoType {
                 status: AuthorizationStatusEnumType::Accepted,

@@ -1,3 +1,5 @@
+use rust_decimal::Decimal;
+
 use crate::v2_0_1::enumerations::monitor_enum_type::MonitorEnumType;
 
 /// A monitoring setting for a variable.
@@ -7,7 +9,8 @@ use crate::v2_0_1::enumerations::monitor_enum_type::MonitorEnumType;
 pub struct VariableMonitoringType {
     pub id: i32,
     pub transaction: bool,
-    pub value: f32,
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
+    pub value: Decimal,
     #[serde(rename = "type")]
     pub kind: MonitorEnumType,
     pub severity: u8,

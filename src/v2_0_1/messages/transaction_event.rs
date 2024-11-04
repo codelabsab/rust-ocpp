@@ -1,5 +1,6 @@
 use chrono::DateTime;
 use chrono::Utc;
+use rust_decimal::Decimal;
 
 use crate::v2_0_1::datatypes::evse_type::EVSEType;
 use crate::v2_0_1::datatypes::id_token_info_type::IdTokenInfoType;
@@ -40,7 +41,8 @@ pub struct TransactionEventRequest {
 #[serde(rename_all = "camelCase")]
 pub struct TransactionEventResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub total_cost: Option<f32>,
+    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+    pub total_cost: Option<Decimal>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_priority: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]

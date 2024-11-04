@@ -1,3 +1,5 @@
+use rust_decimal::Decimal;
+
 use super::component_type::ComponentType;
 use super::variable_type::VariableType;
 use crate::v2_0_1::enumerations::monitor_enum_type::MonitorEnumType;
@@ -11,7 +13,8 @@ pub struct SetMonitoringDataType {
     pub id: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction: Option<bool>,
-    pub value: f32,
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
+    pub value: Decimal,
     #[serde(rename = "type")]
     pub kind: MonitorEnumType,
     pub severity: u8,
