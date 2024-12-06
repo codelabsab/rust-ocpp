@@ -28,7 +28,7 @@ pub enum ConnectorEnumType {
     SCEE77,
     #[serde(rename = "sType2")]
     SType2,
-    #[serde(rename = "sType2")]
+    #[serde(rename = "sType3")]
     SType3,
     Other1PhMax16A,
     Other1PhOver16A,
