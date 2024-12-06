@@ -299,7 +299,7 @@ mod tests {
     };
     use crate::v2_0_1::messages::update_firmware::{UpdateFirmwareRequest, UpdateFirmwareResponse};
     use chrono::Utc;
-    use jsonschema::JSONSchema;
+    use jsonschema::Validator;
     use rust_decimal_macros::dec;
 
     #[test]
@@ -326,7 +326,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/AuthorizeRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -367,7 +367,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/AuthorizeResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -396,7 +396,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/BootNotificationRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -422,7 +422,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/BootNotificationResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -439,7 +439,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/CancelReservationRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -463,7 +463,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/CancelReservationResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -483,7 +483,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/CertificateSignedRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -507,7 +507,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/CertificateSignedResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -530,7 +530,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ChangeAvailabilityRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -554,7 +554,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ChangeAvailabilityResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -571,7 +571,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ClearCacheRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -595,7 +595,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ClearCacheResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -621,7 +621,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ClearChargingProfileRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -645,7 +645,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ClearChargingProfileResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -662,7 +662,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ClearDisplayMessageRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -686,7 +686,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ClearDisplayMessageResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -706,7 +706,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ClearedChargingLimitRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -724,7 +724,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ClearedChargingLimitResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -741,7 +741,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ClearVariableMonitoringRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -767,7 +767,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ClearVariableMonitoringResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -787,7 +787,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/CostUpdatedRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -803,7 +803,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/CostUpdatedResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -838,7 +838,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/CustomerInformationRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -860,7 +860,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/CustomerInformationResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -880,7 +880,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/DataTransferRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -903,7 +903,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/DataTransferResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -926,7 +926,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/DeleteCertificateRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -948,7 +948,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/DeleteCertificateResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -967,7 +967,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/FirmwareStatusNotificationRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -983,7 +983,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/FirmwareStatusNotificationResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1003,7 +1003,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/Get15118EVCertificateRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1026,7 +1026,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/Get15118EVCertificateResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1045,7 +1045,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetBaseReportRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1067,7 +1067,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetBaseReportResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1091,7 +1091,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetCertificateStatusRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1114,7 +1114,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetCertificateStatusResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1141,7 +1141,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetChargingProfilesRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1163,7 +1163,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetChargingProfilesResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1183,7 +1183,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetCompositeScheduleRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1217,7 +1217,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetCompositeScheduleResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1238,7 +1238,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetDisplayMessagesRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1260,7 +1260,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetDisplayMessagesResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1278,7 +1278,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetInstalledCertificateIdsRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1315,7 +1315,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetInstalledCertificateIdsResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1331,7 +1331,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetLocalListVersionRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1347,7 +1347,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetLocalListVersionResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1373,7 +1373,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetLogRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1396,7 +1396,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetLogResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1429,7 +1429,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetMonitoringReportRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1451,7 +1451,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetMonitoringReportResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1484,7 +1484,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetReportRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1506,7 +1506,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetReportResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1524,7 +1524,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetTransactionStatusRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1543,7 +1543,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetTransactionStatusResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1575,7 +1575,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetVariablesRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1613,7 +1613,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/GetVariablesResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1629,7 +1629,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/HeartbeatRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1647,7 +1647,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/HeartbeatResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1666,7 +1666,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/InstallCertificateRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1688,7 +1688,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/InstallCertificateResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1707,7 +1707,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/LogStatusNotificationRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1723,7 +1723,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/LogStatusNotificationResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1761,7 +1761,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/MeterValuesRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1777,7 +1777,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/MeterValuesResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1832,7 +1832,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyChargingLimitRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1848,7 +1848,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyChargingLimitResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1870,7 +1870,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyCustomerInformationRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1886,7 +1886,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyCustomerInformationResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1926,7 +1926,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyDisplayMessagesRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1942,7 +1942,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyDisplayMessagesResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -1981,7 +1981,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyEVChargingNeedsRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2003,7 +2003,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyEVChargingNeedsResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2055,7 +2055,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyEVChargingScheduleRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2077,7 +2077,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyEVChargingScheduleResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2122,7 +2122,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyEventRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2138,7 +2138,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyEventResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2180,7 +2180,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyMonitoringReportRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2196,7 +2196,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyMonitoringReportResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2246,7 +2246,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyReportRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2262,7 +2262,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/NotifyReportResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2284,7 +2284,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/PublishFirmwareRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2306,7 +2306,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/PublishFirmwareResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2326,7 +2326,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/PublishFirmwareStatusNotificationRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2342,7 +2342,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/PublishFirmwareStatusNotificationResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2407,7 +2407,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ReportChargingProfilesRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2423,7 +2423,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ReportChargingProfilesResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2502,7 +2502,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/RequestStartTransactionRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2525,7 +2525,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/RequestStartTransactionResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2543,7 +2543,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/RequestStopTransactionRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2565,7 +2565,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/RequestStopTransactionResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2584,7 +2584,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ReservationStatusUpdateRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2600,7 +2600,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ReservationStatusUpdateResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2637,7 +2637,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ReserveNowRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2659,7 +2659,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ReserveNowResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2678,7 +2678,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ResetRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2700,7 +2700,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/ResetResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2720,7 +2720,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SecurityEventNotificationRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2736,7 +2736,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SecurityEventNotificationResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2786,7 +2786,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SendLocalListRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2808,7 +2808,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SendLocalListResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2870,7 +2870,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetChargingProfileRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2892,7 +2892,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetChargingProfileResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2930,7 +2930,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetDisplayMessageRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2952,7 +2952,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetDisplayMessageResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2970,7 +2970,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetMonitoringBaseRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -2992,7 +2992,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetMonitoringBaseResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3008,7 +3008,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetMonitoringLevelRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3030,7 +3030,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetMonitoringLevelResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3073,7 +3073,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetNetworkProfileRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3095,7 +3095,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetNetworkProfileResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3131,7 +3131,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetVariableMonitoringRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3170,7 +3170,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetVariableMonitoringResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3203,7 +3203,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetVariablesRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3240,7 +3240,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SetVariablesResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3259,7 +3259,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SignCertificateRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3281,7 +3281,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/SignCertificateResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3302,7 +3302,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/StatusNotificationRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3318,7 +3318,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/StatusNotificationResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3382,7 +3382,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/TransactionEventRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3427,7 +3427,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/TransactionEventResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3449,7 +3449,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/TriggerMessageRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3471,7 +3471,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/TriggerMessageResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3490,7 +3490,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/UnlockConnectorRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3512,7 +3512,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/UnlockConnectorResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3530,7 +3530,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/UnpublishFirmwareRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3548,7 +3548,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/UnpublishFirmwareResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3575,7 +3575,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/UpdateFirmwareRequest.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
@@ -3597,7 +3597,7 @@ mod tests {
         let schema = include_str!("schemas/v2.0.1/UpdateFirmwareResponse.json");
         let schema = serde_json::from_str(schema).unwrap();
         let instance = serde_json::to_value(test).unwrap();
-        let compiled = JSONSchema::compile(&schema).expect("A valid schema");
+        let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
         if let Err(errors) = result {
             for error in errors {
