@@ -13,7 +13,8 @@ pub struct DataTransferRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message_id: Option<String>,
     /// Data without specified length or format. This needs to be decided by both parties (Open to implementation).
-    pub data: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub data: Option<String>,
     /// This identifies the Vendor specific     implementation
     #[validate(length(min = 0, max = 255))]
     pub vendor_id: String,
@@ -26,7 +27,8 @@ pub struct DataTransferResponse {
     /// This indicates the success or failure of the data transfer.
     pub status: DataTransferStatusEnumType,
     /// Data without specified length or format, in response to request.
-    pub data: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub data: Option<String>,
     /// Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,
