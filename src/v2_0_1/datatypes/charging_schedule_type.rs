@@ -23,8 +23,11 @@ pub struct ChargingScheduleType {
     /// Required. The unit of measure Limit is expressed in.
     pub charging_rate_unit: ChargingRateUnitEnumType,
     /// Optional. Minimum charging rate supported by the EV. The unit of measure is defined by the chargingRateUnit. This parameter is intended to be used by a local smart charging algorithm to optimize the power allocation for in the case a charging process is inefficient at lower charging rates. Accepts at most one digit fraction (e.g. 8.1)
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub min_charging_rate: Option<Decimal>,
     /// Required. List of ChargingSchedulePeriod elements defining maximum power or current usage over time. The maximum number of periods, that is supported by the Charging Station, if less than 1024, is set by device model variable SmartChargingCtrlr.PeriodsPerSchedule
     #[validate(length(min = 1))]

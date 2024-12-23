@@ -10,11 +10,17 @@ pub struct VariableCharacteristicsType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub unit: Option<String>,
     pub data_type: DataEnumType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub min_limit: Option<Decimal>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub max_limit: Option<Decimal>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub values_list: Option<String>,
