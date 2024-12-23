@@ -2226,6 +2226,113 @@ mod tests {
         }
         assert!(compiled.is_valid(&instance));
     }
+    /**
+     * Some optional fields including maxLimit of the VariableCharacteristicsType are not
+     * included in the payload in order to validate deserialization of optional fields.
+     */
+    #[test]
+    fn validate_notify_report_request_from_json() {
+        let json = r#"{
+    "generatedAt": "2024-12-23T03:38:31.625Z",
+    "reportData": [
+      {
+        "component": {
+          "name": "AlignedDataCtrlr"
+        },
+        "variable": {
+          "name": "Interval"
+        },
+        "variableAttribute": [
+          {
+            "mutability": "ReadWrite",
+            "value": "10"
+          }
+        ],
+        "variableCharacteristics": {
+          "dataType": "integer",
+          "supportsMonitoring": true,
+          "unit": "seconds"
+        }
+      },
+      {
+        "component": {
+          "name": "AlignedDataCtrlr"
+        },
+        "variable": {
+          "name": "Measurands"
+        },
+        "variableAttribute": [
+          {
+            "mutability": "ReadWrite",
+            "value": "Energy.Active.Import.Register"
+          }
+        ],
+        "variableCharacteristics": {
+          "dataType": "MemberList",
+          "supportsMonitoring": true
+        }
+      },
+      {
+        "component": {
+          "name": "AlignedDataCtrlr"
+        },
+        "variable": {
+          "name": "TxEndedInterval"
+        },
+        "variableAttribute": [
+          {
+            "mutability": "ReadWrite",
+            "value": "10"
+          }
+        ],
+        "variableCharacteristics": {
+          "dataType": "integer",
+          "supportsMonitoring": true,
+          "unit": "seconds"
+        }
+      },
+      {
+        "component": {
+          "name": "AlignedDataCtrlr"
+        },
+        "variable": {
+          "name": "TxEndedMeasurands"
+        },
+        "variableAttribute": [
+          {
+            "mutability": "ReadWrite",
+            "value": "Energy.Active.Import.Register"
+          }
+        ],
+        "variableCharacteristics": {
+          "dataType": "MemberList",
+          "supportsMonitoring": true,
+          "minLimit": 0
+        }
+      }
+    ],
+    "requestId": 1,
+    "seqNo": 0,
+    "tbc": true
+  }"#;
+
+        // verify that the JSON can be deserialized into a NotifyReportRequest object
+        let request: NotifyReportRequest = serde_json::from_str(json).unwrap();
+        assert_eq!(request.request_id, 1);
+
+        let schema = include_str!("schemas/v2.0.1/NotifyReportRequest.json");
+        let schema = serde_json::from_str(schema).unwrap();
+        let instance = serde_json::from_str(json).unwrap();
+        let compiled = Validator::new(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
     #[test]
     fn validate_notify_report_request() {
         let test = NotifyReportRequest {
@@ -2257,7 +2364,7 @@ mod tests {
                     unit: Some("unit".to_string()),
                     data_type: DataEnumType::String,
                     min_limit: Some(dec!(0.0)),
-                    max_limit: Some(dec!(0.0)),
+                    max_limit: None,
                     values_list: Some("values_list".to_string()),
                     supports_monitoring: false,
                 }),
