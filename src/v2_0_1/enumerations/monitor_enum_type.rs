@@ -3,6 +3,7 @@ pub enum MonitorEnumType {
     #[default]
     UpperThreshold,
     LowerThreshold,
-    DeltaPeriodic,
+    Delta,
+    Periodic,
     PeriodicClockAligned,
 }
