@@ -871,10 +871,30 @@ mod tests {
         assert!(compiled.is_valid(&instance));
     }
     #[test]
+    fn validate_data_transfer_request_no_data() {
+        let test = DataTransferRequest {
+            message_id: Some("message_id".to_string()),
+            data: None,
+            vendor_id: "vendor_id".to_string(),
+        };
+        let schema = include_str!("schemas/v2.0.1/DataTransferRequest.json");
+        let schema = serde_json::from_str(schema).unwrap();
+        let instance = serde_json::to_value(test).unwrap();
+        let compiled = Validator::new(&schema).expect("A valid schema");
+        let result = compiled.validate(&instance);
+        if let Err(errors) = result {
+            for error in errors {
+                println!("Validation error: {}", error);
+                println!("Instance path: {}", error.instance_path);
+            }
+        }
+        assert!(compiled.is_valid(&instance));
+    }
+    #[test]
     fn validate_data_transfer_request() {
         let test = DataTransferRequest {
             message_id: Some("message_id".to_string()),
-            data: "data".to_string(),
+            data: Some("data".to_string()),
             vendor_id: "vendor_id".to_string(),
         };
         let schema = include_str!("schemas/v2.0.1/DataTransferRequest.json");
@@ -894,7 +914,7 @@ mod tests {
     fn validate_data_transfer_response() {
         let test = DataTransferResponse {
             status: DataTransferStatusEnumType::Accepted,
-            data: "".to_string(),
+            data: None,
             status_info: Some(StatusInfoType {
                 reason_code: "".to_string(),
                 additional_info: Some("".to_string()),
