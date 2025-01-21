@@ -87,8 +87,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -110,8 +110,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -137,8 +137,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -158,8 +158,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -175,8 +175,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -194,8 +194,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -214,8 +214,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -233,8 +233,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -253,8 +253,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -272,8 +272,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -289,8 +289,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -308,8 +308,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -330,8 +330,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -349,8 +349,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -370,8 +370,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -390,8 +390,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -409,8 +409,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -426,8 +426,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -445,8 +445,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -462,8 +462,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -483,8 +483,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -515,8 +515,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -534,8 +534,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -558,8 +558,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -581,8 +581,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -598,8 +598,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -615,8 +615,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -632,8 +632,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -649,8 +649,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -668,8 +668,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -700,8 +700,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -717,8 +717,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -738,8 +738,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -757,8 +757,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -774,8 +774,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -793,8 +793,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -816,8 +816,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -835,8 +835,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -854,8 +854,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -873,8 +873,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -894,8 +894,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -913,8 +913,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -953,8 +953,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -972,13 +972,13 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
         }
-        assert!(compiled.is_valid(&instance))
+        assert!(compiled.is_valid(&instance));
     }
     #[test]
     fn validate_start_transaction() {
@@ -995,13 +995,13 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
         }
-        assert!(compiled.is_valid(&instance))
+        assert!(compiled.is_valid(&instance));
     }
     #[test]
     fn validate_start_transaction_response() {
@@ -1019,13 +1019,13 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
         }
-        assert!(compiled.is_valid(&instance))
+        assert!(compiled.is_valid(&instance));
     }
     #[test]
     fn validate_status_notification() {
@@ -1044,13 +1044,13 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
         }
-        assert!(compiled.is_valid(&instance))
+        assert!(compiled.is_valid(&instance));
     }
     #[test]
     fn validate_status_notification_response() {
@@ -1061,13 +1061,13 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
         }
-        assert!(compiled.is_valid(&instance))
+        assert!(compiled.is_valid(&instance));
     }
     #[test]
     fn validate_stop_transaction() {
@@ -1085,8 +1085,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -1108,8 +1108,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
@@ -1128,13 +1128,13 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
         }
-        assert!(compiled.is_valid(&instance))
+        assert!(compiled.is_valid(&instance));
     }
     #[test]
     fn validate_trigger_message_response() {
@@ -1147,13 +1147,13 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
         }
-        assert!(compiled.is_valid(&instance))
+        assert!(compiled.is_valid(&instance));
     }
     #[test]
     fn validate_unlock_connector() {
@@ -1164,13 +1164,13 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
         }
-        assert!(compiled.is_valid(&instance))
+        assert!(compiled.is_valid(&instance));
     }
     #[test]
     fn validate_unlock_connector_response() {
@@ -1183,13 +1183,13 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
         }
-        assert!(compiled.is_valid(&instance))
+        assert!(compiled.is_valid(&instance));
     }
     #[test]
     fn validate_update_firmware() {
@@ -1205,13 +1205,13 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
         }
-        assert!(compiled.is_valid(&instance))
+        assert!(compiled.is_valid(&instance));
     }
     #[test]
     fn validate_update_firmware_response() {
@@ -1222,8 +1222,8 @@ mod tests {
         let instance = serde_json::to_value(&test).unwrap();
         let compiled = Validator::new(&schema).expect("A valid schema");
         let result = compiled.validate(&instance);
-        if let Err(errors) = result {
-            for error in errors {
+        if result.is_err() {
+            for error in compiled.iter_errors(&instance) {
                 println!("Validation error: {}", error);
                 println!("Instance path: {}", error.instance_path);
             }
