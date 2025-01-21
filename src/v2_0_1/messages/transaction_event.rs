@@ -40,8 +40,11 @@ pub struct TransactionEventRequest {
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct TransactionEventResponse {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub total_cost: Option<Decimal>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub charging_priority: Option<i32>,
