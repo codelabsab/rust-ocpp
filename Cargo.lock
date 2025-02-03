@@ -735,9 +735,9 @@ dependencies = [
 
 [[package]]
 name = "jsonschema"
-version = "0.28.1"
+version = "0.28.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2303ef9ebb6acd7afe7c48cbc06ab807349c429d4e47c4cde8b35400503198f"
+checksum = "4b8f66fe41fa46a5c83ed1c717b7e0b4635988f427083108c8cf0a882cc13441"
 dependencies = [
  "ahash 0.8.11",
  "base64",
@@ -1120,9 +1120,9 @@ dependencies = [
 
 [[package]]
 name = "referencing"
-version = "0.28.1"
+version = "0.28.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2fb7a1f338d8e32357ad1d7078454c248e5fdd2188fbb6966b400c2fa4d4f566"
+checksum = "d0dcb5ab28989ad7c91eb1b9531a37a1a137cc69a0499aee4117cae4a107c464"
 dependencies = [
  "ahash 0.8.11",
  "fluent-uri",
@@ -1316,9 +1316,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.134"
+version = "1.0.138"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d00f4175c42ee48b15416f6193a959ba3a0d67fc699a0db9ad12df9f83991c7d"
+checksum = "d434192e7da787e94a6ea7e9670b26a036d0ca41e0b7efb2676dd32bae872949"
 dependencies = [
  "itoa",
  "memchr",
