@@ -168,6 +168,7 @@ Use `rustfmt` before you PR.
 pre-commit config is available. You can read more about it at [pre-commits](https://pre-commit.com) website and checkout their repo on [github](https://github.com/pre-commit/pre-commit)
 
 ## Releasing a new version
+
 1. Update the version of the library and push the changes to the main branch.
 2. Create a [new release](https://github.com/codelabsab/rust-ocpp/releases/new) on GitHub with the new version number and some release notes (optional).
 
