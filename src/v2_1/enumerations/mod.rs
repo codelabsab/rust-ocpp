@@ -1,6 +1,7 @@
 mod authorization_status;
 mod boot_reason;
 mod certificate_signing_use;
+mod change_availability_status;
 mod generic_status;
 mod hash_algorithm;
 mod operational_status;
@@ -9,6 +10,7 @@ mod registration_status;
 pub use authorization_status::AuthorizationStatusEnumType;
 pub use boot_reason::BootReasonEnumType;
 pub use certificate_signing_use::CertificateSigningUseEnumType;
+pub use change_availability_status::ChangeAvailabilityStatusEnumType;
 pub use generic_status::GenericStatusEnumType;
 pub use hash_algorithm::HashAlgorithmEnumType;
 pub use operational_status::OperationalStatusEnumType;
