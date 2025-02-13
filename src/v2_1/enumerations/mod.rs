@@ -19,6 +19,7 @@ mod ocpp_version;
 mod operational_status;
 mod registration_status;
 mod reset_status;
+mod vpn;
 
 pub use apn_authentication::APNAuthenticationEnumType;
 pub use authorization_status::AuthorizationStatusEnumType;
@@ -41,3 +42,4 @@ pub use ocpp_version::OCPPVersionEnumType;
 pub use operational_status::OperationalStatusEnumType;
 pub use registration_status::RegistrationStatusEnumType;
 pub use reset_status::ResetStatusEnumType;
+pub use vpn::VPNEnumType;
