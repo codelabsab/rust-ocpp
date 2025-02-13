@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-/// Type of DER control.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+/// Type of DER curve
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub enum DERControlEnumType {
     #[serde(rename = "EnterService")]
     EnterService,

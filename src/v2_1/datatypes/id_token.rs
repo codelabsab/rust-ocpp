@@ -1,25 +1,26 @@
-use super::additional_info::AdditionalInfoType;
-use super::custom_data::CustomDataType;
 use serde::{Deserialize, Serialize};
+use validator::Validate;
 
-/// Contains a case insensitive identifier to use for the authorization and the type of authorization
-/// to support multiple forms of identifiers.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+use crate::v2_0_1::enumerations::id_token_enum_type::IdTokenEnumType;
+
+use super::{additional_info::AdditionalInfoType, custom_data::CustomDataType};
+
+/// Contains identifier to use for authorization.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
+#[serde(rename_all = "camelCase")]
 pub struct IdTokenType {
-    /// IdToken is case insensitive. Might hold the hidden id of an RFID tag,
-    /// but can for example also contain a UUID.
-    pub id_token: String,
-
-    /// Enumeration of possible idToken types.
-    /// Values defined in Appendix as IdTokenEnumStringType.
-    #[serde(rename = "type")]
-    pub type_: String,
-
-    /// Optional list of additional information about the identifier
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub additional_info: Option<Vec<AdditionalInfoType>>,
-
-    /// Optional custom data
+    /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomDataType>,
+
+    /// Required. Type of the identifier.
+    pub r#type: IdTokenEnumType,
+
+    /// Required. The identifier to use for authorization.
+    #[validate(length(max = 36))]
+    pub id_token: String,
+
+    /// Optional. Additional information about the identifier.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub additional_info: Option<Vec<AdditionalInfoType>>,
 }

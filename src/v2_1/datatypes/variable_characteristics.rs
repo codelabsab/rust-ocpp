@@ -1,5 +1,6 @@
 use super::custom_data::CustomDataType;
 use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 /// Defines the datatype of the variable.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -23,30 +24,28 @@ pub enum DataEnumType {
 }
 
 /// Fixed read-only parameters of a variable.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
+#[serde(rename_all = "camelCase")]
 pub struct VariableCharacteristicsType {
-    /// Unit of the variable. When the transmitted value has a unit, this field SHALL be included.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub unit: Option<String>,
-
-    /// Data type of this variable.
-    pub data_type: DataEnumType,
-
-    /// Minimum possible value of this variable.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub min_limit: Option<f64>,
-
-    /// Maximum possible value of this variable.
-    /// When the datatype is String, OptionList, SequenceList or MemberList,
-    /// this field defines the maximum length of the (CSV) string.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_limit: Option<f64>,
-
-    /// Maximum number of elements from valuesList that are supported as attributeValue.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_elements: Option<i32>,
-
-    /// Optional custom data
+    /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomDataType>,
+
+    /// Required. Unit of the variable. When the variable represents a measurand from the measurand enumeration, this field SHALL contain the unit of the measurand as used in the signedMeterValue field defined in Part 2.
+    #[validate(length(max = 16))]
+    pub unit: String,
+
+    /// Required. Data type of this variable.
+    pub data_type: DataEnumType,
+
+    /// Required. Minimum possible value of this variable.
+    #[validate(length(max = 1000))]
+    pub min_limit: String,
+
+    /// Required. Maximum possible value of this variable.
+    #[validate(length(max = 1000))]
+    pub max_limit: String,
+
+    /// Required. When true, value from the Charging Station may not be set to null.
+    pub supports_monitoring: bool,
 }
