@@ -1,4 +1,4 @@
-use super::super::datatypes::CustomDataType;
+use super::super::datatypes::{CustomDataType, StatusInfoType};
 use super::super::enumerations::CertificateSigningUseEnumType;
 use serde::{Deserialize, Serialize};
 
@@ -17,6 +17,30 @@ pub struct CertificateSignedRequest {
     /// RequestId to correlate this message with the SignCertificateRequest.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub request_id: Option<i32>,
+
+    /// Optional custom data
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
+}
+
+/// Enum indicating whether certificate signing has been accepted or rejected.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum CertificateSignedStatusEnumType {
+    #[serde(rename = "Accepted")]
+    Accepted,
+    #[serde(rename = "Rejected")]
+    Rejected,
+}
+
+/// Response to a CertificateSignedRequest.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CertificateSignedResponse {
+    /// Returns whether certificate signing has been accepted, otherwise rejected.
+    pub status: CertificateSignedStatusEnumType,
+
+    /// Detailed status information.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status_info: Option<StatusInfoType>,
 
     /// Optional custom data
     #[serde(skip_serializing_if = "Option::is_none")]
