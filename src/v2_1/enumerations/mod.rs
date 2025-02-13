@@ -6,6 +6,7 @@ mod day_of_week;
 mod evse_kind;
 mod generic_status;
 mod hash_algorithm;
+mod message_format;
 mod operational_status;
 mod registration_status;
 
@@ -17,5 +18,6 @@ pub use day_of_week::DayOfWeekEnumType;
 pub use evse_kind::EvseKindEnumType;
 pub use generic_status::GenericStatusEnumType;
 pub use hash_algorithm::HashAlgorithmEnumType;
+pub use message_format::MessageFormatEnumType;
 pub use operational_status::OperationalStatusEnumType;
 pub use registration_status::RegistrationStatusEnumType;
