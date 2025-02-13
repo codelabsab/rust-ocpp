@@ -12,9 +12,8 @@ pub struct CancelReservationRequest {
     pub custom_data: Option<CustomDataType>,
 }
 
-use super::super::datatypes::{CustomDataType, StatusInfoType};
+use super::super::datatypes::StatusInfoType;
 use super::super::enumerations::CancelReservationStatusEnumType;
-use serde::{Deserialize, Serialize};
 
 /// Response to a CancelReservationRequest.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
