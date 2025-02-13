@@ -1,4 +1,4 @@
-use super::super::datatypes::{CustomDataType, IdTokenInfoType, IdTokenType, TariffType};
+use super::super::datatypes::{CustomDataType, IdTokenType, TariffType};
 use super::super::enumerations::{AuthorizeCertificateStatusEnumType, EnergyTransferModeEnumType};
 use serde::{Deserialize, Serialize};
 

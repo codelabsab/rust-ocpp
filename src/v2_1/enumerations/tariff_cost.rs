@@ -1,10 +1,12 @@
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
+use serde::{Deserialize, Serialize};
+
+/// Type of cost: normal or the minimum or maximum cost.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub enum TariffCostEnumType {
-    #[default]
-    #[serde(rename = "Relative")]
-    Relative,
-    #[serde(rename = "Absolute")]
-    Absolute,
-    #[serde(rename = "CarbonDioxideEmission")]
-    CarbonDioxideEmission,
+    #[serde(rename = "NormalCost")]
+    NormalCost,
+    #[serde(rename = "MinCost")]
+    MinCost,
+    #[serde(rename = "MaxCost")]
+    MaxCost,
 }
