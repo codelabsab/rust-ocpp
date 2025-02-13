@@ -13,6 +13,7 @@ mod hash_algorithm;
 mod message_format;
 mod operational_status;
 mod registration_status;
+mod reset_status;
 
 pub use apn_authentication::APNAuthenticationEnumType;
 pub use authorization_status::AuthorizationStatusEnumType;
@@ -29,3 +30,4 @@ pub use hash_algorithm::HashAlgorithmEnumType;
 pub use message_format::MessageFormatEnumType;
 pub use operational_status::OperationalStatusEnumType;
 pub use registration_status::RegistrationStatusEnumType;
+pub use reset_status::ResetStatusEnumType;
