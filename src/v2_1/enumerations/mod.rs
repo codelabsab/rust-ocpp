@@ -1,3 +1,4 @@
+mod apn_authentication;
 mod authorization_status;
 mod boot_reason;
 mod certificate_signing_use;
@@ -11,6 +12,7 @@ mod message_format;
 mod operational_status;
 mod registration_status;
 
+pub use apn_authentication::APNAuthenticationEnumType;
 pub use authorization_status::AuthorizationStatusEnumType;
 pub use boot_reason::BootReasonEnumType;
 pub use certificate_signing_use::CertificateSigningUseEnumType;
