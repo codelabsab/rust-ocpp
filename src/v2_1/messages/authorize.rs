@@ -1,3 +1,5 @@
+use crate::v2_1::datatypes::IdTokenInfoType;
+
 use super::super::datatypes::{CustomDataType, IdTokenType, TariffType};
 use super::super::enumerations::{AuthorizeCertificateStatusEnumType, EnergyTransferModeEnumType};
 use serde::{Deserialize, Serialize};
