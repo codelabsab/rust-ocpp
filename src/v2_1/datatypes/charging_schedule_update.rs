@@ -4,7 +4,7 @@ use validator::Validate;
 use super::custom_data::CustomDataType;
 
 /// Updates to a ChargingSchedulePeriodType for dynamic charging profiles.
-#[derive(Clone, Debug, Deserialize, Hash, PartialEq, Serialize, Validate)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingScheduleUpdateType {
     /// Custom data specific to this class.
