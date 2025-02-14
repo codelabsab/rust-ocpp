@@ -136,4 +136,119 @@ fn test_valid_boot_notification_response_v2_1() -> Result<(), Box<dyn std::error
     Ok(())
 }
 
+#[test]
+fn test_valid_id_token_type_comprehensive() -> Result<(), Box<dyn std::error::Error>> {
+    // Test with all optional fields
+    let instance = serde_json::json!({
+        "idToken": {
+            "additionalInfo": [{
+                "additionalIdToken": "TEST123",
+                "type": "someType"
+            }],
+            "idToken": "ABCD1234567890",
+            "type": "ISO14443",
+            "customData": {
+                "vendorId": "TestVendor"
+            }
+        }
+    });
+    assert!(validate_schema_instance("AuthorizeRequest.json", instance)?);
+
+    // Test with only required fields
+    let instance = serde_json::json!({
+        "idToken": {
+            "idToken": "ABCD1234567890",
+            "type": "Central"
+        }
+    });
+    assert!(validate_schema_instance("AuthorizeRequest.json", instance)?);
+
+    // Test with maximum length strings
+    let instance = serde_json::json!({
+        "idToken": {
+            "idToken": "A".repeat(255),
+            "type": "A".repeat(20)
+        }
+    });
+    assert!(validate_schema_instance("AuthorizeRequest.json", instance)?);
+
+    // Test all predefined values
+    for type_value in [
+        "Central",
+        "DirectPayment",
+        "eMAID",
+        "EVCCID",
+        "ISO14443",
+        "ISO15693",
+        "KeyCode",
+        "Local",
+        "MacAddress",
+        "NoAuthorization",
+        "VIN",
+    ] {
+        let instance = serde_json::json!({
+            "idToken": {
+                "idToken": "ABCD1234567890",
+                "type": type_value
+            }
+        });
+        assert!(validate_schema_instance("AuthorizeRequest.json", instance)?);
+    }
+
+    Ok(())
+}
+
+#[test]
+fn test_invalid_id_token_type() -> Result<(), Box<dyn std::error::Error>> {
+    // Test with missing required field
+    let instance = serde_json::json!({
+        "idToken": {
+            "idToken": "ABCD1234567890"
+            // Missing required 'type' field
+        }
+    });
+    assert!(!validate_schema_instance(
+        "AuthorizeRequest.json",
+        instance
+    )?);
+
+    // Test with empty additionalInfo array (violates minItems: 1)
+    let instance = serde_json::json!({
+        "idToken": {
+            "additionalInfo": [],
+            "idToken": "ABCD1234567890",
+            "type": "ISO14443"
+        }
+    });
+    assert!(!validate_schema_instance(
+        "AuthorizeRequest.json",
+        instance
+    )?);
+
+    // Test with too long strings
+    let instance = serde_json::json!({
+        "idToken": {
+            "idToken": "A".repeat(256),
+            "type": "ISO14443"
+        }
+    });
+    assert!(!validate_schema_instance(
+        "AuthorizeRequest.json",
+        instance
+    )?);
+
+    let instance = serde_json::json!({
+        "idToken": {
+            "idToken": "ABCD1234567890",
+            "type": "A".repeat(21)  // Type string too long
+        }
+    });
+    assert!(!validate_schema_instance(
+        "AuthorizeRequest.json",
+        instance
+    )?);
+
+    Ok(())
+}
+
 // We recommend installing an extension to run rust tests.
