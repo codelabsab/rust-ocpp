@@ -23,6 +23,6 @@ pub struct SalesTariffEntryType {
 
     /// Optional. A human readable tariff description.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 32))]
+    #[validate(range(min = 0))]
     pub e_price_level: Option<i32>,
 }
