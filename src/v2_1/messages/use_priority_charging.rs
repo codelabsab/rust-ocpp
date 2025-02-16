@@ -1,0 +1,36 @@
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+pub struct UsePriorityChargingRequest {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<super::CustomData>,
+    pub transaction_id: String,
+    pub activate: bool,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+pub struct UsePriorityChargingResponse {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<super::CustomData>,
+    pub status: super::enumerations::PriorityChargingStatusEnum,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status_info: Option<super::datatypes::StatusInfo>,
+}
+
+impl UsePriorityChargingRequest {
+    pub fn new(transaction_id: String, activate: bool) -> Self {
+        Self {
+            custom_data: None,
+            transaction_id,
+            activate,
+        }
+    }
+}
+
+impl UsePriorityChargingResponse {
+    pub fn new(status: super::enumerations::PriorityChargingStatusEnum) -> Self {
+        Self {
+            custom_data: None,
+            status,
+            status_info: None,
+        }
+    }
+}

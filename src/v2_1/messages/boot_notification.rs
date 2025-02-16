@@ -1,9 +1,13 @@
+use chrono::{DateTime, Utc};
 use lazy_static::lazy_static;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use validator::{Validate, ValidationError};
 
-use crate::v2_1::enumerations::{BootReasonEnumType, RegistrationStatusEnumType};
+use crate::v2_1::{
+    datatypes::{CustomDataType, StatusInfoType},
+    enumerations::{BootReasonEnumType, RegistrationStatusEnumType},
+};
 
 lazy_static! {
     // This regex pattern validates ISO 8601 datetime strings in the format:
@@ -42,85 +46,93 @@ fn validate_datetime(datetime: &str) -> Result<(), ValidationError> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct CustomData {
-    #[validate(length(max = 255))]
-    pub vendor_id: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+/// Defines parameters required for initiating and maintaining wireless communication with other devices.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct ModemType {
-    #[validate(length(max = 20))]
+    /// Optional. Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
+
+    /// Optional. This contains the ICCID of the modem's SIM card.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(max = 20))]
     pub iccid: Option<String>,
+
+    /// Optional. This contains the IMSI of the modem's SIM card.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(length(max = 20))]
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub imsi: Option<String>,
-    #[validate(nested)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomData>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+/// The physical system where an Electrical Vehicle (EV) can be charged.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct ChargingStation {
+pub struct ChargingStationType {
+    /// Optional. Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
+
+    /// Optional. This contains the firmware version of the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(max = 50))]
+    pub firmware_version: Option<String>,
+
+    /// Required. Defines the model of the device.
     #[validate(length(max = 20))]
     pub model: String,
-    #[validate(length(max = 50))]
-    pub vendor_name: String,
-    #[validate(length(max = 25))]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub serial_number: Option<String>,
-    #[validate(length(max = 50))]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub firmware_version: Option<String>,
-    #[validate(nested)]
+
+    /// Optional. Defines parameters required for initiating and maintaining wireless communication with other devices.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub modem: Option<ModemType>,
-    #[validate(nested)]
+
+    /// Optional. Vendor-specific device identifier.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomData>,
+    #[validate(length(max = 25))]
+    pub serial_number: Option<String>,
+
+    /// Required. Identifies the vendor (not necessarily in a unique manner).
+    #[validate(length(max = 50))]
+    pub vendor_name: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+/// Request body for the BootNotification request.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct BootNotificationRequest {
+    /// Required. The physical system where an Electrical Vehicle (EV) can be charged.
+    pub charging_station: ChargingStationType,
+
+    /// Optional. Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
+
+    /// Required. This contains the reason for sending this message to the CSMS.
     pub reason: BootReasonEnumType,
-    #[validate(nested)]
-    pub charging_station: ChargingStation,
-    #[validate(nested)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomData>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct StatusInfoType {
-    #[validate(length(max = 20))]
-    pub reason_code: String,
-    #[validate(length(max = 1024))]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub additional_info: Option<String>,
-    #[validate(nested)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomData>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+/// Response body for the BootNotification response.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct BootNotificationResponse {
-    #[validate(custom(function = "validate_datetime"))]
-    pub current_time: String,
+    /// Optional. Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
+
+    /// Required. This contains the CSMS's current time.
+    pub current_time: DateTime<Utc>,
+
+    /// Required. When Status is Accepted, this contains the heartbeat interval in seconds.
+    /// If the CSMS returns something other than Accepted, the value of the interval field
+    /// indicates the minimum wait time before sending a next BootNotification request.
     pub interval: i32,
+
+    /// Required. This contains whether the Charging Station has been registered within the CSMS.
     pub status: RegistrationStatusEnumType,
-    #[validate(nested)]
+
+    /// Optional. Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,
-    #[validate(nested)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomData>,
 }
 
 #[cfg(test)]
@@ -132,7 +144,7 @@ mod tests {
     fn test_valid_boot_notification_request() {
         let request = BootNotificationRequest {
             reason: BootReasonEnumType::PowerUp,
-            charging_station: ChargingStation {
+            charging_station: ChargingStationType {
                 model: "ModelX".into(),
                 vendor_name: "VendorY".into(),
                 serial_number: Some("123456".into()),
@@ -173,7 +185,7 @@ mod tests {
     fn test_invalid_boot_notification_request() {
         let request = BootNotificationRequest {
             reason: BootReasonEnumType::PowerUp,
-            charging_station: ChargingStation {
+            charging_station: ChargingStationType {
                 model: "This model name is way too long and should fail validation".into(),
                 vendor_name: "VendorY".into(),
                 serial_number: Some("This serial number is also too long to be valid".into()),
@@ -191,7 +203,7 @@ mod tests {
     #[test]
     fn test_valid_boot_notification_response() {
         let response = BootNotificationResponse {
-            current_time: "2023-10-10T10:10:10Z".into(),
+            current_time: Utc::now(),
             interval: 300,
             status: RegistrationStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
@@ -209,7 +221,7 @@ mod tests {
         assert_eq!(
             json,
             json!({
-                "currentTime": "2023-10-10T10:10:10Z",
+                "currentTime": Utc::now().to_rfc3339(),
                 "interval": 300,
                 "status": "Accepted",
                 "statusInfo": {
@@ -223,7 +235,7 @@ mod tests {
     #[test]
     fn test_invalid_boot_notification_response() {
         let response = BootNotificationResponse {
-            current_time: "invalid-datetime".into(),
+            current_time: Utc::now(),
             interval: 300,
             status: RegistrationStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
@@ -242,7 +254,7 @@ mod tests {
     fn test_boot_notification_request_with_custom_data() {
         let request = BootNotificationRequest {
             reason: BootReasonEnumType::PowerUp,
-            charging_station: ChargingStation {
+            charging_station: ChargingStationType {
                 model: "ModelZ".into(),
                 vendor_name: "VendorZ".into(),
                 serial_number: Some("987654321".into()),
@@ -250,15 +262,15 @@ mod tests {
                 modem: Some(ModemType {
                     iccid: Some("iccid12345".into()),
                     imsi: Some("imsi54321".into()),
-                    custom_data: Some(CustomData {
+                    custom_data: Some(CustomDataType {
                         vendor_id: "VendorZ".into(),
                     }),
                 }),
-                custom_data: Some(CustomData {
+                custom_data: Some(CustomDataType {
                     vendor_id: "VendorZ".into(),
                 }),
             },
-            custom_data: Some(CustomData {
+            custom_data: Some(CustomDataType {
                 vendor_id: "VendorZ".into(),
             }),
         };
