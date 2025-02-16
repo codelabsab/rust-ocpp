@@ -1,18 +1,62 @@
 use serde::{Deserialize, Serialize};
 
-/// Represents the source of the charging limit.
+/// Standardized values for a chargingLimitSource field.
+/// Before OCPP 2.1 this used to be an enumeration. This has been changed to a predefined set of strings for more flexibility.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum ChargingLimitSourceEnumType {
-    /// Energy Management System
+    /// Standard OCPP values
+    #[serde(rename_all = "UPPERCASE")]
+    Standard(StandardChargingLimitSourceEnumType),
+    /// Custom charging limit source value
+    Custom(String),
+}
+
+/// Standard OCPP charging limit source values
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum StandardChargingLimitSourceEnumType {
+    /// Indicates that an Energy Management System has sent a charging limit.
     #[serde(rename = "EMS")]
     EMS,
-    /// Other source
+    /// Indicates that an external source, not being an EMS or system operator, has sent a charging limit.
     #[serde(rename = "Other")]
     Other,
-    /// System Operator
+    /// Indicates that a System Operator (DSO or TSO) has sent a charging limit.
     #[serde(rename = "SO")]
     SO,
-    /// Charging Station Operator
+    /// Indicates that the CSO has set this charging profile.
     #[serde(rename = "CSO")]
     CSO,
+}
+
+impl ChargingLimitSourceEnumType {
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Standard(s) => match s {
+                StandardChargingLimitSourceEnumType::EMS => "EMS",
+                StandardChargingLimitSourceEnumType::Other => "Other",
+                StandardChargingLimitSourceEnumType::SO => "SO",
+                StandardChargingLimitSourceEnumType::CSO => "CSO",
+            },
+            Self::Custom(s) => s,
+        }
+    }
+}
+
+impl From<String> for ChargingLimitSourceEnumType {
+    fn from(s: String) -> Self {
+        match s.as_str() {
+            "EMS" => Self::Standard(StandardChargingLimitSourceEnumType::EMS),
+            "Other" => Self::Standard(StandardChargingLimitSourceEnumType::Other),
+            "SO" => Self::Standard(StandardChargingLimitSourceEnumType::SO),
+            "CSO" => Self::Standard(StandardChargingLimitSourceEnumType::CSO),
+            _ => Self::Custom(s),
+        }
+    }
+}
+
+impl ToString for ChargingLimitSourceEnumType {
+    fn to_string(&self) -> String {
+        self.as_str().to_string()
+    }
 }
