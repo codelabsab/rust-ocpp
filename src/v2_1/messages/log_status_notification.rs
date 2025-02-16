@@ -1,6 +1,6 @@
 //! LogStatusNotification
-use crate::v2_1::datatypes::custom_data_type::CustomDataType;
-use crate::v2_1::datatypes::status_info_type::StatusInfoType;
+use crate::v2_1::datatypes::CustomDataType;
+use crate::v2_1::datatypes::StatusInfoType;
 use crate::v2_1::enumerations::upload_log_status::UploadLogStatusEnumType;
 use validator::Validate;
 

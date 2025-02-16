@@ -3,7 +3,7 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::custom_data::CustomData;
+use super::CustomData;
 
 /// Request message for NotifyDERStartStop.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
