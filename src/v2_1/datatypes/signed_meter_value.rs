@@ -1,29 +1,28 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::custom_data::CustomDataType;
+use crate::v2_1::{datatypes::CustomDataType, enumerations::signing_method::SigningMethodEnumType};
 
-/// Signed meter value data.
+/// Contains a signed version of the meter value.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SignedMeterValueType {
-    /// Custom data from the Charging Station.
+    /// Optional. Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomDataType>,
 
     /// Required. Base64 encoded, contains the signed data that needs to be verified.
-    #[validate(length(max = 2500))]
+    #[validate(length(max = 32768))]
     pub signed_meter_data: String,
 
-    /// Required. Base64 encoded, contains the signing method information used to create the signature.
-    #[validate(length(max = 2500))]
-    pub signing_method: String,
+    /// Required. Method used to create the digital signature.
+    pub signing_method: SigningMethodEnumType,
 
-    /// Required. Base64 encoded, contains the encoded X.509 certificate used to create the signature.
-    #[validate(length(max = 5500))]
+    /// Required. Base64 encoded, contains the public key to verify the signature.
+    #[validate(length(max = 50))]
     pub encoding_method: String,
 
-    /// Required. Base64 encoded, contains the actual signature.
-    #[validate(length(max = 800))]
+    /// Required. Base64 encoded SHA256 hash of the public key that is used for the encoding method.
+    #[validate(length(max = 2500))]
     pub public_key: String,
 }
