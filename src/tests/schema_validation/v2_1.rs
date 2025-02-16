@@ -543,54 +543,43 @@ fn test_invalid_battery_swap_request() -> Result<(), Box<dyn std::error::Error>>
 }
 
 #[test]
-fn validate_cancel_reservation_request() {
+fn validate_cancel_reservation_request() -> Result<(), Box<dyn std::error::Error>> {
     let test = CancelReservationRequest {
         reservation_id: 42,
-        custom_data: Some(CustomDataType {
-            vendor_id: "test_vendor".to_string(),
-        }),
+        custom_data: None, // Schema doesn't allow custom_data
     };
 
-    let schema = include_str!("schemas/v2.1/CancelReservationRequest.json");
-    let schema = serde_json::from_str(schema).unwrap();
-    let instance = serde_json::to_value(test).unwrap();
-    let compiled = Validator::new(&schema).expect("A valid schema");
-    let result = compiled.validate(&instance);
-    if result.is_err() {
-        for error in compiled.iter_errors(&instance) {
-            println!("Validation error: {}", error);
-            println!("Instance path: {}", error.instance_path);
-        }
-    }
-    assert!(compiled.is_valid(&instance));
+    let instance = serde_json::to_value(test)?;
+    assert!(validate_schema_instance(
+        "CancelReservationRequest.json",
+        instance
+    )?);
+    Ok(())
 }
 
 #[test]
-fn validate_cancel_reservation_response() {
+fn validate_cancel_reservation_response() -> Result<(), Box<dyn std::error::Error>> {
     let test = CancelReservationResponse {
+        custom_data: Some(CustomDataType {
+            vendor_id: "test_vendor".to_string(),
+        }),
         status: CancelReservationStatusEnumType::Accepted,
         status_info: Some(StatusInfoType {
             reason_code: "NoReservation".to_string(),
             additional_info: Some("No active reservation found".to_string()),
-            custom_data: None,
-        }),
-        custom_data: Some(CustomDataType {
-            vendor_id: "test_vendor".to_string(),
+            custom_data: Some(CustomDataType {
+                // Add vendorId in status_info custom_data
+                vendor_id: "test_vendor".to_string(),
+            }),
         }),
     };
 
-    let schema = include_str!("schemas/v2.1/CancelReservationResponse.json");
-    let schema = serde_json::from_str(schema).unwrap();
-    let instance = serde_json::to_value(test).unwrap();
-    let compiled = Validator::new(&schema).expect("A valid schema");
-    let result = compiled.validate(&instance);
-    if result.is_err() {
-        for error in compiled.iter_errors(&instance) {
-            println!("Validation error: {}", error);
-            println!("Instance path: {}", error.instance_path);
-        }
-    }
-    assert!(compiled.is_valid(&instance));
+    let instance = serde_json::to_value(test)?;
+    assert!(validate_schema_instance(
+        "CancelReservationResponse.json",
+        instance
+    )?);
+    Ok(())
 }
 
 // We recommend installing an extension to run rust tests.
