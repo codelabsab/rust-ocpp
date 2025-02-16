@@ -1,10 +1,10 @@
 pub mod adjust_periodic_event_stream;
 pub mod afrr_signal;
-mod authorize;
+pub mod authorize;
 pub mod battery_swap;
-mod boot_notification;
+pub mod boot_notification;
 pub mod cancel_reservation;
-mod certificate_signed;
+pub mod certificate_signed;
 pub mod status_notification;
 pub mod transaction_event;
 pub mod unlock_connector;
@@ -39,6 +39,7 @@ pub use authorize::{
     AuthorizeRequest, AuthorizeResponse, HashAlgorithmEnumType, OCSPRequestDataType,
 };
 pub use battery_swap::{BatteryDataType, BatterySwapRequest, BatterySwapResponse};
+pub use boot_notification::{BootNotificationRequest, ChargingStationType, ModemType};
 pub use cancel_reservation::CancelReservationRequest;
 pub use certificate_signed::{CertificateSignedRequest, CertificateSignedResponse};
 pub use transaction_event::{TransactionEventRequest, TransactionEventResponse};

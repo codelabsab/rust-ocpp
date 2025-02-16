@@ -72,6 +72,28 @@ pub struct BootNotificationRequest {
     pub reason: BootReasonEnumType,
 }
 
+impl BootNotificationRequest {
+    pub fn validate(&self) -> Result<(), validator::ValidationErrors> {
+        validator::Validate::validate(self)?;
+        self.charging_station.validate()?;
+        if let Some(modem) = &self.charging_station.modem {
+            modem.validate()?;
+        }
+        if let Some(custom_data) = &self.custom_data {
+            custom_data.validate()?;
+        }
+        if let Some(custom_data) = &self.charging_station.custom_data {
+            custom_data.validate()?;
+        }
+        if let Some(modem) = &self.charging_station.modem {
+            if let Some(custom_data) = &modem.custom_data {
+                custom_data.validate()?;
+            }
+        }
+        Ok(())
+    }
+}
+
 /// Response body for the BootNotification response.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
@@ -86,6 +108,7 @@ pub struct BootNotificationResponse {
     /// Required. When Status is Accepted, this contains the heartbeat interval in seconds.
     /// If the CSMS returns something other than Accepted, the value of the interval field
     /// indicates the minimum wait time before sending a next BootNotification request.
+    #[validate(range(min = 0))]
     pub interval: i32,
 
     /// Required. This contains whether the Charging Station has been registered within the CSMS.
@@ -148,13 +171,20 @@ mod tests {
             reason: BootReasonEnumType::PowerUp,
             charging_station: ChargingStationType {
                 model: "This model name is way too long and should fail validation".into(),
-                vendor_name: "VendorY".into(),
+                vendor_name: "This vendor name is also way too long and should fail validation"
+                    .into(),
                 serial_number: Some("This serial number is also too long to be valid".into()),
-                firmware_version: None,
+                firmware_version: Some(
+                    "This firmware version is way too long and should fail validation".into(),
+                ),
                 modem: None,
-                custom_data: None,
+                custom_data: Some(CustomDataType {
+                    vendor_id: "test_vendor".to_string(),
+                }),
             },
-            custom_data: None,
+            custom_data: Some(CustomDataType {
+                vendor_id: "test_vendor".to_string(),
+            }),
         };
 
         // Validate the request - should fail
@@ -163,8 +193,11 @@ mod tests {
 
     #[test]
     fn test_valid_boot_notification_response() {
+        let current_time = DateTime::parse_from_rfc3339("2023-01-01T12:00:00Z")
+            .unwrap()
+            .with_timezone(&Utc);
         let response = BootNotificationResponse {
-            current_time: Utc::now(),
+            current_time,
             interval: 300,
             status: RegistrationStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
@@ -182,7 +215,7 @@ mod tests {
         assert_eq!(
             json,
             json!({
-                "currentTime": Utc::now().to_rfc3339(),
+                "currentTime": "2023-01-01T12:00:00Z",
                 "interval": 300,
                 "status": "Accepted",
                 "statusInfo": {
@@ -197,10 +230,10 @@ mod tests {
     fn test_invalid_boot_notification_response() {
         let response = BootNotificationResponse {
             current_time: Utc::now(),
-            interval: 300,
+            interval: -1, // Invalid interval
             status: RegistrationStatusEnumType::Accepted,
             status_info: Some(StatusInfoType {
-                reason_code: "This reason code is way too long to be valid".into(),
+                reason_code: "This reason code is way too long to be valid and should cause validation to fail because it exceeds the maximum length allowed for reason codes in the OCPP specification".into(),
                 additional_info: None,
                 custom_data: None,
             }),
