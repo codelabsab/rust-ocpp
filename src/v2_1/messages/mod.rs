@@ -14,14 +14,23 @@ pub mod use_priority_charging;
 pub mod vat_number_validation;
 
 // Re-exports
-pub use crate::v2_1::datatypes::CustomData;
+pub use crate::v2_1::datatypes::custom_data::CustomDataType as CustomData;
 pub use crate::v2_1::datatypes::{
-    Address, Firmware, IdToken, IdTokenInfo, MessageContent, MeterValue, StatusInfo, Transaction,
-    TransactionData, TransactionLimit, EVSE,
+    address::AddressType as Address, evse::EVSEType as EVSE, firmware::FirmwareType as Firmware,
+    id_token::IdTokenType as IdToken, id_token_info::IdTokenInfoType as IdTokenInfo,
+    message_content::MessageContentType as MessageContent,
+    meter_value::MeterValueType as MeterValue, status_info::StatusInfoType as StatusInfo,
+    transaction::TransactionType as Transaction,
+    transaction_limit::TransactionLimitType as TransactionLimit,
 };
 pub use crate::v2_1::enumerations::{
-    GenericStatusEnum, PriorityChargingStatusEnum, TransactionEventEnum, TriggerReasonEnum,
-    UnlockStatusEnum, UnpublishFirmwareStatusEnum, UpdateFirmwareStatusEnum,
+    generic_status::GenericStatusEnumType as GenericStatusEnum,
+    priority_charging_status::PriorityChargingStatusEnumType as PriorityChargingStatusEnum,
+    transaction_event::TransactionEventEnumType as TransactionEventEnum,
+    trigger_reason::TriggerReasonEnumType as TriggerReasonEnum,
+    unlock_status::UnlockStatusEnumType as UnlockStatusEnum,
+    unpublish_firmware_status::UnpublishFirmwareStatusEnumType as UnpublishFirmwareStatusEnum,
+    update_firmware_status::UpdateFirmwareStatusEnumType as UpdateFirmwareStatusEnum,
 };
 
 pub use crate::v2_1::messages::cancel_reservation::CancelReservationResponse;

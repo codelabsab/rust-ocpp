@@ -1,50 +1,11 @@
 use chrono::{DateTime, Utc};
-use lazy_static::lazy_static;
-use regex::Regex;
 use serde::{Deserialize, Serialize};
-use validator::{Validate, ValidationError};
+use validator::Validate;
 
 use crate::v2_1::{
     datatypes::{CustomDataType, StatusInfoType},
     enumerations::{BootReasonEnumType, RegistrationStatusEnumType},
 };
-
-lazy_static! {
-    // This regex pattern validates ISO 8601 datetime strings in the format:
-    // YYYY-MM-DDThh:mm:ss[.fraction]Z or
-    // YYYY-MM-DDThh:mm:ss[.fraction]±hh:mm
-    // Where:
-    // - YYYY is a 4 digit year
-    // - MM is a 2 digit month
-    // - DD is a 2 digit day
-    // - T is the literal 'T' separator
-    // - hh:mm:ss is hours, minutes, seconds
-    // - [.fraction] is an optional decimal fraction of a second
-    // - Z represents UTC or ±hh:mm represents timezone offset
-    static ref DATETIME_REGEX: Regex =
-        Regex::new(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$")
-            .unwrap();
-}
-
-/// Validates that a datetime string matches the ISO 8601 format.
-///
-/// The expected format is:
-/// - YYYY-MM-DDThh:mm:ss[.fraction]Z or
-/// - YYYY-MM-DDThh:mm:ss[.fraction]±hh:mm
-///
-/// # Arguments
-/// * `datetime` - The datetime string to validate
-///
-/// # Returns
-/// * `Ok(())` if the datetime string is valid
-/// * `Err(ValidationError)` if the datetime string is invalid
-fn validate_datetime(datetime: &str) -> Result<(), ValidationError> {
-    if DATETIME_REGEX.is_match(datetime) {
-        Ok(())
-    } else {
-        Err(ValidationError::new("invalid_datetime"))
-    }
-}
 
 /// Defines parameters required for initiating and maintaining wireless communication with other devices.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
