@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, GenericStatusEnumType, IdTokenType, StatusInfoType};
+use crate::v2_1::{
+    datatypes::{CustomDataType, IdTokenType, StatusInfoType},
+    enumerations::GenericStatusEnumType,
+};
 
 /// Request body for the RequestBatterySwap request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]

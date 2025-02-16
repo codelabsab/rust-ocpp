@@ -47,4 +47,18 @@ pub enum DERControlEnumType {
     WattPF,
     #[serde(rename = "WattVar")]
     WattVar,
+    PowerLimitation,
+    PowerTarget,
+    PowerFactor,
+    VoltageTarget,
+    CurrentTarget,
+    LoadPriority,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum DERControlStatusEnumType {
+    Accepted,
+    Rejected,
+    NotSupported,
 }

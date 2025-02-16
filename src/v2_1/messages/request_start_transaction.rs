@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{
-    ChargingProfileType, CustomDataType, IdTokenType, RequestStartStopStatusEnumType,
-    StatusInfoType,
+use crate::v2_1::{
+    datatypes::{ChargingProfileType, CustomDataType, IdTokenType, StatusInfoType},
+    enumerations::RequestStartStopStatusEnumType,
 };
 
 /// Request body for the RequestStartTransaction request.

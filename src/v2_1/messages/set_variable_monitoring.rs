@@ -113,8 +113,7 @@ pub struct SetVariableMonitoringRequest {
     pub custom_data: Option<CustomDataType>,
 
     /// Required. List of monitoring settings to configure.
-    #[validate]
-    #[validate(length(min = 1))]
+    #[validate(length(min = 1), nested)]
     pub set_monitoring_data: Vec<SetMonitoringDataType>,
 }
 
@@ -127,7 +126,6 @@ pub struct SetVariableMonitoringResponse {
     pub custom_data: Option<CustomDataType>,
 
     /// Required. List of result statuses per monitoring setting.
-    #[validate]
-    #[validate(length(min = 1))]
+    #[validate(length(min = 1), nested)]
     pub set_monitoring_result: Vec<SetMonitoringResultType>,
 }

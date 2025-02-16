@@ -15,5 +15,15 @@ pub struct CustomDataType {
     /// Additional vendor-specific properties
     #[serde(flatten)]
     #[serde(skip_serializing_if = "HashMap::is_empty")]
+    #[serde(default)]
     pub additional_properties: HashMap<String, Value>,
+}
+
+impl CustomDataType {
+    pub fn new(vendor_id: String) -> Self {
+        Self {
+            vendor_id,
+            additional_properties: HashMap::new(),
+        }
+    }
 }
