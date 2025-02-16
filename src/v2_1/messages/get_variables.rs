@@ -15,8 +15,7 @@ pub struct GetVariablesRequest {
     pub custom_data: Option<CustomDataType>,
 
     /// Required. List of requested variables.
-    #[validate]
-    #[validate(length(min = 1))]
+    #[validate(length(min = 1), nested)]
     pub get_variable_data: Vec<GetVariableDataType>,
 }
 
@@ -29,7 +28,6 @@ pub struct GetVariablesResponse {
     pub custom_data: Option<CustomDataType>,
 
     /// Required. List of requested variables and their values.
-    #[validate]
-    #[validate(length(min = 1))]
+    #[validate(length(min = 1), nested)]
     pub get_variable_result: Vec<GetVariableResultType>,
 }
