@@ -4,7 +4,7 @@ use validator::Validate;
 
 use crate::v2_1::{
     datatypes::{CustomDataType, IdTokenType, StatusInfoType},
-    enumerations::ReserveNowStatusEnumType,
+    enumerations::{connector::ConnectorEnumType, ReserveNowStatusEnumType},
 };
 
 /// Request body for the ReserveNow request.
@@ -22,10 +22,9 @@ pub struct ReserveNowRequest {
     /// Required. Date and time at which the reservation expires.
     pub expiry_date_time: DateTime<Utc>,
 
-    /// Optional. This field specifies the connector type. Values defined in Appendix as ConnectorEnumStringType.
+    /// Optional. This field specifies the connector type.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 20))]
-    pub connector_type: Option<String>,
+    pub connector_type: Option<ConnectorEnumType>,
 
     /// Required. Contains the identifier that needs to be authorized.
     pub id_token: IdTokenType,
