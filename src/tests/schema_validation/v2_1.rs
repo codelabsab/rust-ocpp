@@ -560,17 +560,12 @@ fn validate_cancel_reservation_request() -> Result<(), Box<dyn std::error::Error
 #[test]
 fn validate_cancel_reservation_response() -> Result<(), Box<dyn std::error::Error>> {
     let test = CancelReservationResponse {
-        custom_data: Some(CustomDataType {
-            vendor_id: "test_vendor".to_string(),
-        }),
+        custom_data: Some(CustomDataType::new("test_vendor".to_string())),
         status: CancelReservationStatusEnumType::Accepted,
         status_info: Some(StatusInfoType {
             reason_code: "NoReservation".to_string(),
             additional_info: Some("No active reservation found".to_string()),
-            custom_data: Some(CustomDataType {
-                // Add vendorId in status_info custom_data
-                vendor_id: "test_vendor".to_string(),
-            }),
+            custom_data: Some(CustomDataType::new("test_vendor".to_string())),
         }),
     };
 

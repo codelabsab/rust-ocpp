@@ -2,8 +2,9 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{
-    CustomDataType, IdTokenType, ReserveNowStatusEnumType, StatusInfoType,
+use crate::v2_1::{
+    datatypes::{CustomDataType, IdTokenType, StatusInfoType},
+    enumerations::ReserveNowStatusEnumType,
 };
 
 /// Request body for the ReserveNow request.

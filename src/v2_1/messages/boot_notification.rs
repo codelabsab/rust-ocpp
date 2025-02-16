@@ -178,13 +178,9 @@ mod tests {
                     "This firmware version is way too long and should fail validation".into(),
                 ),
                 modem: None,
-                custom_data: Some(CustomDataType {
-                    vendor_id: "test_vendor".to_string(),
-                }),
+                custom_data: Some(CustomDataType::new("test_vendor".to_string())),
             },
-            custom_data: Some(CustomDataType {
-                vendor_id: "test_vendor".to_string(),
-            }),
+            custom_data: Some(CustomDataType::new("test_vendor".to_string())),
         };
 
         // Validate the request - should fail
@@ -256,17 +252,11 @@ mod tests {
                 modem: Some(ModemType {
                     iccid: Some("iccid12345".into()),
                     imsi: Some("imsi54321".into()),
-                    custom_data: Some(CustomDataType {
-                        vendor_id: "VendorZ".into(),
-                    }),
+                    custom_data: Some(CustomDataType::new("VendorZ".to_string())),
                 }),
-                custom_data: Some(CustomDataType {
-                    vendor_id: "VendorZ".into(),
-                }),
+                custom_data: Some(CustomDataType::new("VendorZ".to_string())),
             },
-            custom_data: Some(CustomDataType {
-                vendor_id: "VendorZ".into(),
-            }),
+            custom_data: Some(CustomDataType::new("VendorZ".to_string())),
         };
 
         let serialized = serde_json::to_string(&request).unwrap();

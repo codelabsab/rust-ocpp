@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{
-    ChargingProfileStatusEnumType, ChargingScheduleUpdateType, CustomDataType, StatusInfoType,
+use crate::v2_1::{
+    datatypes::{ChargingScheduleUpdateType, CustomDataType, StatusInfoType},
+    enumerations::ChargingProfileStatusEnumType,
 };
 
 /// Request body for the PullDynamicScheduleUpdate request.

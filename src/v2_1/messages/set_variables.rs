@@ -91,8 +91,7 @@ pub struct SetVariablesRequest {
     pub custom_data: Option<CustomDataType>,
 
     /// Required. List of settings to set in components.
-    #[validate]
-    #[validate(length(min = 1))]
+    #[validate(length(min = 1), nested)]
     pub set_variable_data: Vec<SetVariableDataType>,
 }
 
@@ -105,7 +104,6 @@ pub struct SetVariablesResponse {
     pub custom_data: Option<CustomDataType>,
 
     /// Required. List of result statuses per settings.
-    #[validate]
-    #[validate(length(min = 1))]
+    #[validate(length(min = 1), nested)]
     pub set_variable_result: Vec<SetVariableResultType>,
 }

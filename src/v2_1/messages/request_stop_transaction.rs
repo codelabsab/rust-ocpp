@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, RequestStartStopStatusEnumType, StatusInfoType};
+use crate::v2_1::{
+    datatypes::{CustomDataType, StatusInfoType},
+    enumerations::RequestStartStopStatusEnumType,
+};
 
 /// Request body for the RequestStopTransaction request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]

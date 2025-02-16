@@ -3,7 +3,7 @@ use validator::Validate;
 
 use crate::v2_1::{
     datatypes::{CustomDataType, StatusInfoType},
-    enumerations::{DERControlEnumType, DERControlStatusEnumType},
+    enumerations::der_control::{DERControlEnumType, DERControlStatusEnumType},
 };
 
 /// Request to clear DER control settings.
