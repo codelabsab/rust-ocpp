@@ -1,5 +1,5 @@
 use super::{
-    CustomData, IdToken, IdTokenInfo, MessageContent, MeterValue, Transaction, TransactionData,
+    CustomData, IdToken, IdTokenInfo, MessageContent, MeterValue, Transaction,
     TransactionEventEnum, TransactionLimit, TriggerReasonEnum, EVSE,
 };
 
@@ -21,8 +21,6 @@ pub struct TransactionEventRequest {
     pub cable_max_current: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reservation_id: Option<i32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub transaction_data: Option<TransactionData>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub evse: Option<EVSE>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -68,7 +66,6 @@ impl TransactionEventRequest {
             number_of_phases_used: None,
             cable_max_current: None,
             reservation_id: None,
-            transaction_data: None,
             evse: None,
             id_token: None,
         }
