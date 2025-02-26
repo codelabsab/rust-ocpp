@@ -2,4 +2,4 @@
 pub mod validator;
 
 /// serializers
-pub mod serializer;
+pub mod datetime_rfc3339;
