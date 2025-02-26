@@ -1,12 +1,15 @@
 use chrono::DateTime;
 use chrono::Utc;
 
+use crate::v2_0_1::helpers::serializer::datetime;
+
 /// Sent by the Charging Station to the CSMS in case of a security event.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SecurityEventNotificationRequest {
     #[serde(rename = "type")]
     pub kind: String,
+    #[serde(with = "datetime")]
     pub timestamp: DateTime<Utc>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tech_info: Option<String>,

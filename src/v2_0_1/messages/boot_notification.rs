@@ -17,6 +17,7 @@ use crate::v2_0_1::datatypes::charging_station_type::ChargingStationType;
 use crate::v2_0_1::datatypes::status_info_type::StatusInfoType;
 use crate::v2_0_1::enumerations::boot_reason_enum_type::BootReasonEnumType;
 use crate::v2_0_1::enumerations::registration_status_enum_type::RegistrationStatusEnumType;
+use crate::v2_0_1::helpers::serializer::datetime;
 
 /// `BootNotificationRequest`, sent by the Charging Station to the CSMS when booting.
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Default)]
@@ -33,6 +34,7 @@ pub struct BootNotificationRequest {
 #[serde(rename_all = "camelCase")]
 pub struct BootNotificationResponse {
     /// This contains the CSMS’s current time.
+    #[serde(with = "datetime")]
     pub current_time: DateTime<Utc>,
     /// When [status](BootNotificationResponse::status) is Accepted, this contains the
     /// heartbeat interval in seconds.
