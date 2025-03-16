@@ -13,7 +13,8 @@ use crate::v2_0_1::enumerations::message_state_enum_type::MessageStateEnumType;
 pub struct MessageInfoType {
     pub id: i32,
     pub priority: MessagePriorityEnumType,
-    pub state: MessageStateEnumType,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub state: Option<MessageStateEnumType>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_date_time: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]
