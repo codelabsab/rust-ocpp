@@ -1924,7 +1924,7 @@ mod tests {
             message_info: Some(vec![MessageInfoType {
                 id: 0,
                 priority: MessagePriorityEnumType::AlwaysFront,
-                state: MessageStateEnumType::Charging,
+                state: Some(MessageStateEnumType::Charging),
                 start_date_time: Some(Utc::now()),
                 end_date_time: Some(Utc::now()),
                 transaction_id: Some("transaction_id".to_string()),
@@ -3035,7 +3035,7 @@ mod tests {
             message: MessageInfoType {
                 id: 0,
                 priority: MessagePriorityEnumType::AlwaysFront,
-                state: MessageStateEnumType::Charging,
+                state: Some(MessageStateEnumType::Charging),
                 start_date_time: Some(Utc::now()),
                 end_date_time: Some(Utc::now()),
                 transaction_id: Some("".to_string()),
