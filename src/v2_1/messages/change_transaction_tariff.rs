@@ -1,9 +1,8 @@
-use chrono::NaiveTime;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::{
-    datatypes::{CustomDataType, MessageContentType, PriceType, StatusInfoType},
+    datatypes::{CustomDataType, MessageContentType, StatusInfoType},
     enumerations::{DayOfWeekEnumType, EvseKindEnumType, TariffChangeStatusEnumType},
 };
 
