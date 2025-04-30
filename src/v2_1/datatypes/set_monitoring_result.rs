@@ -240,12 +240,8 @@ mod tests {
         let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
         let id = 42;
 
-        let result = SetMonitoringResultType::new(
-            status.clone(),
-            component.clone(),
-            variable.clone(),
-            id,
-        );
+        let result =
+            SetMonitoringResultType::new(status.clone(), component.clone(), variable.clone(), id);
 
         assert_eq!(result.status(), &status);
         assert_eq!(result.component(), &component);
@@ -264,14 +260,10 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
         let status_info = StatusInfoType::new("SomeReason".to_string());
 
-        let result = SetMonitoringResultType::new(
-            status.clone(),
-            component.clone(),
-            variable.clone(),
-            id,
-        )
-        .with_custom_data(custom_data.clone())
-        .with_status_info(status_info.clone());
+        let result =
+            SetMonitoringResultType::new(status.clone(), component.clone(), variable.clone(), id)
+                .with_custom_data(custom_data.clone())
+                .with_status_info(status_info.clone());
 
         assert_eq!(result.status(), &status);
         assert_eq!(result.component(), &component);
@@ -288,12 +280,7 @@ mod tests {
         let variable1 = VariableType::new("variable1".to_string(), "instance1".to_string());
         let id1 = 42;
 
-        let mut result = SetMonitoringResultType::new(
-            status1,
-            component1,
-            variable1,
-            id1,
-        );
+        let mut result = SetMonitoringResultType::new(status1, component1, variable1, id1);
 
         let status2 = SetMonitoringStatusEnumType::UnknownVariable;
         let component2 = ComponentType::new("component2".to_string());
@@ -318,9 +305,7 @@ mod tests {
         assert_eq!(result.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        result
-            .set_status_info(None)
-            .set_custom_data(None);
+        result.set_status_info(None).set_custom_data(None);
 
         assert_eq!(result.status_info(), None);
         assert_eq!(result.custom_data(), None);

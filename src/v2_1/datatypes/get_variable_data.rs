@@ -197,7 +197,10 @@ mod tests {
 
         assert_eq!(get_variable_data.component(), &component);
         assert_eq!(get_variable_data.variable(), &variable);
-        assert_eq!(get_variable_data.attribute_type(), Some(attribute_type.as_str()));
+        assert_eq!(
+            get_variable_data.attribute_type(),
+            Some(attribute_type.as_str())
+        );
         assert_eq!(get_variable_data.custom_data(), Some(&custom_data));
     }
 
@@ -224,7 +227,10 @@ mod tests {
 
         assert_eq!(get_variable_data.component(), &component2);
         assert_eq!(get_variable_data.variable(), &variable2);
-        assert_eq!(get_variable_data.attribute_type(), Some(attribute_type.as_str()));
+        assert_eq!(
+            get_variable_data.attribute_type(),
+            Some(attribute_type.as_str())
+        );
         assert_eq!(get_variable_data.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

@@ -160,7 +160,10 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_energy_transfer_mode(&mut self, energy_transfer_mode: EnergyTransferModeEnumType) -> &mut Self {
+    pub fn set_energy_transfer_mode(
+        &mut self,
+        energy_transfer_mode: EnergyTransferModeEnumType,
+    ) -> &mut Self {
         self.energy_transfer_mode = energy_transfer_mode;
         self
     }
@@ -313,7 +316,10 @@ mod tests {
         let energy_transfer_mode = EnergyTransferModeEnumType::DC;
         let tariff_conditions = TariffConditionsType::new(energy_transfer_mode.clone());
 
-        assert_eq!(tariff_conditions.energy_transfer_mode(), &energy_transfer_mode);
+        assert_eq!(
+            tariff_conditions.energy_transfer_mode(),
+            &energy_transfer_mode
+        );
         assert_eq!(tariff_conditions.fixed(), None);
         assert_eq!(tariff_conditions.max_power(), None);
         assert_eq!(tariff_conditions.min_power(), None);
@@ -340,7 +346,10 @@ mod tests {
             .with_min_duration(min_duration)
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(tariff_conditions.energy_transfer_mode(), &energy_transfer_mode);
+        assert_eq!(
+            tariff_conditions.energy_transfer_mode(),
+            &energy_transfer_mode
+        );
         assert_eq!(tariff_conditions.fixed(), Some(&fixed));
         assert_eq!(tariff_conditions.max_power(), Some(max_power));
         assert_eq!(tariff_conditions.min_power(), Some(min_power));
@@ -371,7 +380,10 @@ mod tests {
             .set_min_duration(Some(min_duration))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(tariff_conditions.energy_transfer_mode(), &energy_transfer_mode2);
+        assert_eq!(
+            tariff_conditions.energy_transfer_mode(),
+            &energy_transfer_mode2
+        );
         assert_eq!(tariff_conditions.fixed(), Some(&fixed));
         assert_eq!(tariff_conditions.max_power(), Some(max_power));
         assert_eq!(tariff_conditions.min_power(), Some(min_power));

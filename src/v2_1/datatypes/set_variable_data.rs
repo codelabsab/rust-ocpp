@@ -39,11 +39,7 @@ impl SetVariableDataType {
     /// # Returns
     ///
     /// A new instance of `SetVariableDataType` with optional fields set to `None`
-    pub fn new(
-        component: ComponentType,
-        variable: VariableType,
-        attribute_value: String,
-    ) -> Self {
+    pub fn new(component: ComponentType, variable: VariableType, attribute_value: String) -> Self {
         Self {
             custom_data: None,
             component,
@@ -207,11 +203,8 @@ mod tests {
         let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
         let attribute_value = "value1".to_string();
 
-        let data = SetVariableDataType::new(
-            component.clone(),
-            variable.clone(),
-            attribute_value.clone(),
-        );
+        let data =
+            SetVariableDataType::new(component.clone(), variable.clone(), attribute_value.clone());
 
         assert_eq!(data.component(), &component);
         assert_eq!(data.variable(), &variable);
@@ -228,13 +221,10 @@ mod tests {
         let attribute_type = "ActualValue".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let data = SetVariableDataType::new(
-            component.clone(),
-            variable.clone(),
-            attribute_value.clone(),
-        )
-        .with_attribute_type(attribute_type.clone())
-        .with_custom_data(custom_data.clone());
+        let data =
+            SetVariableDataType::new(component.clone(), variable.clone(), attribute_value.clone())
+                .with_attribute_type(attribute_type.clone())
+                .with_custom_data(custom_data.clone());
 
         assert_eq!(data.component(), &component);
         assert_eq!(data.variable(), &variable);
@@ -249,11 +239,7 @@ mod tests {
         let variable1 = VariableType::new("variable1".to_string(), "instance1".to_string());
         let attribute_value1 = "value1".to_string();
 
-        let mut data = SetVariableDataType::new(
-            component1,
-            variable1,
-            attribute_value1,
-        );
+        let mut data = SetVariableDataType::new(component1, variable1, attribute_value1);
 
         let component2 = ComponentType::new("component2".to_string());
         let variable2 = VariableType::new("variable2".to_string(), "instance2".to_string());
@@ -261,8 +247,7 @@ mod tests {
         let attribute_type = "MinValue".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        data
-            .set_component(component2.clone())
+        data.set_component(component2.clone())
             .set_variable(variable2.clone())
             .set_attribute_value(attribute_value2.clone())
             .set_attribute_type(Some(attribute_type.clone()))
@@ -275,9 +260,7 @@ mod tests {
         assert_eq!(data.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        data
-            .set_attribute_type(None)
-            .set_custom_data(None);
+        data.set_attribute_type(None).set_custom_data(None);
 
         assert_eq!(data.attribute_type(), None);
         assert_eq!(data.custom_data(), None);

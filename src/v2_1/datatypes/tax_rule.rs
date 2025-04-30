@@ -207,7 +207,10 @@ mod tests {
             .with_custom_data(custom_data.clone());
 
         assert_eq!(tax_rule.tax_rate(), &tax_rate);
-        assert_eq!(tax_rule.energy_source_type(), Some(energy_source_type.as_str()));
+        assert_eq!(
+            tax_rule.energy_source_type(),
+            Some(energy_source_type.as_str())
+        );
         assert_eq!(tax_rule.consumption_type(), Some(consumption_type.as_str()));
         assert_eq!(tax_rule.custom_data(), Some(&custom_data));
     }
@@ -229,7 +232,10 @@ mod tests {
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(tax_rule.tax_rate(), &tax_rate2);
-        assert_eq!(tax_rule.energy_source_type(), Some(energy_source_type.as_str()));
+        assert_eq!(
+            tax_rule.energy_source_type(),
+            Some(energy_source_type.as_str())
+        );
         assert_eq!(tax_rule.consumption_type(), Some(consumption_type.as_str()));
         assert_eq!(tax_rule.custom_data(), Some(&custom_data));
 

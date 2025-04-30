@@ -115,8 +115,8 @@ mod tests {
         let overstay_rules = vec![overstay_rule.clone()];
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let overstay_rule_list = OverstayRuleListType::new(overstay_rules.clone())
-            .with_custom_data(custom_data.clone());
+        let overstay_rule_list =
+            OverstayRuleListType::new(overstay_rules.clone()).with_custom_data(custom_data.clone());
 
         assert_eq!(overstay_rule_list.overstay_rules(), &overstay_rules);
         assert_eq!(overstay_rule_list.custom_data(), Some(&custom_data));

@@ -128,7 +128,7 @@ mod tests {
     #[test]
     fn test_v2x_freq_watt_point_new() {
         let point = V2XFreqWattPointType::new(50.0, -30.0);
-        
+
         assert_eq!(point.freq(), 50.0);
         assert_eq!(point.power(), -30.0);
         assert_eq!(point.custom_data(), None);
@@ -137,9 +137,8 @@ mod tests {
     #[test]
     fn test_v2x_freq_watt_point_with_methods() {
         let custom_data = CustomDataType::new("Vendor".to_string());
-        let point = V2XFreqWattPointType::new(51.5, -40.0)
-            .with_custom_data(custom_data.clone());
-        
+        let point = V2XFreqWattPointType::new(51.5, -40.0).with_custom_data(custom_data.clone());
+
         assert_eq!(point.freq(), 51.5);
         assert_eq!(point.power(), -40.0);
         assert_eq!(point.custom_data(), Some(&custom_data));
@@ -148,11 +147,9 @@ mod tests {
     #[test]
     fn test_v2x_freq_watt_point_setters() {
         let mut point = V2XFreqWattPointType::new(50.0, -30.0);
-        
-        point
-            .set_freq(49.5)
-            .set_power(-25.0);
-        
+
+        point.set_freq(49.5).set_power(-25.0);
+
         assert_eq!(point.freq(), 49.5);
         assert_eq!(point.power(), -25.0);
     }

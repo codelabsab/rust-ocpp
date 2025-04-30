@@ -110,7 +110,10 @@ impl SalesTariffEntryType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_relative_time_interval(&mut self, relative_time_interval: RelativeTimeIntervalType) -> &mut Self {
+    pub fn set_relative_time_interval(
+        &mut self,
+        relative_time_interval: RelativeTimeIntervalType,
+    ) -> &mut Self {
         self.relative_time_interval = relative_time_interval;
         self
     }
@@ -133,7 +136,10 @@ impl SalesTariffEntryType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_consumption_cost(&mut self, consumption_cost: Option<Vec<ConsumptionCostType>>) -> &mut Self {
+    pub fn set_consumption_cost(
+        &mut self,
+        consumption_cost: Option<Vec<ConsumptionCostType>>,
+    ) -> &mut Self {
         self.consumption_cost = consumption_cost;
         self
     }

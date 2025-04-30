@@ -178,8 +178,8 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let limit = LimitAtSoCType::new(priority, soc, power_limit)
-            .with_custom_data(custom_data.clone());
+        let limit =
+            LimitAtSoCType::new(priority, soc, power_limit).with_custom_data(custom_data.clone());
 
         assert_eq!(limit.priority(), priority);
         assert_eq!(limit.soc(), soc);

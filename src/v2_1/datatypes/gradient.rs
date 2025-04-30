@@ -144,8 +144,7 @@ mod tests {
         let rate = 5.0;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let gradient = GradientType::new(priority, rate)
-            .with_custom_data(custom_data.clone());
+        let gradient = GradientType::new(priority, rate).with_custom_data(custom_data.clone());
 
         assert_eq!(gradient.priority(), priority);
         assert_eq!(gradient.rate(), rate);

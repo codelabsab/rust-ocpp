@@ -146,7 +146,10 @@ impl TransactionType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_charging_state(&mut self, charging_state: Option<ChargingStateEnumType>) -> &mut Self {
+    pub fn set_charging_state(
+        &mut self,
+        charging_state: Option<ChargingStateEnumType>,
+    ) -> &mut Self {
         self.charging_state = charging_state;
         self
     }

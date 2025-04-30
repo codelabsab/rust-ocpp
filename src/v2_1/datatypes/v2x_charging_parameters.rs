@@ -45,7 +45,11 @@ impl V2XChargingParametersType {
     /// # Returns
     ///
     /// A new `V2XChargingParametersType` instance with optional fields set to `None`
-    pub fn new(ev_max_discharge_power: f64, ev_max_discharge_current: f64, ev_max_voltage: f64) -> Self {
+    pub fn new(
+        ev_max_discharge_power: f64,
+        ev_max_discharge_current: f64,
+        ev_max_voltage: f64,
+    ) -> Self {
         Self {
             custom_data: None,
             ev_max_discharge_power,
@@ -246,7 +250,10 @@ impl V2XChargingParametersType {
     /// # Returns
     ///
     /// The modified `V2XChargingParametersType` instance
-    pub fn set_ev_min_discharge_current(&mut self, ev_min_discharge_current: Option<f64>) -> &mut Self {
+    pub fn set_ev_min_discharge_current(
+        &mut self,
+        ev_min_discharge_current: Option<f64>,
+    ) -> &mut Self {
         self.ev_min_discharge_current = ev_min_discharge_current;
         self
     }
@@ -282,7 +289,7 @@ mod tests {
     #[test]
     fn test_v2x_charging_parameters_new() {
         let params = V2XChargingParametersType::new(10000.0, 32.0, 400.0);
-        
+
         assert_eq!(params.ev_max_discharge_power(), 10000.0);
         assert_eq!(params.ev_max_discharge_current(), 32.0);
         assert_eq!(params.ev_max_voltage(), 400.0);
@@ -300,7 +307,7 @@ mod tests {
             .with_ev_min_voltage(200.0)
             .with_ev_min_discharge_current(10.0)
             .with_ev_min_discharge_power(2000.0);
-        
+
         assert_eq!(params.ev_max_discharge_power(), 10000.0);
         assert_eq!(params.ev_max_discharge_current(), 32.0);
         assert_eq!(params.ev_max_voltage(), 400.0);
@@ -313,7 +320,7 @@ mod tests {
     #[test]
     fn test_v2x_charging_parameters_setters() {
         let mut params = V2XChargingParametersType::new(10000.0, 32.0, 400.0);
-        
+
         params
             .set_ev_max_discharge_power(12000.0)
             .set_ev_max_discharge_current(40.0)
@@ -321,7 +328,7 @@ mod tests {
             .set_ev_min_voltage(Some(210.0))
             .set_ev_min_discharge_current(Some(12.0))
             .set_ev_min_discharge_power(Some(2400.0));
-        
+
         assert_eq!(params.ev_max_discharge_power(), 12000.0);
         assert_eq!(params.ev_max_discharge_current(), 40.0);
         assert_eq!(params.ev_max_voltage(), 415.0);

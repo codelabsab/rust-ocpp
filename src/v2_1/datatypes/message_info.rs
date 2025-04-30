@@ -64,10 +64,10 @@ impl MessageInfoType {
     ///
     /// A new instance of `MessageInfoType` with optional fields set to `None`
     pub fn new(
-        id: String, 
-        priority: MessagePriorityEnumType, 
-        state: MessageStateEnumType, 
-        start_timestamp: DateTime<Utc>
+        id: String,
+        priority: MessagePriorityEnumType,
+        state: MessageStateEnumType,
+        start_timestamp: DateTime<Utc>,
     ) -> Self {
         Self {
             id,
@@ -409,12 +409,8 @@ mod tests {
         let state = MessageStateEnumType::Charging;
         let start_timestamp = Utc::now();
 
-        let message_info = MessageInfoType::new(
-            id.clone(), 
-            priority.clone(), 
-            state.clone(), 
-            start_timestamp,
-        );
+        let message_info =
+            MessageInfoType::new(id.clone(), priority.clone(), state.clone(), start_timestamp);
 
         assert_eq!(message_info.id(), id);
         assert_eq!(message_info.priority(), &priority);
@@ -444,18 +440,14 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let message_info = MessageInfoType::new(
-            id.clone(), 
-            priority.clone(), 
-            state.clone(), 
-            start_timestamp,
-        )
-        .with_end_timestamp(end_timestamp)
-        .with_transaction_id(transaction_id.clone())
-        .with_message(message.clone())
-        .with_display(display.clone())
-        .with_id_token(id_token.clone())
-        .with_custom_data(custom_data.clone());
+        let message_info =
+            MessageInfoType::new(id.clone(), priority.clone(), state.clone(), start_timestamp)
+                .with_end_timestamp(end_timestamp)
+                .with_transaction_id(transaction_id.clone())
+                .with_message(message.clone())
+                .with_display(display.clone())
+                .with_id_token(id_token.clone())
+                .with_custom_data(custom_data.clone());
 
         assert_eq!(message_info.id(), id);
         assert_eq!(message_info.priority(), &priority);
@@ -490,9 +482,9 @@ mod tests {
         };
 
         let mut message_info = MessageInfoType::new(
-            id1.clone(), 
-            priority1.clone(), 
-            state1.clone(), 
+            id1.clone(),
+            priority1.clone(),
+            state1.clone(),
             start_timestamp1,
         );
 

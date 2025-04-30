@@ -46,7 +46,13 @@ impl VPNType {
     /// # Returns
     ///
     /// A new instance of `VPNType` with optional fields set to `None`
-    pub fn new(server: String, user: String, password: String, key: String, r#type: String) -> Self {
+    pub fn new(
+        server: String,
+        user: String,
+        password: String,
+        key: String,
+        r#type: String,
+    ) -> Self {
         Self {
             server,
             user,

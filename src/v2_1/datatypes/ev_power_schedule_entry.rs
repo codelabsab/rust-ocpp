@@ -146,8 +146,8 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let entry = EVPowerScheduleEntryType::new(duration, power)
-            .with_custom_data(custom_data.clone());
+        let entry =
+            EVPowerScheduleEntryType::new(duration, power).with_custom_data(custom_data.clone());
 
         assert_eq!(entry.duration(), duration);
         assert_eq!(entry.power(), power);

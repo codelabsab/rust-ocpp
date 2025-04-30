@@ -129,7 +129,7 @@ mod tests {
     #[test]
     fn test_v2x_signal_watt_point_new() {
         let point = V2XSignalWattPointType::new(75.0, -30.0);
-        
+
         assert_eq!(point.signal(), 75.0);
         assert_eq!(point.power(), -30.0);
         assert_eq!(point.custom_data(), None);
@@ -138,9 +138,8 @@ mod tests {
     #[test]
     fn test_v2x_signal_watt_point_with_methods() {
         let custom_data = CustomDataType::new("Vendor".to_string());
-        let point = V2XSignalWattPointType::new(50.0, -40.0)
-            .with_custom_data(custom_data.clone());
-        
+        let point = V2XSignalWattPointType::new(50.0, -40.0).with_custom_data(custom_data.clone());
+
         assert_eq!(point.signal(), 50.0);
         assert_eq!(point.power(), -40.0);
         assert_eq!(point.custom_data(), Some(&custom_data));
@@ -149,11 +148,9 @@ mod tests {
     #[test]
     fn test_v2x_signal_watt_point_setters() {
         let mut point = V2XSignalWattPointType::new(75.0, -30.0);
-        
-        point
-            .set_signal(80.0)
-            .set_power(-25.0);
-        
+
+        point.set_signal(80.0).set_power(-25.0);
+
         assert_eq!(point.signal(), 80.0);
         assert_eq!(point.power(), -25.0);
     }

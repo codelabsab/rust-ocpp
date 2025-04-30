@@ -165,8 +165,8 @@ mod tests {
         let duration = 60;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let interval = RelativeTimeIntervalType::new(start, duration)
-            .with_custom_data(custom_data.clone());
+        let interval =
+            RelativeTimeIntervalType::new(start, duration).with_custom_data(custom_data.clone());
 
         assert_eq!(interval.start(), start);
         assert_eq!(interval.duration(), duration);

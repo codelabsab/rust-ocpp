@@ -142,8 +142,8 @@ mod tests {
         let value = 42;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let rational_number = RationalNumberType::new(exponent, value)
-            .with_custom_data(custom_data.clone());
+        let rational_number =
+            RationalNumberType::new(exponent, value).with_custom_data(custom_data.clone());
 
         assert_eq!(rational_number.exponent(), exponent);
         assert_eq!(rational_number.value(), value);

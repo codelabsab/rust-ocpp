@@ -133,9 +133,9 @@ impl EVEnergyOfferType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::Utc;
-    use crate::v2_1::datatypes::ev_power_schedule_entry::EVPowerScheduleEntryType;
     use crate::v2_1::datatypes::ev_absolute_price_schedule_entry::EVAbsolutePriceScheduleEntryType;
+    use crate::v2_1::datatypes::ev_power_schedule_entry::EVPowerScheduleEntryType;
+    use chrono::Utc;
 
     #[test]
     fn test_new_ev_energy_offer() {
@@ -175,10 +175,7 @@ mod tests {
             custom_data: None,
         };
 
-        let offer = EVEnergyOfferType::new(
-            power_schedule.clone(),
-            price_schedule.clone(),
-        );
+        let offer = EVEnergyOfferType::new(power_schedule.clone(), price_schedule.clone());
 
         assert_eq!(offer.ev_power_schedule(), &power_schedule);
         assert_eq!(offer.ev_absolute_price_schedule(), &price_schedule);
@@ -190,13 +187,11 @@ mod tests {
         let time_anchor = Utc::now();
 
         // Create power schedule
-        let power_entries = vec![
-            EVPowerScheduleEntryType {
-                duration: 3600,
-                power: 11000.0,
-                custom_data: None,
-            },
-        ];
+        let power_entries = vec![EVPowerScheduleEntryType {
+            duration: 3600,
+            power: 11000.0,
+            custom_data: None,
+        }];
 
         let power_schedule = EVPowerScheduleType {
             time_anchor: time_anchor.clone(),
@@ -205,9 +200,7 @@ mod tests {
         };
 
         // Create price schedule
-        let price_entries = vec![
-            EVAbsolutePriceScheduleEntryType::new(3600, 0.25),
-        ];
+        let price_entries = vec![EVAbsolutePriceScheduleEntryType::new(3600, 0.25)];
 
         let price_schedule = EVAbsolutePriceScheduleType {
             time_anchor: time_anchor.clone(),
@@ -222,11 +215,8 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let offer = EVEnergyOfferType::new(
-            power_schedule.clone(),
-            price_schedule.clone(),
-        )
-        .with_custom_data(custom_data.clone());
+        let offer = EVEnergyOfferType::new(power_schedule.clone(), price_schedule.clone())
+            .with_custom_data(custom_data.clone());
 
         assert_eq!(offer.ev_power_schedule(), &power_schedule);
         assert_eq!(offer.ev_absolute_price_schedule(), &price_schedule);
@@ -238,13 +228,11 @@ mod tests {
         let time_anchor1 = Utc::now();
 
         // Create initial power schedule
-        let power_entries1 = vec![
-            EVPowerScheduleEntryType {
-                duration: 3600,
-                power: 11000.0,
-                custom_data: None,
-            },
-        ];
+        let power_entries1 = vec![EVPowerScheduleEntryType {
+            duration: 3600,
+            power: 11000.0,
+            custom_data: None,
+        }];
 
         let power_schedule1 = EVPowerScheduleType {
             time_anchor: time_anchor1.clone(),
@@ -253,9 +241,7 @@ mod tests {
         };
 
         // Create initial price schedule
-        let price_entries1 = vec![
-            EVAbsolutePriceScheduleEntryType::new(3600, 0.25),
-        ];
+        let price_entries1 = vec![EVAbsolutePriceScheduleEntryType::new(3600, 0.25)];
 
         let price_schedule1 = EVAbsolutePriceScheduleType {
             time_anchor: time_anchor1.clone(),
@@ -305,10 +291,7 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let mut offer = EVEnergyOfferType::new(
-            power_schedule1.clone(),
-            price_schedule1.clone(),
-        );
+        let mut offer = EVEnergyOfferType::new(power_schedule1.clone(), price_schedule1.clone());
 
         offer
             .set_ev_power_schedule(power_schedule2.clone())

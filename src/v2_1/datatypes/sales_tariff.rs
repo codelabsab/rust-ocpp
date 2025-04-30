@@ -179,7 +179,10 @@ impl SalesTariffType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_sales_tariff_entry(&mut self, sales_tariff_entry: Vec<SalesTariffEntryType>) -> &mut Self {
+    pub fn set_sales_tariff_entry(
+        &mut self,
+        sales_tariff_entry: Vec<SalesTariffEntryType>,
+    ) -> &mut Self {
         self.sales_tariff_entry = sales_tariff_entry;
         self
     }
@@ -243,7 +246,10 @@ mod tests {
             .with_custom_data(custom_data.clone());
 
         assert_eq!(sales_tariff.id(), id);
-        assert_eq!(sales_tariff.sales_tariff_description(), Some(description.as_str()));
+        assert_eq!(
+            sales_tariff.sales_tariff_description(),
+            Some(description.as_str())
+        );
         assert_eq!(sales_tariff.num_e_price_levels(), Some(num_levels));
         assert_eq!(sales_tariff.sales_tariff_entry().len(), 1);
         assert_eq!(sales_tariff.sales_tariff_entry()[0], entry);
@@ -273,7 +279,10 @@ mod tests {
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(sales_tariff.id(), id2);
-        assert_eq!(sales_tariff.sales_tariff_description(), Some(description.as_str()));
+        assert_eq!(
+            sales_tariff.sales_tariff_description(),
+            Some(description.as_str())
+        );
         assert_eq!(sales_tariff.num_e_price_levels(), Some(num_levels));
         assert_eq!(sales_tariff.sales_tariff_entry().len(), 1);
         assert_eq!(sales_tariff.sales_tariff_entry()[0], entry2);

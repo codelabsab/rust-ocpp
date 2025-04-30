@@ -263,7 +263,8 @@ mod tests {
         let response_time2 = 3.0;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut freq_droop = FreqDroopType::new(priority1, droop1, offset1, deadband1, response_time1);
+        let mut freq_droop =
+            FreqDroopType::new(priority1, droop1, offset1, deadband1, response_time1);
 
         freq_droop
             .set_priority(priority2)

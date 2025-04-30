@@ -35,11 +35,7 @@ impl StreamDataElementType {
     /// # Returns
     ///
     /// A new instance of `StreamDataElementType` with optional fields set to `None`
-    pub fn new(
-        variable: VariableType,
-        value: String,
-        sequence_id: i32,
-    ) -> Self {
+    pub fn new(variable: VariableType, value: String, sequence_id: i32) -> Self {
         Self {
             custom_data: None,
             variable,
@@ -165,11 +161,7 @@ mod tests {
         let value = "42.5".to_string();
         let sequence_id = 1;
 
-        let element = StreamDataElementType::new(
-            variable.clone(),
-            value.clone(),
-            sequence_id,
-        );
+        let element = StreamDataElementType::new(variable.clone(), value.clone(), sequence_id);
 
         assert_eq!(element.variable(), &variable);
         assert_eq!(element.value(), value);
@@ -184,12 +176,8 @@ mod tests {
         let sequence_id = 1;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let element = StreamDataElementType::new(
-            variable.clone(),
-            value.clone(),
-            sequence_id,
-        )
-        .with_custom_data(custom_data.clone());
+        let element = StreamDataElementType::new(variable.clone(), value.clone(), sequence_id)
+            .with_custom_data(custom_data.clone());
 
         assert_eq!(element.variable(), &variable);
         assert_eq!(element.value(), value);
@@ -203,11 +191,7 @@ mod tests {
         let value1 = "42.5".to_string();
         let sequence_id1 = 1;
 
-        let mut element = StreamDataElementType::new(
-            variable1,
-            value1,
-            sequence_id1,
-        );
+        let mut element = StreamDataElementType::new(variable1, value1, sequence_id1);
 
         let variable2 = VariableType::new("variable2".to_string(), "instance2".to_string());
         let value2 = "84.0".to_string();

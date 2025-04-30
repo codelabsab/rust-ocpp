@@ -197,7 +197,10 @@ mod tests {
 
         assert_eq!(log_params.remote_location(), remote_location);
         assert_eq!(log_params.oldest_timestamp(), oldest_timestamp);
-        assert_eq!(log_params.latest_timestamp(), Some(latest_timestamp.as_str()));
+        assert_eq!(
+            log_params.latest_timestamp(),
+            Some(latest_timestamp.as_str())
+        );
         assert_eq!(log_params.custom_data(), Some(&custom_data));
     }
 
@@ -213,7 +216,8 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let mut log_params = LogParametersType::new(remote_location1.clone(), oldest_timestamp1.clone());
+        let mut log_params =
+            LogParametersType::new(remote_location1.clone(), oldest_timestamp1.clone());
 
         log_params
             .set_remote_location(remote_location2.clone())
@@ -223,13 +227,14 @@ mod tests {
 
         assert_eq!(log_params.remote_location(), remote_location2);
         assert_eq!(log_params.oldest_timestamp(), oldest_timestamp2);
-        assert_eq!(log_params.latest_timestamp(), Some(latest_timestamp.as_str()));
+        assert_eq!(
+            log_params.latest_timestamp(),
+            Some(latest_timestamp.as_str())
+        );
         assert_eq!(log_params.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        log_params
-            .set_latest_timestamp(None)
-            .set_custom_data(None);
+        log_params.set_latest_timestamp(None).set_custom_data(None);
 
         assert_eq!(log_params.latest_timestamp(), None);
         assert_eq!(log_params.custom_data(), None);

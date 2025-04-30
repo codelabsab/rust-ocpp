@@ -531,7 +531,8 @@ mod tests {
         let total = TotalPriceType::new(100.0);
         let cost = 100.0;
 
-        let total_cost = TotalCostType::new(currency.clone(), type_of_cost.clone(), total.clone(), cost);
+        let total_cost =
+            TotalCostType::new(currency.clone(), type_of_cost.clone(), total.clone(), cost);
 
         assert_eq!(total_cost.currency(), currency);
         assert_eq!(total_cost.type_of_cost(), &type_of_cost);
@@ -564,16 +565,17 @@ mod tests {
         let cost_incl_tax = 100.0;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let total_cost = TotalCostType::new(currency.clone(), type_of_cost.clone(), total.clone(), cost)
-            .with_fixed(fixed.clone())
-            .with_energy(energy.clone())
-            .with_charging_time(charging_time.clone())
-            .with_idle_time(idle_time.clone())
-            .with_reservation_time(reservation_time.clone())
-            .with_reservation_fixed(reservation_fixed.clone())
-            .with_cost_excl_tax(cost_excl_tax)
-            .with_cost_incl_tax(cost_incl_tax)
-            .with_custom_data(custom_data.clone());
+        let total_cost =
+            TotalCostType::new(currency.clone(), type_of_cost.clone(), total.clone(), cost)
+                .with_fixed(fixed.clone())
+                .with_energy(energy.clone())
+                .with_charging_time(charging_time.clone())
+                .with_idle_time(idle_time.clone())
+                .with_reservation_time(reservation_time.clone())
+                .with_reservation_fixed(reservation_fixed.clone())
+                .with_cost_excl_tax(cost_excl_tax)
+                .with_cost_incl_tax(cost_incl_tax)
+                .with_custom_data(custom_data.clone());
 
         assert_eq!(total_cost.currency(), currency);
         assert_eq!(total_cost.type_of_cost(), &type_of_cost);

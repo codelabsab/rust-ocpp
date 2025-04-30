@@ -242,7 +242,10 @@ mod tests {
         assert_eq!(report_data.variable(), &variable);
         assert_eq!(report_data.custom_data(), Some(&custom_data));
         assert_eq!(report_data.variable_value(), Some(variable_value.as_str()));
-        assert_eq!(report_data.variable_attribute(), Some(variable_attribute.as_str()));
+        assert_eq!(
+            report_data.variable_attribute(),
+            Some(variable_attribute.as_str())
+        );
     }
 
     #[test]
@@ -268,7 +271,10 @@ mod tests {
         assert_eq!(report_data.variable(), &variable2);
         assert_eq!(report_data.custom_data(), Some(&custom_data));
         assert_eq!(report_data.variable_value(), Some(variable_value.as_str()));
-        assert_eq!(report_data.variable_attribute(), Some(variable_attribute.as_str()));
+        assert_eq!(
+            report_data.variable_attribute(),
+            Some(variable_attribute.as_str())
+        );
 
         // Test clearing optional fields
         report_data

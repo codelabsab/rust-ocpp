@@ -291,7 +291,10 @@ mod tests {
         assert_eq!(firmware.signature(), signature);
         assert_eq!(firmware.retrieve_date(), Some(retrieve_date.as_str()));
         assert_eq!(firmware.install_date(), Some(install_date.as_str()));
-        assert_eq!(firmware.signing_certificate(), Some(signing_certificate.as_str()));
+        assert_eq!(
+            firmware.signing_certificate(),
+            Some(signing_certificate.as_str())
+        );
         assert_eq!(firmware.custom_data(), Some(&custom_data));
     }
 
@@ -323,7 +326,10 @@ mod tests {
         assert_eq!(firmware.signature(), signature2);
         assert_eq!(firmware.retrieve_date(), Some(retrieve_date.as_str()));
         assert_eq!(firmware.install_date(), Some(install_date.as_str()));
-        assert_eq!(firmware.signing_certificate(), Some(signing_certificate.as_str()));
+        assert_eq!(
+            firmware.signing_certificate(),
+            Some(signing_certificate.as_str())
+        );
         assert_eq!(firmware.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

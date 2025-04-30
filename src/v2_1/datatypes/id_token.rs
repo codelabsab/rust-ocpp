@@ -139,7 +139,10 @@ impl IdTokenType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_additional_info(&mut self, additional_info: Option<Vec<AdditionalInfoType>>) -> &mut Self {
+    pub fn set_additional_info(
+        &mut self,
+        additional_info: Option<Vec<AdditionalInfoType>>,
+    ) -> &mut Self {
         self.additional_info = additional_info;
         self
     }
@@ -189,15 +192,13 @@ mod tests {
     fn test_with_methods() {
         let id = "4F62C4E0123456789".to_string();
         let token_type = "ISO14443".to_string();
-        
-        let additional_info = vec![
-            AdditionalInfoType {
-                additional_id_token: "Card123".to_string(),
-                type_: "CardType".to_string(),
-                custom_data: None,
-            }
-        ];
-        
+
+        let additional_info = vec![AdditionalInfoType {
+            additional_id_token: "Card123".to_string(),
+            type_: "CardType".to_string(),
+            custom_data: None,
+        }];
+
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -219,15 +220,13 @@ mod tests {
         let id2 = "ABCDEF0123456789".to_string();
         let token_type1 = "ISO14443".to_string();
         let token_type2 = "RFID".to_string();
-        
-        let additional_info = vec![
-            AdditionalInfoType {
-                additional_id_token: "Card123".to_string(),
-                type_: "CardType".to_string(),
-                custom_data: None,
-            }
-        ];
-        
+
+        let additional_info = vec![AdditionalInfoType {
+            additional_id_token: "Card123".to_string(),
+            type_: "CardType".to_string(),
+            custom_data: None,
+        }];
+
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -247,9 +246,7 @@ mod tests {
         assert_eq!(token.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        token
-            .set_additional_info(None)
-            .set_custom_data(None);
+        token.set_additional_info(None).set_custom_data(None);
 
         assert_eq!(token.additional_info(), None);
         assert_eq!(token.custom_data(), None);

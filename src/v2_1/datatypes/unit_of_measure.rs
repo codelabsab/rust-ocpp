@@ -188,9 +188,7 @@ mod tests {
         assert_eq!(unit_of_measure.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        unit_of_measure
-            .set_multiplier(None)
-            .set_custom_data(None);
+        unit_of_measure.set_multiplier(None).set_custom_data(None);
 
         assert_eq!(unit_of_measure.multiplier(), None);
         assert_eq!(unit_of_measure.custom_data(), None);

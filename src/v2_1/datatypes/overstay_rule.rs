@@ -169,8 +169,7 @@ mod tests {
 
         let mut rule = OverstayRuleType::new(time_threshold1, fee_threshold1);
 
-        rule
-            .set_overstay_time_threshold(time_threshold2)
+        rule.set_overstay_time_threshold(time_threshold2)
             .set_overstay_fee_threshold(fee_threshold2)
             .set_custom_data(Some(custom_data.clone()));
 

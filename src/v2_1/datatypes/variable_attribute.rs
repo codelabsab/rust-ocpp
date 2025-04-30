@@ -249,7 +249,8 @@ mod tests {
         let value = "42".to_string();
         let mutability = MutabilityEnumType::ReadOnly;
 
-        let attribute = VariableAttributeType::new(attr_type.clone(), value.clone(), mutability.clone());
+        let attribute =
+            VariableAttributeType::new(attr_type.clone(), value.clone(), mutability.clone());
 
         assert_eq!(attribute.type_field(), attr_type);
         assert_eq!(attribute.value(), value);
@@ -271,10 +272,11 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let attribute = VariableAttributeType::new(attr_type.clone(), value.clone(), mutability.clone())
-            .with_persistent(persistent)
-            .with_constant(constant)
-            .with_custom_data(custom_data.clone());
+        let attribute =
+            VariableAttributeType::new(attr_type.clone(), value.clone(), mutability.clone())
+                .with_persistent(persistent)
+                .with_constant(constant)
+                .with_custom_data(custom_data.clone());
 
         assert_eq!(attribute.type_field(), attr_type);
         assert_eq!(attribute.value(), value);
@@ -299,7 +301,8 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let mut attribute = VariableAttributeType::new(attr_type1.clone(), value1.clone(), mutability1.clone());
+        let mut attribute =
+            VariableAttributeType::new(attr_type1.clone(), value1.clone(), mutability1.clone());
 
         attribute
             .set_type(attr_type2.clone())

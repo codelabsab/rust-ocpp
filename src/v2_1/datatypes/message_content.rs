@@ -202,7 +202,8 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let mut message = MessageContentType::new(content1.clone(), format1.clone(), language1.clone());
+        let mut message =
+            MessageContentType::new(content1.clone(), format1.clone(), language1.clone());
 
         message
             .set_content(content2.clone())

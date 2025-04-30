@@ -194,7 +194,8 @@ mod tests {
         let is_superseded2 = true;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut fixed_var_get = FixedVarGetType::new(fixed_var1.clone(), id1.clone(), is_superseded1);
+        let mut fixed_var_get =
+            FixedVarGetType::new(fixed_var1.clone(), id1.clone(), is_superseded1);
 
         fixed_var_get
             .set_fixed_var(fixed_var2.clone())

@@ -194,7 +194,8 @@ mod tests {
         let is_superseded2 = true;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut freq_droop_get = FreqDroopGetType::new(freq_droop1.clone(), id1.clone(), is_superseded1);
+        let mut freq_droop_get =
+            FreqDroopGetType::new(freq_droop1.clone(), id1.clone(), is_superseded1);
 
         freq_droop_get
             .set_freq_droop(freq_droop2.clone())

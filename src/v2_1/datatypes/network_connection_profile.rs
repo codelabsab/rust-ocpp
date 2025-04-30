@@ -531,10 +531,7 @@ mod tests {
         assert_eq!(profile.vpn(), Some(&vpn));
 
         // Test clearing optional fields
-        profile
-            .set_custom_data(None)
-            .set_apn(None)
-            .set_vpn(None);
+        profile.set_custom_data(None).set_apn(None).set_vpn(None);
 
         assert_eq!(profile.custom_data(), None);
         assert_eq!(profile.apn(), None);

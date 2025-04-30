@@ -144,8 +144,8 @@ mod tests {
         let tax_rate_name = "VAT".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let tax_rate_type = TaxRateType::new(tax_rate, tax_rate_name.clone())
-            .with_custom_data(custom_data.clone());
+        let tax_rate_type =
+            TaxRateType::new(tax_rate, tax_rate_name.clone()).with_custom_data(custom_data.clone());
 
         assert_eq!(tax_rate_type.tax_rate(), tax_rate);
         assert_eq!(tax_rate_type.tax_rate_name(), tax_rate_name);

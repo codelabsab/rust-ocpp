@@ -385,8 +385,7 @@ mod tests {
     use super::*;
     use crate::v2_1::{
         datatypes::{
-            tariff_energy_price::TariffEnergyPriceType,
-            tariff_fixed_price::TariffFixedPriceType,
+            tariff_energy_price::TariffEnergyPriceType, tariff_fixed_price::TariffFixedPriceType,
             tariff_time_price::TariffTimePriceType,
         },
         enumerations::EnergyTransferModeEnumType,

@@ -168,9 +168,11 @@ mod tests {
     fn test_new_monitoring_data() {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new("Temperature".to_string(), "Outlet".to_string());
-        let variable_monitoring = vec![
-            VariableMonitoringType::new(1, MonitorEnumType::UpperThreshold, 80.0),
-        ];
+        let variable_monitoring = vec![VariableMonitoringType::new(
+            1,
+            MonitorEnumType::UpperThreshold,
+            80.0,
+        )];
 
         let monitoring_data = MonitoringDataType::new(
             component.clone(),
@@ -188,9 +190,11 @@ mod tests {
     fn test_with_custom_data() {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new("Temperature".to_string(), "Outlet".to_string());
-        let variable_monitoring = vec![
-            VariableMonitoringType::new(1, MonitorEnumType::UpperThreshold, 80.0),
-        ];
+        let variable_monitoring = vec![VariableMonitoringType::new(
+            1,
+            MonitorEnumType::UpperThreshold,
+            80.0,
+        )];
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -213,9 +217,11 @@ mod tests {
     fn test_setter_methods() {
         let component1 = ComponentType::new("Connector".to_string());
         let variable1 = VariableType::new("Temperature".to_string(), "Outlet".to_string());
-        let variable_monitoring1 = vec![
-            VariableMonitoringType::new(1, MonitorEnumType::UpperThreshold, 80.0),
-        ];
+        let variable_monitoring1 = vec![VariableMonitoringType::new(
+            1,
+            MonitorEnumType::UpperThreshold,
+            80.0,
+        )];
 
         let component2 = ComponentType::new("Meter".to_string());
         let variable2 = VariableType::new("Current".to_string(), "Output".to_string());
@@ -228,11 +234,8 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let mut monitoring_data = MonitoringDataType::new(
-            component1,
-            variable1,
-            variable_monitoring1,
-        );
+        let mut monitoring_data =
+            MonitoringDataType::new(component1, variable1, variable_monitoring1);
 
         monitoring_data
             .set_component(component2.clone())

@@ -180,8 +180,7 @@ mod tests {
 
         let mut evse = EVSEType::new(id1);
 
-        evse
-            .set_id(id2)
+        evse.set_id(id2)
             .set_connector_id(Some(connector_id))
             .set_custom_data(Some(custom_data.clone()));
 
@@ -190,9 +189,7 @@ mod tests {
         assert_eq!(evse.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        evse
-            .set_connector_id(None)
-            .set_custom_data(None);
+        evse.set_connector_id(None).set_custom_data(None);
 
         assert_eq!(evse.connector_id(), None);
         assert_eq!(evse.custom_data(), None);

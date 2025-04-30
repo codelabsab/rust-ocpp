@@ -256,7 +256,10 @@ impl GetVariableResultType {
     /// # Returns
     ///
     /// The modified `GetVariableResultType` instance
-    pub fn set_attribute_status(&mut self, attribute_status: GetVariableStatusEnumType) -> &mut Self {
+    pub fn set_attribute_status(
+        &mut self,
+        attribute_status: GetVariableStatusEnumType,
+    ) -> &mut Self {
         self.attribute_status = attribute_status;
         self
     }
@@ -279,7 +282,10 @@ impl GetVariableResultType {
     /// # Returns
     ///
     /// The modified `GetVariableResultType` instance
-    pub fn set_attribute_status_info(&mut self, attribute_status_info: Option<StatusInfoType>) -> &mut Self {
+    pub fn set_attribute_status_info(
+        &mut self,
+        attribute_status_info: Option<StatusInfoType>,
+    ) -> &mut Self {
         self.attribute_status_info = attribute_status_info;
         self
     }

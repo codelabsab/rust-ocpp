@@ -277,7 +277,10 @@ impl SampledValueType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_signed_meter_value(&mut self, signed_meter_value: Option<SignedMeterValueType>) -> &mut Self {
+    pub fn set_signed_meter_value(
+        &mut self,
+        signed_meter_value: Option<SignedMeterValueType>,
+    ) -> &mut Self {
         self.signed_meter_value = signed_meter_value;
         self
     }
@@ -358,7 +361,10 @@ mod tests {
         assert_eq!(sampled_value.measurand(), Some(&measurand));
         assert_eq!(sampled_value.phase(), Some(&phase));
         assert_eq!(sampled_value.location(), Some(&location));
-        assert_eq!(sampled_value.signed_meter_value(), Some(&signed_meter_value));
+        assert_eq!(
+            sampled_value.signed_meter_value(),
+            Some(&signed_meter_value)
+        );
         assert_eq!(sampled_value.custom_data(), Some(&custom_data));
     }
 
@@ -399,7 +405,10 @@ mod tests {
         assert_eq!(sampled_value.measurand(), Some(&measurand));
         assert_eq!(sampled_value.phase(), Some(&phase));
         assert_eq!(sampled_value.location(), Some(&location));
-        assert_eq!(sampled_value.signed_meter_value(), Some(&signed_meter_value));
+        assert_eq!(
+            sampled_value.signed_meter_value(),
+            Some(&signed_meter_value)
+        );
         assert_eq!(sampled_value.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

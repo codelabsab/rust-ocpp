@@ -210,7 +210,11 @@ mod tests {
     fn test_new_monitoring_data() {
         let component = ComponentType::new("component1".to_string());
         let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
-        let monitoring = VariableMonitoringType::new(1, crate::v2_1::enumerations::MonitorEnumType::UpperThreshold, 100.0);
+        let monitoring = VariableMonitoringType::new(
+            1,
+            crate::v2_1::enumerations::MonitorEnumType::UpperThreshold,
+            100.0,
+        );
         let monitoring_data = SetMonitoringDataType::new(
             component.clone(),
             variable.clone(),
@@ -229,7 +233,11 @@ mod tests {
     fn test_with_methods() {
         let component = ComponentType::new("component1".to_string());
         let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
-        let monitoring = VariableMonitoringType::new(1, crate::v2_1::enumerations::MonitorEnumType::UpperThreshold, 100.0);
+        let monitoring = VariableMonitoringType::new(
+            1,
+            crate::v2_1::enumerations::MonitorEnumType::UpperThreshold,
+            100.0,
+        );
         let custom_data = CustomDataType::new("VendorX".to_string());
         let severity = 2;
 
@@ -253,17 +261,22 @@ mod tests {
     fn test_setter_methods() {
         let component1 = ComponentType::new("component1".to_string());
         let variable1 = VariableType::new("variable1".to_string(), "instance1".to_string());
-        let monitoring1 = VariableMonitoringType::new(1, crate::v2_1::enumerations::MonitorEnumType::UpperThreshold, 100.0);
-
-        let mut monitoring_data = SetMonitoringDataType::new(
-            component1,
-            variable1,
-            vec![monitoring1],
+        let monitoring1 = VariableMonitoringType::new(
+            1,
+            crate::v2_1::enumerations::MonitorEnumType::UpperThreshold,
+            100.0,
         );
+
+        let mut monitoring_data =
+            SetMonitoringDataType::new(component1, variable1, vec![monitoring1]);
 
         let component2 = ComponentType::new("component2".to_string());
         let variable2 = VariableType::new("variable2".to_string(), "instance2".to_string());
-        let monitoring2 = VariableMonitoringType::new(2, crate::v2_1::enumerations::MonitorEnumType::LowerThreshold, 50.0);
+        let monitoring2 = VariableMonitoringType::new(
+            2,
+            crate::v2_1::enumerations::MonitorEnumType::LowerThreshold,
+            50.0,
+        );
         let custom_data = CustomDataType::new("VendorX".to_string());
         let severity = 2;
 
@@ -282,9 +295,7 @@ mod tests {
         assert_eq!(monitoring_data.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        monitoring_data
-            .set_severity(None)
-            .set_custom_data(None);
+        monitoring_data.set_severity(None).set_custom_data(None);
 
         assert_eq!(monitoring_data.severity(), None);
         assert_eq!(monitoring_data.custom_data(), None);

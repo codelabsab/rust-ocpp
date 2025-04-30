@@ -34,7 +34,11 @@ impl LimitMaxDischargeGetType {
     /// # Returns
     ///
     /// A new instance of `LimitMaxDischargeGetType` with optional fields set to `None`
-    pub fn new(limit_max_discharge: LimitMaxDischargeType, id: String, is_superseded: bool) -> Self {
+    pub fn new(
+        limit_max_discharge: LimitMaxDischargeType,
+        id: String,
+        is_superseded: bool,
+    ) -> Self {
         Self {
             custom_data: None,
             limit_max_discharge,
@@ -98,7 +102,10 @@ impl LimitMaxDischargeGetType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_limit_max_discharge(&mut self, limit_max_discharge: LimitMaxDischargeType) -> &mut Self {
+    pub fn set_limit_max_discharge(
+        &mut self,
+        limit_max_discharge: LimitMaxDischargeType,
+    ) -> &mut Self {
         self.limit_max_discharge = limit_max_discharge;
         self
     }
@@ -160,7 +167,8 @@ mod tests {
         let id = "setting1".to_string();
         let is_superseded = false;
 
-        let limit_get = LimitMaxDischargeGetType::new(limit_max_discharge.clone(), id.clone(), is_superseded);
+        let limit_get =
+            LimitMaxDischargeGetType::new(limit_max_discharge.clone(), id.clone(), is_superseded);
 
         assert_eq!(limit_get.limit_max_discharge(), &limit_max_discharge);
         assert_eq!(limit_get.id(), id);
@@ -178,8 +186,9 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let limit_get = LimitMaxDischargeGetType::new(limit_max_discharge.clone(), id.clone(), is_superseded)
-            .with_custom_data(custom_data.clone());
+        let limit_get =
+            LimitMaxDischargeGetType::new(limit_max_discharge.clone(), id.clone(), is_superseded)
+                .with_custom_data(custom_data.clone());
 
         assert_eq!(limit_get.limit_max_discharge(), &limit_max_discharge);
         assert_eq!(limit_get.id(), id);
@@ -200,7 +209,11 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let mut limit_get = LimitMaxDischargeGetType::new(limit_max_discharge1.clone(), id1.clone(), is_superseded1);
+        let mut limit_get = LimitMaxDischargeGetType::new(
+            limit_max_discharge1.clone(),
+            id1.clone(),
+            is_superseded1,
+        );
 
         limit_get
             .set_limit_max_discharge(limit_max_discharge2.clone())

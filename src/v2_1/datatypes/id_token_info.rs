@@ -253,7 +253,10 @@ impl IdTokenInfoType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_cache_expiry_date_time(&mut self, cache_expiry_date_time: Option<DateTime<Utc>>) -> &mut Self {
+    pub fn set_cache_expiry_date_time(
+        &mut self,
+        cache_expiry_date_time: Option<DateTime<Utc>>,
+    ) -> &mut Self {
         self.cache_expiry_date_time = cache_expiry_date_time;
         self
     }
@@ -404,9 +407,9 @@ mod tests {
     #[test]
     fn test_new_id_token_info() {
         let status = AuthorizationStatusEnumType::Accepted;
-        
+
         let token_info = IdTokenInfoType::new(status.clone());
-        
+
         assert_eq!(token_info.status(), status);
         assert_eq!(token_info.custom_data(), None);
         assert_eq!(token_info.cache_expiry_date_time(), None);
@@ -417,24 +420,24 @@ mod tests {
         assert_eq!(token_info.parent_id_token(), None);
         assert_eq!(token_info.personal_message(), None);
     }
-    
+
     #[test]
     fn test_with_methods() {
         let status = AuthorizationStatusEnumType::Accepted;
         let now = Utc::now();
         let tomorrow = now + chrono::Duration::days(1);
-        
+
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
         };
-        
+
         let status_info = StatusInfoType {
             reason_code: "200".to_string(),
             additional_info: Some("Additional Info".to_string()),
             custom_data: None,
         };
-        
+
         let token_info = IdTokenInfoType::new(status.clone())
             .with_custom_data(custom_data.clone())
             .with_cache_expiry_date_time(now)
@@ -444,7 +447,7 @@ mod tests {
             .with_expiry_date(tomorrow)
             .with_parent_id_token("parent456".to_string())
             .with_personal_message("Welcome User!".to_string());
-            
+
         assert_eq!(token_info.status(), status);
         assert_eq!(token_info.custom_data(), Some(&custom_data));
         assert_eq!(token_info.cache_expiry_date_time(), Some(&now));
@@ -455,27 +458,27 @@ mod tests {
         assert_eq!(token_info.parent_id_token(), Some("parent456"));
         assert_eq!(token_info.personal_message(), Some("Welcome User!"));
     }
-    
+
     #[test]
     fn test_setter_methods() {
         let status1 = AuthorizationStatusEnumType::Accepted;
         let status2 = AuthorizationStatusEnumType::Blocked;
         let now = Utc::now();
         let tomorrow = now + chrono::Duration::days(1);
-        
+
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
         };
-        
+
         let status_info = StatusInfoType {
             reason_code: "200".to_string(),
             additional_info: Some("Additional Info".to_string()),
             custom_data: None,
         };
-        
+
         let mut token_info = IdTokenInfoType::new(status1.clone());
-        
+
         token_info
             .set_status(status2.clone())
             .set_custom_data(Some(custom_data.clone()))
@@ -486,7 +489,7 @@ mod tests {
             .set_expiry_date(Some(tomorrow))
             .set_parent_id_token(Some("parent456".to_string()))
             .set_personal_message(Some("Welcome User!".to_string()));
-            
+
         assert_eq!(token_info.status(), status2);
         assert_eq!(token_info.custom_data(), Some(&custom_data));
         assert_eq!(token_info.cache_expiry_date_time(), Some(&now));
@@ -496,7 +499,7 @@ mod tests {
         assert_eq!(token_info.expiry_date(), Some(&tomorrow));
         assert_eq!(token_info.parent_id_token(), Some("parent456"));
         assert_eq!(token_info.personal_message(), Some("Welcome User!"));
-        
+
         // Test clearing optional fields
         token_info
             .set_custom_data(None)
@@ -507,7 +510,7 @@ mod tests {
             .set_expiry_date(None)
             .set_parent_id_token(None)
             .set_personal_message(None);
-            
+
         assert_eq!(token_info.custom_data(), None);
         assert_eq!(token_info.cache_expiry_date_time(), None);
         assert_eq!(token_info.charging_priority(), None);

@@ -205,8 +205,14 @@ mod tests {
             .with_custom_data(custom_data.clone());
 
         assert_eq!(tariff_conditions_fixed.price(), price);
-        assert_eq!(tariff_conditions_fixed.price_excl_tax(), Some(price_excl_tax));
-        assert_eq!(tariff_conditions_fixed.price_incl_tax(), Some(price_incl_tax));
+        assert_eq!(
+            tariff_conditions_fixed.price_excl_tax(),
+            Some(price_excl_tax)
+        );
+        assert_eq!(
+            tariff_conditions_fixed.price_incl_tax(),
+            Some(price_incl_tax)
+        );
         assert_eq!(tariff_conditions_fixed.custom_data(), Some(&custom_data));
     }
 
@@ -227,8 +233,14 @@ mod tests {
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(tariff_conditions_fixed.price(), price2);
-        assert_eq!(tariff_conditions_fixed.price_excl_tax(), Some(price_excl_tax));
-        assert_eq!(tariff_conditions_fixed.price_incl_tax(), Some(price_incl_tax));
+        assert_eq!(
+            tariff_conditions_fixed.price_excl_tax(),
+            Some(price_excl_tax)
+        );
+        assert_eq!(
+            tariff_conditions_fixed.price_incl_tax(),
+            Some(price_incl_tax)
+        );
         assert_eq!(tariff_conditions_fixed.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

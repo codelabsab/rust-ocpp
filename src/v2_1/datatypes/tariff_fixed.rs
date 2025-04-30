@@ -111,8 +111,8 @@ mod tests {
         let fixed_price = TariffFixedPriceType::new(10.0);
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let tariff_fixed = TariffFixedType::new(fixed_price.clone())
-            .with_custom_data(custom_data.clone());
+        let tariff_fixed =
+            TariffFixedType::new(fixed_price.clone()).with_custom_data(custom_data.clone());
 
         assert_eq!(tariff_fixed.fixed_price(), &fixed_price);
         assert_eq!(tariff_fixed.custom_data(), Some(&custom_data));

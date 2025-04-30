@@ -257,9 +257,7 @@ mod tests {
         assert_eq!(monitoring.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        monitoring
-            .set_severity(None)
-            .set_custom_data(None);
+        monitoring.set_severity(None).set_custom_data(None);
 
         assert_eq!(monitoring.severity(), None);
         assert_eq!(monitoring.custom_data(), None);
