@@ -133,10 +133,7 @@ mod tests {
 
     #[test]
     fn test_new_additional_info() {
-        let info = AdditionalInfoType::new(
-            "token123".to_string(),
-            "RFID".to_string(),
-        );
+        let info = AdditionalInfoType::new("token123".to_string(), "RFID".to_string());
 
         assert_eq!(info.additional_id_token(), "token123");
         assert_eq!(info.type_(), "RFID");
@@ -147,11 +144,8 @@ mod tests {
     fn test_with_custom_data() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let info = AdditionalInfoType::new(
-            "token123".to_string(),
-            "RFID".to_string(),
-        )
-        .with_custom_data(custom_data.clone());
+        let info = AdditionalInfoType::new("token123".to_string(), "RFID".to_string())
+            .with_custom_data(custom_data.clone());
 
         assert_eq!(info.additional_id_token(), "token123");
         assert_eq!(info.type_(), "RFID");
@@ -162,13 +156,9 @@ mod tests {
     fn test_setter_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut info = AdditionalInfoType::new(
-            "token123".to_string(),
-            "RFID".to_string(),
-        );
+        let mut info = AdditionalInfoType::new("token123".to_string(), "RFID".to_string());
 
-        info
-            .set_additional_id_token("token456".to_string())
+        info.set_additional_id_token("token456".to_string())
             .set_type("NFC".to_string())
             .set_custom_data(Some(custom_data.clone()));
 

@@ -349,7 +349,10 @@ impl ChargingProfileType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_charging_schedule(&mut self, charging_schedule: Vec<ChargingScheduleType>) -> &mut Self {
+    pub fn set_charging_schedule(
+        &mut self,
+        charging_schedule: Vec<ChargingScheduleType>,
+    ) -> &mut Self {
         self.charging_schedule = charging_schedule;
         self
     }
@@ -404,8 +407,8 @@ impl ChargingProfileType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::v2_1::enumerations::ChargingRateUnitEnumType;
     use crate::v2_1::datatypes::charging_schedule_period::ChargingSchedulePeriodType;
+    use crate::v2_1::enumerations::ChargingRateUnitEnumType;
 
     fn create_test_charging_schedule() -> ChargingScheduleType {
         let period = ChargingSchedulePeriodType {
@@ -445,7 +448,10 @@ mod tests {
             profile.charging_profile_purpose(),
             &ChargingProfilePurposeEnumType::ChargingStationExternalConstraints
         );
-        assert_eq!(profile.charging_profile_kind(), &ChargingProfileKindEnumType::Absolute);
+        assert_eq!(
+            profile.charging_profile_kind(),
+            &ChargingProfileKindEnumType::Absolute
+        );
         assert_eq!(profile.charging_schedule().len(), 1);
         assert_eq!(profile.charging_schedule()[0].id, schedule.id);
         assert_eq!(profile.recurrency_kind(), None);
@@ -481,10 +487,16 @@ mod tests {
             profile.charging_profile_purpose(),
             &ChargingProfilePurposeEnumType::TxProfile
         );
-        assert_eq!(profile.charging_profile_kind(), &ChargingProfileKindEnumType::Recurring);
+        assert_eq!(
+            profile.charging_profile_kind(),
+            &ChargingProfileKindEnumType::Recurring
+        );
         assert_eq!(profile.charging_schedule().len(), 1);
         assert_eq!(profile.charging_schedule()[0].id, schedule.id);
-        assert_eq!(profile.recurrency_kind(), Some(&RecurrencyKindEnumType::Daily));
+        assert_eq!(
+            profile.recurrency_kind(),
+            Some(&RecurrencyKindEnumType::Daily)
+        );
         assert_eq!(profile.valid_from(), Some(&valid_from));
         assert_eq!(profile.valid_to(), Some(&valid_to));
         assert_eq!(profile.transaction_id(), Some(&"tx-123".to_string()));
@@ -497,17 +509,15 @@ mod tests {
         let schedule2 = ChargingScheduleType {
             id: 2,
             charging_rate_unit: ChargingRateUnitEnumType::W,
-            charging_schedule_period: vec![
-                ChargingSchedulePeriodType {
-                    start_period: 0,
-                    limit: 11000.0,
-                    limit_l2: None,
-                    limit_l3: None,
-                    number_phases: None,
-                    phase_to_use: None,
-                    custom_data: None,
-                }
-            ],
+            charging_schedule_period: vec![ChargingSchedulePeriodType {
+                start_period: 0,
+                limit: 11000.0,
+                limit_l2: None,
+                limit_l3: None,
+                number_phases: None,
+                phase_to_use: None,
+                custom_data: None,
+            }],
             start_schedule: None,
             duration: None,
             custom_data: None,
@@ -543,11 +553,17 @@ mod tests {
             profile.charging_profile_purpose(),
             &ChargingProfilePurposeEnumType::TxDefaultProfile
         );
-        assert_eq!(profile.charging_profile_kind(), &ChargingProfileKindEnumType::Recurring);
+        assert_eq!(
+            profile.charging_profile_kind(),
+            &ChargingProfileKindEnumType::Recurring
+        );
         assert_eq!(profile.charging_schedule().len(), 2);
         assert_eq!(profile.charging_schedule()[0].id, schedule1.id);
         assert_eq!(profile.charging_schedule()[1].id, schedule2.id);
-        assert_eq!(profile.recurrency_kind(), Some(&RecurrencyKindEnumType::Daily));
+        assert_eq!(
+            profile.recurrency_kind(),
+            Some(&RecurrencyKindEnumType::Daily)
+        );
         assert_eq!(profile.valid_from(), Some(&valid_from));
         assert_eq!(profile.valid_to(), Some(&valid_to));
         assert_eq!(profile.transaction_id(), Some(&"tx-456".to_string()));

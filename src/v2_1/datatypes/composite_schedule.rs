@@ -164,7 +164,10 @@ impl CompositeScheduleType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_charging_rate_unit(&mut self, charging_rate_unit: ChargingRateUnitEnumType) -> &mut Self {
+    pub fn set_charging_rate_unit(
+        &mut self,
+        charging_rate_unit: ChargingRateUnitEnumType,
+    ) -> &mut Self {
         self.charging_rate_unit = charging_rate_unit;
         self
     }
@@ -187,7 +190,10 @@ impl CompositeScheduleType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_charging_schedule_period(&mut self, charging_schedule_period: Vec<ChargingSchedulePeriodType>) -> &mut Self {
+    pub fn set_charging_schedule_period(
+        &mut self,
+        charging_schedule_period: Vec<ChargingSchedulePeriodType>,
+    ) -> &mut Self {
         self.charging_schedule_period = charging_schedule_period;
         self
     }

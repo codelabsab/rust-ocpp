@@ -50,7 +50,10 @@ impl ChargingProfileCriterionType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_charging_profile_purpose(mut self, charging_profile_purpose: ChargingProfilePurposeEnumType) -> Self {
+    pub fn with_charging_profile_purpose(
+        mut self,
+        charging_profile_purpose: ChargingProfilePurposeEnumType,
+    ) -> Self {
         self.charging_profile_purpose = Some(charging_profile_purpose);
         self
     }
@@ -212,7 +215,9 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let criterion = ChargingProfileCriterionType::new()
-            .with_charging_profile_purpose(ChargingProfilePurposeEnumType::ChargingStationExternalConstraints)
+            .with_charging_profile_purpose(
+                ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
+            )
             .with_stack_level(3)
             .with_charging_profile_id(vec![1, 2, 3])
             .with_custom_data(custom_data.clone());

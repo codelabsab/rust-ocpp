@@ -200,21 +200,21 @@ mod tests {
 
         let mut cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
 
-        cost
-            .set_cost_kind(CostKindEnumType::RenewableGenerationPercentage)
+        cost.set_cost_kind(CostKindEnumType::RenewableGenerationPercentage)
             .set_amount(200)
             .set_amount_multiplier(Some(-1))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(cost.cost_kind(), &CostKindEnumType::RenewableGenerationPercentage);
+        assert_eq!(
+            cost.cost_kind(),
+            &CostKindEnumType::RenewableGenerationPercentage
+        );
         assert_eq!(cost.amount(), 200);
         assert_eq!(cost.amount_multiplier(), Some(-1));
         assert_eq!(cost.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        cost
-            .set_amount_multiplier(None)
-            .set_custom_data(None);
+        cost.set_amount_multiplier(None).set_custom_data(None);
 
         assert_eq!(cost.amount_multiplier(), None);
         assert_eq!(cost.custom_data(), None);

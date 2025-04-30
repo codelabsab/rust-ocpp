@@ -189,7 +189,10 @@ impl BatteryDataType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_rechargeable_energy_capacity(&mut self, rechargeable_energy_capacity: f64) -> &mut Self {
+    pub fn set_rechargeable_energy_capacity(
+        &mut self,
+        rechargeable_energy_capacity: f64,
+    ) -> &mut Self {
         self.rechargeable_energy_capacity = rechargeable_energy_capacity;
         self
     }
@@ -202,10 +205,10 @@ mod tests {
     #[test]
     fn test_new_battery_data() {
         let battery_data = BatteryDataType::new(
-            20.0,  // charging_start_soc
-            80.0,  // charging_end_soc
-            75.0,  // battery_capacity
-            70.0,  // rechargeable_energy_capacity
+            20.0, // charging_start_soc
+            80.0, // charging_end_soc
+            75.0, // battery_capacity
+            70.0, // rechargeable_energy_capacity
         );
 
         assert_eq!(battery_data.charging_start_soc(), 20.0);
@@ -220,10 +223,10 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let battery_data = BatteryDataType::new(
-            20.0,  // charging_start_soc
-            80.0,  // charging_end_soc
-            75.0,  // battery_capacity
-            70.0,  // rechargeable_energy_capacity
+            20.0, // charging_start_soc
+            80.0, // charging_end_soc
+            75.0, // battery_capacity
+            70.0, // rechargeable_energy_capacity
         )
         .with_custom_data(custom_data.clone());
 
@@ -239,10 +242,10 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let mut battery_data = BatteryDataType::new(
-            20.0,  // charging_start_soc
-            80.0,  // charging_end_soc
-            75.0,  // battery_capacity
-            70.0,  // rechargeable_energy_capacity
+            20.0, // charging_start_soc
+            80.0, // charging_end_soc
+            75.0, // battery_capacity
+            70.0, // rechargeable_energy_capacity
         );
 
         battery_data

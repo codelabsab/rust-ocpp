@@ -192,7 +192,10 @@ impl ChargingScheduleType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_charging_rate_unit(&mut self, charging_rate_unit: ChargingRateUnitEnumType) -> &mut Self {
+    pub fn set_charging_rate_unit(
+        &mut self,
+        charging_rate_unit: ChargingRateUnitEnumType,
+    ) -> &mut Self {
         self.charging_rate_unit = charging_rate_unit;
         self
     }
@@ -266,16 +269,16 @@ mod tests {
     #[test]
     fn test_new_charging_schedule() {
         let period = create_test_period();
-        let schedule = ChargingScheduleType::new(
-            1,
-            ChargingRateUnitEnumType::A,
-            vec![period.clone()],
-        );
+        let schedule =
+            ChargingScheduleType::new(1, ChargingRateUnitEnumType::A, vec![period.clone()]);
 
         assert_eq!(schedule.id(), 1);
         assert_eq!(schedule.charging_rate_unit(), &ChargingRateUnitEnumType::A);
         assert_eq!(schedule.charging_schedule_period().len(), 1);
-        assert_eq!(schedule.charging_schedule_period()[0].start_period, period.start_period);
+        assert_eq!(
+            schedule.charging_schedule_period()[0].start_period,
+            period.start_period
+        );
         assert_eq!(schedule.charging_schedule_period()[0].limit, period.limit);
         assert_eq!(schedule.start_schedule(), None);
         assert_eq!(schedule.duration(), None);
@@ -288,19 +291,19 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
         let start_time = Utc::now();
 
-        let schedule = ChargingScheduleType::new(
-            1,
-            ChargingRateUnitEnumType::W,
-            vec![period.clone()],
-        )
-        .with_start_schedule(start_time)
-        .with_duration(3600)
-        .with_custom_data(custom_data.clone());
+        let schedule =
+            ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()])
+                .with_start_schedule(start_time)
+                .with_duration(3600)
+                .with_custom_data(custom_data.clone());
 
         assert_eq!(schedule.id(), 1);
         assert_eq!(schedule.charging_rate_unit(), &ChargingRateUnitEnumType::W);
         assert_eq!(schedule.charging_schedule_period().len(), 1);
-        assert_eq!(schedule.charging_schedule_period()[0].start_period, period.start_period);
+        assert_eq!(
+            schedule.charging_schedule_period()[0].start_period,
+            period.start_period
+        );
         assert_eq!(schedule.charging_schedule_period()[0].limit, period.limit);
         assert_eq!(schedule.start_schedule(), Some(&start_time));
         assert_eq!(schedule.duration(), Some(3600));
@@ -323,11 +326,8 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
         let start_time = Utc::now();
 
-        let mut schedule = ChargingScheduleType::new(
-            1,
-            ChargingRateUnitEnumType::A,
-            vec![period1.clone()],
-        );
+        let mut schedule =
+            ChargingScheduleType::new(1, ChargingRateUnitEnumType::A, vec![period1.clone()]);
 
         schedule
             .set_id(2)
@@ -340,9 +340,15 @@ mod tests {
         assert_eq!(schedule.id(), 2);
         assert_eq!(schedule.charging_rate_unit(), &ChargingRateUnitEnumType::W);
         assert_eq!(schedule.charging_schedule_period().len(), 2);
-        assert_eq!(schedule.charging_schedule_period()[0].start_period, period1.start_period);
+        assert_eq!(
+            schedule.charging_schedule_period()[0].start_period,
+            period1.start_period
+        );
         assert_eq!(schedule.charging_schedule_period()[0].limit, period1.limit);
-        assert_eq!(schedule.charging_schedule_period()[1].start_period, period2.start_period);
+        assert_eq!(
+            schedule.charging_schedule_period()[1].start_period,
+            period2.start_period
+        );
         assert_eq!(schedule.charging_schedule_period()[1].limit, period2.limit);
         assert_eq!(schedule.start_schedule(), Some(&start_time));
         assert_eq!(schedule.duration(), Some(7200));

@@ -258,10 +258,7 @@ mod tests {
 
     #[test]
     fn test_new_charging_station() {
-        let station = ChargingStationType::new(
-            "Model X".to_string(),
-            "Vendor Y".to_string(),
-        );
+        let station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string());
 
         assert_eq!(station.model(), "Model X");
         assert_eq!(station.vendor_name(), "Vendor Y");
@@ -280,14 +277,11 @@ mod tests {
             custom_data: None,
         };
 
-        let station = ChargingStationType::new(
-            "Model X".to_string(),
-            "Vendor Y".to_string(),
-        )
-        .with_serial_number("SN12345".to_string())
-        .with_firmware_version("1.0.0".to_string())
-        .with_modem(modem.clone())
-        .with_custom_data(custom_data.clone());
+        let station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string())
+            .with_serial_number("SN12345".to_string())
+            .with_firmware_version("1.0.0".to_string())
+            .with_modem(modem.clone())
+            .with_custom_data(custom_data.clone());
 
         assert_eq!(station.model(), "Model X");
         assert_eq!(station.vendor_name(), "Vendor Y");
@@ -306,10 +300,7 @@ mod tests {
             custom_data: None,
         };
 
-        let mut station = ChargingStationType::new(
-            "Model X".to_string(),
-            "Vendor Y".to_string(),
-        );
+        let mut station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string());
 
         station
             .set_model("Model Z".to_string())

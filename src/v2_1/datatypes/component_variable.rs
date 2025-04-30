@@ -153,10 +153,7 @@ mod tests {
     fn test_with_methods() {
         let component = ComponentType::new("Connector".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let variable = VariableType::new(
-            "CurrentLimit".to_string(),
-            "Main".to_string(),
-        );
+        let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
 
         let component_variable = ComponentVariableType::new(component.clone())
             .with_custom_data(custom_data.clone())
@@ -172,10 +169,7 @@ mod tests {
         let component1 = ComponentType::new("Connector".to_string());
         let component2 = ComponentType::new("Meter".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let variable = VariableType::new(
-            "CurrentLimit".to_string(),
-            "Secondary".to_string(),
-        );
+        let variable = VariableType::new("CurrentLimit".to_string(), "Secondary".to_string());
 
         let mut component_variable = ComponentVariableType::new(component1);
 
@@ -189,9 +183,7 @@ mod tests {
         assert_eq!(component_variable.variable(), Some(&variable));
 
         // Test clearing optional fields
-        component_variable
-            .set_custom_data(None)
-            .set_variable(None);
+        component_variable.set_custom_data(None).set_variable(None);
 
         assert_eq!(component_variable.custom_data(), None);
         assert_eq!(component_variable.variable(), None);

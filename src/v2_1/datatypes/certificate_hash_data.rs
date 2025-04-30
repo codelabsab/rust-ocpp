@@ -200,7 +200,10 @@ mod tests {
             "1234567890abcdef".to_string(),
         );
 
-        assert_eq!(cert_hash_data.hash_algorithm(), &HashAlgorithmEnumType::SHA256);
+        assert_eq!(
+            cert_hash_data.hash_algorithm(),
+            &HashAlgorithmEnumType::SHA256
+        );
         assert_eq!(cert_hash_data.issuer_name_hash(), "a1b2c3d4e5f6");
         assert_eq!(cert_hash_data.issuer_key_hash(), "f6e5d4c3b2a1");
         assert_eq!(cert_hash_data.serial_number(), "1234567890abcdef");
@@ -219,7 +222,10 @@ mod tests {
         )
         .with_custom_data(custom_data.clone());
 
-        assert_eq!(cert_hash_data.hash_algorithm(), &HashAlgorithmEnumType::SHA256);
+        assert_eq!(
+            cert_hash_data.hash_algorithm(),
+            &HashAlgorithmEnumType::SHA256
+        );
         assert_eq!(cert_hash_data.issuer_name_hash(), "a1b2c3d4e5f6");
         assert_eq!(cert_hash_data.issuer_key_hash(), "f6e5d4c3b2a1");
         assert_eq!(cert_hash_data.serial_number(), "1234567890abcdef");
@@ -244,7 +250,10 @@ mod tests {
             .set_serial_number("newserial".to_string())
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(cert_hash_data.hash_algorithm(), &HashAlgorithmEnumType::SHA512);
+        assert_eq!(
+            cert_hash_data.hash_algorithm(),
+            &HashAlgorithmEnumType::SHA512
+        );
         assert_eq!(cert_hash_data.issuer_name_hash(), "newnamehash");
         assert_eq!(cert_hash_data.issuer_key_hash(), "newkeyhash");
         assert_eq!(cert_hash_data.serial_number(), "newserial");

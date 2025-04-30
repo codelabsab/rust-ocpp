@@ -183,7 +183,10 @@ mod tests {
         );
 
         assert_eq!(request_info.certificate_hash_data(), &cert_hash_data);
-        assert_eq!(request_info.source(), &CertificateStatusSourceEnumType::OCSP);
+        assert_eq!(
+            request_info.source(),
+            &CertificateStatusSourceEnumType::OCSP
+        );
         assert_eq!(request_info.urls(), &urls);
         assert_eq!(request_info.custom_data(), None);
     }
@@ -208,7 +211,10 @@ mod tests {
         .with_custom_data(custom_data.clone());
 
         assert_eq!(request_info.certificate_hash_data(), &cert_hash_data);
-        assert_eq!(request_info.source(), &CertificateStatusSourceEnumType::OCSP);
+        assert_eq!(
+            request_info.source(),
+            &CertificateStatusSourceEnumType::OCSP
+        );
         assert_eq!(request_info.urls(), &urls);
         assert_eq!(request_info.custom_data(), Some(&custom_data));
     }
@@ -230,7 +236,10 @@ mod tests {
         );
 
         let urls1 = vec!["https://ocsp.example.com".to_string()];
-        let urls2 = vec!["https://crl.example.com".to_string(), "https://crl2.example.com".to_string()];
+        let urls2 = vec![
+            "https://crl.example.com".to_string(),
+            "https://crl2.example.com".to_string(),
+        ];
 
         let custom_data = CustomDataType::new("VendorX".to_string());
 

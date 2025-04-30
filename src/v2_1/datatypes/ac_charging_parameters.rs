@@ -198,10 +198,10 @@ mod tests {
     #[test]
     fn test_new_ac_charging_parameters() {
         let params = ACChargingParametersType::new(
-            10000.0,  // energy_amount
-            10.0,     // ev_min_current
-            32.0,     // ev_max_current
-            400.0,    // ev_max_voltage
+            10000.0, // energy_amount
+            10.0,    // ev_min_current
+            32.0,    // ev_max_current
+            400.0,   // ev_max_voltage
         );
 
         assert_eq!(params.energy_amount(), 10000.0);
@@ -216,10 +216,10 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let params = ACChargingParametersType::new(
-            10000.0,  // energy_amount
-            10.0,     // ev_min_current
-            32.0,     // ev_max_current
-            400.0,    // ev_max_voltage
+            10000.0, // energy_amount
+            10.0,    // ev_min_current
+            32.0,    // ev_max_current
+            400.0,   // ev_max_voltage
         )
         .with_custom_data(custom_data.clone());
 
@@ -235,10 +235,10 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let mut params = ACChargingParametersType::new(
-            10000.0,  // energy_amount
-            10.0,     // ev_min_current
-            32.0,     // ev_max_current
-            400.0,    // ev_max_voltage
+            10000.0, // energy_amount
+            10.0,    // ev_min_current
+            32.0,    // ev_max_current
+            400.0,   // ev_max_voltage
         );
 
         params

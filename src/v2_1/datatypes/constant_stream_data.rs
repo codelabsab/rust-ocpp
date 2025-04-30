@@ -178,8 +178,8 @@ mod tests {
         let params = PeriodicEventStreamParamsType::new(60);
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let stream_data = ConstantStreamDataType::new(1, params.clone(), 2)
-            .with_custom_data(custom_data.clone());
+        let stream_data =
+            ConstantStreamDataType::new(1, params.clone(), 2).with_custom_data(custom_data.clone());
 
         assert_eq!(stream_data.id(), 1);
         assert_eq!(stream_data.params().reporting_interval, 60);

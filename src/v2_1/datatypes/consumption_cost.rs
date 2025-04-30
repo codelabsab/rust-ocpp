@@ -135,7 +135,10 @@ mod tests {
 
         assert_eq!(consumption_cost.start_value(), 10.0);
         assert_eq!(consumption_cost.cost().len(), 1);
-        assert_eq!(consumption_cost.cost()[0].cost_kind(), &CostKindEnumType::CarbonDioxideEmission);
+        assert_eq!(
+            consumption_cost.cost()[0].cost_kind(),
+            &CostKindEnumType::CarbonDioxideEmission
+        );
         assert_eq!(consumption_cost.cost()[0].amount(), 100);
         assert_eq!(consumption_cost.custom_data(), None);
     }
@@ -168,8 +171,14 @@ mod tests {
 
         assert_eq!(consumption_cost.start_value(), 20.0);
         assert_eq!(consumption_cost.cost().len(), 2);
-        assert_eq!(consumption_cost.cost()[0].cost_kind(), &CostKindEnumType::CarbonDioxideEmission);
-        assert_eq!(consumption_cost.cost()[1].cost_kind(), &CostKindEnumType::RelativePricePercentage);
+        assert_eq!(
+            consumption_cost.cost()[0].cost_kind(),
+            &CostKindEnumType::CarbonDioxideEmission
+        );
+        assert_eq!(
+            consumption_cost.cost()[1].cost_kind(),
+            &CostKindEnumType::RelativePricePercentage
+        );
         assert_eq!(consumption_cost.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

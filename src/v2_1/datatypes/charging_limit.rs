@@ -102,7 +102,10 @@ impl ChargingLimitType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_charging_limit_source(&mut self, charging_limit_source: ChargingLimitSourceEnumType) -> &mut Self {
+    pub fn set_charging_limit_source(
+        &mut self,
+        charging_limit_source: ChargingLimitSourceEnumType,
+    ) -> &mut Self {
         self.charging_limit_source = charging_limit_source;
         self
     }

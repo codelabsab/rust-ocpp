@@ -75,7 +75,10 @@ impl ChargingNeedsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_ac_charging_parameters(mut self, ac_charging_parameters: ACChargingParametersType) -> Self {
+    pub fn with_ac_charging_parameters(
+        mut self,
+        ac_charging_parameters: ACChargingParametersType,
+    ) -> Self {
         self.ac_charging_parameters = Some(ac_charging_parameters);
         self
     }
@@ -89,7 +92,10 @@ impl ChargingNeedsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_dc_charging_parameters(mut self, dc_charging_parameters: DCChargingParametersType) -> Self {
+    pub fn with_dc_charging_parameters(
+        mut self,
+        dc_charging_parameters: DCChargingParametersType,
+    ) -> Self {
         self.dc_charging_parameters = Some(dc_charging_parameters);
         self
     }
@@ -126,7 +132,10 @@ impl ChargingNeedsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_requested_energy_transfer(&mut self, requested_energy_transfer: EnergyTransferModeEnumType) -> &mut Self {
+    pub fn set_requested_energy_transfer(
+        &mut self,
+        requested_energy_transfer: EnergyTransferModeEnumType,
+    ) -> &mut Self {
         self.requested_energy_transfer = requested_energy_transfer;
         self
     }
@@ -172,7 +181,10 @@ impl ChargingNeedsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_ac_charging_parameters(&mut self, ac_charging_parameters: Option<ACChargingParametersType>) -> &mut Self {
+    pub fn set_ac_charging_parameters(
+        &mut self,
+        ac_charging_parameters: Option<ACChargingParametersType>,
+    ) -> &mut Self {
         self.ac_charging_parameters = ac_charging_parameters;
         self
     }
@@ -195,7 +207,10 @@ impl ChargingNeedsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_dc_charging_parameters(&mut self, dc_charging_parameters: Option<DCChargingParametersType>) -> &mut Self {
+    pub fn set_dc_charging_parameters(
+        &mut self,
+        dc_charging_parameters: Option<DCChargingParametersType>,
+    ) -> &mut Self {
         self.dc_charging_parameters = dc_charging_parameters;
         self
     }
@@ -233,7 +248,10 @@ mod tests {
     fn test_new_charging_needs() {
         let needs = ChargingNeedsType::new(EnergyTransferModeEnumType::DC);
 
-        assert_eq!(needs.requested_energy_transfer(), &EnergyTransferModeEnumType::DC);
+        assert_eq!(
+            needs.requested_energy_transfer(),
+            &EnergyTransferModeEnumType::DC
+        );
         assert_eq!(needs.departure_time(), None);
         assert_eq!(needs.ac_charging_parameters(), None);
         assert_eq!(needs.dc_charging_parameters(), None);
@@ -253,7 +271,10 @@ mod tests {
             .with_dc_charging_parameters(dc_params.clone())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(needs.requested_energy_transfer(), &EnergyTransferModeEnumType::ACThreePhase);
+        assert_eq!(
+            needs.requested_energy_transfer(),
+            &EnergyTransferModeEnumType::ACThreePhase
+        );
         assert_eq!(needs.departure_time(), Some(&departure_time));
         assert_eq!(needs.ac_charging_parameters(), Some(&ac_params));
         assert_eq!(needs.dc_charging_parameters(), Some(&dc_params));
@@ -276,7 +297,10 @@ mod tests {
             .set_dc_charging_parameters(Some(dc_params.clone()))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(needs.requested_energy_transfer(), &EnergyTransferModeEnumType::DCBPT);
+        assert_eq!(
+            needs.requested_energy_transfer(),
+            &EnergyTransferModeEnumType::DCBPT
+        );
         assert_eq!(needs.departure_time(), Some(&departure_time));
         assert_eq!(needs.ac_charging_parameters(), Some(&ac_params));
         assert_eq!(needs.dc_charging_parameters(), Some(&dc_params));

@@ -110,8 +110,7 @@ mod tests {
     fn test_with_custom_data() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let params = PeriodicEventStreamParamsType::new(60)
-            .with_custom_data(custom_data.clone());
+        let params = PeriodicEventStreamParamsType::new(60).with_custom_data(custom_data.clone());
 
         assert_eq!(params.reporting_interval(), 60);
         assert_eq!(params.custom_data(), Some(&custom_data));

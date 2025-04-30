@@ -65,7 +65,10 @@ impl ClearChargingProfileType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_charging_profile_purpose(mut self, charging_profile_purpose: ChargingProfilePurposeEnumType) -> Self {
+    pub fn with_charging_profile_purpose(
+        mut self,
+        charging_profile_purpose: ChargingProfilePurposeEnumType,
+    ) -> Self {
         self.charging_profile_purpose = Some(charging_profile_purpose);
         self
     }
@@ -214,7 +217,9 @@ mod tests {
 
         let profile = ClearChargingProfileType::new()
             .with_evse_id(1)
-            .with_charging_profile_purpose(ChargingProfilePurposeEnumType::ChargingStationExternalConstraints)
+            .with_charging_profile_purpose(
+                ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
+            )
             .with_stack_level(3)
             .with_custom_data(custom_data.clone());
 

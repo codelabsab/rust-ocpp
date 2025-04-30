@@ -254,10 +254,7 @@ mod tests {
 
     #[test]
     fn test_new_absolute_price_schedule() {
-        let schedule = AbsolutePriceScheduleType::new(
-            "2023-01-01T00:00:00Z".to_string(),
-            123,
-        );
+        let schedule = AbsolutePriceScheduleType::new("2023-01-01T00:00:00Z".to_string(), 123);
 
         assert_eq!(schedule.time_anchor(), "2023-01-01T00:00:00Z");
         assert_eq!(schedule.price_schedule_id(), 123);
@@ -271,18 +268,18 @@ mod tests {
     fn test_with_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let schedule = AbsolutePriceScheduleType::new(
-            "2023-01-01T00:00:00Z".to_string(),
-            123,
-        )
-        .with_price_schedule_description("Test Schedule".to_string())
-        .with_currency("USD".to_string())
-        .with_language("en".to_string())
-        .with_custom_data(custom_data.clone());
+        let schedule = AbsolutePriceScheduleType::new("2023-01-01T00:00:00Z".to_string(), 123)
+            .with_price_schedule_description("Test Schedule".to_string())
+            .with_currency("USD".to_string())
+            .with_language("en".to_string())
+            .with_custom_data(custom_data.clone());
 
         assert_eq!(schedule.time_anchor(), "2023-01-01T00:00:00Z");
         assert_eq!(schedule.price_schedule_id(), 123);
-        assert_eq!(schedule.price_schedule_description(), Some(&"Test Schedule".to_string()));
+        assert_eq!(
+            schedule.price_schedule_description(),
+            Some(&"Test Schedule".to_string())
+        );
         assert_eq!(schedule.currency(), Some(&"USD".to_string()));
         assert_eq!(schedule.language(), Some(&"en".to_string()));
         assert_eq!(schedule.custom_data(), Some(&custom_data));
@@ -292,10 +289,7 @@ mod tests {
     fn test_setter_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut schedule = AbsolutePriceScheduleType::new(
-            "2023-01-01T00:00:00Z".to_string(),
-            123,
-        );
+        let mut schedule = AbsolutePriceScheduleType::new("2023-01-01T00:00:00Z".to_string(), 123);
 
         schedule
             .set_time_anchor("2023-02-01T00:00:00Z".to_string())
@@ -307,7 +301,10 @@ mod tests {
 
         assert_eq!(schedule.time_anchor(), "2023-02-01T00:00:00Z");
         assert_eq!(schedule.price_schedule_id(), 456);
-        assert_eq!(schedule.price_schedule_description(), Some(&"Updated Schedule".to_string()));
+        assert_eq!(
+            schedule.price_schedule_description(),
+            Some(&"Updated Schedule".to_string())
+        );
         assert_eq!(schedule.currency(), Some(&"EUR".to_string()));
         assert_eq!(schedule.language(), Some(&"fr".to_string()));
         assert_eq!(schedule.custom_data(), Some(&custom_data));

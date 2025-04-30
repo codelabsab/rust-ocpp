@@ -242,15 +242,16 @@ mod tests {
         assert_eq!(period.dimensions().len(), 2);
         assert_eq!(period.dimensions()[0].r#type, CostDimensionEnumType::Energy);
         assert_eq!(period.dimensions()[0].volume, 10.5);
-        assert_eq!(period.dimensions()[1].r#type, CostDimensionEnumType::ChargingTime);
+        assert_eq!(
+            period.dimensions()[1].r#type,
+            CostDimensionEnumType::ChargingTime
+        );
         assert_eq!(period.dimensions()[1].volume, 30.0);
         assert_eq!(period.tariff_id(), Some(&"tariff-456".to_string()));
         assert_eq!(period.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        period
-            .set_tariff_id(None)
-            .set_custom_data(None);
+        period.set_tariff_id(None).set_custom_data(None);
 
         assert_eq!(period.tariff_id(), None);
         assert_eq!(period.custom_data(), None);

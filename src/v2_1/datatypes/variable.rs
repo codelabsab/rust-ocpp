@@ -129,10 +129,7 @@ mod tests {
 
     #[test]
     fn test_new_variable() {
-        let variable = VariableType::new(
-            "CurrentLimit".to_string(),
-            "Main".to_string(),
-        );
+        let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
 
         assert_eq!(variable.name(), "CurrentLimit");
         assert_eq!(variable.instance(), "Main");
@@ -143,11 +140,8 @@ mod tests {
     fn test_with_custom_data() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let variable = VariableType::new(
-            "CurrentLimit".to_string(),
-            "Main".to_string(),
-        )
-        .with_custom_data(custom_data.clone());
+        let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string())
+            .with_custom_data(custom_data.clone());
 
         assert_eq!(variable.name(), "CurrentLimit");
         assert_eq!(variable.instance(), "Main");
@@ -158,10 +152,7 @@ mod tests {
     fn test_setter_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut variable = VariableType::new(
-            "CurrentLimit".to_string(),
-            "Main".to_string(),
-        );
+        let mut variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
 
         variable
             .set_name("VoltageLimit".to_string())

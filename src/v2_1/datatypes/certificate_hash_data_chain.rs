@@ -202,7 +202,10 @@ mod tests {
         );
 
         assert_eq!(cert_chain.certificate_hash_data(), &cert_hash_data);
-        assert_eq!(cert_chain.certificate_type(), &GetCertificateIdUseEnumType::CSMSRootCertificate);
+        assert_eq!(
+            cert_chain.certificate_type(),
+            &GetCertificateIdUseEnumType::CSMSRootCertificate
+        );
         assert_eq!(cert_chain.child_certificate_hash_data(), None);
         assert_eq!(cert_chain.custom_data(), None);
     }
@@ -233,8 +236,14 @@ mod tests {
         .with_custom_data(custom_data.clone());
 
         assert_eq!(cert_chain.certificate_hash_data(), &cert_hash_data);
-        assert_eq!(cert_chain.certificate_type(), &GetCertificateIdUseEnumType::CSMSRootCertificate);
-        assert_eq!(cert_chain.child_certificate_hash_data(), Some(&vec![child_cert_hash_data]));
+        assert_eq!(
+            cert_chain.certificate_type(),
+            &GetCertificateIdUseEnumType::CSMSRootCertificate
+        );
+        assert_eq!(
+            cert_chain.child_certificate_hash_data(),
+            Some(&vec![child_cert_hash_data])
+        );
         assert_eq!(cert_chain.custom_data(), Some(&custom_data));
     }
 
@@ -275,8 +284,14 @@ mod tests {
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(cert_chain.certificate_hash_data(), &cert_hash_data2);
-        assert_eq!(cert_chain.certificate_type(), &GetCertificateIdUseEnumType::V2GRootCertificate);
-        assert_eq!(cert_chain.child_certificate_hash_data(), Some(&vec![child_cert_hash_data]));
+        assert_eq!(
+            cert_chain.certificate_type(),
+            &GetCertificateIdUseEnumType::V2GRootCertificate
+        );
+        assert_eq!(
+            cert_chain.child_certificate_hash_data(),
+            Some(&vec![child_cert_hash_data])
+        );
         assert_eq!(cert_chain.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

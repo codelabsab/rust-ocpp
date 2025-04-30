@@ -314,7 +314,10 @@ impl APNType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_use_only_preferred_network(&mut self, use_only_preferred_network: Option<bool>) -> &mut Self {
+    pub fn set_use_only_preferred_network(
+        &mut self,
+        use_only_preferred_network: Option<bool>,
+    ) -> &mut Self {
         self.use_only_preferred_network = use_only_preferred_network;
         self
     }
@@ -337,7 +340,10 @@ impl APNType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_apn_authentication(&mut self, apn_authentication: APNAuthenticationEnumType) -> &mut Self {
+    pub fn set_apn_authentication(
+        &mut self,
+        apn_authentication: APNAuthenticationEnumType,
+    ) -> &mut Self {
         self.apn_authentication = apn_authentication;
         self
     }
@@ -398,8 +404,7 @@ mod tests {
             APNAuthenticationEnumType::CHAP,
         );
 
-        apn
-            .set_apn("mobile.provider.com".to_string())
+        apn.set_apn("mobile.provider.com".to_string())
             .set_apn_authentication(APNAuthenticationEnumType::PAP)
             .set_apn_user_name(Some("new_username".to_string()))
             .set_apn_password(Some("new_password".to_string()))
@@ -418,8 +423,7 @@ mod tests {
         assert_eq!(apn.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        apn
-            .set_apn_user_name(None)
+        apn.set_apn_user_name(None)
             .set_apn_password(None)
             .set_sim_pin(None)
             .set_preferred_network(None)

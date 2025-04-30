@@ -150,10 +150,7 @@ mod tests {
             custom_data: None,
         };
 
-        let auth_data = AuthorizationData::new(
-            id_token.clone(),
-            id_token_info.clone(),
-        );
+        let auth_data = AuthorizationData::new(id_token.clone(), id_token_info.clone());
 
         assert_eq!(auth_data.id_token(), &id_token);
         assert_eq!(auth_data.id_token_info(), &id_token_info);
@@ -183,11 +180,8 @@ mod tests {
 
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let auth_data = AuthorizationData::new(
-            id_token.clone(),
-            id_token_info.clone(),
-        )
-        .with_custom_data(custom_data.clone());
+        let auth_data = AuthorizationData::new(id_token.clone(), id_token_info.clone())
+            .with_custom_data(custom_data.clone());
 
         assert_eq!(auth_data.id_token(), &id_token);
         assert_eq!(auth_data.id_token_info(), &id_token_info);
@@ -236,10 +230,7 @@ mod tests {
 
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut auth_data = AuthorizationData::new(
-            id_token1.clone(),
-            id_token_info1.clone(),
-        );
+        let mut auth_data = AuthorizationData::new(id_token1.clone(), id_token_info1.clone());
 
         auth_data
             .set_id_token(id_token2.clone())
