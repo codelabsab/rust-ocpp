@@ -26,3 +26,232 @@ pub struct IdTokenType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomDataType>,
 }
+
+impl IdTokenType {
+    /// Creates a new `IdTokenType` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `id_token` - ID token string, case insensitive
+    /// * `type` - Type of identification used to authorize charging
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `IdTokenType` with optional fields set to `None`
+    pub fn new(id_token: String, r#type: String) -> Self {
+        Self {
+            id_token,
+            r#type,
+            additional_info: None,
+            custom_data: None,
+        }
+    }
+
+    /// Sets the additional information.
+    ///
+    /// # Arguments
+    ///
+    /// * `additional_info` - Vector of additional information about the identifier
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_additional_info(mut self, additional_info: Vec<AdditionalInfoType>) -> Self {
+        self.additional_info = Some(additional_info);
+        self
+    }
+
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data for this ID token
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
+        self
+    }
+
+    /// Gets the ID token.
+    ///
+    /// # Returns
+    ///
+    /// The ID token string
+    pub fn id_token(&self) -> &str {
+        &self.id_token
+    }
+
+    /// Sets the ID token.
+    ///
+    /// # Arguments
+    ///
+    /// * `id_token` - ID token string, case insensitive
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_id_token(&mut self, id_token: String) -> &mut Self {
+        self.id_token = id_token;
+        self
+    }
+
+    /// Gets the token type.
+    ///
+    /// # Returns
+    ///
+    /// The token type string
+    pub fn type_field(&self) -> &str {
+        &self.r#type
+    }
+
+    /// Sets the token type.
+    ///
+    /// # Arguments
+    ///
+    /// * `type` - Type of identification used to authorize charging
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_type(&mut self, r#type: String) -> &mut Self {
+        self.r#type = r#type;
+        self
+    }
+
+    /// Gets the additional information.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the vector of additional information
+    pub fn additional_info(&self) -> Option<&Vec<AdditionalInfoType>> {
+        self.additional_info.as_ref()
+    }
+
+    /// Sets the additional information.
+    ///
+    /// # Arguments
+    ///
+    /// * `additional_info` - Vector of additional information about the identifier, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_additional_info(&mut self, additional_info: Option<Vec<AdditionalInfoType>>) -> &mut Self {
+        self.additional_info = additional_info;
+        self
+    }
+
+    /// Gets the custom data.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the custom data
+    pub fn custom_data(&self) -> Option<&CustomDataType> {
+        self.custom_data.as_ref()
+    }
+
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data for this ID token, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
+        self.custom_data = custom_data;
+        self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new_id_token() {
+        let id = "4F62C4E0123456789".to_string();
+        let token_type = "ISO14443".to_string();
+
+        let token = IdTokenType::new(id.clone(), token_type.clone());
+
+        assert_eq!(token.id_token(), &id);
+        assert_eq!(token.type_field(), &token_type);
+        assert_eq!(token.additional_info(), None);
+        assert_eq!(token.custom_data(), None);
+    }
+
+    #[test]
+    fn test_with_methods() {
+        let id = "4F62C4E0123456789".to_string();
+        let token_type = "ISO14443".to_string();
+        
+        let additional_info = vec![
+            AdditionalInfoType {
+                additional_id_token: "Card123".to_string(),
+                type_: "CardType".to_string(),
+                custom_data: None,
+            }
+        ];
+        
+        let custom_data = CustomDataType {
+            vendor_id: "VendorX".to_string(),
+            additional_properties: Default::default(),
+        };
+
+        let token = IdTokenType::new(id.clone(), token_type.clone())
+            .with_additional_info(additional_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(token.id_token(), &id);
+        assert_eq!(token.type_field(), &token_type);
+        assert_eq!(token.additional_info(), Some(&additional_info));
+        assert_eq!(token.custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_setter_methods() {
+        let id1 = "4F62C4E0123456789".to_string();
+        let id2 = "ABCDEF0123456789".to_string();
+        let token_type1 = "ISO14443".to_string();
+        let token_type2 = "RFID".to_string();
+        
+        let additional_info = vec![
+            AdditionalInfoType {
+                additional_id_token: "Card123".to_string(),
+                type_: "CardType".to_string(),
+                custom_data: None,
+            }
+        ];
+        
+        let custom_data = CustomDataType {
+            vendor_id: "VendorX".to_string(),
+            additional_properties: Default::default(),
+        };
+
+        let mut token = IdTokenType::new(id1.clone(), token_type1.clone());
+
+        token
+            .set_id_token(id2.clone())
+            .set_type(token_type2.clone())
+            .set_additional_info(Some(additional_info.clone()))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(token.id_token(), &id2);
+        assert_eq!(token.type_field(), &token_type2);
+        assert_eq!(token.additional_info(), Some(&additional_info));
+        assert_eq!(token.custom_data(), Some(&custom_data));
+
+        // Test clearing optional fields
+        token
+            .set_additional_info(None)
+            .set_custom_data(None);
+
+        assert_eq!(token.additional_info(), None);
+        assert_eq!(token.custom_data(), None);
+    }
+}
