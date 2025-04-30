@@ -19,3 +19,220 @@ pub struct PriceRuleStackType {
     #[validate(length(min = 1))]
     pub price_rules: Vec<PriceRuleType>,
 }
+
+impl PriceRuleStackType {
+    /// Creates a new `PriceRuleStackType` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `duration` - Duration in seconds after which the price rule becomes active
+    /// * `price_rules` - List of price rules that are part of the stack
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `PriceRuleStackType` with optional fields set to `None`
+    pub fn new(duration: i32, price_rules: Vec<PriceRuleType>) -> Self {
+        Self {
+            custom_data: None,
+            duration,
+            price_rules,
+        }
+    }
+
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data for this price rule stack
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
+        self
+    }
+
+    /// Gets the custom data.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the custom data
+    pub fn custom_data(&self) -> Option<&CustomDataType> {
+        self.custom_data.as_ref()
+    }
+
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data for this price rule stack, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
+        self.custom_data = custom_data;
+        self
+    }
+
+    /// Gets the duration.
+    ///
+    /// # Returns
+    ///
+    /// The duration in seconds after which the price rule becomes active
+    pub fn duration(&self) -> i32 {
+        self.duration
+    }
+
+    /// Sets the duration.
+    ///
+    /// # Arguments
+    ///
+    /// * `duration` - Duration in seconds after which the price rule becomes active
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_duration(&mut self, duration: i32) -> &mut Self {
+        self.duration = duration;
+        self
+    }
+
+    /// Gets the price rules.
+    ///
+    /// # Returns
+    ///
+    /// Reference to the list of price rules that are part of the stack
+    pub fn price_rules(&self) -> &[PriceRuleType] {
+        &self.price_rules
+    }
+
+    /// Sets the price rules.
+    ///
+    /// # Arguments
+    ///
+    /// * `price_rules` - List of price rules that are part of the stack
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_price_rules(&mut self, price_rules: Vec<PriceRuleType>) -> &mut Self {
+        self.price_rules = price_rules;
+        self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::enumerations::EnergyTransferModeEnumType;
+
+    #[test]
+    fn test_new_price_rule_stack() {
+        let duration = 3600;
+        let price_rules = vec![PriceRuleType::new(
+            EnergyTransferModeEnumType::DC,
+            0.25,
+            0.10,
+            0.05,
+            300,
+            7200,
+            50.0,
+            10.0,
+        )];
+
+        let stack = PriceRuleStackType::new(duration, price_rules.clone());
+
+        assert_eq!(stack.duration(), duration);
+        assert_eq!(stack.price_rules(), &price_rules);
+        assert_eq!(stack.custom_data(), None);
+    }
+
+    #[test]
+    fn test_with_custom_data() {
+        let duration = 3600;
+        let price_rules = vec![PriceRuleType::new(
+            EnergyTransferModeEnumType::DC,
+            0.25,
+            0.10,
+            0.05,
+            300,
+            7200,
+            50.0,
+            10.0,
+        )];
+
+        let custom_data = CustomDataType {
+            vendor_id: "VendorX".to_string(),
+            additional_properties: Default::default(),
+        };
+
+        let stack = PriceRuleStackType::new(duration, price_rules.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(stack.duration(), duration);
+        assert_eq!(stack.price_rules(), &price_rules);
+        assert_eq!(stack.custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_setter_methods() {
+        let duration1 = 3600;
+        let duration2 = 7200;
+
+        let price_rules1 = vec![PriceRuleType::new(
+            EnergyTransferModeEnumType::DC,
+            0.25,
+            0.10,
+            0.05,
+            300,
+            7200,
+            50.0,
+            10.0,
+        )];
+
+        let price_rules2 = vec![
+            PriceRuleType::new(
+                EnergyTransferModeEnumType::DC,
+                0.25,
+                0.10,
+                0.05,
+                300,
+                7200,
+                50.0,
+                10.0,
+            ),
+            PriceRuleType::new(
+                EnergyTransferModeEnumType::ACSinglePhase,
+                0.20,
+                0.08,
+                0.04,
+                600,
+                10800,
+                22.0,
+                3.7,
+            ),
+        ];
+
+        let custom_data = CustomDataType {
+            vendor_id: "VendorX".to_string(),
+            additional_properties: Default::default(),
+        };
+
+        let mut stack = PriceRuleStackType::new(duration1, price_rules1.clone());
+
+        stack
+            .set_duration(duration2)
+            .set_price_rules(price_rules2.clone())
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(stack.duration(), duration2);
+        assert_eq!(stack.price_rules(), &price_rules2);
+        assert_eq!(stack.custom_data(), Some(&custom_data));
+
+        // Test clearing optional fields
+        stack.set_custom_data(None);
+        assert_eq!(stack.custom_data(), None);
+    }
+}
