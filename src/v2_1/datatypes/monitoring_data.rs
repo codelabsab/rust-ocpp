@@ -169,7 +169,7 @@ mod tests {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring = vec![
-            VariableMonitoringType::new(1, MonitorEnumType::UpperThreshold, 80.0),
+            VariableMonitoringType::new_without_severity(1, MonitorEnumType::UpperThreshold, 80.0),
         ];
 
         let monitoring_data = MonitoringDataType::new(
@@ -189,7 +189,7 @@ mod tests {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring = vec![
-            VariableMonitoringType::new(1, MonitorEnumType::UpperThreshold, 80.0),
+            VariableMonitoringType::new_without_severity(1, MonitorEnumType::UpperThreshold, 80.0),
         ];
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
@@ -214,14 +214,14 @@ mod tests {
         let component1 = ComponentType::new("Connector".to_string());
         let variable1 = VariableType::new("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring1 = vec![
-            VariableMonitoringType::new(1, MonitorEnumType::UpperThreshold, 80.0),
+            VariableMonitoringType::new_without_severity(1, MonitorEnumType::UpperThreshold, 80.0),
         ];
 
         let component2 = ComponentType::new("Meter".to_string());
         let variable2 = VariableType::new("Current".to_string(), "Output".to_string());
         let variable_monitoring2 = vec![
-            VariableMonitoringType::new(2, MonitorEnumType::LowerThreshold, 5.0),
-            VariableMonitoringType::new(3, MonitorEnumType::UpperThreshold, 32.0),
+            VariableMonitoringType::new_without_severity(2, MonitorEnumType::LowerThreshold, 5.0),
+            VariableMonitoringType::new_without_severity(3, MonitorEnumType::UpperThreshold, 32.0),
         ];
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
