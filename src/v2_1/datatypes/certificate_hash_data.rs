@@ -3,7 +3,11 @@ use crate::v2_1::enumerations::HashAlgorithmEnumType;
 use serde::{Deserialize, Serialize};
 
 /// Certificate hash data for validating certificates through OCSP.
+///
+/// This type contains the necessary hash data to validate a certificate using
+/// the Online Certificate Status Protocol (OCSP).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CertificateHashDataType {
     /// Used algorithms for the hashes provided.
     pub hash_algorithm: HashAlgorithmEnumType,
@@ -23,4 +27,231 @@ pub struct CertificateHashDataType {
     /// Optional custom data
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomDataType>,
+}
+
+impl CertificateHashDataType {
+    /// Creates a new `CertificateHashDataType` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `hash_algorithm` - Algorithm used for the hashes
+    /// * `issuer_name_hash` - Hash of the issuer's distinguished name
+    /// * `issuer_key_hash` - Hash of the DER encoded public key
+    /// * `serial_number` - Hexadecimal value of the serial number
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `CertificateHashDataType` with optional fields set to `None`
+    pub fn new(
+        hash_algorithm: HashAlgorithmEnumType,
+        issuer_name_hash: String,
+        issuer_key_hash: String,
+        serial_number: String,
+    ) -> Self {
+        Self {
+            hash_algorithm,
+            issuer_name_hash,
+            issuer_key_hash,
+            serial_number,
+            custom_data: None,
+        }
+    }
+
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data for this certificate hash data
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
+        self
+    }
+
+    /// Gets the hash algorithm.
+    ///
+    /// # Returns
+    ///
+    /// The hash algorithm used for the hashes
+    pub fn hash_algorithm(&self) -> &HashAlgorithmEnumType {
+        &self.hash_algorithm
+    }
+
+    /// Sets the hash algorithm.
+    ///
+    /// # Arguments
+    ///
+    /// * `hash_algorithm` - Algorithm used for the hashes
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_hash_algorithm(&mut self, hash_algorithm: HashAlgorithmEnumType) -> &mut Self {
+        self.hash_algorithm = hash_algorithm;
+        self
+    }
+
+    /// Gets the issuer name hash.
+    ///
+    /// # Returns
+    ///
+    /// The hash of the issuer's distinguished name
+    pub fn issuer_name_hash(&self) -> &str {
+        &self.issuer_name_hash
+    }
+
+    /// Sets the issuer name hash.
+    ///
+    /// # Arguments
+    ///
+    /// * `issuer_name_hash` - Hash of the issuer's distinguished name
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_issuer_name_hash(&mut self, issuer_name_hash: String) -> &mut Self {
+        self.issuer_name_hash = issuer_name_hash;
+        self
+    }
+
+    /// Gets the issuer key hash.
+    ///
+    /// # Returns
+    ///
+    /// The hash of the DER encoded public key
+    pub fn issuer_key_hash(&self) -> &str {
+        &self.issuer_key_hash
+    }
+
+    /// Sets the issuer key hash.
+    ///
+    /// # Arguments
+    ///
+    /// * `issuer_key_hash` - Hash of the DER encoded public key
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_issuer_key_hash(&mut self, issuer_key_hash: String) -> &mut Self {
+        self.issuer_key_hash = issuer_key_hash;
+        self
+    }
+
+    /// Gets the serial number.
+    ///
+    /// # Returns
+    ///
+    /// The hexadecimal value of the serial number
+    pub fn serial_number(&self) -> &str {
+        &self.serial_number
+    }
+
+    /// Sets the serial number.
+    ///
+    /// # Arguments
+    ///
+    /// * `serial_number` - Hexadecimal value of the serial number
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_serial_number(&mut self, serial_number: String) -> &mut Self {
+        self.serial_number = serial_number;
+        self
+    }
+
+    /// Gets the custom data.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the custom data
+    pub fn custom_data(&self) -> Option<&CustomDataType> {
+        self.custom_data.as_ref()
+    }
+
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data for this certificate hash data, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
+        self.custom_data = custom_data;
+        self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new_certificate_hash_data() {
+        let cert_hash_data = CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA256,
+            "a1b2c3d4e5f6".to_string(),
+            "f6e5d4c3b2a1".to_string(),
+            "1234567890abcdef".to_string(),
+        );
+
+        assert_eq!(cert_hash_data.hash_algorithm(), &HashAlgorithmEnumType::SHA256);
+        assert_eq!(cert_hash_data.issuer_name_hash(), "a1b2c3d4e5f6");
+        assert_eq!(cert_hash_data.issuer_key_hash(), "f6e5d4c3b2a1");
+        assert_eq!(cert_hash_data.serial_number(), "1234567890abcdef");
+        assert_eq!(cert_hash_data.custom_data(), None);
+    }
+
+    #[test]
+    fn test_with_custom_data() {
+        let custom_data = CustomDataType::new("VendorX".to_string());
+
+        let cert_hash_data = CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA256,
+            "a1b2c3d4e5f6".to_string(),
+            "f6e5d4c3b2a1".to_string(),
+            "1234567890abcdef".to_string(),
+        )
+        .with_custom_data(custom_data.clone());
+
+        assert_eq!(cert_hash_data.hash_algorithm(), &HashAlgorithmEnumType::SHA256);
+        assert_eq!(cert_hash_data.issuer_name_hash(), "a1b2c3d4e5f6");
+        assert_eq!(cert_hash_data.issuer_key_hash(), "f6e5d4c3b2a1");
+        assert_eq!(cert_hash_data.serial_number(), "1234567890abcdef");
+        assert_eq!(cert_hash_data.custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_setter_methods() {
+        let custom_data = CustomDataType::new("VendorX".to_string());
+
+        let mut cert_hash_data = CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA256,
+            "a1b2c3d4e5f6".to_string(),
+            "f6e5d4c3b2a1".to_string(),
+            "1234567890abcdef".to_string(),
+        );
+
+        cert_hash_data
+            .set_hash_algorithm(HashAlgorithmEnumType::SHA512)
+            .set_issuer_name_hash("newnamehash".to_string())
+            .set_issuer_key_hash("newkeyhash".to_string())
+            .set_serial_number("newserial".to_string())
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(cert_hash_data.hash_algorithm(), &HashAlgorithmEnumType::SHA512);
+        assert_eq!(cert_hash_data.issuer_name_hash(), "newnamehash");
+        assert_eq!(cert_hash_data.issuer_key_hash(), "newkeyhash");
+        assert_eq!(cert_hash_data.serial_number(), "newserial");
+        assert_eq!(cert_hash_data.custom_data(), Some(&custom_data));
+
+        // Test clearing optional fields
+        cert_hash_data.set_custom_data(None);
+        assert_eq!(cert_hash_data.custom_data(), None);
+    }
 }

@@ -3,13 +3,12 @@ use crate::v2_1::datatypes::{
 };
 use crate::v2_1::enumerations::get_certificate_id_use::GetCertificateIdUseEnumType;
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 
 /// Certificate hash data chain for validating certificates through OCSP.
 ///
 /// This type represents a chain of certificate hash data used for certificate validation
 /// through the Online Certificate Status Protocol (OCSP).
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CertificateHashDataChainType {
     /// Information to identify a certificate
@@ -180,5 +179,112 @@ impl CertificateHashDataChainType {
     pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
         self.custom_data = custom_data;
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::enumerations::HashAlgorithmEnumType;
+
+    #[test]
+    fn test_new_certificate_hash_data_chain() {
+        let cert_hash_data = CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA256,
+            "a1b2c3d4e5f6".to_string(),
+            "f6e5d4c3b2a1".to_string(),
+            "1234567890abcdef".to_string(),
+        );
+
+        let cert_chain = CertificateHashDataChainType::new(
+            cert_hash_data.clone(),
+            GetCertificateIdUseEnumType::CSMSRootCertificate,
+        );
+
+        assert_eq!(cert_chain.certificate_hash_data(), &cert_hash_data);
+        assert_eq!(cert_chain.certificate_type(), &GetCertificateIdUseEnumType::CSMSRootCertificate);
+        assert_eq!(cert_chain.child_certificate_hash_data(), None);
+        assert_eq!(cert_chain.custom_data(), None);
+    }
+
+    #[test]
+    fn test_with_methods() {
+        let cert_hash_data = CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA256,
+            "a1b2c3d4e5f6".to_string(),
+            "f6e5d4c3b2a1".to_string(),
+            "1234567890abcdef".to_string(),
+        );
+
+        let child_cert_hash_data = CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA384,
+            "child_name_hash".to_string(),
+            "child_key_hash".to_string(),
+            "child_serial".to_string(),
+        );
+
+        let custom_data = CustomDataType::new("VendorX".to_string());
+
+        let cert_chain = CertificateHashDataChainType::new(
+            cert_hash_data.clone(),
+            GetCertificateIdUseEnumType::CSMSRootCertificate,
+        )
+        .with_child_certificate_hash_data(vec![child_cert_hash_data.clone()])
+        .with_custom_data(custom_data.clone());
+
+        assert_eq!(cert_chain.certificate_hash_data(), &cert_hash_data);
+        assert_eq!(cert_chain.certificate_type(), &GetCertificateIdUseEnumType::CSMSRootCertificate);
+        assert_eq!(cert_chain.child_certificate_hash_data(), Some(&vec![child_cert_hash_data]));
+        assert_eq!(cert_chain.custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_setter_methods() {
+        let cert_hash_data1 = CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA256,
+            "a1b2c3d4e5f6".to_string(),
+            "f6e5d4c3b2a1".to_string(),
+            "1234567890abcdef".to_string(),
+        );
+
+        let cert_hash_data2 = CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA512,
+            "new_name_hash".to_string(),
+            "new_key_hash".to_string(),
+            "new_serial".to_string(),
+        );
+
+        let child_cert_hash_data = CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA384,
+            "child_name_hash".to_string(),
+            "child_key_hash".to_string(),
+            "child_serial".to_string(),
+        );
+
+        let custom_data = CustomDataType::new("VendorX".to_string());
+
+        let mut cert_chain = CertificateHashDataChainType::new(
+            cert_hash_data1.clone(),
+            GetCertificateIdUseEnumType::CSMSRootCertificate,
+        );
+
+        cert_chain
+            .set_certificate_hash_data(cert_hash_data2.clone())
+            .set_certificate_type(GetCertificateIdUseEnumType::V2GRootCertificate)
+            .set_child_certificate_hash_data(Some(vec![child_cert_hash_data.clone()]))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(cert_chain.certificate_hash_data(), &cert_hash_data2);
+        assert_eq!(cert_chain.certificate_type(), &GetCertificateIdUseEnumType::V2GRootCertificate);
+        assert_eq!(cert_chain.child_certificate_hash_data(), Some(&vec![child_cert_hash_data]));
+        assert_eq!(cert_chain.custom_data(), Some(&custom_data));
+
+        // Test clearing optional fields
+        cert_chain
+            .set_child_certificate_hash_data(None)
+            .set_custom_data(None);
+
+        assert_eq!(cert_chain.child_certificate_hash_data(), None);
+        assert_eq!(cert_chain.custom_data(), None);
     }
 }

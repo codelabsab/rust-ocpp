@@ -1,12 +1,11 @@
 use super::custom_data::CustomDataType;
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 
 /// Contains additional information about an identifier.
 ///
 /// The format of the additionalIdToken is pending standardization.
 /// This type is used to provide additional identification information for authorization.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AdditionalInfoType {
     /// This field specifies the type of the additionalIdToken.

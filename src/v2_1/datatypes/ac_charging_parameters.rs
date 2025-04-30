@@ -1,11 +1,10 @@
 use crate::v2_1::datatypes::custom_data::CustomDataType;
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 
 /// EV AC charging parameters for ISO 15118-2
 ///
 /// Contains parameters specific to AC charging according to ISO 15118-2.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ACChargingParametersType {
     /// Amount of energy requested (in Wh). This includes energy required for preconditioning.

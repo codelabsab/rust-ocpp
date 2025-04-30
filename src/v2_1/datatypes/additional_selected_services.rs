@@ -1,12 +1,11 @@
 use crate::v2_1::datatypes::{custom_data::CustomDataType, rational_number::RationalNumberType};
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 
 /// Part of ISO 15118-20 price schedule.
 ///
 /// This type represents additional services that can be selected as part of a charging session,
 /// including the service name and associated fee.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AdditionalSelectedServicesType {
     /// Service fee

@@ -1,12 +1,11 @@
 use crate::v2_1::datatypes::custom_data::CustomDataType;
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 
 /// A generic address format.
 ///
 /// This type represents a physical address with standard address fields
 /// such as name, street address, city, postal code, and country.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AddressType {
     /// Name of person/company

@@ -1,12 +1,11 @@
 use crate::v2_1::datatypes::custom_data::CustomDataType;
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 
 /// The AbsolutePriceScheduleType is modeled after the same type that is defined in ISO 15118-20,
 /// such that if it is supplied by an EMSP as a signed EXI message, the conversion from EXI to JSON
 /// (in OCPP) and back to EXI (for ISO 15118-20) does not change the digest and therefore does not
 /// invalidate the signature.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AbsolutePriceScheduleType {
     /// Starting point of price schedule.
