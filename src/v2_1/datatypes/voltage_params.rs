@@ -220,7 +220,8 @@ mod tests {
             voltage_stop,
             voltage_discharge_start,
             voltage_discharge_stop,
-        ).with_custom_data(custom_data.clone());
+        )
+        .with_custom_data(custom_data.clone());
 
         assert_eq!(params.voltage_start(), voltage_start);
         assert_eq!(params.voltage_stop(), voltage_stop);

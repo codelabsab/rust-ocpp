@@ -216,7 +216,10 @@ mod tests {
         assert_eq!(result.status(), &TariffClearStatusEnumType::Rejected);
         assert_eq!(result.tariff_id(), Some("tariff-123"));
         assert_eq!(result.status_info().unwrap().reason_code(), "SomeReason");
-        assert_eq!(result.status_info().unwrap().additional_info(), Some("Additional details"));
+        assert_eq!(
+            result.status_info().unwrap().additional_info(),
+            Some("Additional details")
+        );
         assert_eq!(result.custom_data(), Some(&custom_data));
     }
 
@@ -238,7 +241,10 @@ mod tests {
         assert_eq!(result.status(), &TariffClearStatusEnumType::NoTariff);
         assert_eq!(result.tariff_id(), Some("tariff-456"));
         assert_eq!(result.status_info().unwrap().reason_code(), "SomeReason");
-        assert_eq!(result.status_info().unwrap().additional_info(), Some("Additional details"));
+        assert_eq!(
+            result.status_info().unwrap().additional_info(),
+            Some("Additional details")
+        );
         assert_eq!(result.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

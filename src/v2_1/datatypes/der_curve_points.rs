@@ -149,8 +149,7 @@ mod tests {
     #[test]
     fn test_with_custom_data() {
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let point = DERCurvePointsType::new(10.5, 20.3)
-            .with_custom_data(custom_data.clone());
+        let point = DERCurvePointsType::new(10.5, 20.3).with_custom_data(custom_data.clone());
 
         assert_eq!(point.x(), 10.5);
         assert_eq!(point.y(), 20.3);

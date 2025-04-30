@@ -111,8 +111,7 @@ mod tests {
         let offset = 0.5;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let hysteresis = HysteresisType::new(offset)
-            .with_custom_data(custom_data.clone());
+        let hysteresis = HysteresisType::new(offset).with_custom_data(custom_data.clone());
 
         assert_eq!(hysteresis.offset(), offset);
         assert_eq!(hysteresis.custom_data(), Some(&custom_data));

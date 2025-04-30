@@ -144,8 +144,14 @@ mod tests {
 
         assert_eq!(custom_data.vendor_id(), "VendorX");
         assert_eq!(custom_data.additional_properties().len(), 2);
-        assert_eq!(custom_data.additional_properties().get("version"), Some(&json!("1.0")));
-        assert_eq!(custom_data.additional_properties().get("features"), Some(&json!(["feature1", "feature2"])));
+        assert_eq!(
+            custom_data.additional_properties().get("version"),
+            Some(&json!("1.0"))
+        );
+        assert_eq!(
+            custom_data.additional_properties().get("features"),
+            Some(&json!(["feature1", "feature2"]))
+        );
     }
 
     #[test]
@@ -159,14 +165,23 @@ mod tests {
 
         assert_eq!(custom_data.vendor_id(), "VendorY");
         assert_eq!(custom_data.additional_properties().len(), 2);
-        assert_eq!(custom_data.additional_properties().get("version"), Some(&json!("2.0")));
-        assert_eq!(custom_data.additional_properties().get("enabled"), Some(&json!(true)));
+        assert_eq!(
+            custom_data.additional_properties().get("version"),
+            Some(&json!("2.0"))
+        );
+        assert_eq!(
+            custom_data.additional_properties().get("enabled"),
+            Some(&json!(true))
+        );
 
         // Test removing a property
         custom_data.remove_property("version");
         assert_eq!(custom_data.additional_properties().len(), 1);
         assert!(custom_data.additional_properties().get("version").is_none());
-        assert_eq!(custom_data.additional_properties().get("enabled"), Some(&json!(true)));
+        assert_eq!(
+            custom_data.additional_properties().get("enabled"),
+            Some(&json!(true))
+        );
 
         // Test clearing all properties
         custom_data.clear_properties();

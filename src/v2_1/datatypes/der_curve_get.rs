@@ -228,7 +228,13 @@ mod tests {
         let is_default = true;
         let is_superseded = false;
 
-        let curve_get = DERCurveGetType::new(curve.clone(), id.clone(), curve_type.clone(), is_default, is_superseded);
+        let curve_get = DERCurveGetType::new(
+            curve.clone(),
+            id.clone(),
+            curve_type.clone(),
+            is_default,
+            is_superseded,
+        );
 
         assert_eq!(curve_get.curve(), &curve);
         assert_eq!(curve_get.id(), id);
@@ -248,8 +254,14 @@ mod tests {
         let is_superseded = false;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let curve_get = DERCurveGetType::new(curve.clone(), id.clone(), curve_type.clone(), is_default, is_superseded)
-            .with_custom_data(custom_data.clone());
+        let curve_get = DERCurveGetType::new(
+            curve.clone(),
+            id.clone(),
+            curve_type.clone(),
+            is_default,
+            is_superseded,
+        )
+        .with_custom_data(custom_data.clone());
 
         assert_eq!(curve_get.curve(), &curve);
         assert_eq!(curve_get.id(), id);
@@ -263,7 +275,10 @@ mod tests {
     fn test_setter_methods() {
         let curve_points1 = vec![DERCurvePointsType::default()];
         let curve1 = DERCurveType::new(curve_points1, 1, DERUnitEnumType::PctMaxW);
-        let curve_points2 = vec![DERCurvePointsType::new(1.0, 2.0), DERCurvePointsType::new(3.0, 4.0)];
+        let curve_points2 = vec![
+            DERCurvePointsType::new(1.0, 2.0),
+            DERCurvePointsType::new(3.0, 4.0),
+        ];
         let curve2 = DERCurveType::new(curve_points2, 2, DERUnitEnumType::PctMaxVar);
         let id1 = "curve1".to_string();
         let id2 = "curve2".to_string();
@@ -271,7 +286,13 @@ mod tests {
         let curve_type2 = DERControlEnumType::FixedVar;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut curve_get = DERCurveGetType::new(curve1.clone(), id1.clone(), curve_type1.clone(), true, false);
+        let mut curve_get = DERCurveGetType::new(
+            curve1.clone(),
+            id1.clone(),
+            curve_type1.clone(),
+            true,
+            false,
+        );
 
         curve_get
             .set_curve(curve2.clone())

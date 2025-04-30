@@ -179,9 +179,7 @@ mod tests {
         assert_eq!(status_info.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        status_info
-            .set_additional_info(None)
-            .set_custom_data(None);
+        status_info.set_additional_info(None).set_custom_data(None);
 
         assert_eq!(status_info.additional_info(), None);
         assert_eq!(status_info.custom_data(), None);

@@ -194,7 +194,10 @@ mod tests {
         assert_eq!(result.status(), &ClearMonitoringStatusEnumType::Rejected);
         assert_eq!(result.id(), 42);
         assert_eq!(result.status_info().unwrap().reason_code, "SomeReason");
-        assert_eq!(result.status_info().unwrap().additional_info, Some("Additional details".to_string()));
+        assert_eq!(
+            result.status_info().unwrap().additional_info,
+            Some("Additional details".to_string())
+        );
         assert_eq!(result.custom_data(), Some(&custom_data));
     }
 
@@ -205,7 +208,8 @@ mod tests {
 
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut result = ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 42);
+        let mut result =
+            ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 42);
 
         result
             .set_status(ClearMonitoringStatusEnumType::NotFound)
@@ -216,13 +220,14 @@ mod tests {
         assert_eq!(result.status(), &ClearMonitoringStatusEnumType::NotFound);
         assert_eq!(result.id(), 43);
         assert_eq!(result.status_info().unwrap().reason_code, "SomeReason");
-        assert_eq!(result.status_info().unwrap().additional_info, Some("Additional details".to_string()));
+        assert_eq!(
+            result.status_info().unwrap().additional_info,
+            Some("Additional details".to_string())
+        );
         assert_eq!(result.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        result
-            .set_status_info(None)
-            .set_custom_data(None);
+        result.set_status_info(None).set_custom_data(None);
 
         assert_eq!(result.status_info(), None);
         assert_eq!(result.custom_data(), None);

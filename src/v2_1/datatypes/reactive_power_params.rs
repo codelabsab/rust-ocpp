@@ -142,8 +142,8 @@ mod tests {
         let min_var = -100.0;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let params = ReactivePowerParamsType::new(max_var, min_var)
-            .with_custom_data(custom_data.clone());
+        let params =
+            ReactivePowerParamsType::new(max_var, min_var).with_custom_data(custom_data.clone());
 
         assert_eq!(params.max_var(), max_var);
         assert_eq!(params.min_var(), min_var);

@@ -74,7 +74,10 @@ impl DERChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_ev_supported_der_control(&mut self, ev_supported_der_control: Vec<DERControlEnumType>) -> &mut Self {
+    pub fn set_ev_supported_der_control(
+        &mut self,
+        ev_supported_der_control: Vec<DERControlEnumType>,
+    ) -> &mut Self {
         self.ev_supported_der_control = ev_supported_der_control;
         self
     }
@@ -109,7 +112,10 @@ mod tests {
 
     #[test]
     fn test_new_der_charging_parameters() {
-        let der_controls = vec![DERControlEnumType::FreqDroop, DERControlEnumType::PowerFactor];
+        let der_controls = vec![
+            DERControlEnumType::FreqDroop,
+            DERControlEnumType::PowerFactor,
+        ];
         let params = DERChargingParametersType::new(der_controls.clone());
 
         assert_eq!(params.ev_supported_der_control(), &der_controls);
@@ -131,7 +137,10 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let der_controls1 = vec![DERControlEnumType::FreqDroop];
-        let der_controls2 = vec![DERControlEnumType::PowerFactor, DERControlEnumType::FixedVar];
+        let der_controls2 = vec![
+            DERControlEnumType::PowerFactor,
+            DERControlEnumType::FixedVar,
+        ];
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let mut params = DERChargingParametersType::new(der_controls1.clone());

@@ -65,7 +65,11 @@ impl DERCurveType {
     /// # Returns
     ///
     /// A new instance of `DERCurveType` with optional fields set to `None`
-    pub fn new(curve_data: Vec<DERCurvePointsType>, priority: i32, y_unit: DERUnitEnumType) -> Self {
+    pub fn new(
+        curve_data: Vec<DERCurvePointsType>,
+        priority: i32,
+        y_unit: DERUnitEnumType,
+    ) -> Self {
         Self {
             curve_data,
             priority,
@@ -117,7 +121,10 @@ impl DERCurveType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_reactive_power_params(mut self, reactive_power_params: ReactivePowerParamsType) -> Self {
+    pub fn with_reactive_power_params(
+        mut self,
+        reactive_power_params: ReactivePowerParamsType,
+    ) -> Self {
         self.reactive_power_params = Some(reactive_power_params);
         self
     }
@@ -311,7 +318,10 @@ impl DERCurveType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_reactive_power_params(&mut self, reactive_power_params: Option<ReactivePowerParamsType>) -> &mut Self {
+    pub fn set_reactive_power_params(
+        &mut self,
+        reactive_power_params: Option<ReactivePowerParamsType>,
+    ) -> &mut Self {
         self.reactive_power_params = reactive_power_params;
         self
     }
