@@ -32,3 +32,297 @@ pub struct SetMonitoringResultType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,
 }
+
+impl SetMonitoringResultType {
+    /// Creates a new `SetMonitoringResultType` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `status` - Status indicating whether the Charging Station accepts the monitoring request
+    /// * `component` - Component for which the monitoring status is returned
+    /// * `variable` - Variable for which the monitoring status is returned
+    /// * `id` - Id of the monitor that was set
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `SetMonitoringResultType` with optional fields set to `None`
+    pub fn new(
+        status: SetMonitoringStatusEnumType,
+        component: ComponentType,
+        variable: VariableType,
+        id: i32,
+    ) -> Self {
+        Self {
+            custom_data: None,
+            status,
+            component,
+            variable,
+            id,
+            status_info: None,
+        }
+    }
+
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data for this monitoring result
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
+        self
+    }
+
+    /// Sets the status info.
+    ///
+    /// # Arguments
+    ///
+    /// * `status_info` - Detailed status information
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_status_info(mut self, status_info: StatusInfoType) -> Self {
+        self.status_info = Some(status_info);
+        self
+    }
+
+    /// Gets the status.
+    ///
+    /// # Returns
+    ///
+    /// The status indicating whether the Charging Station accepts the monitoring request
+    pub fn status(&self) -> &SetMonitoringStatusEnumType {
+        &self.status
+    }
+
+    /// Sets the status.
+    ///
+    /// # Arguments
+    ///
+    /// * `status` - Status indicating whether the Charging Station accepts the monitoring request
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_status(&mut self, status: SetMonitoringStatusEnumType) -> &mut Self {
+        self.status = status;
+        self
+    }
+
+    /// Gets the component.
+    ///
+    /// # Returns
+    ///
+    /// A reference to the component for which the monitoring status is returned
+    pub fn component(&self) -> &ComponentType {
+        &self.component
+    }
+
+    /// Sets the component.
+    ///
+    /// # Arguments
+    ///
+    /// * `component` - Component for which the monitoring status is returned
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_component(&mut self, component: ComponentType) -> &mut Self {
+        self.component = component;
+        self
+    }
+
+    /// Gets the variable.
+    ///
+    /// # Returns
+    ///
+    /// A reference to the variable for which the monitoring status is returned
+    pub fn variable(&self) -> &VariableType {
+        &self.variable
+    }
+
+    /// Sets the variable.
+    ///
+    /// # Arguments
+    ///
+    /// * `variable` - Variable for which the monitoring status is returned
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_variable(&mut self, variable: VariableType) -> &mut Self {
+        self.variable = variable;
+        self
+    }
+
+    /// Gets the id of the monitor.
+    ///
+    /// # Returns
+    ///
+    /// The id of the monitor that was set
+    pub fn id(&self) -> i32 {
+        self.id
+    }
+
+    /// Sets the id of the monitor.
+    ///
+    /// # Arguments
+    ///
+    /// * `id` - Id of the monitor that was set
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_id(&mut self, id: i32) -> &mut Self {
+        self.id = id;
+        self
+    }
+
+    /// Gets the status info.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to detailed status information
+    pub fn status_info(&self) -> Option<&StatusInfoType> {
+        self.status_info.as_ref()
+    }
+
+    /// Sets the status info.
+    ///
+    /// # Arguments
+    ///
+    /// * `status_info` - Detailed status information, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_status_info(&mut self, status_info: Option<StatusInfoType>) -> &mut Self {
+        self.status_info = status_info;
+        self
+    }
+
+    /// Gets the custom data.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the custom data
+    pub fn custom_data(&self) -> Option<&CustomDataType> {
+        self.custom_data.as_ref()
+    }
+
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data for this monitoring result, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
+        self.custom_data = custom_data;
+        self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new_monitoring_result() {
+        let status = SetMonitoringStatusEnumType::Accepted;
+        let component = ComponentType::new("component1".to_string());
+        let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
+        let id = 42;
+
+        let result = SetMonitoringResultType::new(
+            status.clone(),
+            component.clone(),
+            variable.clone(),
+            id,
+        );
+
+        assert_eq!(result.status(), &status);
+        assert_eq!(result.component(), &component);
+        assert_eq!(result.variable(), &variable);
+        assert_eq!(result.id(), id);
+        assert_eq!(result.status_info(), None);
+        assert_eq!(result.custom_data(), None);
+    }
+
+    #[test]
+    fn test_with_methods() {
+        let status = SetMonitoringStatusEnumType::Accepted;
+        let component = ComponentType::new("component1".to_string());
+        let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
+        let id = 42;
+        let custom_data = CustomDataType::new("VendorX".to_string());
+        let status_info = StatusInfoType::new("SomeReason".to_string());
+
+        let result = SetMonitoringResultType::new(
+            status.clone(),
+            component.clone(),
+            variable.clone(),
+            id,
+        )
+        .with_custom_data(custom_data.clone())
+        .with_status_info(status_info.clone());
+
+        assert_eq!(result.status(), &status);
+        assert_eq!(result.component(), &component);
+        assert_eq!(result.variable(), &variable);
+        assert_eq!(result.id(), id);
+        assert_eq!(result.status_info(), Some(&status_info));
+        assert_eq!(result.custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_setter_methods() {
+        let status1 = SetMonitoringStatusEnumType::Accepted;
+        let component1 = ComponentType::new("component1".to_string());
+        let variable1 = VariableType::new("variable1".to_string(), "instance1".to_string());
+        let id1 = 42;
+
+        let mut result = SetMonitoringResultType::new(
+            status1,
+            component1,
+            variable1,
+            id1,
+        );
+
+        let status2 = SetMonitoringStatusEnumType::UnknownVariable;
+        let component2 = ComponentType::new("component2".to_string());
+        let variable2 = VariableType::new("variable2".to_string(), "instance2".to_string());
+        let id2 = 43;
+        let custom_data = CustomDataType::new("VendorX".to_string());
+        let status_info = StatusInfoType::new("NotFound".to_string());
+
+        result
+            .set_status(status2.clone())
+            .set_component(component2.clone())
+            .set_variable(variable2.clone())
+            .set_id(id2)
+            .set_status_info(Some(status_info.clone()))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(result.status(), &status2);
+        assert_eq!(result.component(), &component2);
+        assert_eq!(result.variable(), &variable2);
+        assert_eq!(result.id(), id2);
+        assert_eq!(result.status_info(), Some(&status_info));
+        assert_eq!(result.custom_data(), Some(&custom_data));
+
+        // Test clearing optional fields
+        result
+            .set_status_info(None)
+            .set_custom_data(None);
+
+        assert_eq!(result.status_info(), None);
+        assert_eq!(result.custom_data(), None);
+    }
+}
