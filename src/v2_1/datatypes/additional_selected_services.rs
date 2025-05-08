@@ -1,11 +1,12 @@
 use crate::v2_1::datatypes::{custom_data::CustomDataType, rational_number::RationalNumberType};
 use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 /// Part of ISO 15118-20 price schedule.
 ///
 /// This type represents additional services that can be selected as part of a charging session,
 /// including the service name and associated fee.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct AdditionalSelectedServicesType {
     /// Service fee
@@ -16,6 +17,7 @@ pub struct AdditionalSelectedServicesType {
     /// Human-readable string to identify this service.
     ///
     /// A descriptive name for the service that can be displayed to users.
+    #[validate(length(max = 80))]
     pub service_name: String,
 
     /// Optional custom data
@@ -34,7 +36,13 @@ impl AdditionalSelectedServicesType {
     /// # Returns
     ///
     /// A new instance of `AdditionalSelectedServicesType` with optional fields set to `None`
+    ///
+    /// # Panics
+    ///
+    /// Panics if `service_name` is longer than 80 characters
     pub fn new(service_fee: RationalNumberType, service_name: String) -> Self {
+        assert!(service_name.len() <= 80, "service_name must not exceed 80 characters");
+
         Self {
             service_fee,
             service_name,
@@ -54,6 +62,15 @@ impl AdditionalSelectedServicesType {
     pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
         self.custom_data = Some(custom_data);
         self
+    }
+
+    /// Validates this instance according to the OCPP 2.1 specification.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` if the instance is valid, otherwise an error
+    pub fn validate(&self) -> Result<(), validator::ValidationErrors> {
+        Validate::validate(self)
     }
 
     /// Gets the service fee.
@@ -97,7 +114,12 @@ impl AdditionalSelectedServicesType {
     /// # Returns
     ///
     /// Self reference for method chaining
+    ///
+    /// # Panics
+    ///
+    /// Panics if `service_name` is longer than 80 characters
     pub fn set_service_name(&mut self, service_name: String) -> &mut Self {
+        assert!(service_name.len() <= 80, "service_name must not exceed 80 characters");
         self.service_name = service_name;
         self
     }
@@ -146,6 +168,9 @@ mod tests {
         assert_eq!(services.service_fee(), &service_fee);
         assert_eq!(services.service_name(), "Premium Charging");
         assert_eq!(services.custom_data(), None);
+
+        // Validation should pass
+        assert!(services.validate().is_ok());
     }
 
     #[test]
@@ -167,6 +192,9 @@ mod tests {
         assert_eq!(services.service_fee(), &service_fee);
         assert_eq!(services.service_name(), "Premium Charging");
         assert_eq!(services.custom_data(), Some(&custom_data));
+
+        // Validation should pass
+        assert!(services.validate().is_ok());
     }
 
     #[test]
@@ -199,8 +227,71 @@ mod tests {
         assert_eq!(services.service_name(), "Ultra Premium Charging");
         assert_eq!(services.custom_data(), Some(&custom_data));
 
+        // Validation should pass
+        assert!(services.validate().is_ok());
+
         // Test clearing optional fields
         services.set_custom_data(None);
         assert_eq!(services.custom_data(), None);
+
+        // Validation should still pass
+        assert!(services.validate().is_ok());
+    }
+
+    #[test]
+    #[should_panic(expected = "service_name must not exceed 80 characters")]
+    fn test_service_name_length_validation_new() {
+        let service_fee = RationalNumberType {
+            exponent: 2,
+            value: 1995,
+            custom_data: None,
+        };
+
+        // This should panic because service_name is too long
+        let _services = AdditionalSelectedServicesType::new(
+            service_fee,
+            "A".repeat(81), // 81 characters, exceeding the 80 character limit
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "service_name must not exceed 80 characters")]
+    fn test_service_name_length_validation_setter() {
+        let service_fee = RationalNumberType {
+            exponent: 2,
+            value: 1995,
+            custom_data: None,
+        };
+
+        let mut services = AdditionalSelectedServicesType::new(
+            service_fee,
+            "Premium Charging".to_string(),
+        );
+
+        // This should panic because service_name is too long
+        services.set_service_name("A".repeat(81)); // 81 characters, exceeding the 80 character limit
+    }
+
+    #[test]
+    fn test_validation_with_validator() {
+        let service_fee = RationalNumberType {
+            exponent: 2,
+            value: 1995,
+            custom_data: None,
+        };
+
+        let mut services = AdditionalSelectedServicesType::new(
+            service_fee,
+            "Premium Charging".to_string(),
+        );
+
+        // Valid service name
+        assert!(services.validate().is_ok());
+
+        // Manually set an invalid service name (bypassing the setter)
+        services.service_name = "A".repeat(81);
+
+        // Validation should fail
+        assert!(services.validate().is_err());
     }
 }
