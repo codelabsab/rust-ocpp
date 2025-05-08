@@ -14,7 +14,7 @@ pub struct AdditionalInfoType {
     ///
     /// The format of the additionalIdToken is pending standardization.
     #[validate(
-        length(min = 1, max = 255),
+        length(max = 255),
         custom(function = "validate_identifier_string")
     )]
     pub additional_id_token: String,
@@ -23,7 +23,7 @@ pub struct AdditionalInfoType {
     ///
     /// This is a custom type, so the implementation needs to be agreed upon by all involved parties.
     #[serde(rename = "type")]
-    #[validate(length(min = 1, max = 50))]
+    #[validate(length(max = 50))]
     pub type_: String,
 
     /// Optional custom data
