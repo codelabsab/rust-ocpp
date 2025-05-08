@@ -1,41 +1,48 @@
 use crate::v2_1::datatypes::custom_data::CustomDataType;
 use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 /// A generic address format.
 ///
 /// This type represents a physical address with standard address fields
 /// such as name, street address, city, postal code, and country.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct AddressType {
     /// Name of person/company
+    #[validate(length(max = 50))]
     pub name: String,
 
     /// Address line 1
     ///
     /// Primary street address, building number, etc.
+    #[validate(length(max = 100))]
     pub address1: String,
 
     /// Address line 2
     ///
     /// Additional address information like apartment number, suite, etc.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(max = 100), optional)]
     pub address2: Option<String>,
 
     /// City
     ///
     /// Name of the city or locality
+    #[validate(length(max = 100))]
     pub city: String,
 
     /// Postal code
     ///
     /// ZIP or postal code
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(max = 20), optional)]
     pub postal_code: Option<String>,
 
     /// Country name
     ///
     /// Name of the country
+    #[validate(length(max = 50))]
     pub country: String,
 
     /// Optional custom data
@@ -354,5 +361,79 @@ mod tests {
         assert_eq!(address.address2(), None);
         assert_eq!(address.postal_code(), None);
         assert_eq!(address.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // Valid address
+        let valid_address = AddressType::new(
+            "John Doe".to_string(),
+            "123 Main St".to_string(),
+            "Anytown".to_string(),
+            "USA".to_string(),
+        );
+        assert!(valid_address.validate().is_ok());
+
+        // Test name length validation
+        let long_name = "A".repeat(51); // 51 characters, exceeds max of 50
+        let invalid_address = AddressType::new(
+            long_name,
+            "123 Main St".to_string(),
+            "Anytown".to_string(),
+            "USA".to_string(),
+        );
+        assert!(invalid_address.validate().is_err());
+
+        // Test address1 length validation
+        let long_address1 = "A".repeat(101); // 101 characters, exceeds max of 100
+        let invalid_address = AddressType::new(
+            "John Doe".to_string(),
+            long_address1,
+            "Anytown".to_string(),
+            "USA".to_string(),
+        );
+        assert!(invalid_address.validate().is_err());
+
+        // Test address2 length validation
+        let long_address2 = "A".repeat(101); // 101 characters, exceeds max of 100
+        let mut invalid_address = AddressType::new(
+            "John Doe".to_string(),
+            "123 Main St".to_string(),
+            "Anytown".to_string(),
+            "USA".to_string(),
+        );
+        invalid_address.set_address2(Some(long_address2));
+        assert!(invalid_address.validate().is_err());
+
+        // Test city length validation
+        let long_city = "A".repeat(101); // 101 characters, exceeds max of 100
+        let invalid_address = AddressType::new(
+            "John Doe".to_string(),
+            "123 Main St".to_string(),
+            long_city,
+            "USA".to_string(),
+        );
+        assert!(invalid_address.validate().is_err());
+
+        // Test postal_code length validation
+        let long_postal_code = "A".repeat(21); // 21 characters, exceeds max of 20
+        let mut invalid_address = AddressType::new(
+            "John Doe".to_string(),
+            "123 Main St".to_string(),
+            "Anytown".to_string(),
+            "USA".to_string(),
+        );
+        invalid_address.set_postal_code(Some(long_postal_code));
+        assert!(invalid_address.validate().is_err());
+
+        // Test country length validation
+        let long_country = "A".repeat(51); // 51 characters, exceeds max of 50
+        let invalid_address = AddressType::new(
+            "John Doe".to_string(),
+            "123 Main St".to_string(),
+            "Anytown".to_string(),
+            long_country,
+        );
+        assert!(invalid_address.validate().is_err());
     }
 }
