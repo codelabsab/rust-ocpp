@@ -1,6 +1,7 @@
 use super::{Address, CustomData, GenericStatusEnum, StatusInfo};
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct VatNumberValidationRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomData>,
@@ -10,6 +11,7 @@ pub struct VatNumberValidationRequest {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct VatNumberValidationResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomData>,
