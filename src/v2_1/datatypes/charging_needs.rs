@@ -262,7 +262,7 @@ mod tests {
     fn test_with_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
         let departure_time = Utc.with_ymd_and_hms(2023, 1, 1, 12, 0, 0).unwrap();
-        let ac_params = ACChargingParametersType::new(10000.0, 10.0, 32.0, 400.0);
+        let ac_params = ACChargingParametersType::new_from_f64(10000.0, 10.0, 32.0, 400.0);
         let dc_params = DCChargingParametersType::new(400.0, 100.0);
 
         let needs = ChargingNeedsType::new(EnergyTransferModeEnumType::ACThreePhase)
@@ -285,7 +285,7 @@ mod tests {
     fn test_setter_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
         let departure_time = Utc.with_ymd_and_hms(2023, 1, 1, 12, 0, 0).unwrap();
-        let ac_params = ACChargingParametersType::new(10000.0, 10.0, 32.0, 400.0);
+        let ac_params = ACChargingParametersType::new_from_f64(10000.0, 10.0, 32.0, 400.0);
         let dc_params = DCChargingParametersType::new(400.0, 100.0);
 
         let mut needs = ChargingNeedsType::new(EnergyTransferModeEnumType::ACSinglePhase);

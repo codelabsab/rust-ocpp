@@ -1,13 +1,21 @@
-use crate::v2_1::datatypes::custom_data::CustomDataType;
+use crate::v2_1::datatypes::{
+    additional_selected_services::AdditionalSelectedServicesType,
+    custom_data::CustomDataType,
+    overstay_rule_list::OverstayRuleListType,
+    price_rule_stack::PriceRuleStackType,
+    rational_number::RationalNumberType,
+    tax_rule::TaxRuleType,
+};
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 use crate::v2_1::helpers::datetime_rfc3339;
+use validator::Validate;
 
 /// The AbsolutePriceScheduleType is modeled after the same type that is defined in ISO 15118-20,
 /// such that if it is supplied by an EMSP as a signed EXI message, the conversion from EXI to JSON
 /// (in OCPP) and back to EXI (for ISO 15118-20) does not change the digest and therefore does not
 /// invalidate the signature.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct AbsolutePriceScheduleType {
     /// Starting point of price schedule.
@@ -16,18 +24,53 @@ pub struct AbsolutePriceScheduleType {
 
     /// Unique ID of price schedule
     #[serde(rename = "priceScheduleID")]
+    #[validate(range(min = 0))]
     pub price_schedule_id: i32,
 
     /// Description of the price schedule.
     #[serde(rename = "priceScheduleDescription")]
+    #[validate(length(max = 160))]
     pub price_schedule_description: Option<String>,
 
     /// Currency according to ISO 4217.
-    pub currency: Option<String>,
+    #[validate(length(max = 3))]
+    pub currency: String,
 
     /// String that indicates what language is used for the human readable strings in the price schedule.
     /// Based on ISO 639.
-    pub language: Option<String>,
+    #[validate(length(max = 8))]
+    pub language: String,
+
+    /// A string in URN notation which shall uniquely identify an algorithm that defines how to compute
+    /// an energy fee sum for a specific power profile based on the EnergyFee information from the PriceRule elements.
+    #[validate(length(max = 2000))]
+    pub price_algorithm: String,
+
+    /// Stack of price rules, defining the price of charging.
+    #[validate(length(min = 1, max = 1024))]
+    pub price_rule_stacks: Vec<PriceRuleStackType>,
+
+    /// List of tax rules that apply to the price.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 1, max = 10))]
+    pub tax_rules: Option<Vec<TaxRuleType>>,
+
+    /// List of additional services selected by the user.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 1, max = 5))]
+    pub additional_selected_services: Option<Vec<AdditionalSelectedServicesType>>,
+
+    /// Rules for overstay pricing.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub overstay_rule_list: Option<OverstayRuleListType>,
+
+    /// Minimum cost of a charging session.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub minimum_cost: Option<RationalNumberType>,
+
+    /// Maximum cost of a charging session.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub maximum_cost: Option<RationalNumberType>,
 
     /// Optional custom data
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -41,17 +84,35 @@ impl AbsolutePriceScheduleType {
     ///
     /// * `time_anchor` - Starting point of price schedule as DateTime<Utc>
     /// * `price_schedule_id` - Unique ID of price schedule
+    /// * `currency` - Currency according to ISO 4217
+    /// * `language` - Language used for human readable strings based on ISO 639
+    /// * `price_algorithm` - Algorithm that defines how to compute energy fee
+    /// * `price_rule_stacks` - Stack of price rules defining the price of charging
     ///
     /// # Returns
     ///
     /// A new instance of `AbsolutePriceScheduleType` with optional fields set to `None`
-    pub fn new(time_anchor: DateTime<Utc>, price_schedule_id: i32) -> Self {
+    pub fn new(
+        time_anchor: DateTime<Utc>,
+        price_schedule_id: i32,
+        currency: String,
+        language: String,
+        price_algorithm: String,
+        price_rule_stacks: Vec<PriceRuleStackType>,
+    ) -> Self {
         Self {
             time_anchor,
             price_schedule_id,
             price_schedule_description: None,
-            currency: None,
-            language: None,
+            currency,
+            language,
+            price_algorithm,
+            minimum_cost: None,
+            maximum_cost: None,
+            price_rule_stacks,
+            tax_rules: None,
+            overstay_rule_list: None,
+            additional_selected_services: None,
             custom_data: None,
         }
     }
@@ -62,17 +123,35 @@ impl AbsolutePriceScheduleType {
     ///
     /// * `time_anchor_str` - Starting point of price schedule in RFC3339 date-time format
     /// * `price_schedule_id` - Unique ID of price schedule
+    /// * `currency` - Currency according to ISO 4217
+    /// * `language` - Language used for human readable strings based on ISO 639
+    /// * `price_algorithm` - Algorithm that defines how to compute energy fee
+    /// * `price_rule_stacks` - Stack of price rules defining the price of charging
     ///
     /// # Returns
     ///
     /// A new instance of `AbsolutePriceScheduleType` with optional fields set to `None`
-    pub fn new_from_str(time_anchor_str: &str, price_schedule_id: i32) -> Self {
+    pub fn new_from_str(
+        time_anchor_str: &str,
+        price_schedule_id: i32,
+        currency: String,
+        language: String,
+        price_algorithm: String,
+        price_rule_stacks: Vec<PriceRuleStackType>,
+    ) -> Self {
         // Parse the time_anchor string into DateTime<Utc>
         let time_anchor = DateTime::parse_from_rfc3339(time_anchor_str)
             .expect("Invalid RFC3339 datetime format")
             .with_timezone(&Utc);
 
-        Self::new(time_anchor, price_schedule_id)
+        Self::new(
+            time_anchor,
+            price_schedule_id,
+            currency,
+            language,
+            price_algorithm,
+            price_rule_stacks,
+        )
     }
 
     /// Sets the price schedule description.
@@ -89,31 +168,90 @@ impl AbsolutePriceScheduleType {
         self
     }
 
-    /// Sets the currency.
+    /// Sets the price algorithm.
     ///
     /// # Arguments
     ///
-    /// * `currency` - Currency according to ISO 4217
+    /// * `price_algorithm` - Algorithm that defines how to compute energy fee
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_currency(mut self, currency: String) -> Self {
-        self.currency = Some(currency);
+    pub fn with_price_algorithm(mut self, price_algorithm: String) -> Self {
+        self.price_algorithm = price_algorithm;
         self
     }
 
-    /// Sets the language.
+    /// Sets the minimum cost.
     ///
     /// # Arguments
     ///
-    /// * `language` - Language code based on ISO 639
+    /// * `minimum_cost` - Minimum cost of a charging session
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_language(mut self, language: String) -> Self {
-        self.language = Some(language);
+    pub fn with_minimum_cost(mut self, minimum_cost: RationalNumberType) -> Self {
+        self.minimum_cost = Some(minimum_cost);
+        self
+    }
+
+    /// Sets the maximum cost.
+    ///
+    /// # Arguments
+    ///
+    /// * `maximum_cost` - Maximum cost of a charging session
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_maximum_cost(mut self, maximum_cost: RationalNumberType) -> Self {
+        self.maximum_cost = Some(maximum_cost);
+        self
+    }
+
+    /// Sets the tax rules.
+    ///
+    /// # Arguments
+    ///
+    /// * `tax_rules` - List of tax rules that apply to the price
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_tax_rules(mut self, tax_rules: Vec<TaxRuleType>) -> Self {
+        self.tax_rules = Some(tax_rules);
+        self
+    }
+
+    /// Sets the overstay rule list.
+    ///
+    /// # Arguments
+    ///
+    /// * `overstay_rule_list` - Rules for overstay pricing
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_overstay_rule_list(mut self, overstay_rule_list: OverstayRuleListType) -> Self {
+        self.overstay_rule_list = Some(overstay_rule_list);
+        self
+    }
+
+    /// Sets the additional selected services.
+    ///
+    /// # Arguments
+    ///
+    /// * `additional_selected_services` - List of additional services selected by the user
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_additional_selected_services(
+        mut self,
+        additional_selected_services: Vec<AdditionalSelectedServicesType>,
+    ) -> Self {
+        self.additional_selected_services = Some(additional_selected_services);
         self
     }
 
@@ -130,6 +268,8 @@ impl AbsolutePriceScheduleType {
         self.custom_data = Some(custom_data);
         self
     }
+
+
 
     /// Gets the time anchor.
     ///
@@ -230,21 +370,21 @@ impl AbsolutePriceScheduleType {
     ///
     /// # Returns
     ///
-    /// An optional reference to the currency code
-    pub fn currency(&self) -> Option<&String> {
-        self.currency.as_ref()
+    /// A reference to the currency code
+    pub fn currency(&self) -> &String {
+        &self.currency
     }
 
     /// Sets the currency.
     ///
     /// # Arguments
     ///
-    /// * `currency` - Currency according to ISO 4217, or None to clear
+    /// * `currency` - Currency according to ISO 4217
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_currency(&mut self, currency: Option<String>) -> &mut Self {
+    pub fn set_currency(&mut self, currency: String) -> &mut Self {
         self.currency = currency;
         self
     }
@@ -253,22 +393,68 @@ impl AbsolutePriceScheduleType {
     ///
     /// # Returns
     ///
-    /// An optional reference to the language code
-    pub fn language(&self) -> Option<&String> {
-        self.language.as_ref()
+    /// A reference to the language code
+    pub fn language(&self) -> &String {
+        &self.language
     }
 
     /// Sets the language.
     ///
     /// # Arguments
     ///
-    /// * `language` - Language code based on ISO 639, or None to clear
+    /// * `language` - Language code based on ISO 639
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_language(&mut self, language: Option<String>) -> &mut Self {
+    pub fn set_language(&mut self, language: String) -> &mut Self {
         self.language = language;
+        self
+    }
+
+    /// Gets the price algorithm.
+    ///
+    /// # Returns
+    ///
+    /// A reference to the price algorithm
+    pub fn price_algorithm(&self) -> &String {
+        &self.price_algorithm
+    }
+
+    /// Sets the price algorithm.
+    ///
+    /// # Arguments
+    ///
+    /// * `price_algorithm` - Algorithm that defines how to compute energy fee
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_price_algorithm(&mut self, price_algorithm: String) -> &mut Self {
+        self.price_algorithm = price_algorithm;
+        self
+    }
+
+    /// Gets the price rule stacks.
+    ///
+    /// # Returns
+    ///
+    /// A reference to the price rule stacks
+    pub fn price_rule_stacks(&self) -> &Vec<PriceRuleStackType> {
+        &self.price_rule_stacks
+    }
+
+    /// Sets the price rule stacks.
+    ///
+    /// # Arguments
+    ///
+    /// * `price_rule_stacks` - Stack of price rules defining the price of charging
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_price_rule_stacks(&mut self, price_rule_stacks: Vec<PriceRuleStackType>) -> &mut Self {
+        self.price_rule_stacks = price_rule_stacks;
         self
     }
 
@@ -299,6 +485,8 @@ impl AbsolutePriceScheduleType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::v2_1::datatypes::price_rule::PriceRuleType;
+    use crate::v2_1::enumerations::EnergyTransferModeEnumType;
 
     #[test]
     fn test_new_absolute_price_schedule() {
@@ -307,31 +495,70 @@ mod tests {
             .expect("Invalid RFC3339 datetime format")
             .with_timezone(&Utc);
 
-        let schedule = AbsolutePriceScheduleType::new(time, 123);
+        // Create a simple price rule for testing
+        let price_rule = PriceRuleType::new(
+            EnergyTransferModeEnumType::DC,
+            0.25,  // energy_fee
+            0.10,  // time_fee
+            0.05,  // parking_fee
+            300,   // minimum_duration
+            7200,  // maximum_duration
+            50.0,  // maximum_power
+            10.0,  // minimum_power
+        );
+
+        // Create a simple price rule stack for testing
+        let price_rule_stack = PriceRuleStackType::new(3600, vec![price_rule]);
+
+        let schedule = AbsolutePriceScheduleType::new(
+            time,
+            123,
+            "USD".to_string(),
+            "en".to_string(),
+            "urn:algorithm:energy-fee:1.0".to_string(),
+            vec![price_rule_stack],
+        );
 
         // Use time_anchor_str() to get the string representation for comparison
         assert_eq!(schedule.time_anchor_str(), "2023-01-01T00:00:00Z");
         assert_eq!(schedule.price_schedule_id(), 123);
         assert_eq!(schedule.price_schedule_description(), None);
-        assert_eq!(schedule.currency(), None);
-        assert_eq!(schedule.language(), None);
-        assert_eq!(schedule.custom_data(), None);
+        assert_eq!(schedule.currency(), &"USD".to_string());
+        assert_eq!(schedule.language(), &"en".to_string());
+        assert_eq!(schedule.price_algorithm(), &"urn:algorithm:energy-fee:1.0".to_string());
     }
 
     #[test]
     fn test_with_methods() {
-        let custom_data = CustomDataType::new("VendorX".to_string());
-
         // Create a DateTime<Utc> for testing
         let time = DateTime::parse_from_rfc3339("2023-01-01T00:00:00Z")
             .expect("Invalid RFC3339 datetime format")
             .with_timezone(&Utc);
 
-        let schedule = AbsolutePriceScheduleType::new(time, 123)
-            .with_price_schedule_description("Test Schedule".to_string())
-            .with_currency("USD".to_string())
-            .with_language("en".to_string())
-            .with_custom_data(custom_data.clone());
+        // Create a simple price rule for testing
+        let price_rule = PriceRuleType::new(
+            EnergyTransferModeEnumType::DC,
+            0.25,  // energy_fee
+            0.10,  // time_fee
+            0.05,  // parking_fee
+            300,   // minimum_duration
+            7200,  // maximum_duration
+            50.0,  // maximum_power
+            10.0,  // minimum_power
+        );
+
+        // Create a simple price rule stack for testing
+        let price_rule_stack = PriceRuleStackType::new(3600, vec![price_rule]);
+
+        let schedule = AbsolutePriceScheduleType::new(
+            time,
+            123,
+            "USD".to_string(),
+            "en".to_string(),
+            "urn:algorithm:energy-fee:1.0".to_string(),
+            vec![price_rule_stack],
+        )
+        .with_price_schedule_description("Test Schedule".to_string());
 
         // Use time_anchor_str() to get the string representation for comparison
         assert_eq!(schedule.time_anchor_str(), "2023-01-01T00:00:00Z");
@@ -340,21 +567,40 @@ mod tests {
             schedule.price_schedule_description(),
             Some(&"Test Schedule".to_string())
         );
-        assert_eq!(schedule.currency(), Some(&"USD".to_string()));
-        assert_eq!(schedule.language(), Some(&"en".to_string()));
-        assert_eq!(schedule.custom_data(), Some(&custom_data));
+        assert_eq!(schedule.currency(), &"USD".to_string());
+        assert_eq!(schedule.language(), &"en".to_string());
     }
 
     #[test]
     fn test_setter_methods() {
-        let custom_data = CustomDataType::new("VendorX".to_string());
-
         // Create a DateTime<Utc> for testing
         let time = DateTime::parse_from_rfc3339("2023-01-01T00:00:00Z")
             .expect("Invalid RFC3339 datetime format")
             .with_timezone(&Utc);
 
-        let mut schedule = AbsolutePriceScheduleType::new(time, 123);
+        // Create a simple price rule for testing
+        let price_rule = PriceRuleType::new(
+            EnergyTransferModeEnumType::DC,
+            0.25,  // energy_fee
+            0.10,  // time_fee
+            0.05,  // parking_fee
+            300,   // minimum_duration
+            7200,  // maximum_duration
+            50.0,  // maximum_power
+            10.0,  // minimum_power
+        );
+
+        // Create a simple price rule stack for testing
+        let price_rule_stack = PriceRuleStackType::new(3600, vec![price_rule]);
+
+        let mut schedule = AbsolutePriceScheduleType::new(
+            time,
+            123,
+            "USD".to_string(),
+            "en".to_string(),
+            "urn:algorithm:energy-fee:1.0".to_string(),
+            vec![price_rule_stack],
+        );
 
         // We don't need to create another DateTime since we're using the string version in set_time_anchor_str
 
@@ -362,9 +608,9 @@ mod tests {
             .set_time_anchor_str("2023-02-01T00:00:00Z")
             .set_price_schedule_id(456)
             .set_price_schedule_description(Some("Updated Schedule".to_string()))
-            .set_currency(Some("EUR".to_string()))
-            .set_language(Some("fr".to_string()))
-            .set_custom_data(Some(custom_data.clone()));
+            .set_currency("EUR".to_string())
+            .set_language("fr".to_string())
+            .set_price_algorithm("urn:algorithm:energy-fee:2.0".to_string());
 
         // Use time_anchor_str() to get the string representation for comparison
         assert_eq!(schedule.time_anchor_str(), "2023-02-01T00:00:00Z");
@@ -373,20 +619,70 @@ mod tests {
             schedule.price_schedule_description(),
             Some(&"Updated Schedule".to_string())
         );
-        assert_eq!(schedule.currency(), Some(&"EUR".to_string()));
-        assert_eq!(schedule.language(), Some(&"fr".to_string()));
-        assert_eq!(schedule.custom_data(), Some(&custom_data));
+        assert_eq!(schedule.currency(), &"EUR".to_string());
+        assert_eq!(schedule.language(), &"fr".to_string());
+        assert_eq!(schedule.price_algorithm(), &"urn:algorithm:energy-fee:2.0".to_string());
 
         // Test clearing optional fields
-        schedule
-            .set_price_schedule_description(None)
-            .set_currency(None)
-            .set_language(None)
-            .set_custom_data(None);
+        schedule.set_price_schedule_description(None);
 
         assert_eq!(schedule.price_schedule_description(), None);
-        assert_eq!(schedule.currency(), None);
-        assert_eq!(schedule.language(), None);
-        assert_eq!(schedule.custom_data(), None);
+    }
+
+    #[test]
+    fn test_with_custom_data() {
+        // Create a DateTime<Utc> for testing
+        let time = DateTime::parse_from_rfc3339("2023-01-01T00:00:00Z")
+            .expect("Invalid RFC3339 datetime format")
+            .with_timezone(&Utc);
+
+        // Create a simple price rule for testing
+        let price_rule = PriceRuleType::new(
+            EnergyTransferModeEnumType::DC,
+            0.25,  // energy_fee
+            0.10,  // time_fee
+            0.05,  // parking_fee
+            300,   // minimum_duration
+            7200,  // maximum_duration
+            50.0,  // maximum_power
+            10.0,  // minimum_power
+        );
+
+        // Create a simple price rule stack for testing
+        let price_rule_stack1 = PriceRuleStackType::new(3600, vec![price_rule.clone()]);
+        let price_rule_stack2 = PriceRuleStackType::new(3600, vec![price_rule]);
+
+        // Create custom data
+        let custom_data = CustomDataType::new("VendorX".to_string());
+
+        // Test with_custom_data method
+        let schedule = AbsolutePriceScheduleType::new(
+            time,
+            123,
+            "USD".to_string(),
+            "en".to_string(),
+            "urn:algorithm:energy-fee:1.0".to_string(),
+            vec![price_rule_stack1],
+        )
+        .with_custom_data(custom_data.clone());
+
+        assert_eq!(schedule.custom_data(), Some(&custom_data));
+
+        // Test setter method
+        let mut schedule2 = AbsolutePriceScheduleType::new(
+            time,
+            123,
+            "USD".to_string(),
+            "en".to_string(),
+            "urn:algorithm:energy-fee:1.0".to_string(),
+            vec![price_rule_stack2],
+        );
+
+        schedule2.set_custom_data(Some(custom_data.clone()));
+        assert_eq!(schedule2.custom_data(), Some(&custom_data));
+
+        // Test clearing custom data
+        schedule2.set_custom_data(None);
+        assert_eq!(schedule2.custom_data(), None);
     }
 }

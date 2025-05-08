@@ -1,22 +1,29 @@
 use super::custom_data::CustomDataType;
+use crate::v2_1::helpers::validator::validate_identifier_string;
 use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 /// Contains additional information about an identifier.
 ///
 /// The format of the additionalIdToken is pending standardization.
 /// This type is used to provide additional identification information for authorization.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct AdditionalInfoType {
     /// This field specifies the type of the additionalIdToken.
     ///
     /// The format of the additionalIdToken is pending standardization.
+    #[validate(
+        length(min = 1, max = 255),
+        custom(function = "validate_identifier_string")
+    )]
     pub additional_id_token: String,
 
     /// This defines the type of the additionalIdToken.
     ///
     /// This is a custom type, so the implementation needs to be agreed upon by all involved parties.
     #[serde(rename = "type")]
+    #[validate(length(min = 1, max = 50))]
     pub type_: String,
 
     /// Optional custom data
