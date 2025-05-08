@@ -19,7 +19,7 @@ You can find the tests in `schema_validation.rs` for all supported versions.
 
 ## How to Use
 
-Add `rust-ocpp` as a dependency in your `Cargo.toml`. Note that there is no default version - you must explicitly specify which OCPP version(s) you want to use via feature flags.
+Add `rust-ocpp` as a dependency in your `Cargo.toml`. Note that there is no default version - you must explicitly specify which OCPP version(s) you want to use via feature flags
 
 ```toml
 [dependencies]

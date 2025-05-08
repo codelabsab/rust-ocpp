@@ -1,5 +1,7 @@
 use crate::v2_1::datatypes::custom_data::CustomDataType;
 use serde::{Deserialize, Serialize};
+use chrono::{DateTime, Utc};
+use crate::v2_1::helpers::datetime_rfc3339;
 
 /// The AbsolutePriceScheduleType is modeled after the same type that is defined in ISO 15118-20,
 /// such that if it is supplied by an EMSP as a signed EXI message, the conversion from EXI to JSON
@@ -9,7 +11,8 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub struct AbsolutePriceScheduleType {
     /// Starting point of price schedule.
-    pub time_anchor: String, // date-time format
+    #[serde(with = "datetime_rfc3339 ")]
+    pub time_anchor: DateTime<Utc>, // date-time format
 
     /// Unique ID of price schedule
     #[serde(rename = "priceScheduleID")]
@@ -36,13 +39,13 @@ impl AbsolutePriceScheduleType {
     ///
     /// # Arguments
     ///
-    /// * `time_anchor` - Starting point of price schedule in date-time format
+    /// * `time_anchor` - Starting point of price schedule as DateTime<Utc>
     /// * `price_schedule_id` - Unique ID of price schedule
     ///
     /// # Returns
     ///
     /// A new instance of `AbsolutePriceScheduleType` with optional fields set to `None`
-    pub fn new(time_anchor: String, price_schedule_id: i32) -> Self {
+    pub fn new(time_anchor: DateTime<Utc>, price_schedule_id: i32) -> Self {
         Self {
             time_anchor,
             price_schedule_id,
@@ -51,6 +54,25 @@ impl AbsolutePriceScheduleType {
             language: None,
             custom_data: None,
         }
+    }
+
+    /// Creates a new `AbsolutePriceScheduleType` from a string time anchor.
+    ///
+    /// # Arguments
+    ///
+    /// * `time_anchor_str` - Starting point of price schedule in RFC3339 date-time format
+    /// * `price_schedule_id` - Unique ID of price schedule
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `AbsolutePriceScheduleType` with optional fields set to `None`
+    pub fn new_from_str(time_anchor_str: &str, price_schedule_id: i32) -> Self {
+        // Parse the time_anchor string into DateTime<Utc>
+        let time_anchor = DateTime::parse_from_rfc3339(time_anchor_str)
+            .expect("Invalid RFC3339 datetime format")
+            .with_timezone(&Utc);
+
+        Self::new(time_anchor, price_schedule_id)
     }
 
     /// Sets the price schedule description.
@@ -113,21 +135,47 @@ impl AbsolutePriceScheduleType {
     ///
     /// # Returns
     ///
-    /// The time anchor as a string in date-time format
-    pub fn time_anchor(&self) -> &str {
+    /// A reference to the time anchor as DateTime<Utc>
+    pub fn time_anchor(&self) -> &DateTime<Utc> {
         &self.time_anchor
     }
 
-    /// Sets the time anchor.
+    /// Gets the time anchor as a formatted string.
+    ///
+    /// # Returns
+    ///
+    /// The time anchor formatted as an RFC3339 string with 'Z' timezone format
+    pub fn time_anchor_str(&self) -> String {
+        // Format with 'Z' instead of '+00:00' for UTC timezone
+        self.time_anchor.format("%Y-%m-%dT%H:%M:%SZ").to_string()
+    }
+
+    /// Sets the time anchor from a string in RFC3339 format.
     ///
     /// # Arguments
     ///
-    /// * `time_anchor` - Starting point of price schedule in date-time format
+    /// * `time_anchor_str` - Starting point of price schedule in RFC3339 date-time format as a string
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_time_anchor(&mut self, time_anchor: String) -> &mut Self {
+    pub fn set_time_anchor_str(&mut self, time_anchor_str: &str) -> &mut Self {
+        self.time_anchor = DateTime::parse_from_rfc3339(time_anchor_str)
+            .expect("Invalid RFC3339 datetime format")
+            .with_timezone(&Utc);
+        self
+    }
+
+    /// Sets the time anchor directly with a DateTime<Utc> value.
+    ///
+    /// # Arguments
+    ///
+    /// * `time_anchor` - Starting point of price schedule as DateTime<Utc>
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_time_anchor(&mut self, time_anchor: DateTime<Utc>) -> &mut Self {
         self.time_anchor = time_anchor;
         self
     }
@@ -254,9 +302,15 @@ mod tests {
 
     #[test]
     fn test_new_absolute_price_schedule() {
-        let schedule = AbsolutePriceScheduleType::new("2023-01-01T00:00:00Z".to_string(), 123);
+        // Create a DateTime<Utc> for testing
+        let time = DateTime::parse_from_rfc3339("2023-01-01T00:00:00Z")
+            .expect("Invalid RFC3339 datetime format")
+            .with_timezone(&Utc);
 
-        assert_eq!(schedule.time_anchor(), "2023-01-01T00:00:00Z");
+        let schedule = AbsolutePriceScheduleType::new(time, 123);
+
+        // Use time_anchor_str() to get the string representation for comparison
+        assert_eq!(schedule.time_anchor_str(), "2023-01-01T00:00:00Z");
         assert_eq!(schedule.price_schedule_id(), 123);
         assert_eq!(schedule.price_schedule_description(), None);
         assert_eq!(schedule.currency(), None);
@@ -268,13 +322,19 @@ mod tests {
     fn test_with_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let schedule = AbsolutePriceScheduleType::new("2023-01-01T00:00:00Z".to_string(), 123)
+        // Create a DateTime<Utc> for testing
+        let time = DateTime::parse_from_rfc3339("2023-01-01T00:00:00Z")
+            .expect("Invalid RFC3339 datetime format")
+            .with_timezone(&Utc);
+
+        let schedule = AbsolutePriceScheduleType::new(time, 123)
             .with_price_schedule_description("Test Schedule".to_string())
             .with_currency("USD".to_string())
             .with_language("en".to_string())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(schedule.time_anchor(), "2023-01-01T00:00:00Z");
+        // Use time_anchor_str() to get the string representation for comparison
+        assert_eq!(schedule.time_anchor_str(), "2023-01-01T00:00:00Z");
         assert_eq!(schedule.price_schedule_id(), 123);
         assert_eq!(
             schedule.price_schedule_description(),
@@ -289,17 +349,25 @@ mod tests {
     fn test_setter_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut schedule = AbsolutePriceScheduleType::new("2023-01-01T00:00:00Z".to_string(), 123);
+        // Create a DateTime<Utc> for testing
+        let time = DateTime::parse_from_rfc3339("2023-01-01T00:00:00Z")
+            .expect("Invalid RFC3339 datetime format")
+            .with_timezone(&Utc);
+
+        let mut schedule = AbsolutePriceScheduleType::new(time, 123);
+
+        // We don't need to create another DateTime since we're using the string version in set_time_anchor_str
 
         schedule
-            .set_time_anchor("2023-02-01T00:00:00Z".to_string())
+            .set_time_anchor_str("2023-02-01T00:00:00Z")
             .set_price_schedule_id(456)
             .set_price_schedule_description(Some("Updated Schedule".to_string()))
             .set_currency(Some("EUR".to_string()))
             .set_language(Some("fr".to_string()))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(schedule.time_anchor(), "2023-02-01T00:00:00Z");
+        // Use time_anchor_str() to get the string representation for comparison
+        assert_eq!(schedule.time_anchor_str(), "2023-02-01T00:00:00Z");
         assert_eq!(schedule.price_schedule_id(), 456);
         assert_eq!(
             schedule.price_schedule_description(),
