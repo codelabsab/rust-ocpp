@@ -15,10 +15,6 @@ use crate::v2_1::enumerations::APNAuthenticationEnumType;
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct APNType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Required. The Access Point Name as an URL.
     #[validate(length(max = 2000))]
     pub apn: String,
@@ -48,6 +44,10 @@ pub struct APNType {
 
     /// Required. Authentication method.
     pub apn_authentication: APNAuthenticationEnumType,
+    
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl APNType {
