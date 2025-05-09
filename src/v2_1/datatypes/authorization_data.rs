@@ -10,15 +10,18 @@ use super::{custom_data::CustomDataType, id_token::IdTokenType, id_token_info::I
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthorizationData {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Required. The identifier to be authorized.
+    #[validate(nested)]
     pub id_token: IdTokenType,
 
     /// Required. Status information about the identifier.
+    #[validate(nested)]
     pub id_token_info: IdTokenInfoType,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl AuthorizationData {
@@ -128,6 +131,7 @@ impl AuthorizationData {
 mod tests {
     use super::*;
     use crate::v2_1::enumerations::AuthorizationStatusEnumType;
+    use validator::Validate;
 
     #[test]
     fn test_new_authorization_data() {
@@ -244,5 +248,70 @@ mod tests {
         // Test clearing optional fields
         auth_data.set_custom_data(None);
         assert_eq!(auth_data.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // 创建有效的AuthorizationData实例
+        let id_token = IdTokenType {
+            id_token: "tag123".to_string(),
+            r#type: "RFID".to_string(),
+            additional_info: None,
+            custom_data: None,
+        };
+
+        let id_token_info = IdTokenInfoType {
+            status: AuthorizationStatusEnumType::Accepted,
+            cache_expiry_date_time: None,
+            charging_priority: None,
+            status_info: None,
+            group_id_token: None,
+            expiry_date: None,
+            parent_id_token: None,
+            personal_message: None,
+            custom_data: None,
+        };
+
+        let auth_data = AuthorizationData::new(id_token.clone(), id_token_info.clone());
+
+        // 验证有效实例
+        assert!(auth_data.validate().is_ok(), "Valid authorization data should pass validation");
+
+        // 1. 测试无效的id_token（id_token字段超出长度限制）
+        let mut invalid_id_token = id_token.clone();
+        invalid_id_token.id_token = "a".repeat(256); // 超过255字符的最大限制
+
+        let invalid_auth_data = AuthorizationData::new(invalid_id_token, id_token_info.clone());
+
+        let validation_result = invalid_auth_data.validate();
+        assert!(validation_result.is_err(), "Authorization data with invalid id_token should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("id_token"),
+                "Error should mention id_token: {}", error);
+
+        // 2. 测试无效的id_token_info（charging_priority超出范围）
+        let mut invalid_id_token_info = id_token_info.clone();
+        invalid_id_token_info.charging_priority = Some(-10); // 超出-9到9的范围
+
+        let invalid_auth_data = AuthorizationData::new(id_token.clone(), invalid_id_token_info);
+
+        let validation_result = invalid_auth_data.validate();
+        assert!(validation_result.is_err(), "Authorization data with invalid id_token_info should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("id_token_info"),
+                "Error should mention id_token_info: {}", error);
+
+        // 3. 测试无效的custom_data（vendor_id超出长度限制）
+        let mut invalid_custom_data = CustomDataType::new("VendorX".to_string());
+        invalid_custom_data.vendor_id = "A".repeat(256); // 超过255字符的最大限制
+
+        let mut invalid_auth_data = AuthorizationData::new(id_token.clone(), id_token_info.clone());
+        invalid_auth_data.custom_data = Some(invalid_custom_data);
+
+        let validation_result = invalid_auth_data.validate();
+        assert!(validation_result.is_err(), "Authorization data with invalid custom_data should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("custom_data"),
+                "Error should mention custom_data: {}", error);
     }
 }

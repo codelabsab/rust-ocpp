@@ -12,6 +12,7 @@ pub struct AdditionalSelectedServicesType {
     /// Service fee
     ///
     /// The fee associated with this additional service, represented as a rational number.
+    #[validate(nested)]
     pub service_fee: RationalNumberType,
 
     /// Human-readable string to identify this service.
@@ -22,6 +23,7 @@ pub struct AdditionalSelectedServicesType {
 
     /// Optional custom data
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -151,6 +153,7 @@ impl AdditionalSelectedServicesType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use validator::Validate;
 
     #[test]
     fn test_new_additional_selected_services() {
@@ -293,5 +296,51 @@ mod tests {
 
         // Validation should fail
         assert!(services.validate().is_err());
+    }
+
+    #[test]
+    fn test_comprehensive_validation() {
+        // 1. Create a valid instance
+        let valid_service_fee = RationalNumberType {
+            exponent: 2,
+            value: 1995,
+            custom_data: None,
+        };
+
+        let valid_custom_data = CustomDataType::new("VendorX".to_string());
+
+        let valid_services = AdditionalSelectedServicesType::new(
+            valid_service_fee.clone(),
+            "Premium Charging".to_string(),
+        )
+        .with_custom_data(valid_custom_data.clone());
+
+        // Valid instance should pass validation
+        let validation_result = Validate::validate(&valid_services);
+        assert!(validation_result.is_ok(), "Valid services should pass validation");
+
+        // 2. Test invalid service_name (too long)
+        let mut invalid_name_services = valid_services.clone();
+        // Bypass the setter to avoid the panic
+        invalid_name_services.service_name = "A".repeat(81);
+
+        let validation_result = Validate::validate(&invalid_name_services);
+        assert!(validation_result.is_err(), "Services with too long name should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("service_name"),
+                "Error should mention service_name: {}", error);
+
+        // 3. Test invalid custom_data (nested validation failure)
+        let mut invalid_services_custom_data = valid_services.clone();
+        let mut invalid_custom_data = CustomDataType::new("VendorX".to_string());
+        // Set an invalid vendor_id (too long) by bypassing the setter
+        invalid_custom_data.vendor_id = "A".repeat(256); // Max length is 255
+        invalid_services_custom_data.custom_data = Some(invalid_custom_data);
+
+        let validation_result = Validate::validate(&invalid_services_custom_data);
+        assert!(validation_result.is_err(), "Services with invalid custom_data should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("custom_data"),
+                "Error should mention custom_data: {}", error);
     }
 }

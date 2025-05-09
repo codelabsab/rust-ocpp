@@ -28,6 +28,7 @@ pub struct AdditionalInfoType {
 
     /// Optional custom data
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -137,6 +138,7 @@ impl AdditionalInfoType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use validator::Validate;
 
     #[test]
     fn test_new_additional_info() {
@@ -176,5 +178,49 @@ mod tests {
         // Test clearing optional fields
         info.set_custom_data(None);
         assert_eq!(info.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // 1. Test valid instance - should pass validation
+        let valid_info = AdditionalInfoType::new(
+            "valid-token-123".to_string(),
+            "RFID".to_string()
+        );
+
+        assert!(valid_info.validate().is_ok(), "Valid info should pass validation");
+
+        // 2. Test invalid additional_id_token (too long)
+        let long_token = "a".repeat(256); // 256 characters, exceeds max of 255
+        let mut invalid_token_length_info = valid_info.clone();
+        invalid_token_length_info.set_additional_id_token(long_token);
+
+        let validation_result = invalid_token_length_info.validate();
+        assert!(validation_result.is_err(), "Info with too long token should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("additional_id_token"),
+                "Error should mention additional_id_token: {}", error);
+
+        // 3. Test invalid additional_id_token (invalid characters)
+        let invalid_token = "invalid token with spaces".to_string(); // Contains spaces
+        let mut invalid_token_chars_info = valid_info.clone();
+        invalid_token_chars_info.set_additional_id_token(invalid_token);
+
+        let validation_result = invalid_token_chars_info.validate();
+        assert!(validation_result.is_err(), "Info with invalid token characters should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("additional_id_token"),
+                "Error should mention additional_id_token: {}", error);
+
+        // 4. Test invalid type_ (too long)
+        let long_type = "a".repeat(51); // 51 characters, exceeds max of 50
+        let mut invalid_type_length_info = valid_info.clone();
+        invalid_type_length_info.set_type(long_type);
+
+        let validation_result = invalid_type_length_info.validate();
+        assert!(validation_result.is_err(), "Info with too long type should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("type_"),
+                "Error should mention type_: {}", error);
     }
 }

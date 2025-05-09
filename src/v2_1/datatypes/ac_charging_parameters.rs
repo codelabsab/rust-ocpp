@@ -36,6 +36,7 @@ pub struct ACChargingParametersType {
 
     /// Optional custom data
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 

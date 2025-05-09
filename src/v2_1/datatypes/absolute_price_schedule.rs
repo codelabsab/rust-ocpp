@@ -62,18 +62,22 @@ pub struct AbsolutePriceScheduleType {
 
     /// Rules for overstay pricing.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub overstay_rule_list: Option<OverstayRuleListType>,
 
     /// Minimum cost of a charging session.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub minimum_cost: Option<RationalNumberType>,
 
     /// Maximum cost of a charging session.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub maximum_cost: Option<RationalNumberType>,
 
     /// Optional custom data
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -684,5 +688,135 @@ mod tests {
         // Test clearing custom data
         schedule2.set_custom_data(None);
         assert_eq!(schedule2.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validate_absolute_price_schedule() {
+        use validator::Validate;
+
+        // Create a DateTime<Utc> for testing
+        let time = DateTime::parse_from_rfc3339("2023-01-01T00:00:00Z")
+            .expect("Invalid RFC3339 datetime format")
+            .with_timezone(&Utc);
+
+        // Create a simple price rule for testing
+        let price_rule = PriceRuleType::new(
+            EnergyTransferModeEnumType::DC,
+            0.25,  // energy_fee
+            0.10,  // time_fee
+            0.05,  // parking_fee
+            300,   // minimum_duration
+            7200,  // maximum_duration
+            50.0,  // maximum_power
+            10.0,  // minimum_power
+        );
+
+        // Create a simple price rule stack for testing
+        let price_rule_stack = PriceRuleStackType::new(3600, vec![price_rule.clone()]);
+
+        // 1. Test valid instance - should pass validation
+        let valid_schedule = AbsolutePriceScheduleType::new(
+            time,
+            123,
+            "USD".to_string(),
+            "en".to_string(),
+            "urn:algorithm:energy-fee:1.0".to_string(),
+            vec![price_rule_stack.clone()],
+        );
+
+        assert!(valid_schedule.validate().is_ok(), "Valid schedule should pass validation");
+
+        // 2. Test invalid price_schedule_id (negative value)
+        let mut invalid_id_schedule = valid_schedule.clone();
+        invalid_id_schedule.set_price_schedule_id(-1);
+
+        let validation_result = invalid_id_schedule.validate();
+        assert!(validation_result.is_err(), "Schedule with negative ID should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("price_schedule_id"),
+                "Error should mention price_schedule_id: {}", error);
+
+        // 3. Test invalid price_schedule_description (too long)
+        let mut invalid_desc_schedule = valid_schedule.clone();
+        let long_description = "a".repeat(161); // 161 characters, exceeds max of 160
+        invalid_desc_schedule.set_price_schedule_description(Some(long_description));
+
+        let validation_result = invalid_desc_schedule.validate();
+        assert!(validation_result.is_err(), "Schedule with too long description should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("price_schedule_description"),
+                "Error should mention price_schedule_description: {}", error);
+
+        // 4. Test invalid currency (too long)
+        let mut invalid_currency_schedule = valid_schedule.clone();
+        invalid_currency_schedule.set_currency("USDT".to_string()); // 4 characters, exceeds max of 3
+
+        let validation_result = invalid_currency_schedule.validate();
+        assert!(validation_result.is_err(), "Schedule with too long currency should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("currency"),
+                "Error should mention currency: {}", error);
+
+        // 5. Test invalid language (too long)
+        let mut invalid_language_schedule = valid_schedule.clone();
+        invalid_language_schedule.set_language("en-US-ext".to_string()); // 9 characters, exceeds max of 8
+
+        let validation_result = invalid_language_schedule.validate();
+        assert!(validation_result.is_err(), "Schedule with too long language should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("language"),
+                "Error should mention language: {}", error);
+
+        // 6. Test invalid price_algorithm (too long)
+        let mut invalid_algorithm_schedule = valid_schedule.clone();
+        let long_algorithm = "urn:".to_string() + &"a".repeat(2000); // Exceeds max of 2000
+        invalid_algorithm_schedule.set_price_algorithm(long_algorithm);
+
+        let validation_result = invalid_algorithm_schedule.validate();
+        assert!(validation_result.is_err(), "Schedule with too long price_algorithm should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("price_algorithm"),
+                "Error should mention price_algorithm: {}", error);
+
+        // 7. Test invalid price_rule_stacks (empty)
+        let mut invalid_stacks_schedule = valid_schedule.clone();
+        invalid_stacks_schedule.set_price_rule_stacks(vec![]);
+
+        let validation_result = invalid_stacks_schedule.validate();
+        assert!(validation_result.is_err(), "Schedule with empty price_rule_stacks should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("price_rule_stacks"),
+                "Error should mention price_rule_stacks: {}", error);
+
+        // 8. Test invalid price_rule_stacks (too many)
+        let mut invalid_many_stacks_schedule = valid_schedule.clone();
+        let many_stacks = vec![price_rule_stack; 1025]; // 1025 elements, exceeds max of 1024
+        invalid_many_stacks_schedule.set_price_rule_stacks(many_stacks);
+
+        let validation_result = invalid_many_stacks_schedule.validate();
+        assert!(validation_result.is_err(), "Schedule with too many price_rule_stacks should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("price_rule_stacks"),
+                "Error should mention price_rule_stacks: {}", error);
+
+        // 9. Test invalid tax_rules (empty when set)
+        let invalid_tax_rules_schedule = valid_schedule.clone()
+            .with_tax_rules(vec![]);
+
+        let validation_result = invalid_tax_rules_schedule.validate();
+        assert!(validation_result.is_err(), "Schedule with empty tax_rules should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("tax_rules"),
+                "Error should mention tax_rules: {}", error);
+
+        // 10. Test invalid additional_selected_services (empty when set)
+        let invalid_services_schedule = valid_schedule.clone()
+            .with_additional_selected_services(vec![]);
+
+        let validation_result = invalid_services_schedule.validate();
+        assert!(validation_result.is_err(), "Schedule with empty additional_selected_services should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("additional_selected_services"),
+                "Error should mention additional_selected_services: {}", error);
     }
 }

@@ -23,7 +23,7 @@ pub struct AddressType {
     ///
     /// Additional address information like apartment number, suite, etc.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 100), optional)]
+    #[validate(length(max = 100))]
     pub address2: Option<String>,
 
     /// City
@@ -36,7 +36,7 @@ pub struct AddressType {
     ///
     /// ZIP or postal code
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 20), optional)]
+    #[validate(length(max = 20))]
     pub postal_code: Option<String>,
 
     /// Country name
@@ -47,6 +47,7 @@ pub struct AddressType {
 
     /// Optional custom data
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -435,5 +436,20 @@ mod tests {
             long_country,
         );
         assert!(invalid_address.validate().is_err());
+
+        // Test custom_data nested validation
+        let mut invalid_custom_data = CustomDataType::new("VendorX".to_string());
+        // Set an invalid vendor_id (too long) by bypassing the setter
+        invalid_custom_data.vendor_id = "A".repeat(256); // Max length is 255
+
+        let mut invalid_address = AddressType::new(
+            "John Doe".to_string(),
+            "123 Main St".to_string(),
+            "Anytown".to_string(),
+            "USA".to_string(),
+        );
+        invalid_address.set_custom_data(Some(invalid_custom_data));
+
+        assert!(invalid_address.validate().is_err(), "Address with invalid custom_data should fail validation");
     }
 }
