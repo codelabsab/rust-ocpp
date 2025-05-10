@@ -1,34 +1,67 @@
 use crate::v2_1::{
     datatypes::{
-        ac_charging_parameters::ACChargingParametersType, custom_data::CustomDataType,
-        dc_charging_parameters::DCChargingParametersType,
+        ACChargingParametersType,
+        CustomDataType,
+        DCChargingParametersType,
+        V2XChargingParametersType,
+        DERChargingParametersType,
+        EVEnergyOfferType,
     },
-    enumerations::EnergyTransferModeEnumType,
+    enumerations::{
+        EnergyTransferModeEnumType,
+        ControlModeEnumType,
+        MobilityNeedsModeEnumType,
+    }
 };
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 /// Represents the charging needs of an EV.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingNeedsType {
     /// Mode of energy transfer requested by the EV.
     pub requested_energy_transfer: EnergyTransferModeEnumType,
 
+    /// Modes of energy transfer that are marked as available by EV
+    pub available_energy_transfer: Option<Vec<EnergyTransferModeEnumType>>,
+
+    /// Indicates whether EV wants to operate in Dynamic or Scheduled mode.When absent, Scheduled mode is assumed for backwards compatibility.ISO 15118-20: ServiceSelectionReq(SelectedEnergyTransferService)
+    pub control_mode: Option<ControlModeEnumType>,
+
+    /// Value of EVCC indicates that EV determines min/target SOC and departure time. +\r\nA value of EVCC_SECC indicates that charging station or CSMS may also update min/target SOC and departure time. +\r\n*ISO 15118-20:* +\r\nServiceSelectionReq(SelectedEnergyTransferService)
+    pub mobility_needs_mode: Option<MobilityNeedsModeEnumType>,
+
     /// Estimated departure time of the EV.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub departure_time: Option<DateTime<Utc>>,
 
-    /// EV AC charging parameters.
+    /// Charging parameters for ISO 15118-20, also supporting V2X charging/discharging.+\r\nAll values are greater or equal to zero, with the exception of EVMinEnergyRequest, EVMaxEnergyRequest, EVTargetEnergyRequest, EVMinV2XEnergyRequest and EVMaxV2XEnergyRequest.
+    #[validate(nested)]
+    pub v2x_charging_parameters: Option<V2XChargingParametersType>,
+
+    /// EV DC charging parameters for ISO 15118-2
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub dc_charging_parameters: Option<DCChargingParametersType>,
+
+    /// EV AC charging parameters for ISO 15118-2
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub ac_charging_parameters: Option<ACChargingParametersType>,
 
-    /// EV DC charging parameters
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub dc_charging_parameters: Option<DCChargingParametersType>,
+    /// *(2.1)* A schedule of the energy amount over time that EV is willing to discharge. A negative value indicates the willingness to discharge under specific conditions, a positive value indicates that the EV currently is not able to offer energy to discharge.
+    #[validate(nested)]
+    pub ev_energy_offer: Option<EVEnergyOfferType>,
+
+    /// DERChargingParametersType is used in ChargingNeedsType during an ISO 15118-20 session for AC_BPT_DER to report the inverter settings related to DER control that were agreed between EVSE and EV.\r\n\r\nFields starting with \"ev\" contain values from the EV.\r\nOther fields contain a value that is supported by both EV and EVSE.\r\n\r\nDERChargingParametersType type is only relevant in case of an ISO 15118-20 AC_BPT_DER/AC_DER charging session.
+    #[validate(nested)]
+    pub der_charging_parameters: Option<DERChargingParametersType>,
 
     /// Optional custom data
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -45,9 +78,15 @@ impl ChargingNeedsType {
     pub fn new(requested_energy_transfer: EnergyTransferModeEnumType) -> Self {
         Self {
             requested_energy_transfer,
+            available_energy_transfer: None,
+            control_mode: None,
+            mobility_needs_mode: None,
             departure_time: None,
-            ac_charging_parameters: None,
+            v2x_charging_parameters: None,
             dc_charging_parameters: None,
+            ac_charging_parameters: None,
+            ev_energy_offer: None,
+            der_charging_parameters: None,
             custom_data: None,
         }
     }
@@ -237,6 +276,15 @@ impl ChargingNeedsType {
         self.custom_data = custom_data;
         self
     }
+
+    /// Validates this instance according to the OCPP 2.1 specification.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` if the instance is valid, otherwise an error
+    pub fn validate(&self) -> Result<(), validator::ValidationErrors> {
+        Validate::validate(self)
+    }
 }
 
 #[cfg(test)]
@@ -317,5 +365,63 @@ mod tests {
         assert_eq!(needs.ac_charging_parameters(), None);
         assert_eq!(needs.dc_charging_parameters(), None);
         assert_eq!(needs.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // Create a valid charging needs
+        let valid_needs = ChargingNeedsType::new(EnergyTransferModeEnumType::DC);
+
+        // Validation should pass
+        assert!(valid_needs.validate().is_ok());
+
+        // Test with valid custom data
+        let custom_data = CustomDataType::new("VendorX".to_string());
+        let departure_time = Utc.with_ymd_and_hms(2023, 1, 1, 12, 0, 0).unwrap();
+        let ac_params = ACChargingParametersType::new_from_f64(10000.0, 10.0, 32.0, 400.0);
+        let dc_params = DCChargingParametersType::new(400.0, 100.0);
+
+        let valid_needs_with_params = ChargingNeedsType::new(EnergyTransferModeEnumType::ACThreePhase)
+            .with_departure_time(departure_time)
+            .with_ac_charging_parameters(ac_params)
+            .with_dc_charging_parameters(dc_params)
+            .with_custom_data(custom_data);
+
+        // Validation should pass
+        assert!(valid_needs_with_params.validate().is_ok());
+
+        // Test with invalid custom data (nested validation)
+        let invalid_custom_data = CustomDataType::new("a".repeat(256)); // Exceeds max length of 255
+        let invalid_needs = ChargingNeedsType::new(EnergyTransferModeEnumType::DC)
+            .with_custom_data(invalid_custom_data);
+
+        // Validation should fail
+        assert!(invalid_needs.validate().is_err());
+    }
+
+    #[test]
+    fn test_serialization_deserialization() {
+        let custom_data = CustomDataType::new("VendorX".to_string());
+        let departure_time = Utc.with_ymd_and_hms(2023, 1, 1, 12, 0, 0).unwrap();
+        let ac_params = ACChargingParametersType::new_from_f64(10000.0, 10.0, 32.0, 400.0);
+        let dc_params = DCChargingParametersType::new(400.0, 100.0);
+
+        let needs = ChargingNeedsType::new(EnergyTransferModeEnumType::ACThreePhase)
+            .with_departure_time(departure_time)
+            .with_ac_charging_parameters(ac_params)
+            .with_dc_charging_parameters(dc_params)
+            .with_custom_data(custom_data);
+
+        // Serialize to JSON
+        let serialized = serde_json::to_string(&needs).unwrap();
+
+        // Deserialize back
+        let deserialized: ChargingNeedsType = serde_json::from_str(&serialized).unwrap();
+
+        // Verify the result is the same as the original object
+        assert_eq!(needs, deserialized);
+
+        // Validate the deserialized object
+        assert!(deserialized.validate().is_ok());
     }
 }
