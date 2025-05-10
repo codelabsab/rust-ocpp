@@ -14,7 +14,9 @@ pub struct ChargingPeriodType {
     pub start_period: DateTime<Utc>,
 
     /// List of dimensions that influence this period.
-    pub dimensions: Vec<CostDimensionType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 1))]
+    pub dimensions: Option<Vec<CostDimensionType>>,
 
     /// Unique identifier of the Tariff that was used to calculate cost.
     /// If not provided, then cost was calculated by some other means.
@@ -24,6 +26,7 @@ pub struct ChargingPeriodType {
 
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -41,7 +44,7 @@ impl ChargingPeriodType {
     pub fn new(start_period: DateTime<Utc>, dimensions: Vec<CostDimensionType>) -> Self {
         Self {
             start_period,
-            dimensions,
+            dimensions: Some(dimensions),
             tariff_id: None,
             custom_data: None,
         }
@@ -104,7 +107,7 @@ impl ChargingPeriodType {
     ///
     /// A reference to the list of dimensions that influence this period
     pub fn dimensions(&self) -> &Vec<CostDimensionType> {
-        &self.dimensions
+        self.dimensions.as_ref().expect("dimensions should always be set")
     }
 
     /// Sets the dimensions.
@@ -117,7 +120,7 @@ impl ChargingPeriodType {
     ///
     /// Self reference for method chaining
     pub fn set_dimensions(&mut self, dimensions: Vec<CostDimensionType>) -> &mut Self {
-        self.dimensions = dimensions;
+        self.dimensions = Some(dimensions);
         self
     }
 
@@ -172,6 +175,7 @@ impl ChargingPeriodType {
 mod tests {
     use super::*;
     use crate::v2_1::enumerations::CostDimensionEnumType;
+    use validator::Validate;
 
     #[test]
     fn test_new_charging_period() {
@@ -255,5 +259,54 @@ mod tests {
 
         assert_eq!(period.tariff_id(), None);
         assert_eq!(period.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validate() {
+        let start_time = Utc::now();
+        let dimension = CostDimensionType {
+            r#type: CostDimensionEnumType::Energy,
+            volume: 10.5,
+            custom_data: None,
+        };
+
+        // 1. Valid charging period - should pass validation
+        let valid_period = ChargingPeriodType::new(start_time, vec![dimension.clone()]);
+        assert!(valid_period.validate().is_ok(), "Valid charging period should pass validation");
+
+        // 2. Test dimensions validation (empty dimensions)
+        let mut invalid_dimensions_period = valid_period.clone();
+        invalid_dimensions_period.dimensions = Some(vec![]);
+
+        let validation_result = invalid_dimensions_period.validate();
+        assert!(validation_result.is_err(), "Charging period with empty dimensions should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("dimensions"),
+                "Error should mention dimensions: {}", error);
+
+        // 3. Test tariff_id validation (too long)
+        let long_tariff_id = "A".repeat(61); // 61 characters, exceeds max of 60
+        let mut invalid_tariff_id_period = valid_period.clone();
+        invalid_tariff_id_period.tariff_id = Some(long_tariff_id);
+
+        let validation_result = invalid_tariff_id_period.validate();
+        assert!(validation_result.is_err(), "Charging period with too long tariff_id should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("tariff_id"),
+                "Error should mention tariff_id: {}", error);
+
+        // 4. Test custom_data nested validation
+        let mut invalid_custom_data = CustomDataType::new("VendorX".to_string());
+        // Set an invalid vendor_id (too long) by bypassing the setter
+        invalid_custom_data.vendor_id = "A".repeat(256); // Max length is 255
+
+        let mut invalid_custom_data_period = valid_period.clone();
+        invalid_custom_data_period.custom_data = Some(invalid_custom_data);
+
+        let validation_result = invalid_custom_data_period.validate();
+        assert!(validation_result.is_err(), "Charging period with invalid custom_data should fail validation");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("custom_data"),
+                "Error should mention custom_data: {}", error);
     }
 }
