@@ -1,4 +1,12 @@
 use serde::{Deserialize, Serialize};
+use validator::Validate;
+
+#[derive(Debug, Validate, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(transparent)]
+pub struct CustomString {
+    #[validate(length(max = 20, message = "String length must not exceed 20 characters"))]
+    pub value: String,
+}
 
 /// Standardized values for a chargingLimitSource field.
 /// Before OCPP 2.1 this used to be an enumeration. This has been changed to a predefined set of strings for more flexibility.
@@ -9,7 +17,7 @@ pub enum ChargingLimitSourceEnumType {
     #[serde(rename_all = "UPPERCASE")]
     Standard(StandardChargingLimitSourceEnumType),
     /// Custom charging limit source value
-    Custom(String),
+    Custom(CustomString),
 }
 
 /// Standard OCPP charging limit source values
@@ -38,7 +46,7 @@ impl ChargingLimitSourceEnumType {
                 StandardChargingLimitSourceEnumType::SO => "SO",
                 StandardChargingLimitSourceEnumType::CSO => "CSO",
             },
-            Self::Custom(s) => s,
+            Self::Custom(s) => &s.value,
         }
     }
 }
@@ -50,7 +58,7 @@ impl From<String> for ChargingLimitSourceEnumType {
             "Other" => Self::Standard(StandardChargingLimitSourceEnumType::Other),
             "SO" => Self::Standard(StandardChargingLimitSourceEnumType::SO),
             "CSO" => Self::Standard(StandardChargingLimitSourceEnumType::CSO),
-            _ => Self::Custom(s),
+            _ => Self::Custom(CustomString { value: s }),
         }
     }
 }
