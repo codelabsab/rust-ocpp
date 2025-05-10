@@ -25,12 +25,16 @@ pub struct ChargingNeedsType {
     pub requested_energy_transfer: EnergyTransferModeEnumType,
 
     /// Modes of energy transfer that are marked as available by EV
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 1))]
     pub available_energy_transfer: Option<Vec<EnergyTransferModeEnumType>>,
 
     /// Indicates whether EV wants to operate in Dynamic or Scheduled mode.When absent, Scheduled mode is assumed for backwards compatibility.ISO 15118-20: ServiceSelectionReq(SelectedEnergyTransferService)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub control_mode: Option<ControlModeEnumType>,
 
     /// Value of EVCC indicates that EV determines min/target SOC and departure time. +\r\nA value of EVCC_SECC indicates that charging station or CSMS may also update min/target SOC and departure time. +\r\n*ISO 15118-20:* +\r\nServiceSelectionReq(SelectedEnergyTransferService)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub mobility_needs_mode: Option<MobilityNeedsModeEnumType>,
 
     /// Estimated departure time of the EV.
@@ -38,25 +42,23 @@ pub struct ChargingNeedsType {
     pub departure_time: Option<DateTime<Utc>>,
 
     /// Charging parameters for ISO 15118-20, also supporting V2X charging/discharging.+\r\nAll values are greater or equal to zero, with the exception of EVMinEnergyRequest, EVMaxEnergyRequest, EVTargetEnergyRequest, EVMinV2XEnergyRequest and EVMaxV2XEnergyRequest.
-    #[validate(nested)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub v2x_charging_parameters: Option<V2XChargingParametersType>,
 
     /// EV DC charging parameters for ISO 15118-2
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(nested)]
     pub dc_charging_parameters: Option<DCChargingParametersType>,
 
     /// EV AC charging parameters for ISO 15118-2
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(nested)]
     pub ac_charging_parameters: Option<ACChargingParametersType>,
 
     /// *(2.1)* A schedule of the energy amount over time that EV is willing to discharge. A negative value indicates the willingness to discharge under specific conditions, a positive value indicates that the EV currently is not able to offer energy to discharge.
-    #[validate(nested)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ev_energy_offer: Option<EVEnergyOfferType>,
 
     /// DERChargingParametersType is used in ChargingNeedsType during an ISO 15118-20 session for AC_BPT_DER to report the inverter settings related to DER control that were agreed between EVSE and EV.\r\n\r\nFields starting with \"ev\" contain values from the EV.\r\nOther fields contain a value that is supported by both EV and EVSE.\r\n\r\nDERChargingParametersType type is only relevant in case of an ISO 15118-20 AC_BPT_DER/AC_DER charging session.
-    #[validate(nested)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub der_charging_parameters: Option<DERChargingParametersType>,
 
     /// Optional custom data

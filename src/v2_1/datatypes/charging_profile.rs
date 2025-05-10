@@ -14,10 +14,6 @@ use crate::v2_1::{
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingProfileType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Id of ChargingProfile. Unique within charging station. Id can have a negative value.
     /// This is useful to distinguish charging profiles from an external actor (external constraints)
     /// from charging profiles received from CSMS.
@@ -25,6 +21,7 @@ pub struct ChargingProfileType {
 
     /// Value determining level in hierarchy stack of profiles. Higher values have precedence over lower values.
     /// Lowest level is 0.
+    #[validate(range(min = 0))]
     pub stack_level: i32,
 
     /// Defines the purpose of the schedule transferred by this profile
@@ -47,13 +44,47 @@ pub struct ChargingProfileType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub valid_to: Option<DateTime<Utc>>,
 
-    /// Contains limits for the available power or current over time.
-    pub charging_schedule: Vec<ChargingScheduleType>,
-
     /// SHALL only be included if ChargingProfilePurpose is set to TxProfile.
     /// The transactionId is used to match the profile to a specific transaction.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(max = 36))]
     pub transaction_id: Option<String>,
+
+    /// Period in seconds that this charging profile remains valid after the Charging Station has gone offline. After this period the charging profile becomes invalid for as long as it is offline and the Charging Station reverts back to a valid profile with a lower stack level. \r\nIf _invalidAfterOfflineDuration_ is true, then this charging profile will become permanently invalid.\r\nA value of 0 means that the charging profile is immediately invalid while offline. When the field is absent, then  no timeout applies and the charging profile remains valid when offline.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_offline_duration: Option<i32>,
+
+    /// When set to true this charging profile will not be valid anymore after being offline for more than _maxOfflineDuration_. When absent defaults to false.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub invalid_after_offline_duration: Option<bool>,
+
+    /// Interval in seconds after receipt of last update, when to request a profile update by sending a PullDynamicScheduleUpdateRequest message.\r\n    A value of 0 or no value means that no update interval applies. +\r\n    Only relevant in a dynamic charging profile.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub dyn_update_interval: Option<i32>,
+
+    /// Time at which limits or setpoints in this charging profile were last updated by a PullDynamicScheduleUpdateRequest or UpdateDynamicScheduleRequest or by an external actor. Only relevant in a dynamic charging profile.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub dyn_update_time: Option<DateTime<Utc>>,
+
+    /// ISO 15118-20 signature for all price schedules in _chargingSchedules_. +\r\nNote: for 256-bit elliptic curves (like secp256k1) the ECDSA signature is 512 bits (64 bytes) and for 521-bit curves (like secp521r1) the signature is 1042 bits. This equals 131 bytes, which can be encoded as base64 in 176 bytes.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(max = 176))]
+    pub price_schedule_signature: Option<String>,
+
+    /// Schedule that contains limits for the available
+    /// power or current over time. In order to support ISO 15118
+    /// schedule negotiation, it supports at most three schedules
+    /// with associated tariff to choose from. Having multiple
+    /// chargingSchedules is only allowed for charging profiles of
+    /// purpose TxProfile in the context of an ISO 15118
+    /// charging session. For ISO 15118 Dynamic Control Mode
+    /// only one chargingSchedule shall be provided.
+    #[validate(length(min = 1, max = 3))]
+    pub charging_schedule: Vec<ChargingScheduleType>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl ChargingProfileType {
@@ -88,6 +119,11 @@ impl ChargingProfileType {
             valid_from: None,
             valid_to: None,
             transaction_id: None,
+            max_offline_duration: None,
+            invalid_after_offline_duration: None,
+            dyn_update_interval: None,
+            dyn_update_time: None,
+            price_schedule_signature: None,
         }
     }
 
