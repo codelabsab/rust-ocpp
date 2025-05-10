@@ -225,11 +225,12 @@ impl CompositeScheduleType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rust_decimal_macros::dec;
 
     #[test]
     fn test_new_composite_schedule() {
         let start_time = Utc::now();
-        let period = ChargingSchedulePeriodType::new(0, 16.0);
+        let period = ChargingSchedulePeriodType::new_from_f64(0, 16.0);
 
         let schedule = CompositeScheduleType::new(
             1,
@@ -245,14 +246,14 @@ mod tests {
         assert_eq!(schedule.charging_rate_unit(), &ChargingRateUnitEnumType::A);
         assert_eq!(schedule.charging_schedule_period().len(), 1);
         assert_eq!(schedule.charging_schedule_period()[0].start_period(), 0);
-        assert_eq!(schedule.charging_schedule_period()[0].limit(), 16.0);
+        assert_eq!(schedule.charging_schedule_period()[0].limit(), &dec!(16.0));
         assert_eq!(schedule.custom_data(), None);
     }
 
     #[test]
     fn test_with_custom_data() {
         let start_time = Utc::now();
-        let period = ChargingSchedulePeriodType::new(0, 16.0);
+        let period = ChargingSchedulePeriodType::new(0, dec!(16.0));
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let schedule = CompositeScheduleType::new(
@@ -276,8 +277,8 @@ mod tests {
     fn test_setter_methods() {
         let start_time = Utc::now();
         let new_start_time = Utc::now();
-        let period1 = ChargingSchedulePeriodType::new(0, 16.0);
-        let period2 = ChargingSchedulePeriodType::new(3600, 32.0);
+        let period1 = ChargingSchedulePeriodType::new_from_f64(0, 16.0);
+        let period2 = ChargingSchedulePeriodType::new_from_f64(3600, 32.0);
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let mut schedule = CompositeScheduleType::new(

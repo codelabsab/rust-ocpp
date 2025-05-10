@@ -21,7 +21,7 @@ pub struct CertificateHashDataChainType {
 
     /// Information to identify the child certificate(s).
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(min = 1, max = 4))]
+    #[validate(length(min = 1, max = 4), nested)]
     pub child_certificate_hash_data: Option<Vec<CertificateHashDataType>>,
 
     /// Optional custom data

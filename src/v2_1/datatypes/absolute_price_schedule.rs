@@ -47,17 +47,17 @@ pub struct AbsolutePriceScheduleType {
     pub price_algorithm: String,
 
     /// Stack of price rules, defining the price of charging.
-    #[validate(length(min = 1, max = 1024))]
+    #[validate(length(min = 1, max = 1024), nested)]
     pub price_rule_stacks: Vec<PriceRuleStackType>,
 
     /// List of tax rules that apply to the price.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(min = 1, max = 10))]
+    #[validate(length(min = 1, max = 10), nested)]
     pub tax_rules: Option<Vec<TaxRuleType>>,
 
     /// List of additional services selected by the user.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(min = 1, max = 5))]
+    #[validate(length(min = 1, max = 5), nested)]
     pub additional_selected_services: Option<Vec<AdditionalSelectedServicesType>>,
 
     /// Rules for overstay pricing.

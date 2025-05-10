@@ -79,7 +79,7 @@ pub struct ChargingProfileType {
     /// purpose TxProfile in the context of an ISO 15118
     /// charging session. For ISO 15118 Dynamic Control Mode
     /// only one chargingSchedule shall be provided.
-    #[validate(length(min = 1, max = 3))]
+    #[validate(length(min = 1, max = 3), nested)]
     pub charging_schedule: Vec<ChargingScheduleType>,
 
     /// Custom data from the Charging Station.
@@ -447,15 +447,7 @@ mod tests {
     use crate::v2_1::enumerations::ChargingRateUnitEnumType;
 
     fn create_test_charging_schedule() -> ChargingScheduleType {
-        let period = ChargingSchedulePeriodType {
-            start_period: 0,
-            limit: 16.0,
-            limit_l2: None,
-            limit_l3: None,
-            number_phases: None,
-            phase_to_use: None,
-            custom_data: None,
-        };
+        let period = ChargingSchedulePeriodType::new_from_f64(0, 16.0);
 
         ChargingScheduleType {
             id: 1,
@@ -545,15 +537,7 @@ mod tests {
         let schedule2 = ChargingScheduleType {
             id: 2,
             charging_rate_unit: ChargingRateUnitEnumType::W,
-            charging_schedule_period: vec![ChargingSchedulePeriodType {
-                start_period: 0,
-                limit: 11000.0,
-                limit_l2: None,
-                limit_l3: None,
-                number_phases: None,
-                phase_to_use: None,
-                custom_data: None,
-            }],
+            charging_schedule_period: vec![ChargingSchedulePeriodType::new_from_f64(0, 11000.0)],
             start_schedule: None,
             duration: None,
             custom_data: None,

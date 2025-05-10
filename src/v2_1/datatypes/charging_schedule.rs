@@ -255,15 +255,7 @@ mod tests {
     use super::*;
 
     fn create_test_period() -> ChargingSchedulePeriodType {
-        ChargingSchedulePeriodType {
-            start_period: 0,
-            limit: 16.0,
-            limit_l2: None,
-            limit_l3: None,
-            number_phases: None,
-            phase_to_use: None,
-            custom_data: None,
-        }
+        ChargingSchedulePeriodType::new_from_f64(0, 16.0)
     }
 
     #[test]
@@ -313,15 +305,7 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let period1 = create_test_period();
-        let period2 = ChargingSchedulePeriodType {
-            start_period: 3600,
-            limit: 32.0,
-            limit_l2: None,
-            limit_l3: None,
-            number_phases: None,
-            phase_to_use: None,
-            custom_data: None,
-        };
+        let period2 = ChargingSchedulePeriodType::new_from_f64(3600, 32.0);
 
         let custom_data = CustomDataType::new("VendorX".to_string());
         let start_time = Utc::now();

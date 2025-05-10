@@ -15,7 +15,7 @@ pub struct ChargingPeriodType {
 
     /// List of dimensions that influence this period.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(min = 1))]
+    #[validate(length(min = 1), nested)]
     pub dimensions: Option<Vec<CostDimensionType>>,
 
     /// Unique identifier of the Tariff that was used to calculate cost.
