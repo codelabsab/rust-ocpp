@@ -1240,6 +1240,7 @@ version = "3.0.1"
 dependencies = [
  "chrono",
  "jsonschema",
+ "lazy_static",
  "mockall",
  "regex",
  "rust_decimal",
