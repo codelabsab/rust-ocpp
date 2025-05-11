@@ -29,6 +29,7 @@ pub struct CompositeScheduleType {
     pub charging_rate_unit: ChargingRateUnitEnumType,
 
     /// List of charging periods describing the amount of power or current that can be delivered per time interval.
+    #[validate(length(min = 1))]
     pub charging_schedule_period: Vec<ChargingSchedulePeriodType>,
 }
 
