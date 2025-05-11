@@ -2,6 +2,7 @@ use std::sync::OnceLock;
 
 use regex::Regex;
 use validator::ValidationError;
+use rust_decimal::Decimal;
 
 static REGEX: OnceLock<Regex> = OnceLock::new();
 
@@ -20,6 +21,25 @@ pub fn validate_identifier_string(s: &str) -> Result<(), ValidationError> {
         true => Ok(()),
         false => Err(ValidationError::new("Not a valid identifierString")),
     }
+}
+
+/// Validates that a discharge limit is non-positive (less than or equal to zero).
+///
+/// # Arguments
+///
+/// * `value` - The Decimal value to validate
+///
+/// # Returns
+///
+/// Returns Ok(()) if the value is less than or equal to zero, otherwise returns Err
+pub fn validate_discharge_limit(value: &Decimal) -> Result<(), ValidationError> {
+    if *value > Decimal::ZERO {
+        let mut error = ValidationError::new("discharge_limit_must_be_non_positive");
+        error.message = Some("Discharge limit must be less than or equal to zero".into());
+        return Err(error);
+    }
+
+    Ok(())
 }
 
 #[cfg(test)]

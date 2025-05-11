@@ -6,27 +6,8 @@ use crate::v2_1::datatypes::CustomDataType;
 use crate::v2_1::{
     datatypes::{V2XFreqWattPointType, V2XSignalWattPointType},
     enumerations::OperationModeEnumType,
+    helpers::validator::validate_discharge_limit,
 };
-
-/// Validates that a discharge limit is non-positive (less than or equal to zero).
-///
-/// # Arguments
-///
-/// * `value` - The Decimal value to validate
-///
-/// # Returns
-///
-/// Returns Ok(()) if the value is less than or equal to zero, otherwise returns Err
-pub fn validate_discharge_limit(value: &Decimal) -> Result<(), ValidationError> {
-    if *value > Decimal::ZERO {
-        let mut error = ValidationError::new("discharge_limit_must_be_non_positive");
-        error.message = Some("Discharge limit must be less than or equal to zero".into());
-        return Err(error);
-    }
-
-    Ok(())
-}
-
 
 
 /// Charging schedule period structure defines a time period in a charging schedule.
@@ -71,14 +52,17 @@ pub struct ChargingSchedulePeriodType {
 
     /// Limit in _chargingRateUnit_ that the EV is allowed to discharge with. Note, these are negative values in order to be consistent with _setpoint_, which can be positive and negative.  +\r\nFor AC this field represents the sum of all phases, unless values are provided for L2 and L3, in which case this field represents phase L1.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(custom(function = "validate_discharge_limit"))]
     pub discharge_limit: Option<Decimal>,
 
     /// Limit in _chargingRateUnit_ that the EV is allowed to discharge with on phase L2.
     #[serde(rename = "dischargeLimit_L2", skip_serializing_if = "Option::is_none")]
+    #[validate(custom(function = "validate_discharge_limit"))]
     pub discharge_limit_l2: Option<Decimal>,
 
     /// Limit in _chargingRateUnit_ that the EV is allowed to discharge with on phase L3.
     #[serde(rename = "dischargeLimit_L3", skip_serializing_if = "Option::is_none")]
+    #[validate(custom(function = "validate_discharge_limit"))]
     pub discharge_limit_l3: Option<Decimal>,
 
     /// Setpoint in _chargingRateUnit_ that the EV should follow as close as possible. Use negative values for discharging. +\r\nWhen a limit and/or _dischargeLimit_ are given the overshoot when following _setpoint_ must remain within these values.\r\nThis field represents the sum of all phases, unless values are provided for L2 and L3, in which case this field represents phase L1.

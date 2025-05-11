@@ -449,14 +449,7 @@ mod tests {
     fn create_test_charging_schedule() -> ChargingScheduleType {
         let period = ChargingSchedulePeriodType::new_from_f64(0, 16.0);
 
-        ChargingScheduleType {
-            id: 1,
-            charging_rate_unit: ChargingRateUnitEnumType::A,
-            charging_schedule_period: vec![period],
-            start_schedule: None,
-            duration: None,
-            custom_data: None,
-        }
+        ChargingScheduleType::new(1, ChargingRateUnitEnumType::A, vec![period])
     }
 
     #[test]
@@ -534,14 +527,11 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let schedule1 = create_test_charging_schedule();
-        let schedule2 = ChargingScheduleType {
-            id: 2,
-            charging_rate_unit: ChargingRateUnitEnumType::W,
-            charging_schedule_period: vec![ChargingSchedulePeriodType::new_from_f64(0, 11000.0)],
-            start_schedule: None,
-            duration: None,
-            custom_data: None,
-        };
+        let schedule2 = ChargingScheduleType::new(
+            2,
+            ChargingRateUnitEnumType::W,
+            vec![ChargingSchedulePeriodType::new_from_f64(0, 11000.0)]
+        );
 
         let custom_data = CustomDataType::new("VendorX".to_string());
         let valid_from = Utc::now();
