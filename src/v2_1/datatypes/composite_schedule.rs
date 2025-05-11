@@ -9,10 +9,6 @@ use crate::v2_1::enumerations::ChargingRateUnitEnumType;
 #[derive(Debug, Clone, Serialize, Deserialize, Validate, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CompositeScheduleType {
-    /// Custom data specific to this class.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// The ID of the EVSE for which the schedule is requested.
     /// When evseid=0, the Charging Station calculated the expected consumption for the grid connection.
     #[validate(range(min = 0))]
@@ -29,8 +25,13 @@ pub struct CompositeScheduleType {
     pub charging_rate_unit: ChargingRateUnitEnumType,
 
     /// List of charging periods describing the amount of power or current that can be delivered per time interval.
-    #[validate(length(min = 1))]
+    #[validate(length(min = 1), nested)]
     pub charging_schedule_period: Vec<ChargingSchedulePeriodType>,
+
+    /// Custom data specific to this class.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl CompositeScheduleType {
@@ -227,6 +228,7 @@ impl CompositeScheduleType {
 mod tests {
     use super::*;
     use rust_decimal_macros::dec;
+    use validator::Validate;
 
     #[test]
     fn test_new_composite_schedule() {
@@ -310,5 +312,95 @@ mod tests {
         // Test clearing optional fields
         schedule.set_custom_data(None);
         assert_eq!(schedule.custom_data(), None);
+    }
+
+    #[test]
+    fn test_valid_validation() {
+        let start_time = Utc::now();
+        let period = ChargingSchedulePeriodType::new_from_f64(0, 16.0);
+        let custom_data = CustomDataType::new("VendorX".to_string());
+
+        let schedule = CompositeScheduleType::new(
+            1,
+            3600,
+            start_time,
+            ChargingRateUnitEnumType::A,
+            vec![period.clone()],
+        )
+        .with_custom_data(custom_data);
+
+        // Valid instance should pass validation
+        assert!(schedule.validate().is_ok());
+    }
+
+    #[test]
+    fn test_invalid_evse_id_validation() {
+        let start_time = Utc::now();
+        let period = ChargingSchedulePeriodType::new_from_f64(0, 16.0);
+
+        // Create a schedule with negative EVSE ID (invalid)
+        let schedule = CompositeScheduleType::new(
+            -1, // Invalid: should be >= 0
+            3600,
+            start_time,
+            ChargingRateUnitEnumType::A,
+            vec![period.clone()],
+        );
+
+        // Should fail validation due to negative EVSE ID
+        let validation_result = schedule.validate();
+        assert!(validation_result.is_err());
+        
+        // Check that the error is related to evse_id field
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("evse_id"));
+    }
+
+    #[test]
+    fn test_empty_charging_schedule_period_validation() {
+        let start_time = Utc::now();
+
+        // Create a schedule with empty charging schedule period (invalid)
+        let schedule = CompositeScheduleType {
+            evse_id: 1,
+            duration: 3600,
+            schedule_start: start_time,
+            charging_rate_unit: ChargingRateUnitEnumType::A,
+            charging_schedule_period: vec![], // Invalid: should have at least one period
+            custom_data: None,
+        };
+
+        // Should fail validation due to empty charging_schedule_period
+        let validation_result = schedule.validate();
+        assert!(validation_result.is_err());
+        
+        // Check that the error is related to charging_schedule_period field
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("charging_schedule_period"));
+    }
+
+    #[test]
+    fn test_nested_invalid_custom_data_validation() {
+        let start_time = Utc::now();
+        let period = ChargingSchedulePeriodType::new_from_f64(0, 16.0);
+
+        // Create custom data with invalid vendor_id (longer than 255 chars)
+        let too_long_vendor_id = "X".repeat(256);
+        let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
+
+        let schedule = CompositeScheduleType::new(
+            1,
+            3600,
+            start_time,
+            ChargingRateUnitEnumType::A,
+            vec![period.clone()],
+        )
+        .with_custom_data(invalid_custom_data);
+
+        // Should fail validation due to nested custom_data validation
+        let validation_result = schedule.validate();
+        
+        // The test passes if validation fails (we know the structure is invalid)
+        assert!(validation_result.is_err(), "Validation should fail with invalid nested data");
     }
 }
