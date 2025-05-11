@@ -288,17 +288,17 @@ mod tests {
         // Valid case - one cost element
         let cost1 = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
         let consumption_cost1 = ConsumptionCostType::new(Decimal::new(100, 1), vec![cost1.clone()]);
-        assert!(consumption_cost1.validate().is_ok());
+        assert!(consumption_cost1.validate().is_ok(), "Consumption cost with one valid cost element should pass validation");
         
         // Valid case - maximum of 3 cost elements
         let cost2 = CostType::new(CostKindEnumType::RelativePricePercentage, 200);
         let cost3 = CostType::new(CostKindEnumType::RenewableGenerationPercentage, 300);
         let consumption_cost3 = ConsumptionCostType::new(Decimal::new(100, 1), vec![cost1.clone(), cost2.clone(), cost3.clone()]);
-        assert!(consumption_cost3.validate().is_ok());
+        assert!(consumption_cost3.validate().is_ok(), "Consumption cost with three valid cost elements should pass validation");
         
         // Invalid case - empty cost vector
         let consumption_cost_empty = ConsumptionCostType::new(Decimal::new(100, 1), vec![]);
-        assert!(consumption_cost_empty.validate().is_err());
+        assert!(consumption_cost_empty.validate().is_err(), "Consumption cost with empty cost vector should fail validation");
         
         // Invalid case - too many elements (more than 3)
         let cost1_dup = CostType::new(CostKindEnumType::CarbonDioxideEmission, 101);
@@ -306,7 +306,7 @@ mod tests {
             Decimal::new(100, 1), 
             vec![cost1.clone(), cost2.clone(), cost3.clone(), cost1_dup.clone()]
         );
-        assert!(consumption_cost_too_many.validate().is_err());
+        assert!(consumption_cost_too_many.validate().is_err(), "Consumption cost with more than 3 elements should fail validation");
         
         // Invalid nested validation - cost with invalid amount_multiplier
         let invalid_cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100)
@@ -315,7 +315,7 @@ mod tests {
             Decimal::new(100, 1),
             vec![invalid_cost]
         );
-        assert!(consumption_cost_invalid_nested.validate().is_err());
+        assert!(consumption_cost_invalid_nested.validate().is_err(), "Consumption cost with invalid nested cost should fail validation");
     }
     
     #[test]
@@ -428,5 +428,89 @@ mod tests {
         let expected = Decimal::try_from(9999999.9999).unwrap();
         assert_eq!(large_value.start_value(), expected);
         assert_eq!(deserialized.start_value(), expected);
+    }
+    
+    #[test]
+    fn test_validation_errors_content() {
+        use validator::Validate;
+        
+        // Test validation error for empty cost vector
+        let consumption_cost_empty = ConsumptionCostType::new(Decimal::new(100, 1), vec![]);
+        
+        let validation_result = consumption_cost_empty.validate();
+        assert!(validation_result.is_err());
+        
+        let errors = validation_result.unwrap_err();
+        let field_errors = errors.field_errors();
+        
+        // Verify error is on the cost field for length validation
+        assert!(field_errors.contains_key("cost"), "Validation errors should contain cost field");
+        let cost_errors = &field_errors["cost"];
+        assert!(!cost_errors.is_empty(), "Cost field should have validation errors");
+        assert_eq!(cost_errors[0].code, "length", "Cost field should have a length error");
+        
+        // Test validation error for too many elements
+        let cost1 = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
+        let cost2 = CostType::new(CostKindEnumType::RelativePricePercentage, 200);
+        let cost3 = CostType::new(CostKindEnumType::RenewableGenerationPercentage, 300);
+        let cost4 = CostType::new(CostKindEnumType::CarbonDioxideEmission, 400);
+        
+        let consumption_cost_too_many = ConsumptionCostType::new(
+            Decimal::new(100, 1), 
+            vec![cost1, cost2, cost3, cost4]
+        );
+        
+        let validation_result = consumption_cost_too_many.validate();
+        assert!(validation_result.is_err());
+        
+        let errors = validation_result.unwrap_err();
+        let field_errors = errors.field_errors();
+        
+        // Verify error is on the cost field for length validation
+        assert!(field_errors.contains_key("cost"), "Validation errors should contain cost field");
+        let cost_errors = &field_errors["cost"];
+        assert!(!cost_errors.is_empty(), "Cost field should have validation errors");
+        assert_eq!(cost_errors[0].code, "length", "Cost field should have a length error");
+    }
+    
+    #[test]
+    fn test_nested_validation() {
+        use validator::Validate;
+        
+        // Create a cost with invalid amount_multiplier (outside -3 to 3 range)
+        let invalid_cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100)
+            .with_amount_multiplier(4); // Should be in range -3 to 3
+            
+        let consumption_cost = ConsumptionCostType::new(
+            Decimal::new(100, 1),
+            vec![invalid_cost]
+        );
+        
+        // Validation should fail due to nested validation
+        let validation_result = consumption_cost.validate();
+        assert!(validation_result.is_err(), "Validation should fail with invalid nested cost");
+        
+        // Only assert that validation fails, without checking specific error structure
+        // Since error reporting for nested validation can vary depending on validator implementation
+        println!("Validation errors: {:?}", validation_result.unwrap_err());
+    }
+    
+    #[test]
+    fn test_custom_data_validation() {
+        use validator::Validate;
+        
+        // Create a cost element
+        let cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
+        
+        // Create custom data with invalid vendor_id (too long)
+        let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
+        let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
+        
+        let consumption_cost = ConsumptionCostType::new(Decimal::new(100, 1), vec![cost])
+            .with_custom_data(invalid_custom_data);
+            
+        // Validation should fail due to invalid custom_data
+        let validation_result = consumption_cost.validate();
+        assert!(validation_result.is_err(), "Invalid custom_data should cause validation failure");
     }
 }
