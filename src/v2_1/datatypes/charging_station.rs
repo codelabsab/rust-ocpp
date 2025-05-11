@@ -8,10 +8,6 @@ use super::modem::ModemType;
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct ChargingStationType {
-    /// Custom data specific to this class.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Vendor-specific device identifier.
     #[validate(length(max = 25))]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -32,7 +28,13 @@ pub struct ChargingStationType {
 
     /// Defines parameters required for initiating and maintaining wireless communication with other devices.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub modem: Option<ModemType>,
+
+    /// Custom data specific to this class.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl ChargingStationType {
@@ -255,6 +257,8 @@ impl ChargingStationType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::{from_str, to_string};
+    use validator::Validate;
 
     #[test]
     fn test_new_charging_station() {
@@ -271,11 +275,10 @@ mod tests {
     #[test]
     fn test_with_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let modem = ModemType {
-            iccid: "12345678901234567890".to_string(),
-            imsi: "123456789012345".to_string(),
-            custom_data: None,
-        };
+        let modem = ModemType::new(
+            "12345678901234567890".to_string(),
+            "123456789012345".to_string(),
+        );
 
         let station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string())
             .with_serial_number("SN12345".to_string())
@@ -294,11 +297,10 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let modem = ModemType {
-            iccid: "12345678901234567890".to_string(),
-            imsi: "123456789012345".to_string(),
-            custom_data: None,
-        };
+        let modem = ModemType::new(
+            "12345678901234567890".to_string(),
+            "123456789012345".to_string(),
+        );
 
         let mut station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string());
 
@@ -328,5 +330,167 @@ mod tests {
         assert_eq!(station.firmware_version(), None);
         assert_eq!(station.modem(), None);
         assert_eq!(station.custom_data(), None);
+    }
+
+    #[test]
+    fn test_serialization_deserialization() {
+        let custom_data = CustomDataType::new("VendorX".to_string());
+        let modem = ModemType::new(
+            "12345678901234567890".to_string(),
+            "123456789012345".to_string(),
+        );
+
+        let station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string())
+            .with_serial_number("SN12345".to_string())
+            .with_firmware_version("1.0.0".to_string())
+            .with_modem(modem.clone())
+            .with_custom_data(custom_data.clone());
+
+        // Serialize to JSON
+        let serialized = to_string(&station).unwrap();
+
+        // Verify JSON contains expected fields
+        assert!(serialized.contains(r#""model":"Model X"#));
+        assert!(serialized.contains(r#""vendorName":"Vendor Y"#));
+        assert!(serialized.contains(r#""serialNumber":"SN12345"#));
+        assert!(serialized.contains(r#""firmwareVersion":"1.0.0"#));
+        assert!(serialized.contains(r#""iccid":"12345678901234567890"#));
+        assert!(serialized.contains(r#""imsi":"123456789012345"#));
+        assert!(serialized.contains(r#""vendorId":"VendorX"#));
+
+        // Deserialize back
+        let deserialized: ChargingStationType = from_str(&serialized).unwrap();
+
+        // Verify the result is the same as the original object
+        assert_eq!(deserialized.model(), station.model());
+        assert_eq!(deserialized.vendor_name(), station.vendor_name());
+        assert_eq!(deserialized.serial_number(), station.serial_number());
+        assert_eq!(deserialized.firmware_version(), station.firmware_version());
+        assert_eq!(deserialized.modem().unwrap().iccid(), modem.iccid());
+        assert_eq!(deserialized.modem().unwrap().imsi(), modem.imsi());
+        assert_eq!(
+            deserialized.custom_data().unwrap().vendor_id(),
+            custom_data.vendor_id()
+        );
+    }
+
+    #[test]
+    fn test_validation() {
+        // Valid charging station
+        let valid_station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string());
+        assert!(valid_station.validate().is_ok(), "Valid station should pass validation");
+
+        // Test model length validation (too long)
+        let mut invalid_station = valid_station.clone();
+        invalid_station.model = "a".repeat(21); // Exceeds max length of 20
+        assert!(
+            invalid_station.validate().is_err(),
+            "Station with too long model should fail validation"
+        );
+
+        // Test vendor_name length validation (too long)
+        let mut invalid_station = valid_station.clone();
+        invalid_station.vendor_name = "a".repeat(51); // Exceeds max length of 50
+        assert!(
+            invalid_station.validate().is_err(),
+            "Station with too long vendor_name should fail validation"
+        );
+
+        // Test serial_number length validation (too long)
+        let mut invalid_station = valid_station.clone();
+        invalid_station.serial_number = Some("a".repeat(26)); // Exceeds max length of 25
+        assert!(
+            invalid_station.validate().is_err(),
+            "Station with too long serial_number should fail validation"
+        );
+
+        // Test firmware_version length validation (too long)
+        let mut invalid_station = valid_station.clone();
+        invalid_station.firmware_version = Some("a".repeat(51)); // Exceeds max length of 50
+        assert!(
+            invalid_station.validate().is_err(),
+            "Station with too long firmware_version should fail validation"
+        );
+
+        // Test nested validation for modem
+        let mut invalid_station = valid_station.clone();
+        let invalid_modem = ModemType {
+            iccid: "a".repeat(21), // Exceeds max length of 20
+            imsi: "123456789012345".to_string(),
+            custom_data: None,
+        };
+        invalid_station.modem = Some(invalid_modem);
+        assert!(
+            invalid_station.validate().is_err(),
+            "Station with invalid modem should fail validation"
+        );
+
+        // Test nested validation for custom_data
+        // Note: CustomDataType doesn't have validation constraints that can be easily violated
+        // in a test, but we're testing the principle of nested validation
+    }
+
+    #[test]
+    fn test_edge_cases() {
+        // Test with empty strings for required fields
+        let station = ChargingStationType::new("".to_string(), "".to_string());
+        // Empty strings are valid for these fields from a validation perspective
+        assert!(station.validate().is_ok());
+
+        // Test with maximum allowed lengths
+        let station = ChargingStationType::new(
+            "a".repeat(20),  // Max length for model
+            "a".repeat(50),  // Max length for vendor_name
+        )
+        .with_serial_number("a".repeat(25))  // Max length for serial_number
+        .with_firmware_version("a".repeat(50));  // Max length for firmware_version
+
+        assert!(station.validate().is_ok(), "Station with maximum length fields should pass validation");
+
+        // Test with modem that has maximum length fields
+        let modem = ModemType::new(
+            "a".repeat(20),  // Max length for iccid
+            "a".repeat(20),  // Max length for imsi
+        );
+        let station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string())
+            .with_modem(modem);
+
+        assert!(station.validate().is_ok(), "Station with modem having maximum length fields should pass validation");
+    }
+
+    #[test]
+    fn test_complex_scenario() {
+        // Create a modem with custom data
+        let modem_custom_data = CustomDataType::new("ModemVendor".to_string());
+        let modem = ModemType::new(
+            "12345678901234567890".to_string(),
+            "123456789012345".to_string(),
+        )
+        .with_custom_data(modem_custom_data);
+
+        // Create a charging station with all fields populated
+        let station_custom_data = CustomDataType::new("StationVendor".to_string());
+        let station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string())
+            .with_serial_number("SN12345".to_string())
+            .with_firmware_version("1.0.0".to_string())
+            .with_modem(modem.clone())
+            .with_custom_data(station_custom_data.clone());
+
+        // Validate the complex object
+        assert!(station.validate().is_ok(), "Complex station should pass validation");
+
+        // Serialize and deserialize
+        let serialized = to_string(&station).unwrap();
+        let deserialized: ChargingStationType = from_str(&serialized).unwrap();
+
+        // Verify nested custom data is preserved
+        assert_eq!(
+            deserialized.modem().unwrap().custom_data().unwrap().vendor_id(),
+            "ModemVendor"
+        );
+        assert_eq!(
+            deserialized.custom_data().unwrap().vendor_id(),
+            "StationVendor"
+        );
     }
 }

@@ -8,10 +8,6 @@ use crate::v2_1::enumerations::ChargingProfilePurposeEnumType;
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct ClearChargingProfileType {
-    /// Custom data specific to this class.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Specifies the id of the EVSE for which to clear charging profiles. An evseId of zero (0) specifies the charging profile for the overall Charging Station. Absence of this parameter means the clearing applies to all charging profiles that match the other criteria in the request.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(range(min = 0))]
@@ -25,6 +21,10 @@ pub struct ClearChargingProfileType {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(range(min = 0))]
     pub stack_level: Option<i32>,
+
+    /// Custom data specific to this class.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl ClearChargingProfileType {
@@ -200,6 +200,8 @@ impl ClearChargingProfileType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::{from_str, to_string};
+    use validator::Validate;
 
     #[test]
     fn test_new_clear_charging_profile() {
@@ -263,5 +265,190 @@ mod tests {
         assert_eq!(profile.charging_profile_purpose(), None);
         assert_eq!(profile.stack_level(), None);
         assert_eq!(profile.custom_data(), None);
+    }
+
+    #[test]
+    fn test_serialization_deserialization() {
+        let custom_data = CustomDataType::new("VendorX".to_string());
+
+        let profile = ClearChargingProfileType::new()
+            .with_evse_id(1)
+            .with_charging_profile_purpose(
+                ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
+            )
+            .with_stack_level(3)
+            .with_custom_data(custom_data.clone());
+
+        // Serialize to JSON
+        let serialized = to_string(&profile).unwrap();
+
+        // Verify JSON contains expected fields
+        assert!(serialized.contains(r#""evseId":1"#));
+        assert!(serialized.contains(r#""chargingProfilePurpose":"ChargingStationExternalConstraints""#));
+        assert!(serialized.contains(r#""stackLevel":3"#));
+        assert!(serialized.contains(r#""vendorId":"VendorX""#));
+
+        // Deserialize back
+        let deserialized: ClearChargingProfileType = from_str(&serialized).unwrap();
+
+        // Verify the result is the same as the original object
+        assert_eq!(deserialized.evse_id(), profile.evse_id());
+        assert_eq!(deserialized.charging_profile_purpose(), profile.charging_profile_purpose());
+        assert_eq!(deserialized.stack_level(), profile.stack_level());
+        assert_eq!(
+            deserialized.custom_data().unwrap().vendor_id(),
+            custom_data.vendor_id()
+        );
+    }
+
+    #[test]
+    fn test_validation() {
+        // Valid profile
+        let valid_profile = ClearChargingProfileType::new()
+            .with_evse_id(1)
+            .with_stack_level(3);
+        assert!(valid_profile.validate().is_ok(), "Valid profile should pass validation");
+
+        // Test evse_id validation (negative value)
+        let mut invalid_profile = valid_profile.clone();
+        invalid_profile.evse_id = Some(-1); // Invalid: must be >= 0
+        assert!(
+            invalid_profile.validate().is_err(),
+            "Profile with negative evse_id should fail validation"
+        );
+
+        // Test stack_level validation (negative value)
+        let mut invalid_profile = valid_profile.clone();
+        invalid_profile.stack_level = Some(-1); // Invalid: must be >= 0
+        assert!(
+            invalid_profile.validate().is_err(),
+            "Profile with negative stack_level should fail validation"
+        );
+
+        // Test with all fields None (should be valid)
+        let empty_profile = ClearChargingProfileType::new();
+        assert!(
+            empty_profile.validate().is_ok(),
+            "Profile with all None fields should pass validation"
+        );
+    }
+
+    #[test]
+    fn test_edge_cases() {
+        // Test with zero values (should be valid)
+        let zero_profile = ClearChargingProfileType::new()
+            .with_evse_id(0)
+            .with_stack_level(0);
+        assert!(
+            zero_profile.validate().is_ok(),
+            "Profile with zero values should pass validation"
+        );
+
+        // Test with maximum integer values
+        let max_profile = ClearChargingProfileType::new()
+            .with_evse_id(i32::MAX)
+            .with_stack_level(i32::MAX);
+        assert!(
+            max_profile.validate().is_ok(),
+            "Profile with maximum integer values should pass validation"
+        );
+    }
+
+    #[test]
+    fn test_all_charging_profile_purpose_enum_values() {
+        // Test with each enum value
+        let purposes = vec![
+            ChargingProfilePurposeEnumType::ChargingStationExternalConstraints,
+            ChargingProfilePurposeEnumType::ChargingStationMaxProfile,
+            ChargingProfilePurposeEnumType::TxDefaultProfile,
+            ChargingProfilePurposeEnumType::TxProfile,
+        ];
+
+        for purpose in purposes {
+            let profile = ClearChargingProfileType::new()
+                .with_charging_profile_purpose(purpose.clone());
+
+            assert_eq!(
+                profile.charging_profile_purpose(),
+                Some(&purpose),
+                "Profile should have the correct charging profile purpose"
+            );
+
+            // Serialize and deserialize
+            let serialized = to_string(&profile).unwrap();
+            let deserialized: ClearChargingProfileType = from_str(&serialized).unwrap();
+
+            assert_eq!(
+                deserialized.charging_profile_purpose(),
+                Some(&purpose),
+                "Deserialized profile should have the correct charging profile purpose"
+            );
+        }
+    }
+
+    #[test]
+    fn test_complex_scenario() {
+        // Create a profile with custom data
+        let custom_data = CustomDataType::new("VendorX".to_string());
+
+        let profile = ClearChargingProfileType::new()
+            .with_evse_id(1)
+            .with_charging_profile_purpose(ChargingProfilePurposeEnumType::TxProfile)
+            .with_stack_level(3)
+            .with_custom_data(custom_data.clone());
+
+        // Validate the complex object
+        assert!(profile.validate().is_ok(), "Complex profile should pass validation");
+
+        // Serialize and deserialize
+        let serialized = to_string(&profile).unwrap();
+        let deserialized: ClearChargingProfileType = from_str(&serialized).unwrap();
+
+        // Verify all fields are preserved
+        assert_eq!(deserialized.evse_id(), Some(1));
+        assert_eq!(
+            deserialized.charging_profile_purpose(),
+            Some(&ChargingProfilePurposeEnumType::TxProfile)
+        );
+        assert_eq!(deserialized.stack_level(), Some(3));
+        assert_eq!(
+            deserialized.custom_data().unwrap().vendor_id(),
+            "VendorX"
+        );
+    }
+
+    #[test]
+    fn test_partial_fields() {
+        // Test with only evse_id
+        let profile_with_evse = ClearChargingProfileType::new()
+            .with_evse_id(1);
+
+        assert_eq!(profile_with_evse.evse_id(), Some(1));
+        assert_eq!(profile_with_evse.charging_profile_purpose(), None);
+        assert_eq!(profile_with_evse.stack_level(), None);
+
+        // Test with only charging_profile_purpose
+        let profile_with_purpose = ClearChargingProfileType::new()
+            .with_charging_profile_purpose(ChargingProfilePurposeEnumType::TxDefaultProfile);
+
+        assert_eq!(profile_with_purpose.evse_id(), None);
+        assert_eq!(
+            profile_with_purpose.charging_profile_purpose(),
+            Some(&ChargingProfilePurposeEnumType::TxDefaultProfile)
+        );
+        assert_eq!(profile_with_purpose.stack_level(), None);
+
+        // Test with only stack_level
+        let profile_with_stack = ClearChargingProfileType::new()
+            .with_stack_level(3);
+
+        assert_eq!(profile_with_stack.evse_id(), None);
+        assert_eq!(profile_with_stack.charging_profile_purpose(), None);
+        assert_eq!(profile_with_stack.stack_level(), Some(3));
+
+        // Validate all partial profiles
+        assert!(profile_with_evse.validate().is_ok(), "Profile with only evse_id should pass validation");
+        assert!(profile_with_purpose.validate().is_ok(), "Profile with only charging_profile_purpose should pass validation");
+        assert!(profile_with_stack.validate().is_ok(), "Profile with only stack_level should pass validation");
     }
 }
