@@ -15,6 +15,7 @@ pub struct ConsumptionCostType {
 
     /// The lowest level of consumption that defines the starting point of this consumption block.
     /// The block interval extends to the start of the next interval.
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
     pub start_value: Decimal,
 
     /// List of costs associated with this consumption block.

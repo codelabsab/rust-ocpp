@@ -13,6 +13,7 @@ pub struct CostDimensionType {
     pub type_: CostDimensionEnumType,
 
     /// Volume of the dimension consumed, measured according to the dimension type.
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
     pub volume: Decimal,
 
     /// Custom data from the Charging Station.

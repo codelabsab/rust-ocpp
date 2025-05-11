@@ -41,10 +41,12 @@ pub struct BatteryDataType {
 
     ///Required. State of charge
     #[validate(custom(function = "validate_decimal_range"))]
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
     pub so_c: Decimal,
 
     ///Required. State of health
     #[validate(custom(function = "validate_decimal_range"))]
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
     pub so_h: Decimal,
 
     ///Optional. Production date of battery
