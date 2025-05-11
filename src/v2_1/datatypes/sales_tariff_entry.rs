@@ -196,6 +196,7 @@ mod tests {
     use super::*;
     use crate::v2_1::datatypes::cost::CostType;
     use crate::v2_1::enumerations::CostKindEnumType;
+    use rust_decimal::Decimal;
 
     #[test]
     fn test_new_sales_tariff_entry() {
@@ -222,7 +223,7 @@ mod tests {
     fn test_with_methods() {
         let price_level = 3;
         let cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
-        let consumption_cost = vec![ConsumptionCostType::new(10.0, vec![cost])];
+        let consumption_cost = vec![ConsumptionCostType::new(Decimal::new(100, 1), vec![cost])];
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -245,7 +246,7 @@ mod tests {
         let interval = RelativeTimeIntervalType::new_default();
         let price_level2 = 5;
         let cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
-        let consumption_cost = vec![ConsumptionCostType::new(10.0, vec![cost])];
+        let consumption_cost = vec![ConsumptionCostType::new(Decimal::new(100, 1), vec![cost])];
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
