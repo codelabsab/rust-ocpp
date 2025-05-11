@@ -1,3 +1,5 @@
+use rust_decimal::Decimal;
+use rust_decimal::prelude::ToPrimitive;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -7,37 +9,54 @@ use crate::v2_1::datatypes::CustomDataType;
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct DCChargingParametersType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Maximum current (in A) supported by the electric vehicle. Includes cable capacity.
     /// Relates to:
     /// *ISO 15118-2*: DC_EVChargeParameterType:EVMaximumCurrentLimit
-    pub ev_max_current: f64,
+    pub ev_max_current: Decimal,
 
     /// Maximum voltage supported by the electric vehicle.
     /// Relates to:
     /// *ISO 15118-2*: DC_EVChargeParameterType: EVMaximumVoltageLimit
-    pub ev_max_voltage: f64,
+    pub ev_max_voltage: Decimal,
 
     /// Maximum power (in W) supported by the electric vehicle. Required for DC charging.
     /// Relates to:
     /// *ISO 15118-2*: DC_EVChargeParameterType: EVMaximumPowerLimit
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub ev_max_power: Option<f64>,
+    pub ev_max_power: Option<Decimal>,
 
     /// Capacity of the electric vehicle battery (in Wh).
     /// Relates to:
     /// *ISO 15118-2*: DC_EVChargeParameterType: EVEnergyCapacity
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub ev_energy_capacity: Option<f64>,
+    pub ev_energy_capacity: Option<Decimal>,
 
     /// Amount of energy requested (in Wh). This includes energy required for preconditioning.
     /// Relates to:
     /// *ISO 15118-2*: DC_EVChargeParameterType: EVEnergyRequest
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub energy_amount: Option<f64>,
+    pub energy_amount: Option<Decimal>,
+
+    /// Energy available in the battery (in percent of the
+    /// battery capacity) Relates to:
+    /// ISO 15118-2: DC_EVChargeParameterType:
+    /// DC_EVStatus: EVRESSSOC
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(range(min = 0, max = 100))]
+    pub state_of_charge: Option<i32>,
+
+    /// Percentage of SoC at which the EV considers
+    /// the battery fully charged. (possible values: 0 - 100)
+    /// Relates to:
+    /// ISO 15118-2: DC_EVChargeParameterType: FullSOC
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(range(min = 0, max = 100))]
+    pub full_so_c: Option<i32>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl DCChargingParametersType {
@@ -53,11 +72,13 @@ impl DCChargingParametersType {
     /// A new instance of `DCChargingParametersType` with optional fields set to `None`
     pub fn new(ev_max_voltage: f64, ev_max_current: f64) -> Self {
         Self {
-            ev_max_voltage,
-            ev_max_current,
+            ev_max_voltage: Decimal::try_from(ev_max_voltage).unwrap_or_default(),
+            ev_max_current: Decimal::try_from(ev_max_current).unwrap_or_default(),
             ev_max_power: None,
             ev_energy_capacity: None,
             energy_amount: None,
+            state_of_charge: None,
+            full_so_c: None,
             custom_data: None,
         }
     }
@@ -72,7 +93,7 @@ impl DCChargingParametersType {
     ///
     /// Self reference for method chaining
     pub fn with_max_power(mut self, ev_max_power: f64) -> Self {
-        self.ev_max_power = Some(ev_max_power);
+        self.ev_max_power = Some(Decimal::try_from(ev_max_power).unwrap_or_default());
         self
     }
 
@@ -86,7 +107,7 @@ impl DCChargingParametersType {
     ///
     /// Self reference for method chaining
     pub fn with_energy_capacity(mut self, ev_energy_capacity: f64) -> Self {
-        self.ev_energy_capacity = Some(ev_energy_capacity);
+        self.ev_energy_capacity = Some(Decimal::try_from(ev_energy_capacity).unwrap_or_default());
         self
     }
 
@@ -100,7 +121,35 @@ impl DCChargingParametersType {
     ///
     /// Self reference for method chaining
     pub fn with_energy_amount(mut self, energy_amount: f64) -> Self {
-        self.energy_amount = Some(energy_amount);
+        self.energy_amount = Some(Decimal::try_from(energy_amount).unwrap_or_default());
+        self
+    }
+
+    /// Sets the state of charge.
+    ///
+    /// # Arguments
+    ///
+    /// * `state_of_charge` - Energy available in the battery (in percent of the battery capacity)
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_state_of_charge(mut self, state_of_charge: i32) -> Self {
+        self.state_of_charge = Some(state_of_charge);
+        self
+    }
+
+    /// Sets the full state of charge.
+    ///
+    /// # Arguments
+    ///
+    /// * `full_so_c` - Percentage of SoC at which the EV considers the battery fully charged
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_full_so_c(mut self, full_so_c: i32) -> Self {
+        self.full_so_c = Some(full_so_c);
         self
     }
 
@@ -124,7 +173,7 @@ impl DCChargingParametersType {
     ///
     /// The maximum voltage supported by the electric vehicle
     pub fn ev_max_voltage(&self) -> f64 {
-        self.ev_max_voltage
+        self.ev_max_voltage.to_f64().unwrap_or_default()
     }
 
     /// Sets the maximum voltage supported by the electric vehicle.
@@ -137,7 +186,7 @@ impl DCChargingParametersType {
     ///
     /// Self reference for method chaining
     pub fn set_ev_max_voltage(&mut self, ev_max_voltage: f64) -> &mut Self {
-        self.ev_max_voltage = ev_max_voltage;
+        self.ev_max_voltage = Decimal::try_from(ev_max_voltage).unwrap_or_default();
         self
     }
 
@@ -147,7 +196,7 @@ impl DCChargingParametersType {
     ///
     /// The maximum current (in A) supported by the electric vehicle
     pub fn ev_max_current(&self) -> f64 {
-        self.ev_max_current
+        self.ev_max_current.to_f64().unwrap_or_default()
     }
 
     /// Sets the maximum current supported by the electric vehicle.
@@ -160,7 +209,7 @@ impl DCChargingParametersType {
     ///
     /// Self reference for method chaining
     pub fn set_ev_max_current(&mut self, ev_max_current: f64) -> &mut Self {
-        self.ev_max_current = ev_max_current;
+        self.ev_max_current = Decimal::try_from(ev_max_current).unwrap_or_default();
         self
     }
 
@@ -170,7 +219,7 @@ impl DCChargingParametersType {
     ///
     /// An optional value representing the maximum power (in W) supported by the electric vehicle
     pub fn ev_max_power(&self) -> Option<f64> {
-        self.ev_max_power
+        self.ev_max_power.as_ref().map(|d| d.to_f64().unwrap_or_default())
     }
 
     /// Sets the maximum power supported by the electric vehicle.
@@ -183,7 +232,7 @@ impl DCChargingParametersType {
     ///
     /// Self reference for method chaining
     pub fn set_ev_max_power(&mut self, ev_max_power: Option<f64>) -> &mut Self {
-        self.ev_max_power = ev_max_power;
+        self.ev_max_power = ev_max_power.map(|v| Decimal::try_from(v).unwrap_or_default());
         self
     }
 
@@ -193,7 +242,7 @@ impl DCChargingParametersType {
     ///
     /// An optional value representing the capacity of the electric vehicle battery (in Wh)
     pub fn ev_energy_capacity(&self) -> Option<f64> {
-        self.ev_energy_capacity
+        self.ev_energy_capacity.as_ref().map(|d| d.to_f64().unwrap_or_default())
     }
 
     /// Sets the capacity of the electric vehicle battery.
@@ -206,7 +255,7 @@ impl DCChargingParametersType {
     ///
     /// Self reference for method chaining
     pub fn set_ev_energy_capacity(&mut self, ev_energy_capacity: Option<f64>) -> &mut Self {
-        self.ev_energy_capacity = ev_energy_capacity;
+        self.ev_energy_capacity = ev_energy_capacity.map(|v| Decimal::try_from(v).unwrap_or_default());
         self
     }
 
@@ -216,7 +265,7 @@ impl DCChargingParametersType {
     ///
     /// An optional value representing the amount of energy requested (in Wh)
     pub fn energy_amount(&self) -> Option<f64> {
-        self.energy_amount
+        self.energy_amount.as_ref().map(|d| d.to_f64().unwrap_or_default())
     }
 
     /// Sets the amount of energy requested.
@@ -229,7 +278,53 @@ impl DCChargingParametersType {
     ///
     /// Self reference for method chaining
     pub fn set_energy_amount(&mut self, energy_amount: Option<f64>) -> &mut Self {
-        self.energy_amount = energy_amount;
+        self.energy_amount = energy_amount.map(|v| Decimal::try_from(v).unwrap_or_default());
+        self
+    }
+
+    /// Gets the state of charge.
+    ///
+    /// # Returns
+    ///
+    /// An optional value representing the energy available in the battery (in percent)
+    pub fn state_of_charge(&self) -> Option<i32> {
+        self.state_of_charge
+    }
+
+    /// Sets the state of charge.
+    ///
+    /// # Arguments
+    ///
+    /// * `state_of_charge` - Energy available in the battery (in percent), or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_state_of_charge(&mut self, state_of_charge: Option<i32>) -> &mut Self {
+        self.state_of_charge = state_of_charge;
+        self
+    }
+
+    /// Gets the full state of charge.
+    ///
+    /// # Returns
+    ///
+    /// An optional value representing the percentage of SoC at which the EV considers the battery fully charged
+    pub fn full_so_c(&self) -> Option<i32> {
+        self.full_so_c
+    }
+
+    /// Sets the full state of charge.
+    ///
+    /// # Arguments
+    ///
+    /// * `full_so_c` - Percentage of SoC at which the EV considers the battery fully charged, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_full_so_c(&mut self, full_so_c: Option<i32>) -> &mut Self {
+        self.full_so_c = full_so_c;
         self
     }
 
@@ -260,6 +355,7 @@ impl DCChargingParametersType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use validator::Validate;
 
     #[test]
     fn test_new_dc_charging_parameters() {
@@ -323,5 +419,116 @@ mod tests {
         assert_eq!(params.ev_energy_capacity(), None);
         assert_eq!(params.energy_amount(), None);
         assert_eq!(params.custom_data(), None);
+    }
+
+    #[test]
+    fn test_basic_validation() {
+        // Valid parameters - should pass validation
+        let params = DCChargingParametersType::new(500.0, 125.0);
+        assert!(params.validate().is_ok(), "Valid DC charging parameters should pass validation");
+
+        // Add optional fields - should still pass validation
+        let params_with_optionals = DCChargingParametersType::new(500.0, 125.0)
+            .with_max_power(50000.0)
+            .with_energy_capacity(75000.0)
+            .with_energy_amount(20000.0);
+        assert!(params_with_optionals.validate().is_ok(),
+                "DC charging parameters with optional fields should pass validation");
+    }
+
+    #[test]
+    fn test_state_of_charge_validation() {
+        let mut params = DCChargingParametersType::new(500.0, 125.0);
+
+        // Valid state of charge values (0-100)
+        params.state_of_charge = Some(0);
+        assert!(params.validate().is_ok(), "State of charge = 0 should be valid");
+
+        params.state_of_charge = Some(50);
+        assert!(params.validate().is_ok(), "State of charge = 50 should be valid");
+
+        params.state_of_charge = Some(100);
+        assert!(params.validate().is_ok(), "State of charge = 100 should be valid");
+
+        // Invalid state of charge values (outside 0-100 range)
+        params.state_of_charge = Some(-1);
+        assert!(params.validate().is_err(), "State of charge = -1 should be invalid");
+        let error = params.validate().unwrap_err();
+        assert!(error.to_string().contains("state_of_charge"),
+                "Error should mention state_of_charge: {}", error);
+
+        params.state_of_charge = Some(101);
+        assert!(params.validate().is_err(), "State of charge = 101 should be invalid");
+        let error = params.validate().unwrap_err();
+        assert!(error.to_string().contains("state_of_charge"),
+                "Error should mention state_of_charge: {}", error);
+    }
+
+    #[test]
+    fn test_full_soc_validation() {
+        let mut params = DCChargingParametersType::new(500.0, 125.0);
+
+        // Valid full_so_c values (0-100)
+        params.full_so_c = Some(0);
+        assert!(params.validate().is_ok(), "full_so_c = 0 should be valid");
+
+        params.full_so_c = Some(80);
+        assert!(params.validate().is_ok(), "full_so_c = 80 should be valid");
+
+        params.full_so_c = Some(100);
+        assert!(params.validate().is_ok(), "full_so_c = 100 should be valid");
+
+        // Invalid full_so_c values (outside 0-100 range)
+        params.full_so_c = Some(-1);
+        assert!(params.validate().is_err(), "full_so_c = -1 should be invalid");
+        let error = params.validate().unwrap_err();
+        assert!(error.to_string().contains("full_so_c"),
+                "Error should mention full_so_c: {}", error);
+
+        params.full_so_c = Some(101);
+        assert!(params.validate().is_err(), "full_so_c = 101 should be invalid");
+        let error = params.validate().unwrap_err();
+        assert!(error.to_string().contains("full_so_c"),
+                "Error should mention full_so_c: {}", error);
+    }
+
+    #[test]
+    fn test_custom_data_validation() {
+        // Create custom data with invalid vendor_id (too long)
+        let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
+        let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
+
+        let params = DCChargingParametersType::new(500.0, 125.0)
+            .with_custom_data(invalid_custom_data);
+
+        // Validation should fail due to invalid custom_data
+        let validation_result = params.validate();
+        assert!(validation_result.is_err(), "Invalid custom_data should cause validation failure");
+        let error = validation_result.unwrap_err();
+        assert!(error.to_string().contains("custom_data"),
+                "Error should mention custom_data: {}", error);
+    }
+
+    #[test]
+    fn test_combined_validation() {
+        // Test with multiple validation issues
+        let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
+        let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
+
+        let mut params = DCChargingParametersType::new(500.0, 125.0)
+            .with_custom_data(invalid_custom_data);
+
+        // Add invalid state_of_charge and full_so_c
+        params.state_of_charge = Some(101);
+        params.full_so_c = Some(101);
+
+        // Validation should fail
+        let validation_result = params.validate();
+        assert!(validation_result.is_err(), "Multiple invalid fields should cause validation failure");
+
+        // Error message should contain all validation failures
+        let error = validation_result.unwrap_err().to_string();
+        assert!(error.contains("custom_data") || error.contains("state_of_charge") || error.contains("full_so_c"),
+                "Error should mention at least one invalid field: {}", error);
     }
 }
