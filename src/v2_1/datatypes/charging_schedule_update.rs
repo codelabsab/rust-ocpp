@@ -59,10 +59,12 @@ pub struct ChargingScheduleUpdateType {
     pub setpoint_reactive: Option<Decimal>,
 
     /// *(2.1)* Setpoint for reactive power (or current) on phase L2 in _chargingRateUnit_ that the EV should follow as closely as possible. Positive values for inductive, negative for capacitive reactive power or current.
+    #[serde(rename = "setpointReactive_L2")]
     #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
     pub setpoint_reactive_l2: Option<Decimal>,
 
     /// *(2.1)* Setpoint for reactive power (or current) on phase L3 in _chargingRateUnit_ that the EV should follow as closely as possible. Positive values for inductive, negative for capacitive reactive power or current.
+    #[serde(rename = "setpointReactive_L3")]
     #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
     pub setpoint_reactive_l3: Option<Decimal>,
 

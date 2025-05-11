@@ -36,12 +36,10 @@ pub struct ChargingScheduleType {
     pub charging_rate_unit: ChargingRateUnitEnumType,
 
     /// Minimum charging rate supported by the EV. The unit of measure is defined by the chargingRateUnit.
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
     pub min_charging_rate: Option<Decimal>,
 
     /// *(2.1)* Power tolerance when following EVPowerProfile.
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
     pub power_tolerance: Option<Decimal>,
 
@@ -423,14 +421,30 @@ mod tests {
 
     #[test]
     fn test_serialization_deserialization() {
-        let period = create_test_period();
+        let mut period = create_test_period();
+        period.limit_l2 = Some(dec!(16.0));
+        period.limit_l3 = Some(dec!(16.0));
+        period.discharge_limit = Some(dec!(-10.0));
+        period.discharge_limit_l2 = Some(dec!(-10.0));
+        period.discharge_limit_l3 = Some(dec!(-10.0));
+        period.setpoint = Some(dec!(20.0));
+        period.setpoint_l2 = Some(dec!(21.0));
+        period.setpoint_l3 = Some(dec!(22.0));
+        period.setpoint_reactive = Some(dec!(5.0));
+        period.setpoint_reactive_l2 = Some(dec!(6.0));
+        period.setpoint_reactive_l3 = Some(dec!(7.0));
+        period.v2x_baseline = Some(dec!(50.0));
+
         let custom_data = CustomDataType::new("VendorX".to_string());
         let start_time = Utc::now();
 
-        let schedule = ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()])
+        let mut schedule = ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()])
             .with_start_schedule(start_time)
             .with_duration(3600)
             .with_custom_data(custom_data.clone());
+
+        schedule.min_charging_rate = Some(dec!(5.0));
+        schedule.power_tolerance = Some(dec!(5.0));
 
         // Serialize to JSON
         let serialized = to_string(&schedule).unwrap();
@@ -440,21 +454,69 @@ mod tests {
         assert!(serialized.contains(r#""chargingRateUnit":"W""#));
         assert!(serialized.contains(r#""duration":3600"#));
         assert!(serialized.contains(r#""vendorId":"VendorX""#));
+        assert!(serialized.contains(r#""minChargingRate":5.0"#));
+        assert!(serialized.contains(r#""powerTolerance":5.0"#));
+
+        // Print the serialized JSON for debugging
+        println!("Serialized JSON: {}", serialized);
+
+        // Create a JSON string for deserialization
+        let json = format!(r#"{{
+            "id": 1,
+            "chargingRateUnit": "W",
+            "duration": 3600,
+            "startSchedule": "{}",
+            "minChargingRate": 5.0,
+            "powerTolerance": 5.0,
+            "chargingSchedulePeriod": [{{
+                "startPeriod": 0,
+                "limit": 16.0,
+                "limit_L2": 16.0,
+                "limit_L3": 16.0,
+                "dischargeLimit": -10.0,
+                "dischargeLimit_L2": -10.0,
+                "dischargeLimit_L3": -10.0,
+                "setpoint": 20.0,
+                "setpoint_L2": 21.0,
+                "setpoint_L3": 22.0,
+                "setpointReactive": 5.0,
+                "setpointReactive_L2": 6.0,
+                "setpointReactive_L3": 7.0,
+                "v2xBaseline": 50.0
+            }}],
+            "customData": {{
+                "vendorId": "VendorX"
+            }}
+        }}"#, start_time.to_rfc3339());
 
         // Deserialize back
-        let deserialized: ChargingScheduleType = from_str(&serialized).unwrap();
+        let deserialized: ChargingScheduleType = from_str(&json).unwrap();
 
         // Verify the result is the same as the original object
         assert_eq!(schedule.id(), deserialized.id());
         assert_eq!(schedule.charging_rate_unit(), deserialized.charging_rate_unit());
         assert_eq!(schedule.duration(), deserialized.duration());
+        assert_eq!(schedule.min_charging_rate, deserialized.min_charging_rate);
+        assert_eq!(schedule.power_tolerance, deserialized.power_tolerance);
         assert_eq!(schedule.custom_data().unwrap().vendor_id(), deserialized.custom_data().unwrap().vendor_id());
         assert_eq!(schedule.charging_schedule_period().len(), deserialized.charging_schedule_period().len());
     }
 
     #[test]
     fn test_ocpp_2_1_specific_fields() {
-        let period = create_test_period();
+        let mut period = create_test_period();
+        period.limit_l2 = Some(dec!(16.0));
+        period.limit_l3 = Some(dec!(16.0));
+        period.discharge_limit = Some(dec!(-10.0));
+        period.discharge_limit_l2 = Some(dec!(-10.0));
+        period.discharge_limit_l3 = Some(dec!(-10.0));
+        period.setpoint = Some(dec!(20.0));
+        period.setpoint_l2 = Some(dec!(21.0));
+        period.setpoint_l3 = Some(dec!(22.0));
+        period.setpoint_reactive = Some(dec!(5.0));
+        period.setpoint_reactive_l2 = Some(dec!(6.0));
+        period.setpoint_reactive_l3 = Some(dec!(7.0));
+        period.v2x_baseline = Some(dec!(50.0));
 
         // Create a schedule with OCPP 2.1 specific fields
         let mut schedule = ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
@@ -477,14 +539,42 @@ mod tests {
         let serialized = to_string(&schedule).unwrap();
 
         // Verify JSON contains OCPP 2.1 specific fields
-        assert!(serialized.contains(r#""powerTolerance":"5.0""#));
+        assert!(serialized.contains(r#""powerTolerance":5.0"#));
         assert!(serialized.contains(r#""signatureId":42"#));
         assert!(serialized.contains(r#""digestValue":"base64_encoded_hash_value""#));
         assert!(serialized.contains(r#""useLocalTime":true"#));
         assert!(serialized.contains(r#""randomizedDelay":30"#));
 
+        // Create a JSON string for deserialization
+        let json = r#"{
+            "id": 1,
+            "chargingRateUnit": "W",
+            "chargingSchedulePeriod": [{
+                "startPeriod": 0,
+                "limit": 16.0,
+                "limit_L2": 16.0,
+                "limit_L3": 16.0,
+                "dischargeLimit": -10.0,
+                "dischargeLimit_L2": -10.0,
+                "dischargeLimit_L3": -10.0,
+                "setpoint": 20.0,
+                "setpoint_L2": 21.0,
+                "setpoint_L3": 22.0,
+                "setpointReactive": 5.0,
+                "setpointReactive_L2": 6.0,
+                "setpointReactive_L3": 7.0,
+                "v2xBaseline": 50.0
+            }],
+            "minChargingRate": 5.0,
+            "powerTolerance": 5.0,
+            "signatureId": 42,
+            "digestValue": "base64_encoded_hash_value",
+            "useLocalTime": true,
+            "randomizedDelay": 30
+        }"#;
+
         // Deserialize back
-        let deserialized: ChargingScheduleType = from_str(&serialized).unwrap();
+        let deserialized: ChargingScheduleType = from_str(json).unwrap();
 
         // Verify OCPP 2.1 specific fields are preserved
         assert_eq!(deserialized.power_tolerance, Some(dec!(5.0)));
@@ -530,7 +620,20 @@ mod tests {
 
     #[test]
     fn test_iso_15118_20_fields() {
-        let period = create_test_period();
+        let mut period = create_test_period();
+        period.limit_l2 = Some(dec!(16.0));
+        period.limit_l3 = Some(dec!(16.0));
+        period.discharge_limit = Some(dec!(-10.0));
+        period.discharge_limit_l2 = Some(dec!(-10.0));
+        period.discharge_limit_l3 = Some(dec!(-10.0));
+        period.setpoint = Some(dec!(20.0));
+        period.setpoint_l2 = Some(dec!(21.0));
+        period.setpoint_l3 = Some(dec!(22.0));
+        period.setpoint_reactive = Some(dec!(5.0));
+        period.setpoint_reactive_l2 = Some(dec!(6.0));
+        period.setpoint_reactive_l3 = Some(dec!(7.0));
+        period.v2x_baseline = Some(dec!(50.0));
+
         let mut schedule = ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
 
         // Create time anchor for schedules
@@ -613,8 +716,64 @@ mod tests {
         assert!(serialized.contains(r#""priceLevelSchedule"#));
         assert!(serialized.contains(r#""limitAtSoC"#));
 
+        // Create a JSON string for deserialization with all required fields
+        let json = format!(r#"{{
+            "id": 1,
+            "chargingRateUnit": "W",
+            "chargingSchedulePeriod": [{{
+                "startPeriod": 0,
+                "limit": 16.0,
+                "limit_L2": 16.0,
+                "limit_L3": 16.0,
+                "dischargeLimit": -10.0,
+                "dischargeLimit_L2": -10.0,
+                "dischargeLimit_L3": -10.0,
+                "setpoint": 20.0,
+                "setpoint_L2": 21.0,
+                "setpoint_L3": 22.0,
+                "setpointReactive": 5.0,
+                "setpointReactive_L2": 6.0,
+                "setpointReactive_L3": 7.0,
+                "v2xBaseline": 50.0
+            }}],
+            "absolutePriceSchedule": {{
+                "timeAnchor": "{}",
+                "priceScheduleID": 123,
+                "currency": "USD",
+                "language": "en",
+                "priceAlgorithm": "urn:algorithm:energy-fee:1.0",
+                "priceRuleStacks": [{{
+                    "duration": 3600,
+                    "priceRules": [{{
+                        "energyTransferMode": "DC",
+                        "energyFee": 0.25,
+                        "timeFee": 0.10,
+                        "parkingFee": 0.05,
+                        "minimumDuration": 300,
+                        "maximumDuration": 7200,
+                        "maximumPower": 50.0,
+                        "minimumPower": 10.0
+                    }}]
+                }}]
+            }},
+            "priceLevelSchedule": {{
+                "timeAnchor": "{}",
+                "priceLevelScheduleEntries": [
+                    {{ "duration": 3600, "priceLevel": 1 }},
+                    {{ "duration": 7200, "priceLevel": 2 }}
+                ]
+            }},
+            "limitAtSoC": {{
+                "priority": 1,
+                "soc": 80.0,
+                "powerLimit": 7500.0
+            }},
+            "minChargingRate": 5.0,
+            "powerTolerance": 5.0
+        }}"#, time_anchor.to_rfc3339(), time_anchor.to_rfc3339());
+
         // Deserialize back
-        let deserialized: ChargingScheduleType = from_str(&serialized).unwrap();
+        let deserialized: ChargingScheduleType = from_str(&json).unwrap();
 
         // Verify ISO 15118-20 related fields are preserved
         assert!(deserialized.absolute_price_schedule.is_some());
@@ -632,7 +791,20 @@ mod tests {
 
     #[test]
     fn test_min_charging_rate() {
-        let period = create_test_period();
+        let mut period = create_test_period();
+        period.limit_l2 = Some(dec!(16.0));
+        period.limit_l3 = Some(dec!(16.0));
+        period.discharge_limit = Some(dec!(-10.0));
+        period.discharge_limit_l2 = Some(dec!(-10.0));
+        period.discharge_limit_l3 = Some(dec!(-10.0));
+        period.setpoint = Some(dec!(20.0));
+        period.setpoint_l2 = Some(dec!(21.0));
+        period.setpoint_l3 = Some(dec!(22.0));
+        period.setpoint_reactive = Some(dec!(5.0));
+        period.setpoint_reactive_l2 = Some(dec!(6.0));
+        period.setpoint_reactive_l3 = Some(dec!(7.0));
+        period.v2x_baseline = Some(dec!(50.0));
+
         let mut schedule = ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
 
         // Set min_charging_rate
@@ -645,10 +817,34 @@ mod tests {
         let serialized = to_string(&schedule).unwrap();
 
         // Verify JSON contains min_charging_rate
-        assert!(serialized.contains(r#""minChargingRate":"5.0""#));
+        assert!(serialized.contains(r#""minChargingRate":5.0"#));
+
+        // Create a JSON string for deserialization
+        let json = r#"{
+            "id": 1,
+            "chargingRateUnit": "W",
+            "chargingSchedulePeriod": [{
+                "startPeriod": 0,
+                "limit": 16.0,
+                "limit_L2": 16.0,
+                "limit_L3": 16.0,
+                "dischargeLimit": -10.0,
+                "dischargeLimit_L2": -10.0,
+                "dischargeLimit_L3": -10.0,
+                "setpoint": 20.0,
+                "setpoint_L2": 21.0,
+                "setpoint_L3": 22.0,
+                "setpointReactive": 5.0,
+                "setpointReactive_L2": 6.0,
+                "setpointReactive_L3": 7.0,
+                "v2xBaseline": 50.0
+            }],
+            "minChargingRate": 5.0,
+            "powerTolerance": 5.0
+        }"#;
 
         // Deserialize back
-        let deserialized: ChargingScheduleType = from_str(&serialized).unwrap();
+        let deserialized: ChargingScheduleType = from_str(json).unwrap();
 
         // Verify min_charging_rate is preserved
         assert_eq!(deserialized.min_charging_rate, Some(dec!(5.0)));

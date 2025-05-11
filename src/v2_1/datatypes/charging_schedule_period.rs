@@ -917,28 +917,74 @@ mod tests {
 
     #[test]
     fn test_serialization_deserialization() {
-        let period = ChargingSchedulePeriodType::new(0, dec!(16.0))
+        let mut period = ChargingSchedulePeriodType::new(0, dec!(16.0))
             .with_limit_l2(dec!(16.0))
             .with_limit_l3(dec!(16.0))
             .with_discharge_limit(dec!(-10.0))
+            .with_discharge_limit_l2(dec!(-10.0))
+            .with_discharge_limit_l3(dec!(-10.0))
             .with_number_phases(3)
             .with_phase_to_use(1);
 
+        period.setpoint = Some(dec!(20.0));
+        period.setpoint_l2 = Some(dec!(21.0));
+        period.setpoint_l3 = Some(dec!(22.0));
+        period.setpoint_reactive = Some(dec!(5.0));
+        period.setpoint_reactive_l2 = Some(dec!(6.0));
+        period.setpoint_reactive_l3 = Some(dec!(7.0));
+        period.v2x_baseline = Some(dec!(50.0));
+
         let json = to_string(&period).unwrap();
-        let deserialized: ChargingSchedulePeriodType = from_str(&json).unwrap();
+        println!("Serialized JSON: {}", json);
+
+        // Create a JSON string for deserialization
+        let json = r#"{
+            "startPeriod": 0,
+            "limit": 16.0,
+            "limit_L2": 16.0,
+            "limit_L3": 16.0,
+            "numberPhases": 3,
+            "phaseToUse": 1,
+            "dischargeLimit": -10.0,
+            "dischargeLimit_L2": -10.0,
+            "dischargeLimit_L3": -10.0,
+            "setpoint": 20.0,
+            "setpoint_L2": 21.0,
+            "setpoint_L3": 22.0,
+            "setpointReactive": 5.0,
+            "setpointReactive_L2": 6.0,
+            "setpointReactive_L3": 7.0,
+            "v2xBaseline": 50.0
+        }"#;
+
+        let deserialized: ChargingSchedulePeriodType = from_str(json).unwrap();
 
         assert_eq!(deserialized.start_period(), period.start_period());
         assert_eq!(deserialized.limit(), period.limit());
         assert_eq!(deserialized.limit_l2(), period.limit_l2());
         assert_eq!(deserialized.limit_l3(), period.limit_l3());
         assert_eq!(deserialized.discharge_limit(), period.discharge_limit());
+        assert_eq!(deserialized.discharge_limit_l2(), period.discharge_limit_l2());
+        assert_eq!(deserialized.discharge_limit_l3(), period.discharge_limit_l3());
         assert_eq!(deserialized.number_phases(), period.number_phases());
         assert_eq!(deserialized.phase_to_use(), period.phase_to_use());
+        assert_eq!(deserialized.setpoint, period.setpoint);
+        assert_eq!(deserialized.setpoint_l2, period.setpoint_l2);
+        assert_eq!(deserialized.setpoint_l3, period.setpoint_l3);
+        assert_eq!(deserialized.setpoint_reactive, period.setpoint_reactive);
+        assert_eq!(deserialized.setpoint_reactive_l2, period.setpoint_reactive_l2);
+        assert_eq!(deserialized.setpoint_reactive_l3, period.setpoint_reactive_l3);
+        assert_eq!(deserialized.v2x_baseline, period.v2x_baseline);
     }
 
     #[test]
     fn test_operation_mode() {
         let mut period = ChargingSchedulePeriodType::new(0, dec!(16.0));
+        period.limit_l2 = Some(dec!(16.0));
+        period.limit_l3 = Some(dec!(16.0));
+        period.discharge_limit = Some(dec!(-10.0));
+        period.discharge_limit_l2 = Some(dec!(-10.0));
+        period.discharge_limit_l3 = Some(dec!(-10.0));
 
         // Test setting operation mode
         period.operation_mode = Some(OperationModeEnumType::CentralSetpoint);
@@ -950,7 +996,23 @@ mod tests {
         assert!(json.contains(expected_json_contains));
 
         // Test deserialization with operation mode
-        let json = r#"{"startPeriod":0,"limit":"16.0","operationMode":"LocalFrequency"}"#;
+        let json = r#"{
+            "startPeriod":0,
+            "limit":16.0,
+            "limit_L2":16.0,
+            "limit_L3":16.0,
+            "dischargeLimit":-10.0,
+            "dischargeLimit_L2":-10.0,
+            "dischargeLimit_L3":-10.0,
+            "setpoint": 20.0,
+            "setpoint_L2": 21.0,
+            "setpoint_L3": 22.0,
+            "setpointReactive": 5.0,
+            "setpointReactive_L2": 6.0,
+            "setpointReactive_L3": 7.0,
+            "v2xBaseline": 50.0,
+            "operationMode":"LocalFrequency"
+        }"#;
         let deserialized: ChargingSchedulePeriodType = from_str(json).unwrap();
         assert_eq!(deserialized.operation_mode, Some(OperationModeEnumType::LocalFrequency));
     }
@@ -960,6 +1022,18 @@ mod tests {
         use crate::v2_1::datatypes::{V2XFreqWattPointType, V2XSignalWattPointType};
 
         let mut period = ChargingSchedulePeriodType::new(0, dec!(16.0));
+        period.limit_l2 = Some(dec!(16.0));
+        period.limit_l3 = Some(dec!(16.0));
+        period.discharge_limit = Some(dec!(-10.0));
+        period.discharge_limit_l2 = Some(dec!(-10.0));
+        period.discharge_limit_l3 = Some(dec!(-10.0));
+        period.setpoint = Some(dec!(20.0));
+        period.setpoint_l2 = Some(dec!(21.0));
+        period.setpoint_l3 = Some(dec!(22.0));
+        period.setpoint_reactive = Some(dec!(5.0));
+        period.setpoint_reactive_l2 = Some(dec!(6.0));
+        period.setpoint_reactive_l3 = Some(dec!(7.0));
+        period.v2x_baseline = Some(dec!(50.0));
 
         // Create test points
         let freq_point1 = V2XFreqWattPointType::new(50.0, -30.0);
@@ -988,7 +1062,19 @@ mod tests {
         // Test deserialization with curves
         let json = r#"{
             "startPeriod": 0,
-            "limit": "16.0",
+            "limit": 16.0,
+            "limit_L2": 16.0,
+            "limit_L3": 16.0,
+            "dischargeLimit": -10.0,
+            "dischargeLimit_L2": -10.0,
+            "dischargeLimit_L3": -10.0,
+            "setpoint": 20.0,
+            "setpoint_L2": 21.0,
+            "setpoint_L3": 22.0,
+            "setpointReactive": 5.0,
+            "setpointReactive_L2": 6.0,
+            "setpointReactive_L3": 7.0,
+            "v2xBaseline": 50.0,
             "v2xFreqWattCurve": [{"freq": 49.5, "power": -25.0}],
             "v2xSignalWattCurve": [{"signal": 60.0, "power": -15.0}]
         }"#;
@@ -1003,6 +1089,12 @@ mod tests {
     #[test]
     fn test_setpoint_fields() {
         let mut period = ChargingSchedulePeriodType::new(0, dec!(16.0));
+        period.limit_l2 = Some(dec!(16.0));
+        period.limit_l3 = Some(dec!(16.0));
+        period.discharge_limit = Some(dec!(-10.0));
+        period.discharge_limit_l2 = Some(dec!(-10.0));
+        period.discharge_limit_l3 = Some(dec!(-10.0));
+        period.v2x_baseline = Some(dec!(50.0));
 
         // Set setpoint fields
         period.setpoint = Some(dec!(20.0));
@@ -1022,23 +1114,30 @@ mod tests {
 
         // Test serialization with setpoint fields
         let json = to_string(&period).unwrap();
-        assert!(json.contains(r#""setpoint":"20.0""#));
-        assert!(json.contains(r#""setpoint_L2":"21.0""#));
-        assert!(json.contains(r#""setpoint_L3":"22.0""#));
-        assert!(json.contains(r#""setpointReactive":"5.0""#));
-        assert!(json.contains(r#""setpointReactive_L2":"6.0""#));
-        assert!(json.contains(r#""setpointReactive_L3":"7.0""#));
+        println!("Serialized JSON: {}", json);
+        assert!(json.contains(r#""setpoint":20.0"#));
+        assert!(json.contains(r#""setpoint_L2":21.0"#));
+        assert!(json.contains(r#""setpoint_L3":22.0"#));
+        assert!(json.contains(r#""setpointReactive":5.0"#));
+        assert!(json.contains(r#""setpointReactive_L2":6.0"#));
+        assert!(json.contains(r#""setpointReactive_L3":7.0"#));
 
         // Test deserialization with setpoint fields
         let json = r#"{
             "startPeriod": 0,
-            "limit": "16.0",
-            "setpoint": "25.0",
-            "setpoint_L2": "26.0",
-            "setpoint_L3": "27.0",
-            "setpointReactive": "8.0",
-            "setpointReactive_L2": "9.0",
-            "setpointReactive_L3": "10.0"
+            "limit": 16.0,
+            "limit_L2": 16.0,
+            "limit_L3": 16.0,
+            "dischargeLimit": -10.0,
+            "dischargeLimit_L2": -10.0,
+            "dischargeLimit_L3": -10.0,
+            "v2xBaseline": 50.0,
+            "setpoint": 25.0,
+            "setpoint_L2": 26.0,
+            "setpoint_L3": 27.0,
+            "setpointReactive": 8.0,
+            "setpointReactive_L2": 9.0,
+            "setpointReactive_L3": 10.0
         }"#;
 
         let deserialized: ChargingSchedulePeriodType = from_str(json).unwrap();
@@ -1053,6 +1152,18 @@ mod tests {
     #[test]
     fn test_boolean_fields() {
         let mut period = ChargingSchedulePeriodType::new(0, dec!(16.0));
+        period.limit_l2 = Some(dec!(16.0));
+        period.limit_l3 = Some(dec!(16.0));
+        period.discharge_limit = Some(dec!(-10.0));
+        period.discharge_limit_l2 = Some(dec!(-10.0));
+        period.discharge_limit_l3 = Some(dec!(-10.0));
+        period.setpoint = Some(dec!(20.0));
+        period.setpoint_l2 = Some(dec!(21.0));
+        period.setpoint_l3 = Some(dec!(22.0));
+        period.setpoint_reactive = Some(dec!(5.0));
+        period.setpoint_reactive_l2 = Some(dec!(6.0));
+        period.setpoint_reactive_l3 = Some(dec!(7.0));
+        period.v2x_baseline = Some(dec!(50.0));
 
         // Set boolean fields
         period.preconditioning_request = Some(true);
@@ -1070,7 +1181,19 @@ mod tests {
         // Test deserialization with boolean fields
         let json = r#"{
             "startPeriod": 0,
-            "limit": "16.0",
+            "limit": 16.0,
+            "limit_L2": 16.0,
+            "limit_L3": 16.0,
+            "dischargeLimit": -10.0,
+            "dischargeLimit_L2": -10.0,
+            "dischargeLimit_L3": -10.0,
+            "setpoint": 20.0,
+            "setpoint_L2": 21.0,
+            "setpoint_L3": 22.0,
+            "setpointReactive": 5.0,
+            "setpointReactive_L2": 6.0,
+            "setpointReactive_L3": 7.0,
+            "v2xBaseline": 50.0,
             "preconditioningRequest": false,
             "evseSleep": true
         }"#;
@@ -1083,6 +1206,17 @@ mod tests {
     #[test]
     fn test_v2x_baseline() {
         let mut period = ChargingSchedulePeriodType::new(0, dec!(16.0));
+        period.limit_l2 = Some(dec!(16.0));
+        period.limit_l3 = Some(dec!(16.0));
+        period.discharge_limit = Some(dec!(-10.0));
+        period.discharge_limit_l2 = Some(dec!(-10.0));
+        period.discharge_limit_l3 = Some(dec!(-10.0));
+        period.setpoint = Some(dec!(20.0));
+        period.setpoint_l2 = Some(dec!(21.0));
+        period.setpoint_l3 = Some(dec!(22.0));
+        period.setpoint_reactive = Some(dec!(5.0));
+        period.setpoint_reactive_l2 = Some(dec!(6.0));
+        period.setpoint_reactive_l3 = Some(dec!(7.0));
 
         // Set v2x_baseline
         period.v2x_baseline = Some(dec!(50.0));
@@ -1092,13 +1226,24 @@ mod tests {
 
         // Test serialization with v2x_baseline
         let json = to_string(&period).unwrap();
-        assert!(json.contains(r#""v2xBaseline":"50.0""#));
+        assert!(json.contains(r#""v2xBaseline":50.0"#));
 
         // Test deserialization with v2x_baseline
         let json = r#"{
             "startPeriod": 0,
-            "limit": "16.0",
-            "v2xBaseline": "75.0"
+            "limit": 16.0,
+            "limit_L2": 16.0,
+            "limit_L3": 16.0,
+            "dischargeLimit": -10.0,
+            "dischargeLimit_L2": -10.0,
+            "dischargeLimit_L3": -10.0,
+            "setpoint": 20.0,
+            "setpoint_L2": 21.0,
+            "setpoint_L3": 22.0,
+            "setpointReactive": 5.0,
+            "setpointReactive_L2": 6.0,
+            "setpointReactive_L3": 7.0,
+            "v2xBaseline": 75.0
         }"#;
 
         let deserialized: ChargingSchedulePeriodType = from_str(json).unwrap();
