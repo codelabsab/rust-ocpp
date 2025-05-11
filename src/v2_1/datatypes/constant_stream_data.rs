@@ -11,6 +11,7 @@ use super::{
 pub struct ConstantStreamDataType {
     /// Custom data specific to this class.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 
     /// Uniquely identifies the stream.
@@ -219,15 +220,14 @@ mod tests {
         let params = PeriodicEventStreamParamsType::new(60);
         let custom_data = CustomDataType::new("VendorX".to_string())
             .with_property("version".to_string(), json!("1.0"));
-        
-        let stream_data = ConstantStreamDataType::new(1, params, 2)
-            .with_custom_data(custom_data);
-        
+
+        let stream_data = ConstantStreamDataType::new(1, params, 2).with_custom_data(custom_data);
+
         let serialized = serde_json::to_string(&stream_data).unwrap();
         let deserialized: ConstantStreamDataType = serde_json::from_str(&serialized).unwrap();
-        
+
         assert_eq!(stream_data, deserialized);
-        
+
         // Verify specific JSON structure
         let json_value: Value = serde_json::from_str(&serialized).unwrap();
         assert_eq!(json_value["id"], 1);
@@ -250,9 +250,9 @@ mod tests {
                 "extraInfo": "Something"
             }
         }"#;
-        
+
         let stream_data: ConstantStreamDataType = serde_json::from_str(json_str).unwrap();
-        
+
         assert_eq!(stream_data.id(), 5);
         assert_eq!(stream_data.params().reporting_interval(), 30);
         assert_eq!(stream_data.variable_monitoring_id(), 10);
@@ -269,20 +269,20 @@ mod tests {
         let params = PeriodicEventStreamParamsType::new(60);
         let stream_data = ConstantStreamDataType::new(1, params.clone(), 2);
         assert!(stream_data.validate().is_ok());
-        
+
         // Invalid id (negative)
         let invalid_id_data = ConstantStreamDataType::new(-1, params.clone(), 2);
         assert!(invalid_id_data.validate().is_err());
-        
+
         // Invalid variable_monitoring_id (negative)
         let invalid_variable_id_data = ConstantStreamDataType::new(1, params.clone(), -5);
         assert!(invalid_variable_id_data.validate().is_err());
-        
+
         // Invalid params (reporting_interval out of range)
         let invalid_params = PeriodicEventStreamParamsType::new(0); // Min is 1
         let invalid_params_data = ConstantStreamDataType::new(1, invalid_params, 2);
         assert!(invalid_params_data.validate().is_err());
-        
+
         // Invalid params (reporting_interval too large)
         let too_large_params = PeriodicEventStreamParamsType::new(86401); // Max is 86400
         let too_large_params_data = ConstantStreamDataType::new(1, too_large_params, 2);
@@ -295,43 +295,45 @@ mod tests {
         let vendor_custom_data = CustomDataType::new("VendorComplex".to_string())
             .with_property("version".to_string(), json!("2.5"))
             .with_property("features".to_string(), json!(["advanced", "premium"]))
-            .with_property("config".to_string(), json!({
-                "timeout": 120,
-                "retries": 3,
-                "enabled": true
-            }));
-            
+            .with_property(
+                "config".to_string(),
+                json!({
+                    "timeout": 120,
+                    "retries": 3,
+                    "enabled": true
+                }),
+            );
+
         let params_custom_data = CustomDataType::new("ParamsVendor".to_string())
             .with_property("mode".to_string(), json!("enhanced"));
-            
-        let params = PeriodicEventStreamParamsType::new(300)
-            .with_custom_data(params_custom_data);
-            
-        let stream_data = ConstantStreamDataType::new(42, params, 99)
-            .with_custom_data(vendor_custom_data);
-            
+
+        let params = PeriodicEventStreamParamsType::new(300).with_custom_data(params_custom_data);
+
+        let stream_data =
+            ConstantStreamDataType::new(42, params, 99).with_custom_data(vendor_custom_data);
+
         // Serialize and deserialize
         let serialized = serde_json::to_string(&stream_data).unwrap();
         let deserialized: ConstantStreamDataType = serde_json::from_str(&serialized).unwrap();
-        
+
         // Verify the complex structure is preserved
         assert_eq!(deserialized.id(), 42);
         assert_eq!(deserialized.variable_monitoring_id(), 99);
         assert_eq!(deserialized.params().reporting_interval(), 300);
-        
+
         let custom_data = deserialized.custom_data().unwrap();
         assert_eq!(custom_data.vendor_id(), "VendorComplex");
         assert_eq!(custom_data.additional_properties()["version"], json!("2.5"));
-        
+
         let features = &custom_data.additional_properties()["features"];
         assert_eq!(features[0], "advanced");
         assert_eq!(features[1], "premium");
-        
+
         let config = &custom_data.additional_properties()["config"];
         assert_eq!(config["timeout"], 120);
         assert_eq!(config["retries"], 3);
         assert_eq!(config["enabled"], true);
-        
+
         let params_custom = deserialized.params().custom_data().unwrap();
         assert_eq!(params_custom.vendor_id(), "ParamsVendor");
         assert_eq!(params_custom.additional_properties()["mode"], "enhanced");
@@ -342,16 +344,16 @@ mod tests {
         // Test with minimum valid values
         let min_params = PeriodicEventStreamParamsType::new(1); // Minimum reporting interval
         let min_stream_data = ConstantStreamDataType::new(0, min_params, 0); // Minimum IDs
-        
+
         assert_eq!(min_stream_data.id(), 0);
         assert_eq!(min_stream_data.params().reporting_interval(), 1);
         assert_eq!(min_stream_data.variable_monitoring_id(), 0);
         assert!(min_stream_data.validate().is_ok());
-        
+
         // Test with maximum valid values for reporting interval
         let max_params = PeriodicEventStreamParamsType::new(86400); // Maximum reporting interval
         let max_stream_data = ConstantStreamDataType::new(i32::MAX, max_params, i32::MAX);
-        
+
         assert_eq!(max_stream_data.id(), i32::MAX);
         assert_eq!(max_stream_data.params().reporting_interval(), 86400);
         assert_eq!(max_stream_data.variable_monitoring_id(), i32::MAX);
