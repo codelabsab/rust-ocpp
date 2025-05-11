@@ -11,13 +11,22 @@ use super::{
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct CostDetailsType {
-    /// List of charging periods that make up this transaction.
-    pub charging_periods: Vec<ChargingPeriodType>,
+    /// List of Charging Periods that make up this
+    /// charging session. A finished session has of 1 or more
+    /// periods, where each period has a different list of
+    /// dimensions that determined the price. When sent as a
+    /// running cost update during a transaction chargingPeriods
+    /// are omitted.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 1))]
+    pub charging_periods: Option<Vec<ChargingPeriodType>>,
 
     /// Total cost of this transaction, including taxes.
+    #[validate(nested)]
     pub total_cost: TotalCostType,
 
     /// Total usage of energy and time during this transaction.
+    #[validate(nested)]
     pub total_usage: TotalUsageType,
 
     /// If set to true, then Charging Station has failed to calculate the cost.
@@ -31,6 +40,7 @@ pub struct CostDetailsType {
 
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -52,7 +62,7 @@ impl CostDetailsType {
         total_usage: TotalUsageType,
     ) -> Self {
         Self {
-            charging_periods,
+            charging_periods: Some(charging_periods),
             total_cost,
             total_usage,
             failure_to_calculate: None,
@@ -107,9 +117,9 @@ impl CostDetailsType {
     ///
     /// # Returns
     ///
-    /// A reference to the list of charging periods that make up this transaction
+    /// A reference to the list of charging periods that make up this transaction, or an empty slice if none
     pub fn charging_periods(&self) -> &[ChargingPeriodType] {
-        &self.charging_periods
+        self.charging_periods.as_deref().unwrap_or(&[])
     }
 
     /// Sets the charging periods.
@@ -122,7 +132,7 @@ impl CostDetailsType {
     ///
     /// Self reference for method chaining
     pub fn set_charging_periods(&mut self, charging_periods: Vec<ChargingPeriodType>) -> &mut Self {
-        self.charging_periods = charging_periods;
+        self.charging_periods = Some(charging_periods);
         self
     }
 
@@ -247,6 +257,7 @@ mod tests {
     use super::super::total_price::TotalPriceType;
     use super::*;
     use crate::v2_1::enumerations::TariffCostEnumType;
+    use validator::Validate;
     #[test]
     fn test_new_cost_details() {
         let charging_period = ChargingPeriodType::new(chrono::Utc::now(), vec![]);
@@ -439,5 +450,251 @@ mod tests {
         assert_eq!(cost_details.failure_to_calculate(), None);
         assert_eq!(cost_details.failure_reason(), None);
         assert_eq!(cost_details.custom_data(), None);
+    }
+    
+    #[test]
+    fn test_validation() {
+        // Valid case
+        let charging_period = ChargingPeriodType::new(chrono::Utc::now(), vec![]);
+        let total_cost = TotalCostType {
+            currency: "EUR".to_string(),
+            type_of_cost: TariffCostEnumType::NormalCost,
+            total: TotalPriceType {
+                price: 10.5,
+                price_excl_tax: None,
+                price_incl_tax: None,
+                custom_data: None,
+            },
+            custom_data: None,
+            cost: 10.5,
+            cost_excl_tax: None,
+            cost_incl_tax: None,
+            fixed: None,
+            energy: None,
+            charging_time: None,
+            idle_time: None,
+            reservation_time: None,
+            reservation_fixed: None,
+        };
+
+        let total_usage = TotalUsageType {
+            usage: 20.0,
+            usage_excl_tax: None,
+            usage_incl_tax: None,
+            custom_data: None,
+        };
+
+        let cost_details = CostDetailsType::new(
+            vec![charging_period.clone()],
+            total_cost.clone(),
+            total_usage.clone(),
+        );
+
+        // Valid instance should pass validation
+        assert!(cost_details.validate().is_ok(), "Valid cost details should pass validation");
+    }
+    
+    #[test]
+    fn test_empty_charging_periods_validation() {
+        let total_cost = TotalCostType {
+            currency: "EUR".to_string(),
+            type_of_cost: TariffCostEnumType::NormalCost,
+            total: TotalPriceType {
+                price: 10.5,
+                price_excl_tax: None,
+                price_incl_tax: None,
+                custom_data: None,
+            },
+            custom_data: None,
+            cost: 10.5,
+            cost_excl_tax: None,
+            cost_incl_tax: None,
+            fixed: None,
+            energy: None,
+            charging_time: None,
+            idle_time: None,
+            reservation_time: None,
+            reservation_fixed: None,
+        };
+
+        let total_usage = TotalUsageType {
+            usage: 20.0,
+            usage_excl_tax: None,
+            usage_incl_tax: None,
+            custom_data: None,
+        };
+        
+        // Create a CostDetailsType with empty charging periods
+        let mut cost_details_empty_periods = CostDetailsType::new(
+            vec![],
+            total_cost.clone(),
+            total_usage.clone(),
+        );
+        
+        // Manually override the charging_periods to test validation
+        // Since the constructor wraps in Some, we manually set to Some(vec![])
+        cost_details_empty_periods.charging_periods = Some(vec![]);
+        
+        let validation_result = cost_details_empty_periods.validate();
+        assert!(validation_result.is_err(), "Empty charging periods should fail validation");
+        
+        let errors = validation_result.unwrap_err();
+        let field_errors = errors.field_errors();
+        assert!(field_errors.contains_key("charging_periods"), "Validation errors should contain charging_periods field");
+    }
+    
+    #[test]
+    fn test_failure_reason_length_validation() {
+        let charging_period = ChargingPeriodType::new(chrono::Utc::now(), vec![]);
+        let total_cost = TotalCostType {
+            currency: "EUR".to_string(),
+            type_of_cost: TariffCostEnumType::NormalCost,
+            total: TotalPriceType {
+                price: 10.5,
+                price_excl_tax: None,
+                price_incl_tax: None,
+                custom_data: None,
+            },
+            custom_data: None,
+            cost: 10.5,
+            cost_excl_tax: None,
+            cost_incl_tax: None,
+            fixed: None,
+            energy: None,
+            charging_time: None,
+            idle_time: None,
+            reservation_time: None,
+            reservation_fixed: None,
+        };
+
+        let total_usage = TotalUsageType {
+            usage: 20.0,
+            usage_excl_tax: None,
+            usage_incl_tax: None,
+            custom_data: None,
+        };
+        
+        // Valid case with reasonable failure reason length
+        let valid_cost_details = CostDetailsType::new(
+            vec![charging_period.clone()],
+            total_cost.clone(),
+            total_usage.clone(),
+        )
+        .with_failure_to_calculate(true)
+        .with_failure_reason("Calculation failed due to network connectivity issue".to_string());
+        
+        assert!(valid_cost_details.validate().is_ok(), "Cost details with valid failure reason should pass validation");
+        
+        // Invalid case with failure reason exceeding 500 characters
+        let too_long_reason = "X".repeat(501);
+        let invalid_cost_details = CostDetailsType::new(
+            vec![charging_period.clone()],
+            total_cost.clone(),
+            total_usage.clone(),
+        )
+        .with_failure_to_calculate(true)
+        .with_failure_reason(too_long_reason);
+        
+        let validation_result = invalid_cost_details.validate();
+        assert!(validation_result.is_err(), "Cost details with too long failure reason should fail validation");
+        
+        let errors = validation_result.unwrap_err();
+        let field_errors = errors.field_errors();
+        assert!(field_errors.contains_key("failure_reason"), "Validation errors should contain failure_reason field");
+    }
+    
+    #[test]
+    fn test_custom_data_validation() {
+        let charging_period = ChargingPeriodType::new(chrono::Utc::now(), vec![]);
+        let total_cost = TotalCostType {
+            currency: "EUR".to_string(),
+            type_of_cost: TariffCostEnumType::NormalCost,
+            total: TotalPriceType {
+                price: 10.5,
+                price_excl_tax: None,
+                price_incl_tax: None,
+                custom_data: None,
+            },
+            custom_data: None,
+            cost: 10.5,
+            cost_excl_tax: None,
+            cost_incl_tax: None,
+            fixed: None,
+            energy: None,
+            charging_time: None,
+            idle_time: None,
+            reservation_time: None,
+            reservation_fixed: None,
+        };
+
+        let total_usage = TotalUsageType {
+            usage: 20.0,
+            usage_excl_tax: None,
+            usage_incl_tax: None,
+            custom_data: None,
+        };
+        
+        // Create custom data with invalid vendor_id (too long)
+        let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
+        let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
+        
+        let cost_details = CostDetailsType::new(
+            vec![charging_period.clone()],
+            total_cost.clone(),
+            total_usage.clone(),
+        )
+        .with_custom_data(invalid_custom_data);
+        
+        // Validation should fail due to invalid custom_data
+        let validation_result = cost_details.validate();
+        assert!(validation_result.is_err(), "Invalid custom_data should cause validation failure");
+    }
+    
+    #[test]
+    fn test_nested_validation() {
+        let charging_period = ChargingPeriodType::new(chrono::Utc::now(), vec![]);
+        
+        // Create a TotalCostType with invalid currency (exceeds max length of 3)
+        let invalid_total_cost = TotalCostType {
+            currency: "USDX".to_string(), // Should fail validation - max length is 3
+            type_of_cost: TariffCostEnumType::NormalCost,
+            total: TotalPriceType {
+                price: 10.5,
+                price_excl_tax: None,
+                price_incl_tax: None,
+                custom_data: None,
+            },
+            custom_data: None,
+            cost: 10.5,
+            cost_excl_tax: None,
+            cost_incl_tax: None,
+            fixed: None,
+            energy: None,
+            charging_time: None,
+            idle_time: None,
+            reservation_time: None,
+            reservation_fixed: None,
+        };
+        
+        let total_usage = TotalUsageType {
+            usage: 20.0,
+            usage_excl_tax: None,
+            usage_incl_tax: None,
+            custom_data: None,
+        };
+        
+        let cost_details = CostDetailsType::new(
+            vec![charging_period.clone()],
+            invalid_total_cost,
+            total_usage,
+        );
+        
+        // Validation should fail due to invalid nested total_cost
+        let validation_result = cost_details.validate();
+        assert!(validation_result.is_err(), "Invalid nested total_cost should cause validation failure");
+        
+        if let Err(errors) = validation_result {
+            println!("Validation errors: {:?}", errors);
+        }
     }
 }
