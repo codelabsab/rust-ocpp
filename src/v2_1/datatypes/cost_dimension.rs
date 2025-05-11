@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -8,13 +9,15 @@ use crate::v2_1::{datatypes::CustomDataType, enumerations::CostDimensionEnumType
 #[serde(rename_all = "camelCase")]
 pub struct CostDimensionType {
     /// Type of cost dimension: energy, power, time, etc.
-    pub r#type: CostDimensionEnumType,
+    #[serde(rename = "type")]
+    pub type_: CostDimensionEnumType,
 
     /// Volume of the dimension consumed, measured according to the dimension type.
-    pub volume: f64,
+    pub volume: Decimal,
 
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -29,10 +32,10 @@ impl CostDimensionType {
     /// # Returns
     ///
     /// A new instance of `CostDimensionType` with optional fields set to `None`
-    pub fn new(r#type: CostDimensionEnumType, volume: f64) -> Self {
+    pub fn new(type_: CostDimensionEnumType, volume: f64) -> Self {
         Self {
-            r#type,
-            volume,
+            type_,
+            volume: Decimal::try_from(volume).unwrap_or_default(),
             custom_data: None,
         }
     }
@@ -57,7 +60,7 @@ impl CostDimensionType {
     ///
     /// The type of cost dimension
     pub fn r#type(&self) -> &CostDimensionEnumType {
-        &self.r#type
+        &self.type_
     }
 
     /// Sets the type of cost dimension.
@@ -69,8 +72,8 @@ impl CostDimensionType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_type(&mut self, r#type: CostDimensionEnumType) -> &mut Self {
-        self.r#type = r#type;
+    pub fn set_type(&mut self, type_: CostDimensionEnumType) -> &mut Self {
+        self.type_ = type_;
         self
     }
 
@@ -80,7 +83,7 @@ impl CostDimensionType {
     ///
     /// The volume of the dimension consumed
     pub fn volume(&self) -> f64 {
-        self.volume
+        self.volume.try_into().unwrap_or_default()
     }
 
     /// Sets the volume of the dimension consumed.
@@ -93,7 +96,7 @@ impl CostDimensionType {
     ///
     /// Self reference for method chaining
     pub fn set_volume(&mut self, volume: f64) -> &mut Self {
-        self.volume = volume;
+        self.volume = Decimal::try_from(volume).unwrap_or_default();
         self
     }
 
@@ -124,6 +127,7 @@ impl CostDimensionType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use validator::Validate;
 
     #[test]
     fn test_new_cost_dimension() {
@@ -163,4 +167,52 @@ mod tests {
         dimension.set_custom_data(None);
         assert_eq!(dimension.custom_data(), None);
     }
+    
+    #[test]
+    fn test_validation_basic() {
+        // Valid case
+        let dimension = CostDimensionType::new(CostDimensionEnumType::Energy, 10.5);
+        assert!(dimension.validate().is_ok(), "Valid cost dimension should pass validation");
+        
+        // Test with different enum values
+        let dimension_max_power = CostDimensionType::new(CostDimensionEnumType::MaxPower, 10.5);
+        assert!(dimension_max_power.validate().is_ok(), "MaxPower cost dimension should pass validation");
+        
+        let dimension_min_power = CostDimensionType::new(CostDimensionEnumType::MinPower, 10.5);
+        assert!(dimension_min_power.validate().is_ok(), "MinPower cost dimension should pass validation");
+        
+        let dimension_charging_time = CostDimensionType::new(CostDimensionEnumType::ChargingTime, 30.0);
+        assert!(dimension_charging_time.validate().is_ok(), "ChargingTime cost dimension should pass validation");
+    }
+    
+    #[test]
+    fn test_validation_edge_cases() {
+        // Zero volume should be valid
+        let zero_volume = CostDimensionType::new(CostDimensionEnumType::Energy, 0.0);
+        assert!(zero_volume.validate().is_ok(), "Zero volume should be valid");
+        
+        // Negative volume should be valid (might represent reverse energy flow)
+        let negative_volume = CostDimensionType::new(CostDimensionEnumType::Energy, -10.5);
+        assert!(negative_volume.validate().is_ok(), "Negative volume should be valid");
+        
+        // Large volume should be valid
+        let large_volume = CostDimensionType::new(CostDimensionEnumType::Energy, 1_000_000.0);
+        assert!(large_volume.validate().is_ok(), "Large volume should be valid");
+    }
+    
+    #[test]
+    fn test_custom_data_validation() {
+        // Create custom data with invalid vendor_id (too long)
+        let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
+        let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
+        
+        let dimension = CostDimensionType::new(CostDimensionEnumType::Energy, 10.5)
+            .with_custom_data(invalid_custom_data);
+        
+        // Validation should fail due to invalid custom_data
+        let validation_result = dimension.validate();
+        assert!(validation_result.is_err(), "Invalid custom_data should cause validation failure");
+    }
 }
+
+

@@ -175,14 +175,15 @@ impl ChargingPeriodType {
 mod tests {
     use super::*;
     use crate::v2_1::enumerations::CostDimensionEnumType;
+    use rust_decimal::Decimal;
     use validator::Validate;
 
     #[test]
     fn test_new_charging_period() {
         let start_time = Utc::now();
         let dimension = CostDimensionType {
-            r#type: CostDimensionEnumType::Energy,
-            volume: 10.5,
+            type_: CostDimensionEnumType::Energy,
+            volume: Decimal::try_from(10.5).unwrap_or_default(),
             custom_data: None,
         };
 
@@ -190,8 +191,8 @@ mod tests {
 
         assert_eq!(period.start_period(), &start_time);
         assert_eq!(period.dimensions().len(), 1);
-        assert_eq!(period.dimensions()[0].r#type, CostDimensionEnumType::Energy);
-        assert_eq!(period.dimensions()[0].volume, 10.5);
+        assert_eq!(period.dimensions()[0].r#type(), &CostDimensionEnumType::Energy);
+        assert_eq!(period.dimensions()[0].volume(), 10.5);
         assert_eq!(period.tariff_id(), None);
         assert_eq!(period.custom_data(), None);
     }
@@ -200,8 +201,8 @@ mod tests {
     fn test_with_methods() {
         let start_time = Utc::now();
         let dimension = CostDimensionType {
-            r#type: CostDimensionEnumType::Energy,
-            volume: 10.5,
+            type_: CostDimensionEnumType::Energy,
+            volume: Decimal::try_from(10.5).unwrap_or_default(),
             custom_data: None,
         };
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -212,8 +213,8 @@ mod tests {
 
         assert_eq!(period.start_period(), &start_time);
         assert_eq!(period.dimensions().len(), 1);
-        assert_eq!(period.dimensions()[0].r#type, CostDimensionEnumType::Energy);
-        assert_eq!(period.dimensions()[0].volume, 10.5);
+        assert_eq!(period.dimensions()[0].r#type(), &CostDimensionEnumType::Energy);
+        assert_eq!(period.dimensions()[0].volume(), 10.5);
         assert_eq!(period.tariff_id(), Some(&"tariff-123".to_string()));
         assert_eq!(period.custom_data(), Some(&custom_data));
     }
@@ -222,13 +223,13 @@ mod tests {
     fn test_setter_methods() {
         let start_time = Utc::now();
         let dimension1 = CostDimensionType {
-            r#type: CostDimensionEnumType::Energy,
-            volume: 10.5,
+            type_: CostDimensionEnumType::Energy,
+            volume: Decimal::try_from(10.5).unwrap_or_default(),
             custom_data: None,
         };
         let dimension2 = CostDimensionType {
-            r#type: CostDimensionEnumType::ChargingTime,
-            volume: 30.0,
+            type_: CostDimensionEnumType::ChargingTime,
+            volume: Decimal::try_from(30.0).unwrap_or_default(),
             custom_data: None,
         };
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -244,13 +245,13 @@ mod tests {
 
         assert_eq!(period.start_period(), &new_time);
         assert_eq!(period.dimensions().len(), 2);
-        assert_eq!(period.dimensions()[0].r#type, CostDimensionEnumType::Energy);
-        assert_eq!(period.dimensions()[0].volume, 10.5);
+        assert_eq!(period.dimensions()[0].r#type(), &CostDimensionEnumType::Energy);
+        assert_eq!(period.dimensions()[0].volume(), 10.5);
         assert_eq!(
-            period.dimensions()[1].r#type,
-            CostDimensionEnumType::ChargingTime
+            period.dimensions()[1].r#type(),
+            &CostDimensionEnumType::ChargingTime
         );
-        assert_eq!(period.dimensions()[1].volume, 30.0);
+        assert_eq!(period.dimensions()[1].volume(), 30.0);
         assert_eq!(period.tariff_id(), Some(&"tariff-456".to_string()));
         assert_eq!(period.custom_data(), Some(&custom_data));
 
@@ -265,8 +266,8 @@ mod tests {
     fn test_validate() {
         let start_time = Utc::now();
         let dimension = CostDimensionType {
-            r#type: CostDimensionEnumType::Energy,
-            volume: 10.5,
+            type_: CostDimensionEnumType::Energy,
+            volume: Decimal::try_from(10.5).unwrap_or_default(),
             custom_data: None,
         };
 
