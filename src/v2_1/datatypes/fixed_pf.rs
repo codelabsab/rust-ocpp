@@ -26,8 +26,7 @@ pub struct FixedPFType {
     pub start_time: Option<DateTime<Utc>>,
 
     /// Duration of the setting in seconds.
-    #[serde(skip_serializing_if = "Option::is_none")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
