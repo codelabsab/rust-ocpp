@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 use rust_decimal::Decimal;
+use rust_decimal::prelude::{FromPrimitive, ToPrimitive};
 use super::custom_data::CustomDataType;
 
 /// Entry in the EVPowerSchedule.
@@ -34,7 +35,7 @@ impl EVPowerScheduleEntryType {
     pub fn new(duration: i32, power: f64) -> Self {
         Self {
             duration,
-            power,
+            power: Decimal::from_f64(power).unwrap_or_default(),
             custom_data: None,
         }
     }
@@ -80,9 +81,18 @@ impl EVPowerScheduleEntryType {
     ///
     /// # Returns
     ///
-    /// The power in Watts (W)
-    pub fn power(&self) -> f64 {
-        self.power
+    /// The power in Watts (W) as a Decimal
+    pub fn power(&self) -> &Decimal {
+        &self.power
+    }
+
+    /// Gets the power as f64.
+    ///
+    /// # Returns
+    ///
+    /// The power in Watts (W) as an f64, or 0.0 if conversion fails
+    pub fn power_as_f64(&self) -> f64 {
+        self.power.to_f64().unwrap_or(0.0)
     }
 
     /// Sets the power.
@@ -95,6 +105,20 @@ impl EVPowerScheduleEntryType {
     ///
     /// Self reference for method chaining
     pub fn set_power(&mut self, power: f64) -> &mut Self {
+        self.power = Decimal::from_f64(power).unwrap_or_default();
+        self
+    }
+
+    /// Sets the power from a Decimal.
+    ///
+    /// # Arguments
+    ///
+    /// * `power` - Power in Watts (W) as a Decimal
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_power_decimal(&mut self, power: Decimal) -> &mut Self {
         self.power = power;
         self
     }
@@ -126,16 +150,19 @@ impl EVPowerScheduleEntryType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rust_decimal_macros::dec;
 
     #[test]
     fn test_new_ev_power_schedule_entry() {
         let duration = 3600;
         let power = 11000.0;
+        let expected_decimal = Decimal::from_f64(power).unwrap();
 
         let entry = EVPowerScheduleEntryType::new(duration, power);
 
         assert_eq!(entry.duration(), duration);
-        assert_eq!(entry.power(), power);
+        assert_eq!(entry.power(), &expected_decimal);
+        assert_eq!(entry.power_as_f64(), power);
         assert_eq!(entry.custom_data(), None);
     }
 
@@ -143,6 +170,7 @@ mod tests {
     fn test_with_custom_data() {
         let duration = 3600;
         let power = 11000.0;
+        let expected_decimal = Decimal::from_f64(power).unwrap();
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -152,7 +180,7 @@ mod tests {
             EVPowerScheduleEntryType::new(duration, power).with_custom_data(custom_data.clone());
 
         assert_eq!(entry.duration(), duration);
-        assert_eq!(entry.power(), power);
+        assert_eq!(entry.power(), &expected_decimal);
         assert_eq!(entry.custom_data(), Some(&custom_data));
     }
 
@@ -162,6 +190,7 @@ mod tests {
         let power1 = 11000.0;
         let duration2 = 7200;
         let power2 = 7500.0;
+        let expected_decimal2 = Decimal::from_f64(power2).unwrap();
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -175,11 +204,41 @@ mod tests {
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(entry.duration(), duration2);
-        assert_eq!(entry.power(), power2);
+        assert_eq!(entry.power(), &expected_decimal2);
         assert_eq!(entry.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
         entry.set_custom_data(None);
         assert_eq!(entry.custom_data(), None);
+    }
+
+    #[test]
+    fn test_set_power_decimal() {
+        let duration = 3600;
+        let power_f64 = 11000.0;
+        let power_decimal = dec!(12345.6789);
+
+        let mut entry = EVPowerScheduleEntryType::new(duration, power_f64);
+        entry.set_power_decimal(power_decimal);
+
+        assert_eq!(entry.power(), &power_decimal);
+    }
+
+    #[test]
+    fn test_decimal_precision() {
+        // Test with a high precision decimal value
+        let duration = 3600;
+        let power_decimal = dec!(12345.6789012345);
+
+        let mut entry = EVPowerScheduleEntryType::new(duration, 0.0);
+        entry.set_power_decimal(power_decimal);
+
+        assert_eq!(entry.power(), &power_decimal);
+
+        // Verify precision is maintained through serialization/deserialization
+        let serialized = serde_json::to_string(&entry).unwrap();
+        let deserialized: EVPowerScheduleEntryType = serde_json::from_str(&serialized).unwrap();
+
+        assert_eq!(deserialized.power(), &power_decimal);
     }
 }
