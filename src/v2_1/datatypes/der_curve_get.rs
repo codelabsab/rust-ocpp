@@ -8,11 +8,8 @@ use crate::v2_1::enumerations::der_control::DERControlEnumType;
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct DERCurveGetType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// The DER curve.
+    #[validate(nested)]
     pub curve: DERCurveType,
 
     /// Id of DER curve.
@@ -27,6 +24,11 @@ pub struct DERCurveGetType {
 
     /// True if this setting is superseded by a higher priority setting (i.e. lower value of priority).
     pub is_superseded: bool,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl DERCurveGetType {
@@ -312,5 +314,62 @@ mod tests {
         // Test clearing optional fields
         curve_get.set_custom_data(None);
         assert_eq!(curve_get.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validate() {
+        // 创建有效的DERCurveGetType实例
+        let curve_points = vec![DERCurvePointsType::new(1.0, 2.0)];
+        let curve = DERCurveType::new(curve_points, 1, DERUnitEnumType::PctMaxW);
+        let id = "valid_id".to_string();
+        let curve_type = DERControlEnumType::FreqDroop;
+        let is_default = true;
+        let is_superseded = false;
+
+        let valid_curve_get = DERCurveGetType::new(
+            curve.clone(),
+            id.clone(),
+            curve_type.clone(),
+            is_default,
+            is_superseded,
+        );
+
+        // 验证有效实例应该通过
+        assert!(valid_curve_get.validate().is_ok());
+
+        // 测试ID长度超过限制的情况
+        let long_id = "a".repeat(37); // 创建一个37字符长的ID，超过了36的限制
+        let invalid_id_curve_get = DERCurveGetType::new(
+            curve.clone(),
+            long_id,
+            curve_type.clone(),
+            is_default,
+            is_superseded,
+        );
+
+        // 验证应该失败，因为ID太长
+        let validation_result = invalid_id_curve_get.validate();
+        assert!(validation_result.is_err());
+        let error_message = validation_result.unwrap_err().to_string();
+        assert!(error_message.contains("id"));
+        assert!(error_message.contains("length"));
+
+        // 测试curve_data为空的情况
+        let empty_curve_points: Vec<DERCurvePointsType> = vec![];
+        let invalid_curve = DERCurveType::new(empty_curve_points, 1, DERUnitEnumType::PctMaxW);
+        let invalid_curve_get = DERCurveGetType::new(
+            invalid_curve,
+            id.clone(),
+            curve_type.clone(),
+            is_default,
+            is_superseded,
+        );
+
+        // 验证应该失败，因为curve_data为空
+        let validation_result = invalid_curve_get.validate();
+        assert!(validation_result.is_err());
+        let error_message = validation_result.unwrap_err().to_string();
+        assert!(error_message.contains("curve"));
+        assert!(error_message.contains("curve_data"));
     }
 }
