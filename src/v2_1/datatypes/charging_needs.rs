@@ -26,7 +26,7 @@ pub struct ChargingNeedsType {
 
     /// Modes of energy transfer that are marked as available by EV
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(min = 1))]
+    #[validate(length(min = 1), nested)]
     pub available_energy_transfer: Option<Vec<EnergyTransferModeEnumType>>,
 
     /// Indicates whether EV wants to operate in Dynamic or Scheduled mode.When absent, Scheduled mode is assumed for backwards compatibility.ISO 15118-20: ServiceSelectionReq(SelectedEnergyTransferService)
