@@ -30,7 +30,7 @@ pub struct FixedVarType {
     pub start_time: Option<DateTime<Utc>>,
 
     /// Duration in seconds that this setting is active.
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
