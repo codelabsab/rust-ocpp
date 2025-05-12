@@ -1,44 +1,51 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-
+use super::super::helpers::validator::validate_identifier_string;
 use super::{custom_data::CustomDataType, fixed_var::FixedVarType};
 
 /// Fixed VAr get type for retrieving fixed VAr settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct FixedVarGetType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
-    /// The fixed VAr settings.
-    pub fixed_var: FixedVarType,
-
     /// Id of the setting.
-    #[validate(length(max = 36))]
+    #[validate(length(max = 36), custom(function = "validate_identifier_string"))]
     pub id: String,
 
-    /// True if this setting is superseded by a higher priority setting (i.e. lower value of priority).
+    /// True if setting is a default control.
+    pub is_default: bool,
+
+    /// True if this setting is superseded by a lower priority setting
     pub is_superseded: bool,
+
+    /// The fixed VAr settings.
+    #[validate(nested)]
+    pub fixed_var: FixedVarType,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl FixedVarGetType {
     /// Creates a new `FixedVarGetType` with required fields.
     ///
     /// # Arguments
-    ///
+    /// 
     /// * `fixed_var` - The fixed VAr settings
     /// * `id` - Id of the setting
     /// * `is_superseded` - True if this setting is superseded by a higher priority setting
     ///
+    /// * `is_default` - True if setting is a default control
     /// # Returns
     ///
     /// A new instance of `FixedVarGetType` with optional fields set to `None`
-    pub fn new(fixed_var: FixedVarType, id: String, is_superseded: bool) -> Self {
+    pub fn new(fixed_var: FixedVarType, id: String, is_superseded: bool, is_default: bool) -> Self {
         Self {
             fixed_var,
             id,
             is_superseded,
+            is_default,
             custom_data: None,
         }
     }
@@ -126,6 +133,29 @@ impl FixedVarGetType {
         self
     }
 
+    /// Gets whether this setting is a default control.
+    ///
+    /// # Returns
+    ///
+    /// True if setting is a default control
+    pub fn is_default(&self) -> bool {
+        self.is_default
+    }
+
+    /// Sets whether this setting is a default control.
+    ///
+    /// # Arguments
+    ///
+    /// * `is_default` - True if setting is a default control
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_is_default(&mut self, is_default: bool) -> &mut Self {
+        self.is_default = is_default;
+        self
+    }
+
     /// Gets the custom data.
     ///
     /// # Returns
@@ -157,14 +187,16 @@ mod tests {
     #[test]
     fn test_new_fixed_var_get() {
         let fixed_var = FixedVarType::new(1, 100.0);
-        let id = "setting1".to_string();
+        let id = "setting1".to_string(); 
         let is_superseded = false;
+        let is_default = true;
 
-        let fixed_var_get = FixedVarGetType::new(fixed_var.clone(), id.clone(), is_superseded);
+        let fixed_var_get = FixedVarGetType::new(fixed_var.clone(), id.clone(), is_superseded, is_default);
 
         assert_eq!(fixed_var_get.fixed_var(), &fixed_var);
         assert_eq!(fixed_var_get.id(), id);
         assert_eq!(fixed_var_get.is_superseded(), is_superseded);
+        assert_eq!(fixed_var_get.is_default(), is_default);
         assert_eq!(fixed_var_get.custom_data(), None);
     }
 
@@ -172,15 +204,17 @@ mod tests {
     fn test_with_custom_data() {
         let fixed_var = FixedVarType::new(1, 100.0);
         let id = "setting1".to_string();
-        let is_superseded = false;
+        let is_superseded = false; 
+        let is_default = true;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let fixed_var_get = FixedVarGetType::new(fixed_var.clone(), id.clone(), is_superseded)
+        let fixed_var_get = FixedVarGetType::new(fixed_var.clone(), id.clone(), is_superseded, is_default)
             .with_custom_data(custom_data.clone());
 
         assert_eq!(fixed_var_get.fixed_var(), &fixed_var);
         assert_eq!(fixed_var_get.id(), id);
         assert_eq!(fixed_var_get.is_superseded(), is_superseded);
+        assert_eq!(fixed_var_get.is_default(), is_default);
         assert_eq!(fixed_var_get.custom_data(), Some(&custom_data));
     }
 
@@ -188,24 +222,28 @@ mod tests {
     fn test_setter_methods() {
         let fixed_var1 = FixedVarType::new(1, 100.0);
         let fixed_var2 = FixedVarType::new(2, -50.0);
-        let id1 = "setting1".to_string();
-        let id2 = "setting2".to_string();
-        let is_superseded1 = false;
-        let is_superseded2 = true;
+        let id1 = "setting1".to_string(); 
+        let id2 = "setting2".to_string(); 
+        let is_superseded1 = false; 
+        let is_superseded2 = true; 
+        let is_default1 = true; 
+        let is_default2 = false;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let mut fixed_var_get =
-            FixedVarGetType::new(fixed_var1.clone(), id1.clone(), is_superseded1);
+            FixedVarGetType::new(fixed_var1.clone(), id1.clone(), is_superseded1, is_default1);
 
         fixed_var_get
             .set_fixed_var(fixed_var2.clone())
             .set_id(id2.clone())
             .set_is_superseded(is_superseded2)
+            .set_is_default(is_default2)
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(fixed_var_get.fixed_var(), &fixed_var2);
         assert_eq!(fixed_var_get.id(), id2);
         assert_eq!(fixed_var_get.is_superseded(), is_superseded2);
+        assert_eq!(fixed_var_get.is_default(), is_default2);
         assert_eq!(fixed_var_get.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
