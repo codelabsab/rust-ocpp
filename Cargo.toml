@@ -34,11 +34,12 @@ v2_1 = []
 [dependencies]
 serde = { version = "1", default-features = false, features = ["derive"] }
 chrono = { version = "0.4.39", default-features = false, features = [
+    "now",
     "serde",
     "alloc",
 ] }
 uuid = { version = "1", default-features = false, features = ["v4"] }
-validator = { version = "0.19.0", default-features = false, features = [
+validator = { version = "0.20.0", default-features = false, features = [
     "derive",
 ] }
 regex = "1.11.1"
@@ -47,10 +48,10 @@ rust_decimal = { version = "1.36.0", features = [
 ] }
 serde_json = "1"
 lazy_static = "1.4"
-jsonschema = "0.28"
+jsonschema = "0.30.0"
 
 [dev-dependencies]
 chrono = { version = "0.4.39", default-features = false, features = ["clock"] }
 mockall = "0.13.1"
-jsonschema = "0.28"
+jsonschema = "0.30.0"
 rust_decimal_macros = "1.36.0"
