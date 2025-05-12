@@ -143,16 +143,8 @@ mod tests {
 
         // Create power schedule
         let power_entries = vec![
-            EVPowerScheduleEntryType {
-                duration: 3600,
-                power: 11000.0,
-                custom_data: None,
-            },
-            EVPowerScheduleEntryType {
-                duration: 7200,
-                power: 7500.0,
-                custom_data: None,
-            },
+            EVPowerScheduleEntryType::new(3600, 11000.0),
+            EVPowerScheduleEntryType::new(7200, 7500.0),
         ];
 
         let power_schedule = EVPowerScheduleType {
@@ -185,11 +177,7 @@ mod tests {
         let time_anchor = Utc::now();
 
         // Create power schedule
-        let power_entries = vec![EVPowerScheduleEntryType {
-            duration: 3600,
-            power: 11000.0,
-            custom_data: None,
-        }];
+        let power_entries = vec![EVPowerScheduleEntryType::new(3600, 11000.0)];
 
         let power_schedule = EVPowerScheduleType {
             time_anchor: time_anchor.clone(),
@@ -226,11 +214,7 @@ mod tests {
         let time_anchor1 = Utc::now();
 
         // Create initial power schedule
-        let power_entries1 = vec![EVPowerScheduleEntryType {
-            duration: 3600,
-            power: 11000.0,
-            custom_data: None,
-        }];
+        let power_entries1 = vec![EVPowerScheduleEntryType::new(3600, 11000.0)];
 
         let power_schedule1 = EVPowerScheduleType {
             time_anchor: time_anchor1.clone(),
@@ -250,16 +234,8 @@ mod tests {
         // Create updated power schedule
         let time_anchor2 = Utc::now();
         let power_entries2 = vec![
-            EVPowerScheduleEntryType {
-                duration: 1800,
-                power: 22000.0,
-                custom_data: None,
-            },
-            EVPowerScheduleEntryType {
-                duration: 3600,
-                power: 11000.0,
-                custom_data: None,
-            },
+            EVPowerScheduleEntryType::new(1800, 22000.0),
+            EVPowerScheduleEntryType::new(3600, 11000.0),
         ];
 
         let power_schedule2 = EVPowerScheduleType {

@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
+use std::fmt;
 
 use super::custom_data::CustomDataType;
 
 /// Fixed power factor settings.
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct FixedPFType {
     /// Custom data from the Charging Station.
@@ -124,6 +125,18 @@ impl FixedPFType {
     }
 }
 
+/// Implementation of the Display trait for FixedPFType
+impl fmt::Display for FixedPFType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "FixedPFType {{ priority: {}, power_factor: {} }}",
+            self.priority,
+            self.power_factor
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -176,5 +189,28 @@ mod tests {
         // Test clearing optional fields
         fixed_pf.set_custom_data(None);
         assert_eq!(fixed_pf.custom_data(), None);
+    }
+
+    #[test]
+    fn test_default() {
+        // Test the Default trait implementation
+        let default_fixed_pf = FixedPFType::default();
+
+        // Verify default values
+        assert_eq!(default_fixed_pf.priority(), 0);
+        assert_eq!(default_fixed_pf.power_factor(), 0.0);
+        assert_eq!(default_fixed_pf.custom_data(), None);
+    }
+
+    #[test]
+    fn test_display() {
+        // Test the Display trait implementation
+        let fixed_pf = FixedPFType::new(1, 0.95);
+
+        let display_string = format!("{}", fixed_pf);
+
+        // Verify the display string contains all the important information
+        assert!(display_string.contains("priority: 1"));
+        assert!(display_string.contains("power_factor: 0.95"));
     }
 }
