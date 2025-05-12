@@ -141,7 +141,7 @@ impl EVSEType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::{json, Value};
+    use serde_json::json;
     use validator::Validate;
 
     #[test]

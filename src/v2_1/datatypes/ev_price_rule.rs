@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 use rust_decimal::Decimal;
-use rust_decimal::prelude::{FromPrimitive, ToPrimitive};
+use rust_decimal::prelude::ToPrimitive;
 use super::custom_data::CustomDataType;
 
 /// Price rule for a power range.
@@ -174,7 +174,7 @@ impl EVPriceRuleType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::{json, Value};
+    use serde_json::json;
     use validator::Validate;
     use rust_decimal_macros::dec;
 
