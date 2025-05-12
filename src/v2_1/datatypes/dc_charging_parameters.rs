@@ -24,19 +24,31 @@ pub struct DCChargingParametersType {
     /// Maximum power (in W) supported by the electric vehicle. Required for DC charging.
     /// Relates to:
     /// *ISO 15118-2*: DC_EVChargeParameterType: EVMaximumPowerLimit
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub ev_max_power: Option<Decimal>,
 
     /// Capacity of the electric vehicle battery (in Wh).
     /// Relates to:
     /// *ISO 15118-2*: DC_EVChargeParameterType: EVEnergyCapacity
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub ev_energy_capacity: Option<Decimal>,
 
     /// Amount of energy requested (in Wh). This includes energy required for preconditioning.
     /// Relates to:
     /// *ISO 15118-2*: DC_EVChargeParameterType: EVEnergyRequest
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub energy_amount: Option<Decimal>,
 
     /// Energy available in the battery (in percent of the

@@ -27,7 +27,11 @@ pub struct FixedPFType {
 
     /// Duration of the setting in seconds.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub duration: Option<Decimal>,
 
     /// Custom data from the Charging Station.

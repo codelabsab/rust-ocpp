@@ -36,11 +36,19 @@ pub struct ChargingScheduleType {
     pub charging_rate_unit: ChargingRateUnitEnumType,
 
     /// Minimum charging rate supported by the EV. The unit of measure is defined by the chargingRateUnit.
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub min_charging_rate: Option<Decimal>,
 
     /// *(2.1)* Power tolerance when following EVPowerProfile.
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub power_tolerance: Option<Decimal>,
 
     /// *(2.1)* Power tolerance when following EVPowerProfile.

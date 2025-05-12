@@ -28,15 +28,27 @@ pub struct EnterServiceType {
     pub low_freq: Decimal,
 
     /// Enter service delay
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub delay: Option<Decimal>,
 
     /// Enter service randomized delay
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub random_delay: Option<Decimal>,
 
     /// Enter service ramp rate in seconds
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub ramp_rate: Option<Decimal>,
 
     /// Custom data from the Charging Station.

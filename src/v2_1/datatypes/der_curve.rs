@@ -40,7 +40,11 @@ pub struct DERCurveType {
 
     /// Open loop response time, the time to ramp up to 90% of the new target in response to the change in voltage, in seconds.
     /// A value of 0 is used to mean no limit. When not present, the device should follow its default behavior.
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub response_time: Option<Decimal>,
 
     /// Point in time when this curve will become activated. Only absent when default is true.
@@ -48,7 +52,11 @@ pub struct DERCurveType {
     pub start_time: Option<DateTime<Utc>>,
 
     /// Duration in seconds that this curve will be active. Only absent when default is true.
-    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub duration: Option<Decimal>,
 
     /// Custom data from the Charging Station.

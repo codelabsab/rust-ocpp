@@ -1,24 +1,46 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-
+use rust_decimal::Decimal;
+use rust_decimal::prelude::{FromPrimitive, ToPrimitive};
 use super::custom_data::CustomDataType;
+use chrono::{DateTime, Utc};
+use crate::v2_1::enumerations::der_unit::DERUnitEnumType;
 
 /// Fixed VAr settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct FixedVarType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Priority of setting (0=highest)
     #[validate(range(min = 0))]
     pub priority: i32,
 
-    /// Fixed VAr value in VAr.
-    /// A positive value means DER is absorbing reactive power (under-excited),
-    /// a negative value means DER is injecting reactive power (over-excited).
-    pub var: f64,
+    /// The value specifies a target var output
+    /// interpreted as a signed percentage (-100 to 100). A
+    /// negative value refers to charging, whereas a positive one
+    /// refers to discharging. The value type is determined by the
+    /// unit field.
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
+    pub setpoint: Decimal,
+
+    /// Unit of the setpoint.
+    pub unit: DERUnitEnumType,
+
+    /// Time when this setting becomes active.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub start_time: Option<DateTime<Utc>>,
+
+    /// Duration in seconds that this setting is active.
+        #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
+    pub duration: Option<Decimal>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl FixedVarType {
@@ -35,7 +57,10 @@ impl FixedVarType {
     pub fn new(priority: i32, var: f64) -> Self {
         Self {
             priority,
-            var,
+            setpoint: Decimal::from_f64(var).unwrap_or_default(),
+            unit: DERUnitEnumType::PctMaxVar,
+            start_time: None,
+            duration: None,
             custom_data: None,
         }
     }
@@ -83,7 +108,7 @@ impl FixedVarType {
     ///
     /// The fixed VAr value in VAr
     pub fn var(&self) -> f64 {
-        self.var
+        self.setpoint.to_f64().unwrap_or_default()
     }
 
     /// Sets the VAr value.
@@ -96,7 +121,7 @@ impl FixedVarType {
     ///
     /// Self reference for method chaining
     pub fn set_var(&mut self, var: f64) -> &mut Self {
-        self.var = var;
+        self.setpoint = Decimal::from_f64(var).unwrap_or_default();
         self
     }
 
@@ -121,6 +146,25 @@ impl FixedVarType {
     pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
         self.custom_data = custom_data;
         self
+    }
+}
+
+/// Trait for managing Fixed VAr settings.
+pub trait FixedVarSettings {
+    /// Gets the priority of the setting.
+    fn get_priority(&self) -> i32;
+
+    /// Gets the setpoint value.
+    fn get_setpoint(&self) -> f64;
+}
+
+impl FixedVarSettings for FixedVarType {
+    fn get_priority(&self) -> i32 {
+        self.priority()
+    }
+
+    fn get_setpoint(&self) -> f64 {
+        self.var()
     }
 }
 
@@ -175,5 +219,14 @@ mod tests {
         // Test clearing optional fields
         fixed_var.set_custom_data(None);
         assert_eq!(fixed_var.custom_data(), None);
+    }
+
+    #[test]
+    fn test_fixed_var_settings_trait() {
+        let priority = 1;
+        let var_value = 100.0;
+        let fixed_var = FixedVarType::new(priority, var_value);
+        assert_eq!(fixed_var.get_priority(), priority);
+        assert_eq!(fixed_var.get_setpoint(), var_value);
     }
 }
