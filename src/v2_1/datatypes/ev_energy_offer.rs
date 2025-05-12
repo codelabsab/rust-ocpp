@@ -159,12 +159,10 @@ mod tests {
             time_anchor: time_anchor.clone(),
             ev_power_schedule_entries: power_entries,
             custom_data: None,
-        };
-
-        // Create price schedule
+        };        // Create price schedule
         let price_entries = vec![
-            EVAbsolutePriceScheduleEntryType::new(3600, 0.25),
-            EVAbsolutePriceScheduleEntryType::new(7200, 0.30),
+            EVAbsolutePriceScheduleEntryType::new_with_single_price(3600, 0.25, 0.0),
+            EVAbsolutePriceScheduleEntryType::new_with_single_price(7200, 0.30, 0.0),
         ];
 
         let price_schedule = EVAbsolutePriceScheduleType {
@@ -200,7 +198,7 @@ mod tests {
         };
 
         // Create price schedule
-        let price_entries = vec![EVAbsolutePriceScheduleEntryType::new(3600, 0.25)];
+        let price_entries = vec![EVAbsolutePriceScheduleEntryType::new_with_single_price(3600, 0.25, 0.0)];
 
         let price_schedule = EVAbsolutePriceScheduleType {
             time_anchor: time_anchor.clone(),
@@ -238,10 +236,8 @@ mod tests {
             time_anchor: time_anchor1.clone(),
             ev_power_schedule_entries: power_entries1,
             custom_data: None,
-        };
-
-        // Create initial price schedule
-        let price_entries1 = vec![EVAbsolutePriceScheduleEntryType::new(3600, 0.25)];
+        };        // Create initial price schedule
+        let price_entries1 = vec![EVAbsolutePriceScheduleEntryType::new_with_single_price(3600, 0.25, 0.0)];
 
         let price_schedule1 = EVAbsolutePriceScheduleType {
             time_anchor: time_anchor1.clone(),
@@ -270,12 +266,10 @@ mod tests {
             time_anchor: time_anchor2.clone(),
             ev_power_schedule_entries: power_entries2,
             custom_data: None,
-        };
-
-        // Create updated price schedule
+        };        // Create updated price schedule
         let price_entries2 = vec![
-            EVAbsolutePriceScheduleEntryType::new(1800, 0.20),
-            EVAbsolutePriceScheduleEntryType::new(3600, 0.25),
+            EVAbsolutePriceScheduleEntryType::new_with_single_price(1800, 0.20, 0.0),
+            EVAbsolutePriceScheduleEntryType::new_with_single_price(3600, 0.25, 0.0),
         ];
 
         let price_schedule2 = EVAbsolutePriceScheduleType {
