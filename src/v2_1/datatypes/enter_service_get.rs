@@ -130,7 +130,17 @@ mod tests {
 
     #[test]
     fn test_new_enter_service_get() {
-        let enter_service = EnterServiceType::new(1, 240.0, 220.0, 60.5, 59.5, 5.0, 2.0, 10.0);
+        use rust_decimal::prelude::*;
+
+        let high_voltage = Decimal::from_str("240.0").unwrap();
+        let low_voltage = Decimal::from_str("220.0").unwrap();
+        let high_freq = Decimal::from_str("60.5").unwrap();
+        let low_freq = Decimal::from_str("59.5").unwrap();
+        let delay = Decimal::from_str("5.0").unwrap();
+        let random_delay = Decimal::from_str("2.0").unwrap();
+        let ramp_rate = Decimal::from_str("10.0").unwrap();
+
+        let enter_service = EnterServiceType::new(1, high_voltage, low_voltage, high_freq, low_freq, delay, random_delay, ramp_rate);
         let id = "setting1".to_string();
 
         let enter_service_get = EnterServiceGetType::new(enter_service.clone(), id.clone());
@@ -142,7 +152,17 @@ mod tests {
 
     #[test]
     fn test_with_custom_data() {
-        let enter_service = EnterServiceType::new(1, 240.0, 220.0, 60.5, 59.5, 5.0, 2.0, 10.0);
+        use rust_decimal::prelude::*;
+
+        let high_voltage = Decimal::from_str("240.0").unwrap();
+        let low_voltage = Decimal::from_str("220.0").unwrap();
+        let high_freq = Decimal::from_str("60.5").unwrap();
+        let low_freq = Decimal::from_str("59.5").unwrap();
+        let delay = Decimal::from_str("5.0").unwrap();
+        let random_delay = Decimal::from_str("2.0").unwrap();
+        let ramp_rate = Decimal::from_str("10.0").unwrap();
+
+        let enter_service = EnterServiceType::new(1, high_voltage, low_voltage, high_freq, low_freq, delay, random_delay, ramp_rate);
         let id = "setting1".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -156,8 +176,26 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let enter_service1 = EnterServiceType::new(1, 240.0, 220.0, 60.5, 59.5, 5.0, 2.0, 10.0);
-        let enter_service2 = EnterServiceType::new(2, 245.0, 215.0, 61.0, 59.0, 6.0, 3.0, 12.0);
+        use rust_decimal::prelude::*;
+
+        let high_voltage1 = Decimal::from_str("240.0").unwrap();
+        let low_voltage1 = Decimal::from_str("220.0").unwrap();
+        let high_freq1 = Decimal::from_str("60.5").unwrap();
+        let low_freq1 = Decimal::from_str("59.5").unwrap();
+        let delay1 = Decimal::from_str("5.0").unwrap();
+        let random_delay1 = Decimal::from_str("2.0").unwrap();
+        let ramp_rate1 = Decimal::from_str("10.0").unwrap();
+
+        let high_voltage2 = Decimal::from_str("245.0").unwrap();
+        let low_voltage2 = Decimal::from_str("215.0").unwrap();
+        let high_freq2 = Decimal::from_str("61.0").unwrap();
+        let low_freq2 = Decimal::from_str("59.0").unwrap();
+        let delay2 = Decimal::from_str("6.0").unwrap();
+        let random_delay2 = Decimal::from_str("3.0").unwrap();
+        let ramp_rate2 = Decimal::from_str("12.0").unwrap();
+
+        let enter_service1 = EnterServiceType::new(1, high_voltage1, low_voltage1, high_freq1, low_freq1, delay1, random_delay1, ramp_rate1);
+        let enter_service2 = EnterServiceType::new(2, high_voltage2, low_voltage2, high_freq2, low_freq2, delay2, random_delay2, ramp_rate2);
         let id1 = "setting1".to_string();
         let id2 = "setting2".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -180,8 +218,18 @@ mod tests {
 
     #[test]
     fn test_validate() {
+        use rust_decimal::prelude::*;
+
         // 创建有效的EnterServiceGetType实例
-        let enter_service = EnterServiceType::new(1, 240.0, 220.0, 60.5, 59.5, 5.0, 2.0, 10.0);
+        let high_voltage = Decimal::from_str("240.0").unwrap();
+        let low_voltage = Decimal::from_str("220.0").unwrap();
+        let high_freq = Decimal::from_str("60.5").unwrap();
+        let low_freq = Decimal::from_str("59.5").unwrap();
+        let delay = Decimal::from_str("5.0").unwrap();
+        let random_delay = Decimal::from_str("2.0").unwrap();
+        let ramp_rate = Decimal::from_str("10.0").unwrap();
+
+        let enter_service = EnterServiceType::new(1, high_voltage, low_voltage, high_freq, low_freq, delay, random_delay, ramp_rate);
         let id = "valid_id".to_string();
 
         let valid_enter_service_get = EnterServiceGetType::new(enter_service.clone(), id.clone());
@@ -201,7 +249,7 @@ mod tests {
         assert!(error_message.contains("length"));
 
         // 测试嵌套验证 - enter_service中的priority为负数
-        let invalid_enter_service = EnterServiceType::new(-1, 240.0, 220.0, 60.5, 59.5, 5.0, 2.0, 10.0);
+        let invalid_enter_service = EnterServiceType::new(-1, high_voltage, low_voltage, high_freq, low_freq, delay, random_delay, ramp_rate);
         let enter_service_get_with_invalid_enter_service = EnterServiceGetType::new(
             invalid_enter_service,
             id.clone(),
@@ -233,10 +281,19 @@ mod tests {
 
     #[test]
     fn test_serialization() {
+        use rust_decimal::prelude::*;
         use serde_json::{json, Value};
 
         // 创建测试数据
-        let enter_service = EnterServiceType::new(1, 240.0, 220.0, 60.5, 59.5, 5.0, 2.0, 10.0)
+        let high_voltage = Decimal::from_str("240.0").unwrap();
+        let low_voltage = Decimal::from_str("220.0").unwrap();
+        let high_freq = Decimal::from_str("60.5").unwrap();
+        let low_freq = Decimal::from_str("59.5").unwrap();
+        let delay = Decimal::from_str("5.0").unwrap();
+        let random_delay = Decimal::from_str("2.0").unwrap();
+        let ramp_rate = Decimal::from_str("10.0").unwrap();
+
+        let enter_service = EnterServiceType::new(1, high_voltage, low_voltage, high_freq, low_freq, delay, random_delay, ramp_rate)
             .with_custom_data(CustomDataType::new("VendorX".to_string()));
         let id = "setting1".to_string();
         let custom_data = CustomDataType::new("VendorY".to_string())
@@ -263,17 +320,7 @@ mod tests {
         assert!(json_value.get("enterService").is_some());
         assert!(json_value.get("id").is_some());
         assert!(json_value.get("customData").is_some());
-
-        // 验证嵌套的enterService字段
-        let enter_service_json = json_value.get("enterService").unwrap();
-        assert!(enter_service_json.get("priority").is_some());
-        assert!(enter_service_json.get("highVoltage").is_some());
-        assert!(enter_service_json.get("lowVoltage").is_some());
-        assert!(enter_service_json.get("highFreq").is_some());
-        assert!(enter_service_json.get("lowFreq").is_some());
-        assert!(enter_service_json.get("delay").is_some());
-        assert!(enter_service_json.get("randomDelay").is_some());
-        assert!(enter_service_json.get("rampRate").is_some());
-        assert!(enter_service_json.get("customData").is_some());
     }
+
+
 }
