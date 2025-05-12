@@ -7,16 +7,18 @@ use super::{custom_data::CustomDataType, enter_service::EnterServiceType};
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct EnterServiceGetType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// The EnterService parameters.
+    #[validate(nested)]
     pub enter_service: EnterServiceType,
 
     /// Id of setting.
     #[validate(length(max = 36))]
     pub id: String,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl EnterServiceGetType {
@@ -174,5 +176,104 @@ mod tests {
         // Test clearing optional fields
         enter_service_get.set_custom_data(None);
         assert_eq!(enter_service_get.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validate() {
+        // 创建有效的EnterServiceGetType实例
+        let enter_service = EnterServiceType::new(1, 240.0, 220.0, 60.5, 59.5, 5.0, 2.0, 10.0);
+        let id = "valid_id".to_string();
+
+        let valid_enter_service_get = EnterServiceGetType::new(enter_service.clone(), id.clone());
+
+        // 验证有效实例应该通过
+        assert!(valid_enter_service_get.validate().is_ok());
+
+        // 测试ID长度超过限制的情况
+        let long_id = "a".repeat(37); // 创建一个37字符长的ID，超过了36的限制
+        let invalid_id_enter_service_get = EnterServiceGetType::new(enter_service.clone(), long_id);
+
+        // 验证应该失败，因为ID太长
+        let validation_result = invalid_id_enter_service_get.validate();
+        assert!(validation_result.is_err());
+        let error_message = validation_result.unwrap_err().to_string();
+        assert!(error_message.contains("id"));
+        assert!(error_message.contains("length"));
+
+        // 测试嵌套验证 - enter_service中的priority为负数
+        let invalid_enter_service = EnterServiceType::new(-1, 240.0, 220.0, 60.5, 59.5, 5.0, 2.0, 10.0);
+        let enter_service_get_with_invalid_enter_service = EnterServiceGetType::new(
+            invalid_enter_service,
+            id.clone(),
+        );
+
+        // 验证应该失败，因为enter_service中的priority为负数
+        let validation_result = enter_service_get_with_invalid_enter_service.validate();
+        assert!(validation_result.is_err());
+        let error_message = validation_result.unwrap_err().to_string();
+        assert!(error_message.contains("enter_service"));
+        assert!(error_message.contains("priority"));
+
+        // 测试嵌套验证 - 使用无效的CustomDataType
+        let too_long_vendor_id = "X".repeat(256); // 超过255字符限制
+        let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
+
+        let enter_service_get_with_invalid_custom_data = EnterServiceGetType {
+            enter_service: enter_service.clone(),
+            id: id.clone(),
+            custom_data: Some(invalid_custom_data),
+        };
+
+        // 验证应该失败，因为custom_data无效
+        let validation_result = enter_service_get_with_invalid_custom_data.validate();
+        assert!(validation_result.is_err());
+        let error_message = validation_result.unwrap_err().to_string();
+        assert!(error_message.contains("custom_data"));
+    }
+
+    #[test]
+    fn test_serialization() {
+        use serde_json::{json, Value};
+
+        // 创建测试数据
+        let enter_service = EnterServiceType::new(1, 240.0, 220.0, 60.5, 59.5, 5.0, 2.0, 10.0)
+            .with_custom_data(CustomDataType::new("VendorX".to_string()));
+        let id = "setting1".to_string();
+        let custom_data = CustomDataType::new("VendorY".to_string())
+            .with_property("version".to_string(), json!("1.0"));
+
+        // 创建完整的EnterServiceGetType实例
+        let enter_service_get = EnterServiceGetType {
+            enter_service,
+            id,
+            custom_data: Some(custom_data),
+        };
+
+        // 序列化为JSON
+        let serialized = serde_json::to_string(&enter_service_get).unwrap();
+
+        // 反序列化并验证
+        let deserialized: EnterServiceGetType = serde_json::from_str(&serialized).unwrap();
+
+        assert_eq!(enter_service_get, deserialized);
+
+        // 验证JSON结构
+        let json_value: Value = serde_json::from_str(&serialized).unwrap();
+        assert!(json_value.is_object());
+        assert!(json_value.get("enterService").is_some());
+        assert!(json_value.get("id").is_some());
+        assert!(json_value.get("customData").is_some());
+
+        // 验证嵌套的enterService字段
+        let enter_service_json = json_value.get("enterService").unwrap();
+        assert!(enter_service_json.get("priority").is_some());
+        assert!(enter_service_json.get("highVoltage").is_some());
+        assert!(enter_service_json.get("lowVoltage").is_some());
+        assert!(enter_service_json.get("highFreq").is_some());
+        assert!(enter_service_json.get("lowFreq").is_some());
+        assert!(enter_service_json.get("delay").is_some());
+        assert!(enter_service_json.get("randomDelay").is_some());
+        assert!(enter_service_json.get("rampRate").is_some());
+        assert!(enter_service_json.get("customData").is_some());
     }
 }
