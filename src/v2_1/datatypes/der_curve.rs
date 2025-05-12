@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-
+use rust_decimal::Decimal;
 use super::{
     custom_data::CustomDataType, der_curve_points::DERCurvePointsType, hysteresis::HysteresisType,
     reactive_power_params::ReactivePowerParamsType, voltage_params::VoltageParamsType,
@@ -12,16 +12,13 @@ use crate::v2_1::enumerations::der_unit::DERUnitEnumType;
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct DERCurveType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// List of curve points defining this curve.
-    #[validate(length(min = 1, max = 10))]
+    #[validate(length(min = 1, max = 10), nested)]
     pub curve_data: Vec<DERCurvePointsType>,
 
     /// Hysteresis parameters for this curve.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub hysteresis: Option<HysteresisType>,
 
     /// Priority of curve (0=highest)
@@ -30,10 +27,12 @@ pub struct DERCurveType {
 
     /// Reactive power parameters for this curve.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub reactive_power_params: Option<ReactivePowerParamsType>,
 
     /// Voltage parameters for this curve.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub voltage_params: Option<VoltageParamsType>,
 
     /// Unit of the Y-axis values.
@@ -41,16 +40,22 @@ pub struct DERCurveType {
 
     /// Open loop response time, the time to ramp up to 90% of the new target in response to the change in voltage, in seconds.
     /// A value of 0 is used to mean no limit. When not present, the device should follow its default behavior.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub response_time: Option<f64>,
+    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+    pub response_time: Option<Decimal>,
 
     /// Point in time when this curve will become activated. Only absent when default is true.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub start_time: Option<DateTime<Utc>>,
 
     /// Duration in seconds that this curve will be active. Only absent when default is true.
+    #[serde(with = "rust_decimal::serde::arbitrary_precision_option")]
+    pub duration: Option<Decimal>,
+
+    /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub duration: Option<f64>,
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
+
 }
 
 impl DERCurveType {
@@ -152,7 +157,7 @@ impl DERCurveType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_response_time(mut self, response_time: f64) -> Self {
+    pub fn with_response_time(mut self, response_time: Decimal) -> Self {
         self.response_time = Some(response_time);
         self
     }
@@ -180,7 +185,7 @@ impl DERCurveType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_duration(mut self, duration: f64) -> Self {
+    pub fn with_duration(mut self, duration: Decimal) -> Self {
         self.duration = Some(duration);
         self
     }
@@ -354,7 +359,7 @@ impl DERCurveType {
     /// # Returns
     ///
     /// An optional reference to the response time
-    pub fn response_time(&self) -> Option<f64> {
+    pub fn response_time(&self) -> Option<Decimal> {
         self.response_time
     }
 
@@ -367,7 +372,7 @@ impl DERCurveType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_response_time(&mut self, response_time: Option<f64>) -> &mut Self {
+    pub fn set_response_time(&mut self, response_time: Option<Decimal>) -> &mut Self {
         self.response_time = response_time;
         self
     }
@@ -400,7 +405,7 @@ impl DERCurveType {
     /// # Returns
     ///
     /// An optional reference to the duration
-    pub fn duration(&self) -> Option<f64> {
+    pub fn duration(&self) -> Option<Decimal> {
         self.duration
     }
 
@@ -413,7 +418,7 @@ impl DERCurveType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_duration(&mut self, duration: Option<f64>) -> &mut Self {
+    pub fn set_duration(&mut self, duration: Option<Decimal>) -> &mut Self {
         self.duration = duration;
         self
     }
@@ -446,29 +451,35 @@ mod tests {
 
     #[test]
     fn test_with_optional_fields() {
+        use rust_decimal::prelude::*;
+
         let curve_points = vec![DERCurvePointsType::default()];
         let priority = 1;
         let y_unit = DERUnitEnumType::PctMaxW;
         let custom_data = CustomDataType::new("VendorX".to_string());
         let start_time = Utc.with_ymd_and_hms(2023, 1, 1, 0, 0, 0).unwrap();
+        let response_time = Decimal::from_str("10.5").unwrap();
+        let duration = Decimal::from_str("3600.0").unwrap();
 
         let curve = DERCurveType::new(curve_points.clone(), priority, y_unit.clone())
             .with_custom_data(custom_data.clone())
-            .with_response_time(10.5)
+            .with_response_time(response_time)
             .with_start_time(start_time.clone())
-            .with_duration(3600.0);
+            .with_duration(duration);
 
         assert_eq!(curve.curve_data(), &curve_points);
         assert_eq!(curve.priority(), priority);
         assert_eq!(curve.y_unit(), y_unit);
         assert_eq!(curve.custom_data(), Some(&custom_data));
-        assert_eq!(curve.response_time(), Some(10.5));
+        assert_eq!(curve.response_time(), Some(response_time));
         assert_eq!(curve.start_time(), Some(&start_time));
-        assert_eq!(curve.duration(), Some(3600.0));
+        assert_eq!(curve.duration(), Some(duration));
     }
 
     #[test]
     fn test_setter_methods() {
+        use rust_decimal::prelude::*;
+
         let curve_points1 = vec![DERCurvePointsType::default()];
         let curve_points2 = vec![DERCurvePointsType::default(), DERCurvePointsType::default()];
         let priority1 = 1;
@@ -477,6 +488,8 @@ mod tests {
         let y_unit2 = DERUnitEnumType::PctMaxVar;
         let custom_data = CustomDataType::new("VendorX".to_string());
         let start_time = Utc.with_ymd_and_hms(2023, 1, 1, 0, 0, 0).unwrap();
+        let response_time = Decimal::from_str("10.5").unwrap();
+        let duration = Decimal::from_str("3600.0").unwrap();
 
         let mut curve = DERCurveType::new(curve_points1.clone(), priority1, y_unit1.clone());
 
@@ -485,17 +498,17 @@ mod tests {
             .set_priority(priority2)
             .set_y_unit(y_unit2.clone())
             .set_custom_data(Some(custom_data.clone()))
-            .set_response_time(Some(10.5))
+            .set_response_time(Some(response_time))
             .set_start_time(Some(start_time.clone()))
-            .set_duration(Some(3600.0));
+            .set_duration(Some(duration));
 
         assert_eq!(curve.curve_data(), &curve_points2);
         assert_eq!(curve.priority(), priority2);
         assert_eq!(curve.y_unit(), y_unit2);
         assert_eq!(curve.custom_data(), Some(&custom_data));
-        assert_eq!(curve.response_time(), Some(10.5));
+        assert_eq!(curve.response_time(), Some(response_time));
         assert_eq!(curve.start_time(), Some(&start_time));
-        assert_eq!(curve.duration(), Some(3600.0));
+        assert_eq!(curve.duration(), Some(duration));
 
         // Test clearing optional fields
         curve
@@ -508,5 +521,175 @@ mod tests {
         assert_eq!(curve.response_time(), None);
         assert_eq!(curve.start_time(), None);
         assert_eq!(curve.duration(), None);
+    }
+
+    #[test]
+    fn test_validate() {
+        use rust_decimal::prelude::*;
+
+        // 创建有效的DERCurveType实例
+        let curve_points = vec![DERCurvePointsType {
+            x: Decimal::from_str("1.0").unwrap(),
+            y: Decimal::from_str("2.0").unwrap(),
+            custom_data: None,
+        }];
+        let priority = 1;
+        let y_unit = DERUnitEnumType::PctMaxW;
+
+        let valid_curve = DERCurveType::new(curve_points.clone(), priority, y_unit.clone());
+
+        // 验证有效实例应该通过
+        assert!(valid_curve.validate().is_ok());
+
+        // 测试curve_data为空的情况
+        let empty_curve_points: Vec<DERCurvePointsType> = vec![];
+        let invalid_curve_data_empty = DERCurveType::new(empty_curve_points, priority, y_unit.clone());
+
+        // 验证应该失败，因为curve_data为空
+        let validation_result = invalid_curve_data_empty.validate();
+        assert!(validation_result.is_err());
+        let error_message = validation_result.unwrap_err().to_string();
+        assert!(error_message.contains("curve_data"));
+        assert!(error_message.contains("length"));
+
+        // 测试curve_data超过最大长度的情况
+        let too_many_curve_points = vec![
+            DERCurvePointsType::default(),
+            DERCurvePointsType::default(),
+            DERCurvePointsType::default(),
+            DERCurvePointsType::default(),
+            DERCurvePointsType::default(),
+            DERCurvePointsType::default(),
+            DERCurvePointsType::default(),
+            DERCurvePointsType::default(),
+            DERCurvePointsType::default(),
+            DERCurvePointsType::default(),
+            DERCurvePointsType::default(), // 11个元素，超过了10的限制
+        ];
+        let invalid_curve_data_too_many = DERCurveType::new(too_many_curve_points, priority, y_unit.clone());
+
+        // 验证应该失败，因为curve_data元素太多
+        let validation_result = invalid_curve_data_too_many.validate();
+        assert!(validation_result.is_err());
+        let error_message = validation_result.unwrap_err().to_string();
+        assert!(error_message.contains("curve_data"));
+        assert!(error_message.contains("length"));
+
+        // 测试priority为负数的情况
+        let negative_priority = -1;
+        let invalid_priority = DERCurveType::new(curve_points.clone(), negative_priority, y_unit.clone());
+
+        // 验证应该失败，因为priority为负数
+        let validation_result = invalid_priority.validate();
+        assert!(validation_result.is_err());
+        let error_message = validation_result.unwrap_err().to_string();
+        assert!(error_message.contains("priority"));
+        assert!(error_message.contains("range"));
+
+        // 测试嵌套验证 - 使用无效的CustomDataType
+        let too_long_vendor_id = "X".repeat(256); // 超过255字符限制
+        let invalid_custom_data = CustomDataType::new(too_long_vendor_id.clone());
+
+        let curve_with_invalid_custom_data = DERCurveType {
+            curve_data: curve_points.clone(),
+            priority,
+            y_unit: y_unit.clone(),
+            custom_data: Some(invalid_custom_data.clone()),
+            hysteresis: None,
+            reactive_power_params: None,
+            voltage_params: None,
+            response_time: None,
+            start_time: None,
+            duration: None,
+        };
+
+        // 验证应该失败，因为custom_data无效
+        let validation_result = curve_with_invalid_custom_data.validate();
+        assert!(validation_result.is_err());
+        let error_message = validation_result.unwrap_err().to_string();
+        assert!(error_message.contains("custom_data"));
+
+        // 测试嵌套验证 - curve_data中包含无效的DERCurvePointsType
+        let invalid_custom_data2 = CustomDataType::new(too_long_vendor_id);
+        let curve_points_with_invalid_custom_data = vec![DERCurvePointsType {
+            x: Decimal::from_str("1.0").unwrap(),
+            y: Decimal::from_str("2.0").unwrap(),
+            custom_data: Some(invalid_custom_data2),
+        }];
+
+        let curve_with_invalid_nested_data = DERCurveType::new(
+            curve_points_with_invalid_custom_data,
+            priority,
+            y_unit.clone()
+        );
+
+        // 验证应该失败，因为curve_data中的元素包含无效的custom_data
+        let validation_result = curve_with_invalid_nested_data.validate();
+        assert!(validation_result.is_err());
+        let error_message = validation_result.unwrap_err().to_string();
+        assert!(error_message.contains("curve_data"));
+    }
+
+    #[test]
+    fn test_serialization() {
+        use rust_decimal::prelude::*;
+        use serde_json::{json, Value};
+
+        // 创建测试数据
+        let curve_points = vec![
+            DERCurvePointsType {
+                x: Decimal::from_str("1.0").unwrap(),
+                y: Decimal::from_str("2.0").unwrap(),
+                custom_data: None,
+            },
+            DERCurvePointsType {
+                x: Decimal::from_str("3.0").unwrap(),
+                y: Decimal::from_str("4.0").unwrap(),
+                custom_data: None,
+            },
+        ];
+        let priority = 1;
+        let y_unit = DERUnitEnumType::PctMaxW;
+        let custom_data = CustomDataType::new("VendorX".to_string())
+            .with_property("version".to_string(), json!("1.0"));
+        let start_time = Utc.with_ymd_and_hms(2023, 1, 1, 0, 0, 0).unwrap();
+        let response_time = Decimal::from_str("10.5").unwrap();
+        let duration = Decimal::from_str("3600.0").unwrap();
+
+        // 创建完整的DERCurveType实例
+        let curve = DERCurveType {
+            curve_data: curve_points,
+            priority,
+            y_unit,
+            custom_data: Some(custom_data),
+            hysteresis: Some(HysteresisType::new(0.5)),
+            reactive_power_params: Some(ReactivePowerParamsType::new(100.0, -100.0)),
+            voltage_params: Some(VoltageParamsType::new(220.0, 240.0, 250.0, 230.0)),
+            response_time: Some(response_time),
+            start_time: Some(start_time),
+            duration: Some(duration),
+        };
+
+        // 序列化为JSON
+        let serialized = serde_json::to_string(&curve).unwrap();
+
+        // 反序列化并验证
+        let deserialized: DERCurveType = serde_json::from_str(&serialized).unwrap();
+
+        assert_eq!(curve, deserialized);
+
+        // 验证JSON结构
+        let json_value: Value = serde_json::from_str(&serialized).unwrap();
+        assert!(json_value.is_object());
+        assert!(json_value.get("curveData").is_some());
+        assert!(json_value.get("priority").is_some());
+        assert!(json_value.get("yUnit").is_some());
+        assert!(json_value.get("customData").is_some());
+        assert!(json_value.get("hysteresis").is_some());
+        assert!(json_value.get("reactivePowerParams").is_some());
+        assert!(json_value.get("voltageParams").is_some());
+        assert!(json_value.get("responseTime").is_some());
+        assert!(json_value.get("startTime").is_some());
+        assert!(json_value.get("duration").is_some());
     }
 }
