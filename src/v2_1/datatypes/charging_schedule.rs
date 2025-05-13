@@ -693,9 +693,8 @@ mod tests {
 
         // Create LimitAtSoCType with required fields
         let limit_at_soc = LimitAtSoCType::new(
-            1,      // priority
-            80.0,   // soc
-            7500.0, // power_limit
+            80,      // soc
+            dec!(7500.0), // limit
         );
 
         // Set ISO 15118-20 related fields
@@ -712,9 +711,8 @@ mod tests {
         assert_eq!(schedule.absolute_price_schedule.as_ref().unwrap().price_schedule_id, 123);
         assert_eq!(schedule.absolute_price_schedule.as_ref().unwrap().currency, "USD");
         assert_eq!(schedule.price_level_schedule.as_ref().unwrap().price_level_schedule_entries.len(), 2);
-        assert_eq!(schedule.limit_at_so_c.as_ref().unwrap().priority, 1);
-        assert_eq!(schedule.limit_at_so_c.as_ref().unwrap().soc, 80.0);
-        assert_eq!(schedule.limit_at_so_c.as_ref().unwrap().power_limit, 7500.0);
+        assert_eq!(schedule.limit_at_so_c.as_ref().unwrap().soc, 80);
+        assert_eq!(schedule.limit_at_so_c.as_ref().unwrap().limit, dec!(7500.0));
 
         // Serialize to JSON
         let serialized = to_string(&schedule).unwrap();
@@ -772,9 +770,8 @@ mod tests {
                 ]
             }},
             "limitAtSoC": {{
-                "priority": 1,
-                "soc": 80.0,
-                "powerLimit": 7500.0
+                "soc": 80,
+                "limit": 7500.0
             }},
             "minChargingRate": 5.0,
             "powerTolerance": 5.0
@@ -792,9 +789,8 @@ mod tests {
         assert_eq!(deserialized.absolute_price_schedule.as_ref().unwrap().price_schedule_id, 123);
         assert_eq!(deserialized.absolute_price_schedule.as_ref().unwrap().currency, "USD");
         assert_eq!(deserialized.price_level_schedule.as_ref().unwrap().price_level_schedule_entries.len(), 2);
-        assert_eq!(deserialized.limit_at_so_c.as_ref().unwrap().priority, 1);
-        assert_eq!(deserialized.limit_at_so_c.as_ref().unwrap().soc, 80.0);
-        assert_eq!(deserialized.limit_at_so_c.as_ref().unwrap().power_limit, 7500.0);
+        assert_eq!(deserialized.limit_at_so_c.as_ref().unwrap().soc, 80);
+        assert_eq!(deserialized.limit_at_so_c.as_ref().unwrap().limit, dec!(7500.0));
     }
 
     #[test]
