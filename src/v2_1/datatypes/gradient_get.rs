@@ -1,25 +1,29 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-
+use super::super::helpers::validator::validate_identifier_string;
 use super::{custom_data::CustomDataType, gradient::GradientType};
+
+
 
 /// Gradient get type for retrieving gradient settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct GradientGetType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
-    /// The gradient settings.
-    pub gradient: GradientType,
-
     /// Id of the setting.
-    #[validate(length(max = 36))]
+    #[validate(length(max = 36), custom(function = "validate_identifier_string"))]
     pub id: String,
 
-    /// True if this setting is superseded by a higher priority setting (i.e. lower value of priority).
+    /// Default ramp rate in seconds (0 if not applicable)
+    #[validate(nested)]
+    pub gradient: GradientType,
+
+    /// True if this setting is superseded by a higher priority setting
     pub is_superseded: bool,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl GradientGetType {
@@ -150,13 +154,18 @@ impl GradientGetType {
     }
 }
 
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rust_decimal::Decimal;
+    use rust_decimal::prelude::FromPrimitive;
+    use rust_decimal_macros::dec;
 
     #[test]
     fn test_gradient_get_new() {
-        let gradient = GradientType::new(1, 5.0);
+        let gradient = GradientType::new_from_f64(1, 5.0, 2.5);
         let id = "setting1".to_string();
         let is_superseded = false;
 
@@ -170,7 +179,7 @@ mod tests {
 
     #[test]
     fn test_gradient_get_with_methods() {
-        let gradient = GradientType::new(1, 5.0);
+        let gradient = GradientType::new_from_f64(1, 5.0, 2.5);
         let id = "setting1".to_string();
         let is_superseded = false;
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -186,8 +195,8 @@ mod tests {
 
     #[test]
     fn test_gradient_get_setters() {
-        let gradient1 = GradientType::new(1, 5.0);
-        let gradient2 = GradientType::new(2, 10.0);
+        let gradient1 = GradientType::new_from_f64(1, 5.0, 2.5);
+        let gradient2 = GradientType::new_from_f64(2, 10.0, 5.0);
         let id1 = "setting1".to_string();
         let id2 = "setting2".to_string();
         let is_superseded1 = false;
@@ -210,5 +219,42 @@ mod tests {
         // Test clearing optional fields
         gradient_get.set_custom_data(None);
         assert_eq!(gradient_get.custom_data(), None);
+    }
+
+    #[test]
+    fn test_gradient_get_methods() {
+        let gradient = GradientType::new(1, dec!(5.0), dec!(2.5));
+        let id = "setting1".to_string();
+        let is_superseded = false;
+        let custom_data = CustomDataType::new("VendorX".to_string());
+
+        // Create using constructor
+        let mut gradient_get = GradientGetType::new(gradient.clone(), id.clone(), is_superseded);
+
+        // Use methods
+        gradient_get = gradient_get.with_custom_data(custom_data.clone());
+
+        assert_eq!(gradient_get.gradient(), &gradient);
+        assert_eq!(gradient_get.id(), id);
+        assert_eq!(gradient_get.is_superseded(), is_superseded);
+        assert_eq!(gradient_get.custom_data(), Some(&custom_data));
+
+        // Test setter methods
+        gradient_get.set_is_superseded(true);
+        assert_eq!(gradient_get.is_superseded(), true);
+    }
+
+    #[test]
+    fn test_gradient_settings_access() {
+        let gradient = GradientType::new_from_f64(1, 5.0, 2.5);
+        let id = "setting1".to_string();
+        let is_superseded = false;
+
+        let gradient_get = GradientGetType::new(gradient.clone(), id.clone(), is_superseded);
+
+        // Access gradient settings directly
+        assert_eq!(gradient_get.gradient().priority(), 1);
+        assert_eq!(gradient_get.gradient().gradient(), Decimal::from_f64(5.0).unwrap());
+        assert_eq!(gradient_get.gradient().soft_gradient(), Decimal::from_f64(2.5).unwrap());
     }
 }
