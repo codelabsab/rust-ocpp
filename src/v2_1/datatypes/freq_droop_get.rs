@@ -206,10 +206,17 @@ impl FreqDroopGetType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rust_decimal::prelude::FromStr;
 
     #[test]
     fn test_new_freq_droop_get() {
-        let freq_droop = FreqDroopType::new(1, 5.0, 0.1, 0.05, 2.0);
+        let over_freq = rust_decimal::Decimal::from_str("50.5").unwrap();
+        let under_freq = rust_decimal::Decimal::from_str("49.5").unwrap();
+        let over_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
+        let under_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
+        let response_time = rust_decimal::Decimal::from_str("2.0").unwrap();
+
+        let freq_droop = FreqDroopType::new(1, over_freq, under_freq, over_droop, under_droop, response_time);
         let id = "setting1".to_string();
         let is_superseded = false;
         let is_default = true;
@@ -225,7 +232,13 @@ mod tests {
 
     #[test]
     fn test_with_custom_data() {
-        let freq_droop = FreqDroopType::new(1, 5.0, 0.1, 0.05, 2.0);
+        let over_freq = rust_decimal::Decimal::from_str("50.5").unwrap();
+        let under_freq = rust_decimal::Decimal::from_str("49.5").unwrap();
+        let over_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
+        let under_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
+        let response_time = rust_decimal::Decimal::from_str("2.0").unwrap();
+
+        let freq_droop = FreqDroopType::new(1, over_freq, under_freq, over_droop, under_droop, response_time);
         let id = "setting1".to_string();
         let is_superseded = false;
         let is_default = true;
@@ -243,8 +256,20 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let freq_droop1 = FreqDroopType::new(1, 5.0, 0.1, 0.05, 2.0);
-        let freq_droop2 = FreqDroopType::new(2, 6.0, 0.2, 0.1, 3.0);
+        let over_freq1 = rust_decimal::Decimal::from_str("50.5").unwrap();
+        let under_freq1 = rust_decimal::Decimal::from_str("49.5").unwrap();
+        let over_droop1 = rust_decimal::Decimal::from_str("0.04").unwrap();
+        let under_droop1 = rust_decimal::Decimal::from_str("0.04").unwrap();
+        let response_time1 = rust_decimal::Decimal::from_str("2.0").unwrap();
+
+        let over_freq2 = rust_decimal::Decimal::from_str("50.6").unwrap();
+        let under_freq2 = rust_decimal::Decimal::from_str("49.4").unwrap();
+        let over_droop2 = rust_decimal::Decimal::from_str("0.05").unwrap();
+        let under_droop2 = rust_decimal::Decimal::from_str("0.05").unwrap();
+        let response_time2 = rust_decimal::Decimal::from_str("3.0").unwrap();
+
+        let freq_droop1 = FreqDroopType::new(1, over_freq1, under_freq1, over_droop1, under_droop1, response_time1);
+        let freq_droop2 = FreqDroopType::new(2, over_freq2, under_freq2, over_droop2, under_droop2, response_time2);
         let id1 = "setting1".to_string();
         let id2 = "setting2".to_string();
         let is_superseded1 = false;
@@ -277,7 +302,13 @@ mod tests {
 
     #[test]
     fn test_from_freq_droop() {
-        let freq_droop = FreqDroopType::new(1, 5.0, 0.1, 0.05, 2.0);
+        let over_freq = rust_decimal::Decimal::from_str("50.5").unwrap();
+        let under_freq = rust_decimal::Decimal::from_str("49.5").unwrap();
+        let over_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
+        let under_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
+        let response_time = rust_decimal::Decimal::from_str("2.0").unwrap();
+
+        let freq_droop = FreqDroopType::new(1, over_freq, under_freq, over_droop, under_droop, response_time);
         let freq_droop_get = FreqDroopGetType::from(freq_droop.clone());
 
         assert_eq!(freq_droop_get.freq_droop(), &freq_droop);
@@ -289,7 +320,13 @@ mod tests {
 
     #[test]
     fn test_display() {
-        let freq_droop = FreqDroopType::new(1, 5.0, 0.1, 0.05, 2.0);
+        let over_freq = rust_decimal::Decimal::from_str("50.5").unwrap();
+        let under_freq = rust_decimal::Decimal::from_str("49.5").unwrap();
+        let over_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
+        let under_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
+        let response_time = rust_decimal::Decimal::from_str("2.0").unwrap();
+
+        let freq_droop = FreqDroopType::new(1, over_freq, under_freq, over_droop, under_droop, response_time);
         let id = "setting1".to_string();
         let is_superseded = true;
         let is_default = false;
