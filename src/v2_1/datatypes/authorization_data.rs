@@ -137,7 +137,7 @@ mod tests {
     fn test_new_authorization_data() {
         let id_token = IdTokenType {
             id_token: "tag123".to_string(),
-            r#type: "RFID".to_string(),
+            type_: "RFID".to_string(),
             additional_info: None,
             custom_data: None,
         };
@@ -155,7 +155,7 @@ mod tests {
     fn test_with_custom_data() {
         let id_token = IdTokenType {
             id_token: "tag123".to_string(),
-            r#type: "RFID".to_string(),
+            type_: "RFID".to_string(),
             additional_info: None,
             custom_data: None,
         };
@@ -176,14 +176,14 @@ mod tests {
     fn test_setter_methods() {
         let id_token1 = IdTokenType {
             id_token: "tag123".to_string(),
-            r#type: "RFID".to_string(),
+            type_: "RFID".to_string(),
             additional_info: None,
             custom_data: None,
         };
 
         let id_token2 = IdTokenType {
             id_token: "tag456".to_string(),
-            r#type: "ISO15693".to_string(),
+            type_: "ISO15693".to_string(),
             additional_info: None,
             custom_data: None,
         };
@@ -216,7 +216,7 @@ mod tests {
         // 创建有效的AuthorizationData实例
         let id_token = IdTokenType {
             id_token: "tag123".to_string(),
-            r#type: "RFID".to_string(),
+            type_: "RFID".to_string(),
             additional_info: None,
             custom_data: None,
         };
