@@ -142,17 +142,7 @@ mod tests {
             custom_data: None,
         };
 
-        let id_token_info = IdTokenInfoType {
-            status: AuthorizationStatusEnumType::Accepted,
-            cache_expiry_date_time: None,
-            charging_priority: None,
-            status_info: None,
-            group_id_token: None,
-            expiry_date: None,
-            parent_id_token: None,
-            personal_message: None,
-            custom_data: None,
-        };
+        let id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
 
         let auth_data = AuthorizationData::new(id_token.clone(), id_token_info.clone());
 
@@ -170,17 +160,7 @@ mod tests {
             custom_data: None,
         };
 
-        let id_token_info = IdTokenInfoType {
-            status: AuthorizationStatusEnumType::Accepted,
-            cache_expiry_date_time: None,
-            charging_priority: None,
-            status_info: None,
-            group_id_token: None,
-            expiry_date: None,
-            parent_id_token: None,
-            personal_message: None,
-            custom_data: None,
-        };
+        let id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
 
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -208,29 +188,10 @@ mod tests {
             custom_data: None,
         };
 
-        let id_token_info1 = IdTokenInfoType {
-            status: AuthorizationStatusEnumType::Accepted,
-            cache_expiry_date_time: None,
-            charging_priority: None,
-            status_info: None,
-            group_id_token: None,
-            expiry_date: None,
-            parent_id_token: None,
-            personal_message: None,
-            custom_data: None,
-        };
+        let id_token_info1 = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
 
-        let id_token_info2 = IdTokenInfoType {
-            status: AuthorizationStatusEnumType::Blocked,
-            cache_expiry_date_time: None,
-            charging_priority: Some(1),
-            status_info: None,
-            group_id_token: None,
-            expiry_date: None,
-            parent_id_token: None,
-            personal_message: None,
-            custom_data: None,
-        };
+        let mut id_token_info2 = IdTokenInfoType::new(AuthorizationStatusEnumType::Blocked);
+        id_token_info2.set_charging_priority(Some(1));
 
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -252,7 +213,7 @@ mod tests {
 
     #[test]
     fn test_validation() {
-        // 创建有效的AuthorizationData实例
+        // Create a valid AuthorizationData instance
         let id_token = IdTokenType {
             id_token: "tag123".to_string(),
             r#type: "RFID".to_string(),
@@ -260,26 +221,16 @@ mod tests {
             custom_data: None,
         };
 
-        let id_token_info = IdTokenInfoType {
-            status: AuthorizationStatusEnumType::Accepted,
-            cache_expiry_date_time: None,
-            charging_priority: None,
-            status_info: None,
-            group_id_token: None,
-            expiry_date: None,
-            parent_id_token: None,
-            personal_message: None,
-            custom_data: None,
-        };
+        let id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
 
         let auth_data = AuthorizationData::new(id_token.clone(), id_token_info.clone());
 
-        // 验证有效实例
+        // Validate valid instance
         assert!(auth_data.validate().is_ok(), "Valid authorization data should pass validation");
 
-        // 1. 测试无效的id_token（id_token字段超出长度限制）
+        // 1. Test invalid id_token (id_token field exceeds length limit)
         let mut invalid_id_token = id_token.clone();
-        invalid_id_token.id_token = "a".repeat(256); // 超过255字符的最大限制
+        invalid_id_token.id_token = "a".repeat(256); // Exceeds 255 character limit
 
         let invalid_auth_data = AuthorizationData::new(invalid_id_token, id_token_info.clone());
 
@@ -289,9 +240,9 @@ mod tests {
         assert!(error.to_string().contains("id_token"),
                 "Error should mention id_token: {}", error);
 
-        // 2. 测试无效的id_token_info（charging_priority超出范围）
+        // 2. Test invalid id_token_info (charging_priority out of range)
         let mut invalid_id_token_info = id_token_info.clone();
-        invalid_id_token_info.charging_priority = Some(-10); // 超出-9到9的范围
+        invalid_id_token_info.set_charging_priority(Some(-10)); // Out of -9 to 9 range
 
         let invalid_auth_data = AuthorizationData::new(id_token.clone(), invalid_id_token_info);
 
@@ -301,9 +252,9 @@ mod tests {
         assert!(error.to_string().contains("id_token_info"),
                 "Error should mention id_token_info: {}", error);
 
-        // 3. 测试无效的custom_data（vendor_id超出长度限制）
+        // 3. Test invalid custom_data (vendor_id exceeds length limit)
         let mut invalid_custom_data = CustomDataType::new("VendorX".to_string());
-        invalid_custom_data.vendor_id = "A".repeat(256); // 超过255字符的最大限制
+        invalid_custom_data.vendor_id = "A".repeat(256); // Exceeds 255 character limit
 
         let mut invalid_auth_data = AuthorizationData::new(id_token.clone(), id_token_info.clone());
         invalid_auth_data.custom_data = Some(invalid_custom_data);
