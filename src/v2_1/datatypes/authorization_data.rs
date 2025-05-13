@@ -142,17 +142,7 @@ mod tests {
             custom_data: None,
         };
 
-        let id_token_info = IdTokenInfoType {
-            status: AuthorizationStatusEnumType::Accepted,
-            cache_expiry_date_time: None,
-            charging_priority: None,
-            status_info: None,
-            group_id_token: None,
-            expiry_date: None,
-            parent_id_token: None,
-            personal_message: None,
-            custom_data: None,
-        };
+        let id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
 
         let auth_data = AuthorizationData::new(id_token.clone(), id_token_info.clone());
 
@@ -170,17 +160,7 @@ mod tests {
             custom_data: None,
         };
 
-        let id_token_info = IdTokenInfoType {
-            status: AuthorizationStatusEnumType::Accepted,
-            cache_expiry_date_time: None,
-            charging_priority: None,
-            status_info: None,
-            group_id_token: None,
-            expiry_date: None,
-            parent_id_token: None,
-            personal_message: None,
-            custom_data: None,
-        };
+        let id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
 
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -208,29 +188,10 @@ mod tests {
             custom_data: None,
         };
 
-        let id_token_info1 = IdTokenInfoType {
-            status: AuthorizationStatusEnumType::Accepted,
-            cache_expiry_date_time: None,
-            charging_priority: None,
-            status_info: None,
-            group_id_token: None,
-            expiry_date: None,
-            parent_id_token: None,
-            personal_message: None,
-            custom_data: None,
-        };
+        let id_token_info1 = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
 
-        let id_token_info2 = IdTokenInfoType {
-            status: AuthorizationStatusEnumType::Blocked,
-            cache_expiry_date_time: None,
-            charging_priority: Some(1),
-            status_info: None,
-            group_id_token: None,
-            expiry_date: None,
-            parent_id_token: None,
-            personal_message: None,
-            custom_data: None,
-        };
+        let id_token_info2 = IdTokenInfoType::new(AuthorizationStatusEnumType::Blocked)
+            .with_charging_priority(1);
 
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -260,17 +221,7 @@ mod tests {
             custom_data: None,
         };
 
-        let id_token_info = IdTokenInfoType {
-            status: AuthorizationStatusEnumType::Accepted,
-            cache_expiry_date_time: None,
-            charging_priority: None,
-            status_info: None,
-            group_id_token: None,
-            expiry_date: None,
-            parent_id_token: None,
-            personal_message: None,
-            custom_data: None,
-        };
+        let id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
 
         let auth_data = AuthorizationData::new(id_token.clone(), id_token_info.clone());
 
