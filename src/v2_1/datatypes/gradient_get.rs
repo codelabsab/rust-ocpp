@@ -17,9 +17,6 @@ pub struct GradientGetType {
     #[validate(nested)]
     pub gradient: GradientType,
 
-    /// True if this setting is superseded by a higher priority setting
-    pub is_superseded: bool,
-
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
@@ -33,17 +30,15 @@ impl GradientGetType {
     ///
     /// * `gradient` - The gradient settings
     /// * `id` - Id of the setting
-    /// * `is_superseded` - True if this setting is superseded by a higher priority setting
     ///
     /// # Returns
     ///
     /// A new `GradientGetType` instance with optional fields set to `None`
-    pub fn new(gradient: GradientType, id: String, is_superseded: bool) -> Self {
+    pub fn new(gradient: GradientType, id: String) -> Self {
         Self {
             custom_data: None,
             gradient,
             id,
-            is_superseded,
         }
     }
 
@@ -130,28 +125,7 @@ impl GradientGetType {
         self
     }
 
-    /// Gets whether this setting is superseded.
-    ///
-    /// # Returns
-    ///
-    /// True if this setting is superseded by a higher priority setting
-    pub fn is_superseded(&self) -> bool {
-        self.is_superseded
-    }
 
-    /// Sets whether this setting is superseded.
-    ///
-    /// # Arguments
-    ///
-    /// * `is_superseded` - True if this setting is superseded by a higher priority setting
-    ///
-    /// # Returns
-    ///
-    /// The modified `GradientGetType` instance
-    pub fn set_is_superseded(&mut self, is_superseded: bool) -> &mut Self {
-        self.is_superseded = is_superseded;
-        self
-    }
 }
 
 
@@ -167,13 +141,11 @@ mod tests {
     fn test_gradient_get_new() {
         let gradient = GradientType::new_from_f64(1, 5.0, 2.5);
         let id = "setting1".to_string();
-        let is_superseded = false;
 
-        let gradient_get = GradientGetType::new(gradient.clone(), id.clone(), is_superseded);
+        let gradient_get = GradientGetType::new(gradient.clone(), id.clone());
 
         assert_eq!(gradient_get.gradient(), &gradient);
         assert_eq!(gradient_get.id(), id);
-        assert_eq!(gradient_get.is_superseded(), is_superseded);
         assert_eq!(gradient_get.custom_data(), None);
     }
 
@@ -181,15 +153,13 @@ mod tests {
     fn test_gradient_get_with_methods() {
         let gradient = GradientType::new_from_f64(1, 5.0, 2.5);
         let id = "setting1".to_string();
-        let is_superseded = false;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let gradient_get = GradientGetType::new(gradient.clone(), id.clone(), is_superseded)
+        let gradient_get = GradientGetType::new(gradient.clone(), id.clone())
             .with_custom_data(custom_data.clone());
 
         assert_eq!(gradient_get.gradient(), &gradient);
         assert_eq!(gradient_get.id(), id);
-        assert_eq!(gradient_get.is_superseded(), is_superseded);
         assert_eq!(gradient_get.custom_data(), Some(&custom_data));
     }
 
@@ -199,21 +169,17 @@ mod tests {
         let gradient2 = GradientType::new_from_f64(2, 10.0, 5.0);
         let id1 = "setting1".to_string();
         let id2 = "setting2".to_string();
-        let is_superseded1 = false;
-        let is_superseded2 = true;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut gradient_get = GradientGetType::new(gradient1.clone(), id1.clone(), is_superseded1);
+        let mut gradient_get = GradientGetType::new(gradient1.clone(), id1.clone());
 
         gradient_get
             .set_gradient(gradient2.clone())
             .set_id(id2.clone())
-            .set_is_superseded(is_superseded2)
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(gradient_get.gradient(), &gradient2);
         assert_eq!(gradient_get.id(), id2);
-        assert_eq!(gradient_get.is_superseded(), is_superseded2);
         assert_eq!(gradient_get.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
@@ -225,32 +191,25 @@ mod tests {
     fn test_gradient_get_methods() {
         let gradient = GradientType::new(1, dec!(5.0), dec!(2.5));
         let id = "setting1".to_string();
-        let is_superseded = false;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         // Create using constructor
-        let mut gradient_get = GradientGetType::new(gradient.clone(), id.clone(), is_superseded);
+        let mut gradient_get = GradientGetType::new(gradient.clone(), id.clone());
 
         // Use methods
         gradient_get = gradient_get.with_custom_data(custom_data.clone());
 
         assert_eq!(gradient_get.gradient(), &gradient);
         assert_eq!(gradient_get.id(), id);
-        assert_eq!(gradient_get.is_superseded(), is_superseded);
         assert_eq!(gradient_get.custom_data(), Some(&custom_data));
-
-        // Test setter methods
-        gradient_get.set_is_superseded(true);
-        assert_eq!(gradient_get.is_superseded(), true);
     }
 
     #[test]
     fn test_gradient_settings_access() {
         let gradient = GradientType::new_from_f64(1, 5.0, 2.5);
         let id = "setting1".to_string();
-        let is_superseded = false;
 
-        let gradient_get = GradientGetType::new(gradient.clone(), id.clone(), is_superseded);
+        let gradient_get = GradientGetType::new(gradient.clone(), id.clone());
 
         // Access gradient settings directly
         assert_eq!(gradient_get.gradient().priority(), 1);
