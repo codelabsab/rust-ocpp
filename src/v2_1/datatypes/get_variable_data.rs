@@ -10,9 +10,11 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct GetVariableDataType {
     /// Required. Component for which the Variable is requested.
+    #[validate(nested)]
     pub component: ComponentType,
 
     /// Required. Variable for which the attribute value is requested.
+    #[validate(nested)]
     pub variable: VariableType,
 
     /// Optional. If the variable is attribute-based, this field specifies the attribute type for which the value is requested.
@@ -21,6 +23,7 @@ pub struct GetVariableDataType {
 
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -198,8 +201,7 @@ mod tests {
 
         assert_eq!(get_variable_data.component(), &component);
         assert_eq!(get_variable_data.variable(), &variable);
-        assert_eq!(
-            get_variable_data.attribute_type(), Some(&attribute_type));
+        assert_eq!(get_variable_data.attribute_type(), Some(&attribute_type));
         assert_eq!(get_variable_data.custom_data(), Some(&custom_data));
     }
 
@@ -226,8 +228,7 @@ mod tests {
 
         assert_eq!(get_variable_data.component(), &component2);
         assert_eq!(get_variable_data.variable(), &variable2);
-        assert_eq!(
-            get_variable_data.attribute_type(), Some(&attribute_type));
+        assert_eq!(get_variable_data.attribute_type(), Some(&attribute_type));
         assert_eq!(get_variable_data.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
@@ -238,7 +239,7 @@ mod tests {
         assert_eq!(get_variable_data.attribute_type(), None);
         assert_eq!(get_variable_data.custom_data(), None);
     }
-    
+
     #[test]
     fn test_serde_serialization() {
         use serde_json;
@@ -253,7 +254,7 @@ mod tests {
         let get_variable_data = GetVariableDataType::new(component.clone(), variable.clone())
             .with_attribute_type(attribute_type.clone())
             .with_custom_data(custom_data.clone());
-            
+
         let serialized = serde_json::to_string(&get_variable_data).unwrap();
         let deserialized: GetVariableDataType = serde_json::from_str(&serialized).unwrap();
 
