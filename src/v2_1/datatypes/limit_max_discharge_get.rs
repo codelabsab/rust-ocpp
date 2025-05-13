@@ -191,10 +191,12 @@ impl LimitMaxDischargeGetType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rust_decimal::prelude::*;
 
     #[test]
     fn test_new_limit_max_discharge_get() {
-        let limit_max_discharge = LimitMaxDischargeType::new(1, 75.0);
+        let pct_max_discharge_power = Decimal::from_str("80.0").unwrap();
+        let limit_max_discharge = LimitMaxDischargeType::new(1, pct_max_discharge_power, 75.0);
         let id = "setting1".to_string();
         let is_superseded = false;
         let is_default = true;
@@ -215,7 +217,8 @@ mod tests {
 
     #[test]
     fn test_with_custom_data() {
-        let limit_max_discharge = LimitMaxDischargeType::new(1, 75.0);
+        let pct_max_discharge_power = Decimal::from_str("80.0").unwrap();
+        let limit_max_discharge = LimitMaxDischargeType::new(1, pct_max_discharge_power, 75.0);
         let id = "setting1".to_string();
         let is_superseded = false;
         let is_default = true;
@@ -238,8 +241,10 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let limit_max_discharge1 = LimitMaxDischargeType::new(1, 75.0);
-        let limit_max_discharge2 = LimitMaxDischargeType::new(2, 85.0);
+        let pct_max_discharge_power1 = Decimal::from_str("80.0").unwrap();
+        let pct_max_discharge_power2 = Decimal::from_str("90.0").unwrap();
+        let limit_max_discharge1 = LimitMaxDischargeType::new(1, pct_max_discharge_power1, 75.0);
+        let limit_max_discharge2 = LimitMaxDischargeType::new(2, pct_max_discharge_power2, 85.0);
         let id1 = "setting1".to_string();
         let id2 = "setting2".to_string();
         let is_superseded1 = false;
@@ -276,7 +281,8 @@ mod tests {
     #[test]
     fn test_validate() {
         // Valid values
-        let limit_max_discharge = LimitMaxDischargeType::new(1, 75.0);
+        let pct_max_discharge_power = Decimal::from_str("80.0").unwrap();
+        let limit_max_discharge = LimitMaxDischargeType::new(1, pct_max_discharge_power.clone(), 75.0);
         let id = "setting1".to_string();
         let is_superseded = false;
         let is_default = true;
@@ -308,7 +314,7 @@ mod tests {
         assert!(limit_get.validate().is_err());
 
         // Test with invalid LimitMaxDischargeType (negative priority)
-        let invalid_limit_max_discharge = LimitMaxDischargeType::new(-1, 75.0);
+        let invalid_limit_max_discharge = LimitMaxDischargeType::new(-1, pct_max_discharge_power, 75.0);
         let limit_get = LimitMaxDischargeGetType::new(
             invalid_limit_max_discharge,
             id.clone(),
