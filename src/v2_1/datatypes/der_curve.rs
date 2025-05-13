@@ -641,6 +641,7 @@ mod tests {
     #[test]
     fn test_serialization() {
         use rust_decimal::prelude::*;
+        use rust_decimal_macros::dec;
         use serde_json::{json, Value};
 
         // 创建测试数据
@@ -670,7 +671,7 @@ mod tests {
             priority,
             y_unit,
             custom_data: Some(custom_data),
-            hysteresis: Some(HysteresisType::new(0.5)),
+            hysteresis: Some(HysteresisType::new().with_hysteresis_high(dec!(0.5))),
             reactive_power_params: Some(ReactivePowerParamsType::new(100.0, -100.0)),
             voltage_params: Some(VoltageParamsType::new(220.0, 240.0, 250.0, 230.0)),
             response_time: Some(response_time),
