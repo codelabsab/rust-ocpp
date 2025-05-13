@@ -1,16 +1,14 @@
+use super::super::enumerations::AttributeEnumType;
+use super::component::ComponentType;
+use super::custom_data::CustomDataType;
+use super::variable::VariableType;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-
-use super::{component::ComponentType, custom_data::CustomDataType, variable::VariableType};
 
 /// Class to hold parameters for GetVariables request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct GetVariableDataType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Required. Component for which the Variable is requested.
     pub component: ComponentType,
 
@@ -19,8 +17,11 @@ pub struct GetVariableDataType {
 
     /// Optional. If the variable is attribute-based, this field specifies the attribute type for which the value is requested.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 50))]
-    pub attribute_type: Option<String>,
+    pub attribute_type: Option<AttributeEnumType>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl GetVariableDataType {
@@ -52,7 +53,7 @@ impl GetVariableDataType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_attribute_type(mut self, attribute_type: String) -> Self {
+    pub fn with_attribute_type(mut self, attribute_type: AttributeEnumType) -> Self {
         self.attribute_type = Some(attribute_type);
         self
     }
@@ -122,8 +123,8 @@ impl GetVariableDataType {
     /// # Returns
     ///
     /// An optional reference to the attribute type for which the value is requested
-    pub fn attribute_type(&self) -> Option<&str> {
-        self.attribute_type.as_deref()
+    pub fn attribute_type(&self) -> Option<&AttributeEnumType> {
+        self.attribute_type.as_ref()
     }
 
     /// Sets the attribute type.
@@ -135,7 +136,7 @@ impl GetVariableDataType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_attribute_type(&mut self, attribute_type: Option<String>) -> &mut Self {
+    pub fn set_attribute_type(&mut self, attribute_type: Option<AttributeEnumType>) -> &mut Self {
         self.attribute_type = attribute_type;
         self
     }
@@ -185,7 +186,7 @@ mod tests {
     fn test_with_methods() {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
-        let attribute_type = "Actual".to_string();
+        let attribute_type = AttributeEnumType::Actual;
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -198,9 +199,7 @@ mod tests {
         assert_eq!(get_variable_data.component(), &component);
         assert_eq!(get_variable_data.variable(), &variable);
         assert_eq!(
-            get_variable_data.attribute_type(),
-            Some(attribute_type.as_str())
-        );
+            get_variable_data.attribute_type(), Some(&attribute_type));
         assert_eq!(get_variable_data.custom_data(), Some(&custom_data));
     }
 
@@ -211,7 +210,7 @@ mod tests {
 
         let component2 = ComponentType::new("Meter".to_string());
         let variable2 = VariableType::new("Voltage".to_string(), "Secondary".to_string());
-        let attribute_type = "Target".to_string();
+        let attribute_type = AttributeEnumType::Target;
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -228,9 +227,7 @@ mod tests {
         assert_eq!(get_variable_data.component(), &component2);
         assert_eq!(get_variable_data.variable(), &variable2);
         assert_eq!(
-            get_variable_data.attribute_type(),
-            Some(attribute_type.as_str())
-        );
+            get_variable_data.attribute_type(), Some(&attribute_type));
         assert_eq!(get_variable_data.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
@@ -240,5 +237,29 @@ mod tests {
 
         assert_eq!(get_variable_data.attribute_type(), None);
         assert_eq!(get_variable_data.custom_data(), None);
+    }
+    
+    #[test]
+    fn test_serde_serialization() {
+        use serde_json;
+        let component = ComponentType::new("Connector".to_string());
+        let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
+        let attribute_type = AttributeEnumType::Actual;
+        let custom_data = CustomDataType {
+            vendor_id: "VendorX".to_string(),
+            additional_properties: Default::default(),
+        };
+
+        let get_variable_data = GetVariableDataType::new(component.clone(), variable.clone())
+            .with_attribute_type(attribute_type.clone())
+            .with_custom_data(custom_data.clone());
+            
+        let serialized = serde_json::to_string(&get_variable_data).unwrap();
+        let deserialized: GetVariableDataType = serde_json::from_str(&serialized).unwrap();
+
+        assert_eq!(deserialized.component(), &component);
+        assert_eq!(deserialized.variable(), &variable);
+        assert_eq!(deserialized.attribute_type(), Some(&attribute_type));
+        assert_eq!(deserialized.custom_data().unwrap().vendor_id, "VendorX");
     }
 }
