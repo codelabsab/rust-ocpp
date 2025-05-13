@@ -31,9 +31,6 @@ pub struct LimitMaxDischargeType {
     #[validate(nested)]
     pub power_monitoring_must_trip: Option<DERCurveType>,
 
-    /// Maximum discharge rate in percent of nominal discharge rate.
-    pub discharge_limit: f64,
-
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
@@ -47,16 +44,14 @@ impl LimitMaxDischargeType {
     ///
     /// * `priority` - Priority of setting (0=highest)
     /// * `pct_max_discharge_power` - Percentage (0 to 100) of the rated maximum discharge power of EV
-    /// * `discharge_limit` - Maximum discharge rate in percent of nominal discharge rate
     ///
     /// # Returns
     ///
     /// A new instance of `LimitMaxDischargeType` with optional fields set to `None`
-    pub fn new(priority: i32, pct_max_discharge_power: Decimal, discharge_limit: f64) -> Self {
+    pub fn new(priority: i32, pct_max_discharge_power: Decimal) -> Self {
         Self {
             priority,
             pct_max_discharge_power,
-            discharge_limit,
             start_time: None,
             duration: None,
             power_monitoring_must_trip: None,
@@ -235,29 +230,6 @@ impl LimitMaxDischargeType {
         self
     }
 
-    /// Gets the discharge limit.
-    ///
-    /// # Returns
-    ///
-    /// The maximum discharge rate in percent of nominal discharge rate
-    pub fn discharge_limit(&self) -> f64 {
-        self.discharge_limit
-    }
-
-    /// Sets the discharge limit.
-    ///
-    /// # Arguments
-    ///
-    /// * `discharge_limit` - Maximum discharge rate in percent of nominal discharge rate
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_discharge_limit(&mut self, discharge_limit: f64) -> &mut Self {
-        self.discharge_limit = discharge_limit;
-        self
-    }
-
     /// Gets the custom data.
     ///
     /// # Returns
@@ -292,13 +264,11 @@ mod tests {
     fn test_new_limit_max_discharge() {
         let priority = 1;
         let pct_max_discharge_power = Decimal::from_str("80.0").unwrap();
-        let discharge_limit = 75.0;
 
-        let limit = LimitMaxDischargeType::new(priority, pct_max_discharge_power.clone(), discharge_limit);
+        let limit = LimitMaxDischargeType::new(priority, pct_max_discharge_power.clone());
 
         assert_eq!(limit.priority(), priority);
         assert_eq!(limit.pct_max_discharge_power(), &pct_max_discharge_power);
-        assert_eq!(limit.discharge_limit(), discharge_limit);
         assert_eq!(limit.start_time(), None);
         assert_eq!(limit.duration(), None);
         assert_eq!(limit.power_monitoring_must_trip(), None);
@@ -309,7 +279,6 @@ mod tests {
     fn test_with_methods() {
         let priority = 1;
         let pct_max_discharge_power = Decimal::from_str("80.0").unwrap();
-        let discharge_limit = 75.0;
         let start_time = Utc.with_ymd_and_hms(2023, 1, 1, 0, 0, 0).unwrap();
         let duration = Decimal::from_str("3600.0").unwrap();
         let custom_data = CustomDataType {
@@ -325,7 +294,7 @@ mod tests {
             crate::v2_1::enumerations::der_unit::DERUnitEnumType::PctMaxW,
         );
 
-        let limit = LimitMaxDischargeType::new(priority, pct_max_discharge_power.clone(), discharge_limit)
+        let limit = LimitMaxDischargeType::new(priority, pct_max_discharge_power.clone())
             .with_start_time(start_time.clone())
             .with_duration(duration.clone())
             .with_power_monitoring_must_trip(power_monitoring_must_trip.clone())
@@ -333,7 +302,6 @@ mod tests {
 
         assert_eq!(limit.priority(), priority);
         assert_eq!(limit.pct_max_discharge_power(), &pct_max_discharge_power);
-        assert_eq!(limit.discharge_limit(), discharge_limit);
         assert_eq!(limit.start_time(), Some(&start_time));
         assert_eq!(limit.duration(), Some(&duration));
         assert_eq!(limit.power_monitoring_must_trip(), Some(&power_monitoring_must_trip));
@@ -344,10 +312,8 @@ mod tests {
     fn test_setter_methods() {
         let priority1 = 1;
         let pct_max_discharge_power1 = Decimal::from_str("80.0").unwrap();
-        let discharge_limit1 = 75.0;
         let priority2 = 2;
         let pct_max_discharge_power2 = Decimal::from_str("90.0").unwrap();
-        let discharge_limit2 = 85.0;
         let start_time = Utc.with_ymd_and_hms(2023, 1, 1, 0, 0, 0).unwrap();
         let duration = Decimal::from_str("3600.0").unwrap();
         let custom_data = CustomDataType {
@@ -363,12 +329,11 @@ mod tests {
             crate::v2_1::enumerations::der_unit::DERUnitEnumType::PctMaxW,
         );
 
-        let mut limit = LimitMaxDischargeType::new(priority1, pct_max_discharge_power1, discharge_limit1);
+        let mut limit = LimitMaxDischargeType::new(priority1, pct_max_discharge_power1);
 
         limit
             .set_priority(priority2)
             .set_pct_max_discharge_power(pct_max_discharge_power2.clone())
-            .set_discharge_limit(discharge_limit2)
             .set_start_time(Some(start_time.clone()))
             .set_duration(Some(duration.clone()))
             .set_power_monitoring_must_trip(Some(power_monitoring_must_trip.clone()))
@@ -376,7 +341,6 @@ mod tests {
 
         assert_eq!(limit.priority(), priority2);
         assert_eq!(limit.pct_max_discharge_power(), &pct_max_discharge_power2);
-        assert_eq!(limit.discharge_limit(), discharge_limit2);
         assert_eq!(limit.start_time(), Some(&start_time));
         assert_eq!(limit.duration(), Some(&duration));
         assert_eq!(limit.power_monitoring_must_trip(), Some(&power_monitoring_must_trip));
@@ -400,23 +364,22 @@ mod tests {
         // Valid values
         let priority = 1;
         let pct_max_discharge_power = Decimal::from_str("80.0").unwrap();
-        let discharge_limit = 75.0;
 
-        let _limit = LimitMaxDischargeType::new(priority, pct_max_discharge_power, discharge_limit);
+        let _limit = LimitMaxDischargeType::new(priority, pct_max_discharge_power);
 
         // Test with invalid priority (negative)
         let invalid_priority = -1;
-        let _limit_invalid_priority = LimitMaxDischargeType::new(invalid_priority, pct_max_discharge_power.clone(), discharge_limit);
+        let _limit_invalid_priority = LimitMaxDischargeType::new(invalid_priority, pct_max_discharge_power.clone());
         assert!(invalid_priority < 0);
 
         // Test with invalid pctMaxDischargePower (over 100)
         let invalid_pct_over = Decimal::from_str("101.0").unwrap();
-        let _limit_invalid_pct_over = LimitMaxDischargeType::new(priority, invalid_pct_over.clone(), discharge_limit);
+        let _limit_invalid_pct_over = LimitMaxDischargeType::new(priority, invalid_pct_over.clone());
         assert!(invalid_pct_over > Decimal::from(100));
 
         // Test with invalid pctMaxDischargePower (negative)
         let invalid_pct_negative = Decimal::from_str("-1.0").unwrap();
-        let _limit_invalid_pct_negative = LimitMaxDischargeType::new(priority, invalid_pct_negative.clone(), discharge_limit);
+        let _limit_invalid_pct_negative = LimitMaxDischargeType::new(priority, invalid_pct_negative.clone());
         assert!(invalid_pct_negative < Decimal::from(0));
     }
 
@@ -424,7 +387,6 @@ mod tests {
     fn test_serialization_deserialization() {
         let priority = 1;
         let pct_max_discharge_power = Decimal::from_str("80.0").unwrap();
-        let discharge_limit = 75.0;
         let start_time = Utc.with_ymd_and_hms(2023, 1, 1, 0, 0, 0).unwrap();
         let duration = Decimal::from_str("3600.0").unwrap();
         let custom_data = CustomDataType {
@@ -432,7 +394,7 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let limit = LimitMaxDischargeType::new(priority, pct_max_discharge_power.clone(), discharge_limit)
+        let limit = LimitMaxDischargeType::new(priority, pct_max_discharge_power.clone())
             .with_start_time(start_time.clone())
             .with_duration(duration.clone())
             .with_custom_data(custom_data.clone());
@@ -446,7 +408,6 @@ mod tests {
         // Verify the result is the same as the original object
         assert_eq!(deserialized.priority(), limit.priority());
         assert_eq!(deserialized.pct_max_discharge_power(), limit.pct_max_discharge_power());
-        assert_eq!(deserialized.discharge_limit(), limit.discharge_limit());
         assert_eq!(deserialized.start_time(), limit.start_time());
         assert_eq!(deserialized.duration(), limit.duration());
         assert_eq!(deserialized.custom_data().is_some(), limit.custom_data().is_some());
