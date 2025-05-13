@@ -1,25 +1,53 @@
+use std::fmt;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-
+use super::super::helpers::validator::validate_identifier_string;
 use super::{custom_data::CustomDataType, freq_droop::FreqDroopType};
 
 /// Frequency droop get type for retrieving frequency droop settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct FreqDroopGetType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// The frequency droop settings.
+    #[validate(nested)]
     pub freq_droop: FreqDroopType,
 
     /// Id of the setting.
-    #[validate(length(max = 36))]
+    #[validate(length(max = 36), custom(function = "validate_identifier_string"))]
     pub id: String,
 
     /// True if this setting is superseded by a higher priority setting (i.e. lower value of priority).
     pub is_superseded: bool,
+
+    /// True if this is a default setting.
+    pub is_default: bool,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
+}
+
+impl fmt::Display for FreqDroopGetType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "FreqDroopGet {{ id: {}, is_default: {}, is_superseded: {} }}",
+            self.id, self.is_default, self.is_superseded
+        )
+    }
+}
+
+impl From<FreqDroopType> for FreqDroopGetType {
+    fn from(freq_droop: FreqDroopType) -> Self {
+        Self {
+            freq_droop,
+            id: String::new(),
+            is_superseded: false,
+            is_default: false,
+            custom_data: None,
+        }
+    }
 }
 
 impl FreqDroopGetType {
@@ -30,15 +58,17 @@ impl FreqDroopGetType {
     /// * `freq_droop` - The frequency droop settings
     /// * `id` - Id of the setting
     /// * `is_superseded` - True if this setting is superseded by a higher priority setting
+    /// * `is_default` - True if this is a default setting
     ///
     /// # Returns
     ///
     /// A new instance of `FreqDroopGetType` with optional fields set to `None`
-    pub fn new(freq_droop: FreqDroopType, id: String, is_superseded: bool) -> Self {
+    pub fn new(freq_droop: FreqDroopType, id: String, is_superseded: bool, is_default: bool) -> Self {
         Self {
             freq_droop,
             id,
             is_superseded,
+            is_default,
             custom_data: None,
         }
     }
@@ -126,6 +156,29 @@ impl FreqDroopGetType {
         self
     }
 
+    /// Gets whether this is a default setting.
+    ///
+    /// # Returns
+    ///
+    /// True if this is a default setting
+    pub fn is_default(&self) -> bool {
+        self.is_default
+    }
+
+    /// Sets whether this is a default setting.
+    ///
+    /// # Arguments
+    ///
+    /// * `is_default` - True if this is a default setting
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_is_default(&mut self, is_default: bool) -> &mut Self {
+        self.is_default = is_default;
+        self
+    }
+
     /// Gets the custom data.
     ///
     /// # Returns
@@ -159,12 +212,14 @@ mod tests {
         let freq_droop = FreqDroopType::new(1, 5.0, 0.1, 0.05, 2.0);
         let id = "setting1".to_string();
         let is_superseded = false;
+        let is_default = true;
 
-        let freq_droop_get = FreqDroopGetType::new(freq_droop.clone(), id.clone(), is_superseded);
+        let freq_droop_get = FreqDroopGetType::new(freq_droop.clone(), id.clone(), is_superseded, is_default);
 
         assert_eq!(freq_droop_get.freq_droop(), &freq_droop);
         assert_eq!(freq_droop_get.id(), id);
         assert_eq!(freq_droop_get.is_superseded(), is_superseded);
+        assert_eq!(freq_droop_get.is_default(), is_default);
         assert_eq!(freq_droop_get.custom_data(), None);
     }
 
@@ -173,14 +228,16 @@ mod tests {
         let freq_droop = FreqDroopType::new(1, 5.0, 0.1, 0.05, 2.0);
         let id = "setting1".to_string();
         let is_superseded = false;
+        let is_default = true;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let freq_droop_get = FreqDroopGetType::new(freq_droop.clone(), id.clone(), is_superseded)
+        let freq_droop_get = FreqDroopGetType::new(freq_droop.clone(), id.clone(), is_superseded, is_default)
             .with_custom_data(custom_data.clone());
 
         assert_eq!(freq_droop_get.freq_droop(), &freq_droop);
         assert_eq!(freq_droop_get.id(), id);
         assert_eq!(freq_droop_get.is_superseded(), is_superseded);
+        assert_eq!(freq_droop_get.is_default(), is_default);
         assert_eq!(freq_droop_get.custom_data(), Some(&custom_data));
     }
 
@@ -192,24 +249,54 @@ mod tests {
         let id2 = "setting2".to_string();
         let is_superseded1 = false;
         let is_superseded2 = true;
+        let is_default1 = true;
+        let is_default2 = false;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let mut freq_droop_get =
-            FreqDroopGetType::new(freq_droop1.clone(), id1.clone(), is_superseded1);
+            FreqDroopGetType::new(freq_droop1.clone(), id1.clone(), is_superseded1, is_default1);
 
         freq_droop_get
             .set_freq_droop(freq_droop2.clone())
             .set_id(id2.clone())
             .set_is_superseded(is_superseded2)
+            .set_is_default(is_default2)
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(freq_droop_get.freq_droop(), &freq_droop2);
         assert_eq!(freq_droop_get.id(), id2);
         assert_eq!(freq_droop_get.is_superseded(), is_superseded2);
+        assert_eq!(freq_droop_get.is_default(), is_default2);
         assert_eq!(freq_droop_get.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
         freq_droop_get.set_custom_data(None);
         assert_eq!(freq_droop_get.custom_data(), None);
+    }
+
+
+    #[test]
+    fn test_from_freq_droop() {
+        let freq_droop = FreqDroopType::new(1, 5.0, 0.1, 0.05, 2.0);
+        let freq_droop_get = FreqDroopGetType::from(freq_droop.clone());
+
+        assert_eq!(freq_droop_get.freq_droop(), &freq_droop);
+        assert_eq!(freq_droop_get.id(), "");
+        assert_eq!(freq_droop_get.is_superseded(), false);
+        assert_eq!(freq_droop_get.is_default(), false);
+        assert_eq!(freq_droop_get.custom_data(), None);
+    }
+
+    #[test]
+    fn test_display() {
+        let freq_droop = FreqDroopType::new(1, 5.0, 0.1, 0.05, 2.0);
+        let id = "setting1".to_string();
+        let is_superseded = true;
+        let is_default = false;
+
+        let freq_droop_get = FreqDroopGetType::new(freq_droop, id, is_superseded, is_default);
+
+        let display_string = format!("{}", freq_droop_get);
+        assert_eq!(display_string, "FreqDroopGet { id: setting1, is_default: false, is_superseded: true }");
     }
 }
