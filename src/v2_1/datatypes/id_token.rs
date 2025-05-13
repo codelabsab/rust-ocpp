@@ -19,11 +19,13 @@ pub struct IdTokenType {
     /// Required. Type of identification used to authorize charging.
     /// Allowed values: "Central", "DirectPayment", "eMAID", "EVCCID", "ISO14443", "ISO15693",
     /// "KeyCode", "Local", "MacAddress", "NoAuthorization", "VIN"
+    #[serde(rename = "type")]
     #[validate(length(max = 20))]
     pub r#type: String,
 
     /// Optional custom data
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -58,6 +60,28 @@ impl IdTokenType {
     /// Self reference for method chaining
     pub fn with_additional_info(mut self, additional_info: Vec<AdditionalInfoType>) -> Self {
         self.additional_info = Some(additional_info);
+        self
+    }
+
+    /// Adds a single additional information item to the existing list.
+    /// If no list exists yet, a new one is created.
+    ///
+    /// # Arguments
+    ///
+    /// * `info` - Additional information item to add
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn add_additional_info(mut self, info: AdditionalInfoType) -> Self {
+        match self.additional_info {
+            Some(ref mut list) => {
+                list.push(info);
+            }
+            None => {
+                self.additional_info = Some(vec![info]);
+            }
+        }
         self
     }
 
@@ -174,6 +198,7 @@ impl IdTokenType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use validator::Validate;
 
     #[test]
     fn test_new_id_token() {
@@ -215,6 +240,38 @@ mod tests {
     }
 
     #[test]
+    fn test_add_additional_info() {
+        let id = "4F62C4E0123456789".to_string();
+        let token_type = "ISO14443".to_string();
+
+        let info1 = AdditionalInfoType {
+            additional_id_token: "Card123".to_string(),
+            type_: "CardType".to_string(),
+            custom_data: None,
+        };
+
+        let info2 = AdditionalInfoType {
+            additional_id_token: "Card456".to_string(),
+            type_: "CardType".to_string(),
+            custom_data: None,
+        };
+
+        // Test adding to an empty list
+        let token = IdTokenType::new(id.clone(), token_type.clone())
+            .add_additional_info(info1.clone());
+
+        assert_eq!(token.additional_info().unwrap().len(), 1);
+        assert_eq!(token.additional_info().unwrap()[0], info1);
+
+        // Test adding to an existing list
+        let token = token.add_additional_info(info2.clone());
+
+        assert_eq!(token.additional_info().unwrap().len(), 2);
+        assert_eq!(token.additional_info().unwrap()[0], info1);
+        assert_eq!(token.additional_info().unwrap()[1], info2);
+    }
+
+    #[test]
     fn test_setter_methods() {
         let id1 = "4F62C4E0123456789".to_string();
         let id2 = "ABCDEF0123456789".to_string();
@@ -250,5 +307,50 @@ mod tests {
 
         assert_eq!(token.additional_info(), None);
         assert_eq!(token.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // Valid token
+        let valid_token = IdTokenType::new("4F62C4E0123456789".to_string(), "ISO14443".to_string());
+        assert!(valid_token.validate().is_ok(), "Valid token should pass validation");
+
+        // Invalid token - id_token too long (>255 chars)
+        let invalid_id_token = IdTokenType::new("A".repeat(256), "ISO14443".to_string());
+        let result = invalid_id_token.validate();
+        assert!(result.is_err(), "Token with too long id_token should fail validation");
+        let error = result.unwrap_err();
+        assert!(error.to_string().contains("id_token"),
+                "Error should mention id_token: {}", error);
+
+        // Invalid token - type too long (>20 chars)
+        let invalid_type = IdTokenType::new("4F62C4E0123456789".to_string(), "A".repeat(21));
+        let result = invalid_type.validate();
+        assert!(result.is_err(), "Token with too long type should fail validation");
+        let error = result.unwrap_err();
+        assert!(error.to_string().contains("type"),
+                "Error should mention type: {}", error);
+
+        // Invalid token - empty additional_info vector
+        let mut invalid_additional_info = IdTokenType::new("4F62C4E0123456789".to_string(), "ISO14443".to_string());
+        invalid_additional_info.additional_info = Some(vec![]);
+        let result = invalid_additional_info.validate();
+        assert!(result.is_err(), "Token with empty additional_info vector should fail validation");
+        let error = result.unwrap_err();
+        assert!(error.to_string().contains("additional_info"),
+                "Error should mention additional_info: {}", error);
+
+        // Invalid token - invalid custom_data
+        let mut invalid_custom_data = CustomDataType::new("VendorX".to_string());
+        invalid_custom_data.vendor_id = "A".repeat(256); // Too long vendor_id
+
+        let mut invalid_token = IdTokenType::new("4F62C4E0123456789".to_string(), "ISO14443".to_string());
+        invalid_token.custom_data = Some(invalid_custom_data);
+
+        let result = invalid_token.validate();
+        assert!(result.is_err(), "Token with invalid custom_data should fail validation");
+        let error = result.unwrap_err();
+        assert!(error.to_string().contains("custom_data"),
+                "Error should mention custom_data: {}", error);
     }
 }
