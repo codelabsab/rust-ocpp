@@ -1,8 +1,8 @@
-use std::fmt;
-use serde::{Deserialize, Serialize};
-use validator::Validate;
 use super::super::helpers::validator::validate_identifier_string;
 use super::{custom_data::CustomDataType, freq_droop::FreqDroopType};
+use serde::{Deserialize, Serialize};
+use std::fmt;
+use validator::Validate;
 
 /// Frequency droop get type for retrieving frequency droop settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -63,7 +63,12 @@ impl FreqDroopGetType {
     /// # Returns
     ///
     /// A new instance of `FreqDroopGetType` with optional fields set to `None`
-    pub fn new(freq_droop: FreqDroopType, id: String, is_superseded: bool, is_default: bool) -> Self {
+    pub fn new(
+        freq_droop: FreqDroopType,
+        id: String,
+        is_superseded: bool,
+        is_default: bool,
+    ) -> Self {
         Self {
             freq_droop,
             id,
@@ -216,12 +221,20 @@ mod tests {
         let under_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
         let response_time = rust_decimal::Decimal::from_str("2.0").unwrap();
 
-        let freq_droop = FreqDroopType::new(1, over_freq, under_freq, over_droop, under_droop, response_time);
+        let freq_droop = FreqDroopType::new(
+            1,
+            over_freq,
+            under_freq,
+            over_droop,
+            under_droop,
+            response_time,
+        );
         let id = "setting1".to_string();
         let is_superseded = false;
         let is_default = true;
 
-        let freq_droop_get = FreqDroopGetType::new(freq_droop.clone(), id.clone(), is_superseded, is_default);
+        let freq_droop_get =
+            FreqDroopGetType::new(freq_droop.clone(), id.clone(), is_superseded, is_default);
 
         assert_eq!(freq_droop_get.freq_droop(), &freq_droop);
         assert_eq!(freq_droop_get.id(), id);
@@ -238,14 +251,22 @@ mod tests {
         let under_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
         let response_time = rust_decimal::Decimal::from_str("2.0").unwrap();
 
-        let freq_droop = FreqDroopType::new(1, over_freq, under_freq, over_droop, under_droop, response_time);
+        let freq_droop = FreqDroopType::new(
+            1,
+            over_freq,
+            under_freq,
+            over_droop,
+            under_droop,
+            response_time,
+        );
         let id = "setting1".to_string();
         let is_superseded = false;
         let is_default = true;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let freq_droop_get = FreqDroopGetType::new(freq_droop.clone(), id.clone(), is_superseded, is_default)
-            .with_custom_data(custom_data.clone());
+        let freq_droop_get =
+            FreqDroopGetType::new(freq_droop.clone(), id.clone(), is_superseded, is_default)
+                .with_custom_data(custom_data.clone());
 
         assert_eq!(freq_droop_get.freq_droop(), &freq_droop);
         assert_eq!(freq_droop_get.id(), id);
@@ -268,8 +289,22 @@ mod tests {
         let under_droop2 = rust_decimal::Decimal::from_str("0.05").unwrap();
         let response_time2 = rust_decimal::Decimal::from_str("3.0").unwrap();
 
-        let freq_droop1 = FreqDroopType::new(1, over_freq1, under_freq1, over_droop1, under_droop1, response_time1);
-        let freq_droop2 = FreqDroopType::new(2, over_freq2, under_freq2, over_droop2, under_droop2, response_time2);
+        let freq_droop1 = FreqDroopType::new(
+            1,
+            over_freq1,
+            under_freq1,
+            over_droop1,
+            under_droop1,
+            response_time1,
+        );
+        let freq_droop2 = FreqDroopType::new(
+            2,
+            over_freq2,
+            under_freq2,
+            over_droop2,
+            under_droop2,
+            response_time2,
+        );
         let id1 = "setting1".to_string();
         let id2 = "setting2".to_string();
         let is_superseded1 = false;
@@ -278,8 +313,12 @@ mod tests {
         let is_default2 = false;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut freq_droop_get =
-            FreqDroopGetType::new(freq_droop1.clone(), id1.clone(), is_superseded1, is_default1);
+        let mut freq_droop_get = FreqDroopGetType::new(
+            freq_droop1.clone(),
+            id1.clone(),
+            is_superseded1,
+            is_default1,
+        );
 
         freq_droop_get
             .set_freq_droop(freq_droop2.clone())
@@ -299,7 +338,6 @@ mod tests {
         assert_eq!(freq_droop_get.custom_data(), None);
     }
 
-
     #[test]
     fn test_from_freq_droop() {
         let over_freq = rust_decimal::Decimal::from_str("50.5").unwrap();
@@ -308,7 +346,14 @@ mod tests {
         let under_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
         let response_time = rust_decimal::Decimal::from_str("2.0").unwrap();
 
-        let freq_droop = FreqDroopType::new(1, over_freq, under_freq, over_droop, under_droop, response_time);
+        let freq_droop = FreqDroopType::new(
+            1,
+            over_freq,
+            under_freq,
+            over_droop,
+            under_droop,
+            response_time,
+        );
         let freq_droop_get = FreqDroopGetType::from(freq_droop.clone());
 
         assert_eq!(freq_droop_get.freq_droop(), &freq_droop);
@@ -326,7 +371,14 @@ mod tests {
         let under_droop = rust_decimal::Decimal::from_str("0.04").unwrap();
         let response_time = rust_decimal::Decimal::from_str("2.0").unwrap();
 
-        let freq_droop = FreqDroopType::new(1, over_freq, under_freq, over_droop, under_droop, response_time);
+        let freq_droop = FreqDroopType::new(
+            1,
+            over_freq,
+            under_freq,
+            over_droop,
+            under_droop,
+            response_time,
+        );
         let id = "setting1".to_string();
         let is_superseded = true;
         let is_default = false;
@@ -334,6 +386,9 @@ mod tests {
         let freq_droop_get = FreqDroopGetType::new(freq_droop, id, is_superseded, is_default);
 
         let display_string = format!("{}", freq_droop_get);
-        assert_eq!(display_string, "FreqDroopGet { id: setting1, is_default: false, is_superseded: true }");
+        assert_eq!(
+            display_string,
+            "FreqDroopGet { id: setting1, is_default: false, is_superseded: true }"
+        );
     }
 }

@@ -187,7 +187,10 @@ mod tests {
         assert_eq!(entry.duration(), duration);
         assert_eq!(entry.ev_price_rules().len(), 1);
         assert_eq!(entry.ev_price_rules()[0].energy_fee_as_f64(), energy_fee);
-        assert_eq!(entry.ev_price_rules()[0].power_range_start_as_f64(), power_range_start);
+        assert_eq!(
+            entry.ev_price_rules()[0].power_range_start_as_f64(),
+            power_range_start
+        );
         assert_eq!(entry.custom_data(), None);
     }
 

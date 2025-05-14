@@ -1,16 +1,12 @@
+use super::{
+    component::ComponentType, custom_data::CustomDataType, id_token::IdTokenType,
+    message_content::MessageContentType,
+};
+use crate::v2_1::enumerations::{MessagePriorityEnumType, MessageStateEnumType};
+use crate::v2_1::helpers::validator::validate_identifier_string;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use crate::v2_1::helpers::validator::validate_identifier_string;
-use super::{
-    component::ComponentType,
-    custom_data::CustomDataType,
-    id_token::IdTokenType,
-    message_content::MessageContentType
-};
-use crate::v2_1::enumerations::{
-    MessagePriorityEnumType, MessageStateEnumType,
-};
 
 /// Contains message details, for a message to be displayed on a Charging Station.
 ///
@@ -510,8 +506,8 @@ impl MessageInfoType {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, Value};
     use super::*;
+    use serde_json::{json, Value};
 
     #[test]
     fn test_new_message_info() {
@@ -543,12 +539,8 @@ mod tests {
         let state = MessageStateEnumType::Charging;
         let start_timestamp = Utc::now();
 
-        let message_info = MessageInfoType::builder(
-            id,
-            priority.clone(),
-            state.clone(),
-            start_timestamp
-        );
+        let message_info =
+            MessageInfoType::builder(id, priority.clone(), state.clone(), start_timestamp);
 
         assert_eq!(message_info.id(), id);
         assert_eq!(message_info.priority(), &priority);
@@ -575,13 +567,13 @@ mod tests {
         let message_content = MessageContentType::new(
             "Please plug in your vehicle.".to_string(),
             crate::v2_1::enumerations::MessageFormatEnumType::ASCII,
-            "en".to_string()
+            "en".to_string(),
         );
 
         let message_extra = MessageContentType::new(
             "Additional information".to_string(),
             crate::v2_1::enumerations::MessageFormatEnumType::UTF8,
-            "en".to_string()
+            "en".to_string(),
         );
 
         let display = ComponentType::new("MainDisplay".to_string());
@@ -627,25 +619,21 @@ mod tests {
         let message_content = MessageContentType::new(
             "Please plug in your vehicle.".to_string(),
             crate::v2_1::enumerations::MessageFormatEnumType::ASCII,
-            "en".to_string()
+            "en".to_string(),
         );
 
         let message_extra = MessageContentType::new(
             "Additional information".to_string(),
             crate::v2_1::enumerations::MessageFormatEnumType::UTF8,
-            "en".to_string()
+            "en".to_string(),
         );
 
         let display = ComponentType::new("MainDisplay".to_string());
         let id_token = IdTokenType::new("TAG123".to_string(), "RFID".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut message_info = MessageInfoType::new(
-            id1,
-            priority1.clone(),
-            state1.clone(),
-            start_timestamp1,
-        );
+        let mut message_info =
+            MessageInfoType::new(id1, priority1.clone(), state1.clone(), start_timestamp1);
 
         message_info
             .set_id(id2)
@@ -737,7 +725,8 @@ mod tests {
             MessagePriorityEnumType::AlwaysFront,
             MessageStateEnumType::Charging,
             Utc::now(),
-        ).with_transaction_id(long_transaction_id);
+        )
+        .with_transaction_id(long_transaction_id);
 
         // Validation should fail
         let result = message_info.validate();
@@ -761,7 +750,8 @@ mod tests {
             MessagePriorityEnumType::AlwaysFront,
             MessageStateEnumType::Charging,
             Utc::now(),
-        ).with_message(invalid_message_content);
+        )
+        .with_message(invalid_message_content);
 
         // Validation should fail due to nested validation
         let result = message_info.validate();
@@ -778,7 +768,7 @@ mod tests {
         let message_content = MessageContentType::new(
             "Please plug in your vehicle.".to_string(),
             crate::v2_1::enumerations::MessageFormatEnumType::ASCII,
-            "en".to_string()
+            "en".to_string(),
         );
 
         let custom_data = CustomDataType::new("VendorX".to_string())
@@ -798,7 +788,10 @@ mod tests {
         assert_eq!(deserialized["state"], "Charging");
         assert!(deserialized["startTimestamp"].is_string());
         assert!(deserialized["message"].is_object());
-        assert_eq!(deserialized["message"]["content"], "Please plug in your vehicle.");
+        assert_eq!(
+            deserialized["message"]["content"],
+            "Please plug in your vehicle."
+        );
         assert_eq!(deserialized["customData"]["vendorId"], "VendorX");
         assert_eq!(deserialized["customData"]["version"], "1.0");
     }
@@ -840,7 +833,10 @@ mod tests {
 
         // Check fields
         assert_eq!(message_info.id(), 1);
-        assert_eq!(message_info.priority(), &MessagePriorityEnumType::AlwaysFront);
+        assert_eq!(
+            message_info.priority(),
+            &MessagePriorityEnumType::AlwaysFront
+        );
         assert_eq!(message_info.state(), &MessageStateEnumType::Charging);
         assert_eq!(message_info.transaction_id(), Some("TX001"));
         assert!(message_info.message().is_some());

@@ -281,8 +281,12 @@ mod tests {
     #[test]
     fn test_validation() {
         // Valid result
-        let valid_result = ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 42);
-        assert!(valid_result.validate().is_ok(), "Valid result should pass validation");
+        let valid_result =
+            ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 42);
+        assert!(
+            valid_result.validate().is_ok(),
+            "Valid result should pass validation"
+        );
 
         // Test id validation (negative value)
         let mut invalid_result = valid_result.clone();
@@ -322,34 +326,36 @@ mod tests {
     #[test]
     fn test_edge_cases() {
         // Test with zero id (should be valid)
-        let zero_id_result = ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 0);
+        let zero_id_result =
+            ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 0);
         assert!(
             zero_id_result.validate().is_ok(),
             "Result with zero id should pass validation"
         );
 
         // Test with maximum integer id
-        let max_id_result = ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, i32::MAX);
+        let max_id_result =
+            ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, i32::MAX);
         assert!(
             max_id_result.validate().is_ok(),
             "Result with maximum integer id should pass validation"
         );
 
         // Test with empty strings in status_info
-        let status_info = StatusInfoType::new("".to_string())
-            .with_additional_info("".to_string());
-        let empty_strings_result = ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 42)
-            .with_status_info(status_info);
+        let status_info = StatusInfoType::new("".to_string()).with_additional_info("".to_string());
+        let empty_strings_result =
+            ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 42)
+                .with_status_info(status_info);
         assert!(
             empty_strings_result.validate().is_ok(),
             "Result with empty strings in status_info should pass validation"
         );
 
         // Test with maximum length strings in status_info
-        let status_info = StatusInfoType::new("a".repeat(50))
-            .with_additional_info("a".repeat(500));
-        let max_strings_result = ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 42)
-            .with_status_info(status_info);
+        let status_info = StatusInfoType::new("a".repeat(50)).with_additional_info("a".repeat(500));
+        let max_strings_result =
+            ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 42)
+                .with_status_info(status_info);
         assert!(
             max_strings_result.validate().is_ok(),
             "Result with maximum length strings in status_info should pass validation"
@@ -401,7 +407,10 @@ mod tests {
             .with_custom_data(result_custom_data.clone());
 
         // Validate the complex object
-        assert!(result.validate().is_ok(), "Complex result should pass validation");
+        assert!(
+            result.validate().is_ok(),
+            "Complex result should pass validation"
+        );
 
         // Serialize and deserialize
         let serialized = to_string(&result).unwrap();
@@ -409,7 +418,12 @@ mod tests {
 
         // Verify nested custom data is preserved
         assert_eq!(
-            deserialized.status_info().unwrap().custom_data().unwrap().vendor_id(),
+            deserialized
+                .status_info()
+                .unwrap()
+                .custom_data()
+                .unwrap()
+                .vendor_id(),
             "StatusInfoVendor"
         );
         assert_eq!(

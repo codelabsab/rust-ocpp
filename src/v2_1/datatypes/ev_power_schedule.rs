@@ -214,7 +214,10 @@ mod tests {
         let entries = vec![EVPowerScheduleEntryType::new(3600, 11000.0)];
         let schedule = EVPowerScheduleType::new(time_anchor, entries);
 
-        assert!(schedule.validate().is_ok(), "Valid schedule should pass validation");
+        assert!(
+            schedule.validate().is_ok(),
+            "Valid schedule should pass validation"
+        );
 
         // Valid case with multiple entries
         let time_anchor = Utc::now();
@@ -225,7 +228,10 @@ mod tests {
         ];
         let schedule = EVPowerScheduleType::new(time_anchor, entries);
 
-        assert!(schedule.validate().is_ok(), "Schedule with multiple entries should pass validation");
+        assert!(
+            schedule.validate().is_ok(),
+            "Schedule with multiple entries should pass validation"
+        );
     }
 
     #[test]
@@ -236,7 +242,10 @@ mod tests {
         let invalid_schedule = EVPowerScheduleType::new(time_anchor, empty_entries);
 
         let validation_result = invalid_schedule.validate();
-        assert!(validation_result.is_err(), "Schedule with empty entries should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Schedule with empty entries should fail validation"
+        );
 
         let errors = validation_result.unwrap_err();
         let field_errors = errors.field_errors();
@@ -248,10 +257,12 @@ mod tests {
         );
 
         let entries_errors = &field_errors["ev_power_schedule_entries"];
-        assert!(!entries_errors.is_empty(), "ev_power_schedule_entries field should have validation errors");
+        assert!(
+            !entries_errors.is_empty(),
+            "ev_power_schedule_entries field should have validation errors"
+        );
         assert_eq!(
-            entries_errors[0].code,
-            "length",
+            entries_errors[0].code, "length",
             "ev_power_schedule_entries field should have a length error"
         );
     }
@@ -265,8 +276,8 @@ mod tests {
         let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
         let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
 
-        let entry = EVPowerScheduleEntryType::new(3600, 11000.0)
-            .with_custom_data(invalid_custom_data);
+        let entry =
+            EVPowerScheduleEntryType::new(3600, 11000.0).with_custom_data(invalid_custom_data);
 
         let schedule = EVPowerScheduleType::new(time_anchor, vec![entry]);
 
@@ -288,8 +299,8 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string())
             .with_property("version".to_string(), json!("1.0"));
 
-        let schedule = EVPowerScheduleType::new(time_anchor.clone(), entries)
-            .with_custom_data(custom_data);
+        let schedule =
+            EVPowerScheduleType::new(time_anchor.clone(), entries).with_custom_data(custom_data);
 
         // Serialize to JSON
         let serialized = serde_json::to_string(&schedule).unwrap();
@@ -314,8 +325,8 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string())
             .with_property("version".to_string(), json!("1.0"));
 
-        let schedule = EVPowerScheduleType::new(time_anchor.clone(), entries)
-            .with_custom_data(custom_data);
+        let schedule =
+            EVPowerScheduleType::new(time_anchor.clone(), entries).with_custom_data(custom_data);
 
         // Serialize to JSON Value
         let json_value = serde_json::to_value(&schedule).unwrap();

@@ -29,7 +29,7 @@ pub struct DERChargingParametersType {
     /// the EV may override the request and discharge up to overExcitedMaximumDischargePower to meet the minimum reactive power requirements.
     /// Corresponds to the WOvPF attribute in IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVOverExcitedMaximumDischargePower
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -39,7 +39,7 @@ pub struct DERChargingParametersType {
     /// EV power factor when injecting (over excited) the minimum reactive power.
     /// Corresponds to the OvPF attribute in IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVOverExcitedPowerFactor
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -52,7 +52,7 @@ pub struct DERChargingParametersType {
     /// the EV may override the request and discharge up to underExcitedMaximumDischargePower to meet the minimum reactive power requirements.
     /// This corresponds to the WUnPF attribute in the IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVUnderExcitedMaximumDischargePower
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -62,7 +62,7 @@ pub struct DERChargingParametersType {
     /// EV power factor when injecting (under excited) the minimum reactive power.
     /// Corresponds to the OvPF attribute in IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVUnderExcitedPowerFactor
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -72,7 +72,7 @@ pub struct DERChargingParametersType {
     /// Rated maximum total apparent power, defined by min(EV, EVSE) in va.
     /// Corresponds to the VAMaxRtg in IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumApparentPower
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -84,7 +84,7 @@ pub struct DERChargingParametersType {
     /// in which case this field represents phase L1.
     /// Corresponds to the ChaVAMaxRtg in IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumChargeApparentPower
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -94,7 +94,7 @@ pub struct DERChargingParametersType {
     /// Rated maximum absorbed apparent power on phase L2, defined by min(EV, EVSE) in va.
     /// Corresponds to the ChaVAMaxRtg in IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumChargeApparentPower_L2
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -104,7 +104,7 @@ pub struct DERChargingParametersType {
     /// Rated maximum absorbed apparent power on phase L3, defined by min(EV, EVSE) in va.
     /// Corresponds to the ChaVAMaxRtg in IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumChargeApparentPower_L3
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -116,7 +116,7 @@ pub struct DERChargingParametersType {
     /// in which case this field represents phase L1.
     /// Corresponds to the DisVAMaxRtg in IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumDischargeApparentPower
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -126,7 +126,7 @@ pub struct DERChargingParametersType {
     /// Rated maximum injected apparent power on phase L2, defined by min(EV, EVSE) in va.
     /// Corresponds to the DisVAMaxRtg in IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumDischargeApparentPower_L2
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -136,7 +136,7 @@ pub struct DERChargingParametersType {
     /// Rated maximum injected apparent power on phase L3, defined by min(EV, EVSE) in va.
     /// Corresponds to the DisVAMaxRtg in IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumDischargeApparentPower_L3
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -148,7 +148,7 @@ pub struct DERChargingParametersType {
     /// in which case this field represents phase L1.
     /// Corresponds to the AvarMax attribute in the IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumChargeReactivePower
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -158,7 +158,7 @@ pub struct DERChargingParametersType {
     /// Rated maximum absorbed reactive power, defined by min(EV, EVSE), in vars on phase L2.
     /// Corresponds to the AvarMax attribute in the IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumChargeReactivePower_L2
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -168,7 +168,7 @@ pub struct DERChargingParametersType {
     /// Rated maximum absorbed reactive power, defined by min(EV, EVSE), in vars on phase L3.
     /// Corresponds to the AvarMax attribute in the IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumChargeReactivePower_L3
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -179,7 +179,7 @@ pub struct DERChargingParametersType {
     /// This field represents the sum of all phases, unless values are provided for L2 and L3,
     /// in which case this field represents phase L1.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMinimumChargeReactivePower
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -188,7 +188,7 @@ pub struct DERChargingParametersType {
 
     /// Rated minimum absorbed reactive power, defined by max(EV, EVSE), in vars on phase L2.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMinimumChargeReactivePower_L2
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -197,7 +197,7 @@ pub struct DERChargingParametersType {
 
     /// Rated minimum absorbed reactive power, defined by max(EV, EVSE), in vars on phase L3.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMinimumChargeReactivePower_L3
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -209,7 +209,7 @@ pub struct DERChargingParametersType {
     /// in which case this field represents phase L1.
     /// Corresponds to the IvarMax attribute in the IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumDischargeReactivePower
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -219,7 +219,7 @@ pub struct DERChargingParametersType {
     /// Rated maximum injected reactive power, defined by min(EV, EVSE), in vars on phase L2.
     /// Corresponds to the IvarMax attribute in the IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumDischargeReactivePower_L2
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -229,7 +229,7 @@ pub struct DERChargingParametersType {
     /// Rated maximum injected reactive power, defined by min(EV, EVSE), in vars on phase L3.
     /// Corresponds to the IvarMax attribute in the IEC 61850.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumDischargeReactivePower_L3
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -240,7 +240,7 @@ pub struct DERChargingParametersType {
     /// This field represents the sum of all phases, unless values are provided for L2 and L3,
     /// in which case this field represents phase L1.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMinimumDischargeReactivePower
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -249,7 +249,7 @@ pub struct DERChargingParametersType {
 
     /// Rated minimum injected reactive power, defined by max(EV, EVSE), in var on phase L2.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMinimumDischargeReactivePower_L2
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -258,7 +258,7 @@ pub struct DERChargingParametersType {
 
     /// Rated minimum injected reactive power, defined by max(EV, EVSE), in var on phase L3.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMinimumDischargeReactivePower_L3
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -267,7 +267,7 @@ pub struct DERChargingParametersType {
 
     /// Line voltage supported by EVSE and EV.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVNominalVoltage
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -276,7 +276,7 @@ pub struct DERChargingParametersType {
 
     /// The nominal AC voltage (rms) offset between the Charging Station's electrical connection point and the utility's point of common coupling.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVNominalVoltageOffset
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -285,7 +285,7 @@ pub struct DERChargingParametersType {
 
     /// Maximum AC rms voltage, as defined by min(EV, EVSE) to operate with.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumNominalVoltage
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -294,7 +294,7 @@ pub struct DERChargingParametersType {
 
     /// Minimum AC rms voltage, as defined by max(EV, EVSE) to operate with.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMinimumNominalVoltage
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -340,7 +340,7 @@ pub struct DERChargingParametersType {
 
     /// Time after which EV will trip if an island has been detected.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVIslandingTripTime
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -349,7 +349,7 @@ pub struct DERChargingParametersType {
 
     /// Maximum injected DC current allowed at level 1 charging.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumLevel1DCInjection
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -358,7 +358,7 @@ pub struct DERChargingParametersType {
 
     /// Maximum allowed duration of DC injection at level 1 charging.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVDurationLevel1DCInjection
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -367,7 +367,7 @@ pub struct DERChargingParametersType {
 
     /// Maximum injected DC current allowed at level 2 charging.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVMaximumLevel2DCInjection
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -376,7 +376,7 @@ pub struct DERChargingParametersType {
 
     /// Maximum allowed duration of DC injection at level 2 charging.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVDurationLevel2DCInjection
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -385,7 +385,7 @@ pub struct DERChargingParametersType {
 
     /// Measure of the susceptibility of the circuit to reactance, in Siemens (S).
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVReactiveSusceptance
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -396,7 +396,7 @@ pub struct DERChargingParametersType {
     /// The value is independent of the V2X Cycling area. Once this value reaches the value of 0,
     /// the EV may block any attempt to discharge in order to protect the battery health.
     /// ISO 15118-20: DER_BPT_AC_CPDReqEnergyTransferModeType: EVSessionTotalDischargeEnergyAvailable
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -620,7 +620,10 @@ impl DERChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_ev_under_excited_max_discharge_power(&mut self, value: Option<Decimal>) -> &mut Self {
+    pub fn set_ev_under_excited_max_discharge_power(
+        &mut self,
+        value: Option<Decimal>,
+    ) -> &mut Self {
         self.ev_under_excited_max_discharge_power = value;
         self
     }
@@ -694,7 +697,10 @@ impl DERChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_ev_islanding_detection_method(&mut self, value: Option<Vec<IslandingDetectionEnumType>>) -> &mut Self {
+    pub fn set_ev_islanding_detection_method(
+        &mut self,
+        value: Option<Vec<IslandingDetectionEnumType>>,
+    ) -> &mut Self {
         self.ev_islanding_detection_method = value;
         self
     }
@@ -708,7 +714,10 @@ impl DERChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_ev_islanding_detection_method(mut self, value: Vec<IslandingDetectionEnumType>) -> Self {
+    pub fn with_ev_islanding_detection_method(
+        mut self,
+        value: Vec<IslandingDetectionEnumType>,
+    ) -> Self {
         self.ev_islanding_detection_method = Some(value);
         self
     }
@@ -764,11 +773,20 @@ mod tests {
             .with_ev_islanding_detection_method(islanding_methods.clone());
 
         assert_eq!(params.ev_supported_der_control(), &der_controls);
-        assert_eq!(params.ev_over_excited_max_discharge_power(), Some(&dec!(100.5)));
+        assert_eq!(
+            params.ev_over_excited_max_discharge_power(),
+            Some(&dec!(100.5))
+        );
         assert_eq!(params.ev_over_excited_power_factor(), Some(&dec!(0.95)));
-        assert_eq!(params.ev_under_excited_max_discharge_power(), Some(&dec!(90.0)));
+        assert_eq!(
+            params.ev_under_excited_max_discharge_power(),
+            Some(&dec!(90.0))
+        );
         assert_eq!(params.ev_under_excited_power_factor(), Some(&dec!(0.9)));
-        assert_eq!(params.ev_islanding_detection_method(), Some(&islanding_methods));
+        assert_eq!(
+            params.ev_islanding_detection_method(),
+            Some(&islanding_methods)
+        );
     }
 
     #[test]
@@ -794,11 +812,20 @@ mod tests {
 
         assert_eq!(params.ev_supported_der_control(), &der_controls2);
         assert_eq!(params.custom_data(), Some(&custom_data));
-        assert_eq!(params.ev_over_excited_max_discharge_power(), Some(&dec!(100.5)));
+        assert_eq!(
+            params.ev_over_excited_max_discharge_power(),
+            Some(&dec!(100.5))
+        );
         assert_eq!(params.ev_over_excited_power_factor(), Some(&dec!(0.95)));
-        assert_eq!(params.ev_under_excited_max_discharge_power(), Some(&dec!(90.0)));
+        assert_eq!(
+            params.ev_under_excited_max_discharge_power(),
+            Some(&dec!(90.0))
+        );
         assert_eq!(params.ev_under_excited_power_factor(), Some(&dec!(0.9)));
-        assert_eq!(params.ev_islanding_detection_method(), Some(&islanding_methods));
+        assert_eq!(
+            params.ev_islanding_detection_method(),
+            Some(&islanding_methods)
+        );
 
         // Test clearing optional fields
         params

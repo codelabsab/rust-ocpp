@@ -213,8 +213,8 @@ mod tests {
     #[test]
     fn test_component_variable_with_instance() {
         // Test with instance in the component
-        let component = ComponentType::new("Connector".to_string())
-            .with_instance("Main".to_string());
+        let component =
+            ComponentType::new("Connector".to_string()).with_instance("Main".to_string());
 
         let component_variable = ComponentVariableType::new(component.clone());
 
@@ -260,9 +260,15 @@ mod tests {
         let component_variable: ComponentVariableType = serde_json::from_value(json).unwrap();
 
         assert_eq!(component_variable.component().name(), "Connector");
-        assert_eq!(component_variable.variable().unwrap().name(), "CurrentLimit");
+        assert_eq!(
+            component_variable.variable().unwrap().name(),
+            "CurrentLimit"
+        );
         assert_eq!(component_variable.variable().unwrap().instance(), "Main");
-        assert_eq!(component_variable.custom_data().unwrap().vendor_id(), "VendorX");
+        assert_eq!(
+            component_variable.custom_data().unwrap().vendor_id(),
+            "VendorX"
+        );
     }
 
     #[test]
@@ -271,8 +277,7 @@ mod tests {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
 
-        let component_variable = ComponentVariableType::new(component)
-            .with_variable(variable);
+        let component_variable = ComponentVariableType::new(component).with_variable(variable);
 
         // This should validate successfully
         assert!(component_variable.validate().is_ok());
@@ -294,15 +299,18 @@ mod tests {
         custom_data.set_property("features".to_string(), json!(["feature1", "feature2"]));
 
         let component = ComponentType::new("Connector".to_string());
-        let component_variable = ComponentVariableType::new(component)
-            .with_custom_data(custom_data);
+        let component_variable =
+            ComponentVariableType::new(component).with_custom_data(custom_data);
 
         let serialized = serde_json::to_value(&component_variable).unwrap();
 
         // Check that the custom properties are included in the serialized JSON
         assert_eq!(serialized["customData"]["vendorId"], "VendorX");
         assert_eq!(serialized["customData"]["version"], "1.0");
-        assert_eq!(serialized["customData"]["features"], json!(["feature1", "feature2"]));
+        assert_eq!(
+            serialized["customData"]["features"],
+            json!(["feature1", "feature2"])
+        );
     }
 
     #[test]

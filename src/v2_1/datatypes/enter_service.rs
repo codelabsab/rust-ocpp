@@ -1,7 +1,7 @@
+use super::custom_data::CustomDataType;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use super::custom_data::CustomDataType;
 
 /// Parameters for the EnterService DER control function.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -28,7 +28,7 @@ pub struct EnterServiceType {
     pub low_freq: Decimal,
 
     /// Enter service delay
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -36,7 +36,7 @@ pub struct EnterServiceType {
     pub delay: Option<Decimal>,
 
     /// Enter service randomized delay
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -44,7 +44,7 @@ pub struct EnterServiceType {
     pub random_delay: Option<Decimal>,
 
     /// Enter service ramp rate in seconds
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default

@@ -472,15 +472,12 @@ mod tests {
         let basic_auth_password = "Pass123!".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let apn = APNType::new(
-            "internet".to_string(),
-            APNAuthenticationEnumType::CHAP,
-        )
-        .with_apn_user_name("user".to_string())
-        .with_apn_password("password".to_string())
-        .with_sim_pin(1234)
-        .with_preferred_network("network".to_string())
-        .with_use_only_preferred_network(true);
+        let apn = APNType::new("internet".to_string(), APNAuthenticationEnumType::CHAP)
+            .with_apn_user_name("user".to_string())
+            .with_apn_password("password".to_string())
+            .with_sim_pin(1234)
+            .with_preferred_network("network".to_string())
+            .with_use_only_preferred_network(true);
 
         let vpn = VPNType::new(
             "vpn.example.com".to_string(),
@@ -511,7 +508,10 @@ mod tests {
         assert_eq!(profile.message_timeout(), message_timeout);
         assert_eq!(profile.security_profile(), security_profile);
         assert_eq!(profile.identity(), Some(identity.as_str()));
-        assert_eq!(profile.basic_auth_password(), Some(basic_auth_password.as_str()));
+        assert_eq!(
+            profile.basic_auth_password(),
+            Some(basic_auth_password.as_str())
+        );
         assert_eq!(profile.custom_data(), Some(&custom_data));
         assert_eq!(profile.apn(), Some(&apn));
         assert_eq!(profile.vpn(), Some(&vpn));
@@ -536,10 +536,7 @@ mod tests {
 
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let apn = APNType::new(
-            "internet".to_string(),
-            APNAuthenticationEnumType::CHAP,
-        );
+        let apn = APNType::new("internet".to_string(), APNAuthenticationEnumType::CHAP);
 
         let vpn = VPNType::new(
             "vpn.example.com".to_string(),
@@ -578,13 +575,21 @@ mod tests {
         assert_eq!(profile.message_timeout(), message_timeout2);
         assert_eq!(profile.security_profile(), security_profile2);
         assert_eq!(profile.identity(), Some(identity.as_str()));
-        assert_eq!(profile.basic_auth_password(), Some(basic_auth_password.as_str()));
+        assert_eq!(
+            profile.basic_auth_password(),
+            Some(basic_auth_password.as_str())
+        );
         assert_eq!(profile.custom_data(), Some(&custom_data));
         assert_eq!(profile.apn(), Some(&apn));
         assert_eq!(profile.vpn(), Some(&vpn));
 
         // Test clearing optional fields
-        profile.set_custom_data(None).set_apn(None).set_vpn(None).set_identity(None).set_basic_auth_password(None);
+        profile
+            .set_custom_data(None)
+            .set_apn(None)
+            .set_vpn(None)
+            .set_identity(None)
+            .set_basic_auth_password(None);
 
         assert_eq!(profile.custom_data(), None);
         assert_eq!(profile.apn(), None);
@@ -604,7 +609,10 @@ mod tests {
             30,
             1,
         );
-        assert!(valid_profile.validate().is_ok(), "有效的NetworkConnectionProfileType应通过验证");
+        assert!(
+            valid_profile.validate().is_ok(),
+            "有效的NetworkConnectionProfileType应通过验证"
+        );
 
         // 测试ocpp_csms_url长度验证（过长）
         let mut invalid_profile = valid_profile.clone();

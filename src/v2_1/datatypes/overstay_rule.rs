@@ -38,7 +38,11 @@ impl OverstayRuleType {
     /// # Returns
     ///
     /// A new instance of `OverstayRuleType` with optional fields set to `None`
-    pub fn new(start_time: i32, overstay_fee_period: i32, overstay_fee: RationalNumberType) -> Self {
+    pub fn new(
+        start_time: i32,
+        overstay_fee_period: i32,
+        overstay_fee: RationalNumberType,
+    ) -> Self {
         Self {
             start_time,
             overstay_fee_period,

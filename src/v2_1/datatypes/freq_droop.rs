@@ -1,8 +1,8 @@
+use super::custom_data::CustomDataType;
+use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use chrono::{DateTime, Utc};
-use super::custom_data::CustomDataType;
 
 /// Frequency droop settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -17,15 +17,24 @@ pub struct FreqDroopType {
     pub over_freq: Decimal,
 
     /// Under-frequency start of droop
-    #[serde(with = "rust_decimal::serde::arbitrary_precision", rename = "underFreq")]
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision",
+        rename = "underFreq"
+    )]
     pub under_freq: Decimal,
 
     /// Over-frequency droop per unit, oFDroop
-    #[serde(with = "rust_decimal::serde::arbitrary_precision", rename = "overDroop")]
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision",
+        rename = "overDroop"
+    )]
     pub over_droop: Decimal,
 
     /// Under-frequency droop per unit, uFDroop
-    #[serde(with = "rust_decimal::serde::arbitrary_precision", rename = "underDroop")]
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision",
+        rename = "underDroop"
+    )]
     pub under_droop: Decimal,
 
     /// Response time in seconds.
@@ -339,8 +348,8 @@ impl FreqDroopType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rust_decimal::prelude::FromStr;
     use chrono::TimeZone;
+    use rust_decimal::prelude::FromStr;
 
     #[test]
     fn test_new_freq_droop() {

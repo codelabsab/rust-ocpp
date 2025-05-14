@@ -221,8 +221,8 @@ impl MessageContentType {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, Value};
     use super::*;
+    use serde_json::{json, Value};
 
     #[test]
     fn test_new_message_content() {
@@ -244,7 +244,8 @@ mod tests {
         let format = MessageFormatEnumType::ASCII;
         let language = "en".to_string();
 
-        let message = MessageContentType::builder(content.clone(), format.clone(), language.clone());
+        let message =
+            MessageContentType::builder(content.clone(), format.clone(), language.clone());
 
         assert_eq!(message.content(), content);
         assert_eq!(message.format(), &format);
@@ -314,11 +315,8 @@ mod tests {
     fn test_validation_content_length() {
         // Create a message with content that exceeds the maximum length (1024 characters)
         let long_content = "a".repeat(1025);
-        let message = MessageContentType::new(
-            long_content,
-            MessageFormatEnumType::ASCII,
-            "en".to_string(),
-        );
+        let message =
+            MessageContentType::new(long_content, MessageFormatEnumType::ASCII, "en".to_string());
 
         // Validation should fail
         let result = message.validate();
@@ -354,7 +352,8 @@ mod tests {
             "Valid message".to_string(),
             MessageFormatEnumType::ASCII,
             "en".to_string(),
-        ).with_custom_data(invalid_custom_data);
+        )
+        .with_custom_data(invalid_custom_data);
 
         // Validation should fail
         let result = message.validate();

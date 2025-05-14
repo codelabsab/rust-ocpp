@@ -6,7 +6,6 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-
 /// Revocation status of certificate
 ///
 /// This type represents the status of a certificate, including its revocation status,
@@ -377,6 +376,4 @@ mod tests {
         // Validate the deserialized object
         assert!(deserialized.validate().is_ok());
     }
-
-
 }

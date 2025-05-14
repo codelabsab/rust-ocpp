@@ -259,7 +259,10 @@ impl GetVariableResultType {
     /// # Returns
     ///
     /// The modified `GetVariableResultType` instance
-    pub fn set_attribute_status(&mut self, attribute_status: GetVariableStatusEnumType) -> &mut Self {
+    pub fn set_attribute_status(
+        &mut self,
+        attribute_status: GetVariableStatusEnumType,
+    ) -> &mut Self {
         self.attribute_status = attribute_status;
         self
     }
@@ -282,7 +285,10 @@ impl GetVariableResultType {
     /// # Returns
     ///
     /// The modified `GetVariableResultType` instance
-    pub fn set_attribute_status_info(&mut self, attribute_status_info: Option<StatusInfoType>) -> &mut Self {
+    pub fn set_attribute_status_info(
+        &mut self,
+        attribute_status_info: Option<StatusInfoType>,
+    ) -> &mut Self {
         self.attribute_status_info = attribute_status_info;
         self
     }
@@ -290,7 +296,11 @@ impl GetVariableResultType {
 
 /// Trait for GetVariableResult operations
 pub trait GetVariableResult {
-    fn new(component: ComponentType, variable: VariableType, attribute_status: GetVariableStatusEnumType) -> Self;
+    fn new(
+        component: ComponentType,
+        variable: VariableType,
+        attribute_status: GetVariableStatusEnumType,
+    ) -> Self;
     fn with_custom_data(self, custom_data: CustomDataType) -> Self;
     fn with_attribute_type(self, attribute_type: AttributeEnumType) -> Self;
     fn with_attribute_value(self, attribute_value: String) -> Self;
@@ -308,11 +318,18 @@ pub trait GetVariableResult {
     fn attribute_status(&self) -> &GetVariableStatusEnumType;
     fn set_attribute_status(&mut self, attribute_status: GetVariableStatusEnumType) -> &mut Self;
     fn attribute_status_info(&self) -> Option<&StatusInfoType>;
-    fn set_attribute_status_info(&mut self, attribute_status_info: Option<StatusInfoType>) -> &mut Self;
+    fn set_attribute_status_info(
+        &mut self,
+        attribute_status_info: Option<StatusInfoType>,
+    ) -> &mut Self;
 }
 
 impl GetVariableResult for GetVariableResultType {
-    fn new(component: ComponentType, variable: VariableType, attribute_status: GetVariableStatusEnumType) -> Self {
+    fn new(
+        component: ComponentType,
+        variable: VariableType,
+        attribute_status: GetVariableStatusEnumType,
+    ) -> Self {
         GetVariableResultType::new(component, variable, attribute_status)
     }
     fn with_custom_data(self, custom_data: CustomDataType) -> Self {
@@ -366,7 +383,10 @@ impl GetVariableResult for GetVariableResultType {
     fn attribute_status_info(&self) -> Option<&StatusInfoType> {
         self.attribute_status_info()
     }
-    fn set_attribute_status_info(&mut self, attribute_status_info: Option<StatusInfoType>) -> &mut Self {
+    fn set_attribute_status_info(
+        &mut self,
+        attribute_status_info: Option<StatusInfoType>,
+    ) -> &mut Self {
         self.set_attribute_status_info(attribute_status_info)
     }
 }
@@ -375,10 +395,10 @@ impl GetVariableResult for GetVariableResultType {
 mod tests {
     use super::*;
     use crate::v2_1::datatypes::component::ComponentType;
-    use crate::v2_1::datatypes::variable::VariableType;
-    use crate::v2_1::enumerations::GetVariableStatusEnumType;
     use crate::v2_1::datatypes::custom_data::CustomDataType;
     use crate::v2_1::datatypes::status_info::StatusInfoType;
+    use crate::v2_1::datatypes::variable::VariableType;
+    use crate::v2_1::enumerations::GetVariableStatusEnumType;
 
     #[test]
     fn test_new_get_variable_result() {
@@ -386,10 +406,14 @@ mod tests {
         let variable = VariableType::new("TestVariable".to_string(), "instance1".to_string());
         let status = GetVariableStatusEnumType::Accepted;
 
-        let result = GetVariableResultType::new(component.clone(), variable.clone(), status.clone());
+        let result =
+            GetVariableResultType::new(component.clone(), variable.clone(), status.clone());
         assert_eq!(result.component().name(), "TestComponent");
         assert_eq!(result.variable().name(), "TestVariable");
-        assert_eq!(*result.attribute_status(), GetVariableStatusEnumType::Accepted);
+        assert_eq!(
+            *result.attribute_status(),
+            GetVariableStatusEnumType::Accepted
+        );
         assert!(result.custom_data().is_none());
         assert!(result.attribute_type().is_none());
         assert!(result.attribute_value().is_none());
@@ -417,7 +441,10 @@ mod tests {
         assert_eq!(result.custom_data().unwrap().vendor_id(), "Vendor");
         assert_eq!(result.attribute_type().unwrap(), &AttributeEnumType::Actual);
         assert_eq!(result.attribute_value().unwrap(), "Value");
-        assert_eq!(result.attribute_status_info().unwrap().reason_code, "Reason");
+        assert_eq!(
+            result.attribute_status_info().unwrap().reason_code,
+            "Reason"
+        );
     }
 
     #[test]
@@ -447,9 +474,15 @@ mod tests {
         assert_eq!(result.custom_data().unwrap().vendor_id(), "Vendor");
         assert_eq!(result.attribute_type().unwrap(), &AttributeEnumType::Target);
         assert_eq!(result.attribute_value().unwrap(), "Value");
-        assert_eq!(result.attribute_status_info().unwrap().reason_code, "Reason");
+        assert_eq!(
+            result.attribute_status_info().unwrap().reason_code,
+            "Reason"
+        );
         assert_eq!(result.component().name(), "NewComponent");
         assert_eq!(result.variable().name(), "NewVariable");
-        assert_eq!(*result.attribute_status(), GetVariableStatusEnumType::Rejected);
+        assert_eq!(
+            *result.attribute_status(),
+            GetVariableStatusEnumType::Rejected
+        );
     }
 }

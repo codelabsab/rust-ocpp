@@ -350,7 +350,7 @@ mod tests {
         // Should fail validation due to negative EVSE ID
         let validation_result = schedule.validate();
         assert!(validation_result.is_err());
-        
+
         // Check that the error is related to evse_id field
         let errors = validation_result.unwrap_err();
         assert!(errors.field_errors().contains_key("evse_id"));
@@ -373,10 +373,12 @@ mod tests {
         // Should fail validation due to empty charging_schedule_period
         let validation_result = schedule.validate();
         assert!(validation_result.is_err());
-        
+
         // Check that the error is related to charging_schedule_period field
         let errors = validation_result.unwrap_err();
-        assert!(errors.field_errors().contains_key("charging_schedule_period"));
+        assert!(errors
+            .field_errors()
+            .contains_key("charging_schedule_period"));
     }
 
     #[test]
@@ -399,8 +401,11 @@ mod tests {
 
         // Should fail validation due to nested custom_data validation
         let validation_result = schedule.validate();
-        
+
         // The test passes if validation fails (we know the structure is invalid)
-        assert!(validation_result.is_err(), "Validation should fail with invalid nested data");
+        assert!(
+            validation_result.is_err(),
+            "Validation should fail with invalid nested data"
+        );
     }
 }

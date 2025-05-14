@@ -530,7 +530,7 @@ mod tests {
         let schedule2 = ChargingScheduleType::new(
             2,
             ChargingRateUnitEnumType::W,
-            vec![ChargingSchedulePeriodType::new_from_f64(0, 11000.0)]
+            vec![ChargingSchedulePeriodType::new_from_f64(0, 11000.0)],
         );
 
         let custom_data = CustomDataType::new("VendorX".to_string());

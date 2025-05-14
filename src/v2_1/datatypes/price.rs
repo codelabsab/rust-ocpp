@@ -1,7 +1,7 @@
+use super::{custom_data::CustomDataType, tax_rate::TaxRateType};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use super::{custom_data::CustomDataType, tax_rate::TaxRateType};
 
 /// Price with and without tax. At least one of exclTax, inclTax must be present.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]

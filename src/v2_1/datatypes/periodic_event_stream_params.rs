@@ -14,7 +14,7 @@ pub struct PeriodicEventStreamParamsType {
     /// Required. Number of items to be sent together in stream.
     #[validate(range(min = 0))]
     pub values: i32,
-    
+
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
@@ -141,7 +141,8 @@ mod tests {
     fn test_with_custom_data() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let params = PeriodicEventStreamParamsType::new(60, 10).with_custom_data(custom_data.clone());
+        let params =
+            PeriodicEventStreamParamsType::new(60, 10).with_custom_data(custom_data.clone());
 
         assert_eq!(params.interval(), 60);
         assert_eq!(params.values(), 10);
@@ -172,18 +173,30 @@ mod tests {
     fn test_validation() {
         // Test valid case
         let params = PeriodicEventStreamParamsType::new(60, 10);
-        assert!(params.validate().is_ok(), "Valid params should pass validation");
+        assert!(
+            params.validate().is_ok(),
+            "Valid params should pass validation"
+        );
 
         // Test interval below minimum
         let mut params = PeriodicEventStreamParamsType::new(-1, 10);
-        assert!(params.validate().is_err(), "Interval below minimum should fail validation");
+        assert!(
+            params.validate().is_err(),
+            "Interval below minimum should fail validation"
+        );
 
         // Test values below minimum
         params = PeriodicEventStreamParamsType::new(60, -1);
-        assert!(params.validate().is_err(), "Values below minimum should fail validation");
+        assert!(
+            params.validate().is_err(),
+            "Values below minimum should fail validation"
+        );
 
         // Test interval above maximum
         params = PeriodicEventStreamParamsType::new(86401, 10);
-        assert!(params.validate().is_err(), "Interval above maximum should fail validation");
+        assert!(
+            params.validate().is_err(),
+            "Interval above maximum should fail validation"
+        );
     }
 }

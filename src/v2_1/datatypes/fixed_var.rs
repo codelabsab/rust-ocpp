@@ -1,10 +1,10 @@
+use super::custom_data::CustomDataType;
+use crate::v2_1::enumerations::der_unit::DERUnitEnumType;
+use chrono::{DateTime, Utc};
+use rust_decimal::prelude::{FromPrimitive, ToPrimitive};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use rust_decimal::prelude::{FromPrimitive, ToPrimitive};
-use super::custom_data::CustomDataType;
-use chrono::{DateTime, Utc};
-use crate::v2_1::enumerations::der_unit::DERUnitEnumType;
 
 /// Fixed VAr settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]

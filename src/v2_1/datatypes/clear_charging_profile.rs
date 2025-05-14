@@ -284,7 +284,9 @@ mod tests {
 
         // Verify JSON contains expected fields
         assert!(serialized.contains(r#""evseId":1"#));
-        assert!(serialized.contains(r#""chargingProfilePurpose":"ChargingStationExternalConstraints""#));
+        assert!(
+            serialized.contains(r#""chargingProfilePurpose":"ChargingStationExternalConstraints""#)
+        );
         assert!(serialized.contains(r#""stackLevel":3"#));
         assert!(serialized.contains(r#""vendorId":"VendorX""#));
 
@@ -293,7 +295,10 @@ mod tests {
 
         // Verify the result is the same as the original object
         assert_eq!(deserialized.evse_id(), profile.evse_id());
-        assert_eq!(deserialized.charging_profile_purpose(), profile.charging_profile_purpose());
+        assert_eq!(
+            deserialized.charging_profile_purpose(),
+            profile.charging_profile_purpose()
+        );
         assert_eq!(deserialized.stack_level(), profile.stack_level());
         assert_eq!(
             deserialized.custom_data().unwrap().vendor_id(),
@@ -307,7 +312,10 @@ mod tests {
         let valid_profile = ClearChargingProfileType::new()
             .with_evse_id(1)
             .with_stack_level(3);
-        assert!(valid_profile.validate().is_ok(), "Valid profile should pass validation");
+        assert!(
+            valid_profile.validate().is_ok(),
+            "Valid profile should pass validation"
+        );
 
         // Test evse_id validation (negative value)
         let mut invalid_profile = valid_profile.clone();
@@ -365,8 +373,8 @@ mod tests {
         ];
 
         for purpose in purposes {
-            let profile = ClearChargingProfileType::new()
-                .with_charging_profile_purpose(purpose.clone());
+            let profile =
+                ClearChargingProfileType::new().with_charging_profile_purpose(purpose.clone());
 
             assert_eq!(
                 profile.charging_profile_purpose(),
@@ -398,7 +406,10 @@ mod tests {
             .with_custom_data(custom_data.clone());
 
         // Validate the complex object
-        assert!(profile.validate().is_ok(), "Complex profile should pass validation");
+        assert!(
+            profile.validate().is_ok(),
+            "Complex profile should pass validation"
+        );
 
         // Serialize and deserialize
         let serialized = to_string(&profile).unwrap();
@@ -411,17 +422,13 @@ mod tests {
             Some(&ChargingProfilePurposeEnumType::TxProfile)
         );
         assert_eq!(deserialized.stack_level(), Some(3));
-        assert_eq!(
-            deserialized.custom_data().unwrap().vendor_id(),
-            "VendorX"
-        );
+        assert_eq!(deserialized.custom_data().unwrap().vendor_id(), "VendorX");
     }
 
     #[test]
     fn test_partial_fields() {
         // Test with only evse_id
-        let profile_with_evse = ClearChargingProfileType::new()
-            .with_evse_id(1);
+        let profile_with_evse = ClearChargingProfileType::new().with_evse_id(1);
 
         assert_eq!(profile_with_evse.evse_id(), Some(1));
         assert_eq!(profile_with_evse.charging_profile_purpose(), None);
@@ -439,16 +446,24 @@ mod tests {
         assert_eq!(profile_with_purpose.stack_level(), None);
 
         // Test with only stack_level
-        let profile_with_stack = ClearChargingProfileType::new()
-            .with_stack_level(3);
+        let profile_with_stack = ClearChargingProfileType::new().with_stack_level(3);
 
         assert_eq!(profile_with_stack.evse_id(), None);
         assert_eq!(profile_with_stack.charging_profile_purpose(), None);
         assert_eq!(profile_with_stack.stack_level(), Some(3));
 
         // Validate all partial profiles
-        assert!(profile_with_evse.validate().is_ok(), "Profile with only evse_id should pass validation");
-        assert!(profile_with_purpose.validate().is_ok(), "Profile with only charging_profile_purpose should pass validation");
-        assert!(profile_with_stack.validate().is_ok(), "Profile with only stack_level should pass validation");
+        assert!(
+            profile_with_evse.validate().is_ok(),
+            "Profile with only evse_id should pass validation"
+        );
+        assert!(
+            profile_with_purpose.validate().is_ok(),
+            "Profile with only charging_profile_purpose should pass validation"
+        );
+        assert!(
+            profile_with_stack.validate().is_ok(),
+            "Profile with only stack_level should pass validation"
+        );
     }
 }

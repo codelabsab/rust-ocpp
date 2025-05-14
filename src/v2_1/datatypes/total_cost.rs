@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-
 use super::{custom_data::CustomDataType, price::PriceType, total_price::TotalPriceType};
 use crate::v2_1::enumerations::TariffCostEnumType;
 

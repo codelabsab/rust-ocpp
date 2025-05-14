@@ -1,9 +1,7 @@
-use serde::{Deserialize, Serialize};
-use validator::Validate;
 use super::super::helpers::validator::validate_identifier_string;
 use super::{custom_data::CustomDataType, gradient::GradientType};
-
-
+use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 /// Gradient get type for retrieving gradient settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -124,17 +122,13 @@ impl GradientGetType {
         self.id = id;
         self
     }
-
-
 }
-
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rust_decimal::Decimal;
     use rust_decimal::prelude::FromPrimitive;
+    use rust_decimal::Decimal;
     use rust_decimal_macros::dec;
 
     #[test]
@@ -213,7 +207,13 @@ mod tests {
 
         // Access gradient settings directly
         assert_eq!(gradient_get.gradient().priority(), 1);
-        assert_eq!(gradient_get.gradient().gradient(), Decimal::from_f64(5.0).unwrap());
-        assert_eq!(gradient_get.gradient().soft_gradient(), Decimal::from_f64(2.5).unwrap());
+        assert_eq!(
+            gradient_get.gradient().gradient(),
+            Decimal::from_f64(5.0).unwrap()
+        );
+        assert_eq!(
+            gradient_get.gradient().soft_gradient(),
+            Decimal::from_f64(2.5).unwrap()
+        );
     }
 }

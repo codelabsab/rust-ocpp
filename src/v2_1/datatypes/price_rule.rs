@@ -143,7 +143,10 @@ impl PriceRuleType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_carbon_dioxide_emission(&mut self, carbon_dioxide_emission: Option<i32>) -> &mut Self {
+    pub fn set_carbon_dioxide_emission(
+        &mut self,
+        carbon_dioxide_emission: Option<i32>,
+    ) -> &mut Self {
         self.carbon_dioxide_emission = carbon_dioxide_emission;
         self
     }
@@ -166,7 +169,10 @@ impl PriceRuleType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_renewable_generation_percentage(&mut self, renewable_generation_percentage: Option<i32>) -> &mut Self {
+    pub fn set_renewable_generation_percentage(
+        &mut self,
+        renewable_generation_percentage: Option<i32>,
+    ) -> &mut Self {
         self.renewable_generation_percentage = renewable_generation_percentage;
         self
     }
@@ -254,8 +260,14 @@ mod tests {
 
         assert_eq!(price_rule.energy_fee().value(), energy_fee.value());
         assert_eq!(price_rule.energy_fee().exponent(), energy_fee.exponent());
-        assert_eq!(price_rule.power_range_start().value(), power_range_start.value());
-        assert_eq!(price_rule.power_range_start().exponent(), power_range_start.exponent());
+        assert_eq!(
+            price_rule.power_range_start().value(),
+            power_range_start.value()
+        );
+        assert_eq!(
+            price_rule.power_range_start().exponent(),
+            power_range_start.exponent()
+        );
         assert_eq!(price_rule.custom_data(), None);
         assert_eq!(price_rule.parking_fee_period(), None);
         assert_eq!(price_rule.carbon_dioxide_emission(), None);
@@ -277,8 +289,14 @@ mod tests {
 
         assert_eq!(price_rule.energy_fee().value(), energy_fee.value());
         assert_eq!(price_rule.energy_fee().exponent(), energy_fee.exponent());
-        assert_eq!(price_rule.power_range_start().value(), power_range_start.value());
-        assert_eq!(price_rule.power_range_start().exponent(), power_range_start.exponent());
+        assert_eq!(
+            price_rule.power_range_start().value(),
+            power_range_start.value()
+        );
+        assert_eq!(
+            price_rule.power_range_start().exponent(),
+            power_range_start.exponent()
+        );
         assert_eq!(price_rule.custom_data(), Some(&custom_data));
     }
 
@@ -310,14 +328,32 @@ mod tests {
 
         assert_eq!(price_rule.custom_data(), Some(&custom_data));
         assert_eq!(price_rule.parking_fee_period(), Some(parking_fee_period));
-        assert_eq!(price_rule.carbon_dioxide_emission(), Some(carbon_dioxide_emission));
-        assert_eq!(price_rule.renewable_generation_percentage(), Some(renewable_generation_percentage));
+        assert_eq!(
+            price_rule.carbon_dioxide_emission(),
+            Some(carbon_dioxide_emission)
+        );
+        assert_eq!(
+            price_rule.renewable_generation_percentage(),
+            Some(renewable_generation_percentage)
+        );
         assert_eq!(price_rule.energy_fee().value(), energy_fee2.value());
         assert_eq!(price_rule.energy_fee().exponent(), energy_fee2.exponent());
-        assert_eq!(price_rule.parking_fee().unwrap().value(), parking_fee.value());
-        assert_eq!(price_rule.parking_fee().unwrap().exponent(), parking_fee.exponent());
-        assert_eq!(price_rule.power_range_start().value(), power_range_start2.value());
-        assert_eq!(price_rule.power_range_start().exponent(), power_range_start2.exponent());
+        assert_eq!(
+            price_rule.parking_fee().unwrap().value(),
+            parking_fee.value()
+        );
+        assert_eq!(
+            price_rule.parking_fee().unwrap().exponent(),
+            parking_fee.exponent()
+        );
+        assert_eq!(
+            price_rule.power_range_start().value(),
+            power_range_start2.value()
+        );
+        assert_eq!(
+            price_rule.power_range_start().exponent(),
+            power_range_start2.exponent()
+        );
 
         // Test clearing optional fields
         price_rule.set_custom_data(None);

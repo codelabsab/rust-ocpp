@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
-use validator::Validate;
-use std::fmt;
 use super::super::helpers::validator::validate_identifier_string;
+use serde::{Deserialize, Serialize};
+use std::fmt;
+use validator::Validate;
 
 use super::{custom_data::CustomDataType, fixed_pf::FixedPFType};
 
@@ -215,9 +215,9 @@ impl From<FixedPFType> for FixedPFGetType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rust_decimal::Decimal;
     use serde_json::json;
     use validator::Validate;
-    use rust_decimal::Decimal;
 
     #[test]
     fn test_new_fixed_pf_get() {
@@ -226,7 +226,8 @@ mod tests {
         let is_superseded = false;
         let is_default = true;
 
-        let fixed_pf_get = FixedPFGetType::new(fixed_pf.clone(), id.clone(), is_superseded, is_default);
+        let fixed_pf_get =
+            FixedPFGetType::new(fixed_pf.clone(), id.clone(), is_superseded, is_default);
 
         assert_eq!(fixed_pf_get.fixed_pf(), &fixed_pf);
         assert_eq!(fixed_pf_get.id(), id);
@@ -243,8 +244,9 @@ mod tests {
         let is_default = true;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let fixed_pf_get = FixedPFGetType::new(fixed_pf.clone(), id.clone(), is_superseded, is_default)
-            .with_custom_data(custom_data.clone());
+        let fixed_pf_get =
+            FixedPFGetType::new(fixed_pf.clone(), id.clone(), is_superseded, is_default)
+                .with_custom_data(custom_data.clone());
 
         assert_eq!(fixed_pf_get.fixed_pf(), &fixed_pf);
         assert_eq!(fixed_pf_get.id(), id);
@@ -264,7 +266,8 @@ mod tests {
         let is_default1 = true;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut fixed_pf_get = FixedPFGetType::new(fixed_pf1.clone(), id1.clone(), is_superseded1, is_default1);
+        let mut fixed_pf_get =
+            FixedPFGetType::new(fixed_pf1.clone(), id1.clone(), is_superseded1, is_default1);
 
         fixed_pf_get
             .set_fixed_pf(fixed_pf2.clone())
@@ -294,7 +297,10 @@ mod tests {
 
         let fixed_pf_get = FixedPFGetType::new(fixed_pf, id, is_superseded, is_default);
 
-        assert!(fixed_pf_get.validate().is_ok(), "Valid FixedPFGetType should pass validation");
+        assert!(
+            fixed_pf_get.validate().is_ok(),
+            "Valid FixedPFGetType should pass validation"
+        );
 
         // Valid FixedPFGetType with all fields
         let fixed_pf = FixedPFType::new(1, 0.95, true);
@@ -306,7 +312,10 @@ mod tests {
         let fixed_pf_get_with_all = FixedPFGetType::new(fixed_pf, id, is_superseded, is_default)
             .with_custom_data(custom_data);
 
-        assert!(fixed_pf_get_with_all.validate().is_ok(), "FixedPFGetType with all fields should pass validation");
+        assert!(
+            fixed_pf_get_with_all.validate().is_ok(),
+            "FixedPFGetType with all fields should pass validation"
+        );
     }
 
     #[test]
@@ -317,19 +326,32 @@ mod tests {
         let is_superseded = false;
         let is_default = true;
 
-        let invalid_fixed_pf_get = FixedPFGetType::new(fixed_pf, long_id, is_superseded, is_default);
+        let invalid_fixed_pf_get =
+            FixedPFGetType::new(fixed_pf, long_id, is_superseded, is_default);
 
         let validation_result = invalid_fixed_pf_get.validate();
-        assert!(validation_result.is_err(), "FixedPFGetType with too long ID should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "FixedPFGetType with too long ID should fail validation"
+        );
 
         let errors = validation_result.unwrap_err();
         let field_errors = errors.field_errors();
 
         // Verify error is on the id field for length validation
-        assert!(field_errors.contains_key("id"), "Validation errors should contain id field");
+        assert!(
+            field_errors.contains_key("id"),
+            "Validation errors should contain id field"
+        );
         let id_errors = &field_errors["id"];
-        assert!(!id_errors.is_empty(), "id field should have validation errors");
-        assert_eq!(id_errors[0].code, "length", "id field should have a length error");
+        assert!(
+            !id_errors.is_empty(),
+            "id field should have validation errors"
+        );
+        assert_eq!(
+            id_errors[0].code, "length",
+            "id field should have a length error"
+        );
 
         // Test with invalid ID format (should contain only identifier-safe characters)
         let fixed_pf = FixedPFType::new(1, 0.95, true);
@@ -337,10 +359,14 @@ mod tests {
         let is_superseded = false;
         let is_default = true;
 
-        let invalid_fixed_pf_get = FixedPFGetType::new(fixed_pf, invalid_id.to_string(), is_superseded, is_default);
+        let invalid_fixed_pf_get =
+            FixedPFGetType::new(fixed_pf, invalid_id.to_string(), is_superseded, is_default);
 
         let validation_result = invalid_fixed_pf_get.validate();
-        assert!(validation_result.is_err(), "FixedPFGetType with invalid ID format should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "FixedPFGetType with invalid ID format should fail validation"
+        );
     }
 
     #[test]
@@ -362,7 +388,10 @@ mod tests {
 
         // Validation should fail due to invalid fixed_pf
         let validation_result = fixed_pf_get.validate();
-        assert!(validation_result.is_err(), "FixedPFGetType with invalid fixed_pf should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "FixedPFGetType with invalid fixed_pf should fail validation"
+        );
 
         // Test nested validation for CustomDataType
         let fixed_pf = FixedPFType::new(1, 0.95, true);
@@ -378,7 +407,10 @@ mod tests {
 
         // Validation should fail due to invalid custom_data
         let validation_result = fixed_pf_get.validate();
-        assert!(validation_result.is_err(), "FixedPFGetType with invalid custom_data should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "FixedPFGetType with invalid custom_data should fail validation"
+        );
     }
 
     #[test]
@@ -483,11 +515,17 @@ mod tests {
         assert_eq!(fixed_pf_get.fixed_pf().priority(), 1);
         assert_eq!(fixed_pf_get.fixed_pf().displacement_as_f64(), 0.95);
         assert_eq!(fixed_pf_get.fixed_pf().excitation(), true);
-        assert_eq!(fixed_pf_get.custom_data().unwrap().vendor_id(), "TestVendor");
+        assert_eq!(
+            fixed_pf_get.custom_data().unwrap().vendor_id(),
+            "TestVendor"
+        );
 
         // Check additional properties in custom data
         let custom_data = fixed_pf_get.custom_data().unwrap();
-        assert_eq!(custom_data.additional_properties()["extraInfo"], json!("Something"));
+        assert_eq!(
+            custom_data.additional_properties()["extraInfo"],
+            json!("Something")
+        );
     }
 
     #[test]
@@ -531,7 +569,10 @@ mod tests {
 
         // Deserialize from JSON string should fail
         let result = serde_json::from_str::<FixedPFGetType>(json_str);
-        assert!(result.is_err(), "Deserialization should fail with missing required fields");
+        assert!(
+            result.is_err(),
+            "Deserialization should fail with missing required fields"
+        );
     }
 
     #[test]
@@ -545,7 +586,10 @@ mod tests {
         let fixed_pf_get = FixedPFGetType::new(fixed_pf, empty_id, is_superseded, is_default);
 
         // This should pass validation
-        assert!(fixed_pf_get.validate().is_ok(), "FixedPFGetType with empty ID should pass validation");
+        assert!(
+            fixed_pf_get.validate().is_ok(),
+            "FixedPFGetType with empty ID should pass validation"
+        );
 
         // Test with extreme displacement values
         let fixed_pf_high = FixedPFType::new(1, 1.0, true);
@@ -554,8 +598,14 @@ mod tests {
         let high_pf_get = FixedPFGetType::new(fixed_pf_high, "high".to_string(), false, true);
         let low_pf_get = FixedPFGetType::new(fixed_pf_low, "low".to_string(), false, false);
 
-        assert!(high_pf_get.validate().is_ok(), "FixedPFGetType with displacement 1.0 should pass validation");
-        assert!(low_pf_get.validate().is_ok(), "FixedPFGetType with displacement 0.0 should pass validation");
+        assert!(
+            high_pf_get.validate().is_ok(),
+            "FixedPFGetType with displacement 1.0 should pass validation"
+        );
+        assert!(
+            low_pf_get.validate().is_ok(),
+            "FixedPFGetType with displacement 0.0 should pass validation"
+        );
     }
 
     #[test]

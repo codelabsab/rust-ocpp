@@ -1,8 +1,8 @@
+use super::custom_data::CustomDataType;
+use rust_decimal::prelude::ToPrimitive;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use rust_decimal::prelude::ToPrimitive;
-use super::custom_data::CustomDataType;
 
 /// Price rule for a power range.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -174,9 +174,9 @@ impl EVPriceRuleType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rust_decimal_macros::dec;
     use serde_json::json;
     use validator::Validate;
-    use rust_decimal_macros::dec;
 
     #[test]
     fn test_new_ev_price_rule() {
@@ -290,23 +290,32 @@ mod tests {
     fn test_validation() {
         // Basic validation - should pass
         let price_rule = EVPriceRuleType::new(0.25, 5000.0);
-        assert!(price_rule.validate().is_ok(), "Valid price rule should pass validation");
+        assert!(
+            price_rule.validate().is_ok(),
+            "Valid price rule should pass validation"
+        );
 
         // With custom data - should pass
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let price_rule_with_custom = EVPriceRuleType::new(0.25, 5000.0)
-            .with_custom_data(custom_data);
-        assert!(price_rule_with_custom.validate().is_ok(), "Price rule with valid custom data should pass validation");
+        let price_rule_with_custom =
+            EVPriceRuleType::new(0.25, 5000.0).with_custom_data(custom_data);
+        assert!(
+            price_rule_with_custom.validate().is_ok(),
+            "Price rule with valid custom data should pass validation"
+        );
 
         // With invalid custom data (vendor_id too long)
         let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
         let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
-        let price_rule_invalid_custom = EVPriceRuleType::new(0.25, 5000.0)
-            .with_custom_data(invalid_custom_data);
+        let price_rule_invalid_custom =
+            EVPriceRuleType::new(0.25, 5000.0).with_custom_data(invalid_custom_data);
 
         // Validation should fail due to invalid custom_data
         let validation_result = price_rule_invalid_custom.validate();
-        assert!(validation_result.is_err(), "Price rule with invalid custom data should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Price rule with invalid custom data should fail validation"
+        );
     }
 
     #[test]
@@ -316,8 +325,8 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string())
             .with_property("version".to_string(), json!("1.0"));
 
-        let price_rule = EVPriceRuleType::new(energy_fee, power_range_start)
-            .with_custom_data(custom_data);
+        let price_rule =
+            EVPriceRuleType::new(energy_fee, power_range_start).with_custom_data(custom_data);
 
         // Serialize to JSON
         let serialized = serde_json::to_string(&price_rule).unwrap();
@@ -339,8 +348,8 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string())
             .with_property("version".to_string(), json!("1.0"));
 
-        let price_rule = EVPriceRuleType::new(energy_fee, power_range_start)
-            .with_custom_data(custom_data);
+        let price_rule =
+            EVPriceRuleType::new(energy_fee, power_range_start).with_custom_data(custom_data);
 
         // Serialize to JSON Value
         let json_value = serde_json::to_value(&price_rule).unwrap();
@@ -380,7 +389,10 @@ mod tests {
 
         // Check additional properties in custom data
         let custom_data = price_rule.custom_data().unwrap();
-        assert_eq!(custom_data.additional_properties()["extraInfo"], json!("Something"));
+        assert_eq!(
+            custom_data.additional_properties()["extraInfo"],
+            json!("Something")
+        );
     }
 
     #[test]
@@ -411,6 +423,9 @@ mod tests {
 
         // Deserialize from JSON string should fail
         let result = serde_json::from_str::<EVPriceRuleType>(json_str);
-        assert!(result.is_err(), "Deserialization should fail with missing required fields");
+        assert!(
+            result.is_err(),
+            "Deserialization should fail with missing required fields"
+        );
     }
 }

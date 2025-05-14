@@ -1,12 +1,12 @@
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-use validator::Validate;
-use rust_decimal::Decimal;
 use super::{
     custom_data::CustomDataType, der_curve_points::DERCurvePointsType, hysteresis::HysteresisType,
     reactive_power_params::ReactivePowerParamsType, voltage_params::VoltageParamsType,
 };
 use crate::v2_1::enumerations::der_unit::DERUnitEnumType;
+use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
+use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 /// DER curve type for various DER control modes.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -40,7 +40,7 @@ pub struct DERCurveType {
 
     /// Open loop response time, the time to ramp up to 90% of the new target in response to the change in voltage, in seconds.
     /// A value of 0 is used to mean no limit. When not present, the device should follow its default behavior.
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -52,7 +52,7 @@ pub struct DERCurveType {
     pub start_time: Option<DateTime<Utc>>,
 
     /// Duration in seconds that this curve will be active. Only absent when default is true.
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -63,7 +63,6 @@ pub struct DERCurveType {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
-
 }
 
 impl DERCurveType {
@@ -551,7 +550,8 @@ mod tests {
 
         // 测试curve_data为空的情况
         let empty_curve_points: Vec<DERCurvePointsType> = vec![];
-        let invalid_curve_data_empty = DERCurveType::new(empty_curve_points, priority, y_unit.clone());
+        let invalid_curve_data_empty =
+            DERCurveType::new(empty_curve_points, priority, y_unit.clone());
 
         // 验证应该失败，因为curve_data为空
         let validation_result = invalid_curve_data_empty.validate();
@@ -574,7 +574,8 @@ mod tests {
             DERCurvePointsType::default(),
             DERCurvePointsType::default(), // 11个元素，超过了10的限制
         ];
-        let invalid_curve_data_too_many = DERCurveType::new(too_many_curve_points, priority, y_unit.clone());
+        let invalid_curve_data_too_many =
+            DERCurveType::new(too_many_curve_points, priority, y_unit.clone());
 
         // 验证应该失败，因为curve_data元素太多
         let validation_result = invalid_curve_data_too_many.validate();
@@ -585,7 +586,8 @@ mod tests {
 
         // 测试priority为负数的情况
         let negative_priority = -1;
-        let invalid_priority = DERCurveType::new(curve_points.clone(), negative_priority, y_unit.clone());
+        let invalid_priority =
+            DERCurveType::new(curve_points.clone(), negative_priority, y_unit.clone());
 
         // 验证应该失败，因为priority为负数
         let validation_result = invalid_priority.validate();
@@ -628,7 +630,7 @@ mod tests {
         let curve_with_invalid_nested_data = DERCurveType::new(
             curve_points_with_invalid_custom_data,
             priority,
-            y_unit.clone()
+            y_unit.clone(),
         );
 
         // 验证应该失败，因为curve_data中的元素包含无效的custom_data

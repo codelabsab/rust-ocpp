@@ -107,7 +107,9 @@ impl ChargingPeriodType {
     ///
     /// A reference to the list of dimensions that influence this period
     pub fn dimensions(&self) -> &Vec<CostDimensionType> {
-        self.dimensions.as_ref().expect("dimensions should always be set")
+        self.dimensions
+            .as_ref()
+            .expect("dimensions should always be set")
     }
 
     /// Sets the dimensions.
@@ -191,7 +193,10 @@ mod tests {
 
         assert_eq!(period.start_period(), &start_time);
         assert_eq!(period.dimensions().len(), 1);
-        assert_eq!(period.dimensions()[0].r#type(), &CostDimensionEnumType::Energy);
+        assert_eq!(
+            period.dimensions()[0].r#type(),
+            &CostDimensionEnumType::Energy
+        );
         assert_eq!(period.dimensions()[0].volume(), 10.5);
         assert_eq!(period.tariff_id(), None);
         assert_eq!(period.custom_data(), None);
@@ -213,7 +218,10 @@ mod tests {
 
         assert_eq!(period.start_period(), &start_time);
         assert_eq!(period.dimensions().len(), 1);
-        assert_eq!(period.dimensions()[0].r#type(), &CostDimensionEnumType::Energy);
+        assert_eq!(
+            period.dimensions()[0].r#type(),
+            &CostDimensionEnumType::Energy
+        );
         assert_eq!(period.dimensions()[0].volume(), 10.5);
         assert_eq!(period.tariff_id(), Some(&"tariff-123".to_string()));
         assert_eq!(period.custom_data(), Some(&custom_data));
@@ -245,7 +253,10 @@ mod tests {
 
         assert_eq!(period.start_period(), &new_time);
         assert_eq!(period.dimensions().len(), 2);
-        assert_eq!(period.dimensions()[0].r#type(), &CostDimensionEnumType::Energy);
+        assert_eq!(
+            period.dimensions()[0].r#type(),
+            &CostDimensionEnumType::Energy
+        );
         assert_eq!(period.dimensions()[0].volume(), 10.5);
         assert_eq!(
             period.dimensions()[1].r#type(),
@@ -273,17 +284,26 @@ mod tests {
 
         // 1. Valid charging period - should pass validation
         let valid_period = ChargingPeriodType::new(start_time, vec![dimension.clone()]);
-        assert!(valid_period.validate().is_ok(), "Valid charging period should pass validation");
+        assert!(
+            valid_period.validate().is_ok(),
+            "Valid charging period should pass validation"
+        );
 
         // 2. Test dimensions validation (empty dimensions)
         let mut invalid_dimensions_period = valid_period.clone();
         invalid_dimensions_period.dimensions = Some(vec![]);
 
         let validation_result = invalid_dimensions_period.validate();
-        assert!(validation_result.is_err(), "Charging period with empty dimensions should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Charging period with empty dimensions should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("dimensions"),
-                "Error should mention dimensions: {}", error);
+        assert!(
+            error.to_string().contains("dimensions"),
+            "Error should mention dimensions: {}",
+            error
+        );
 
         // 3. Test tariff_id validation (too long)
         let long_tariff_id = "A".repeat(61); // 61 characters, exceeds max of 60
@@ -291,10 +311,16 @@ mod tests {
         invalid_tariff_id_period.tariff_id = Some(long_tariff_id);
 
         let validation_result = invalid_tariff_id_period.validate();
-        assert!(validation_result.is_err(), "Charging period with too long tariff_id should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Charging period with too long tariff_id should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("tariff_id"),
-                "Error should mention tariff_id: {}", error);
+        assert!(
+            error.to_string().contains("tariff_id"),
+            "Error should mention tariff_id: {}",
+            error
+        );
 
         // 4. Test custom_data nested validation
         let mut invalid_custom_data = CustomDataType::new("VendorX".to_string());
@@ -305,9 +331,15 @@ mod tests {
         invalid_custom_data_period.custom_data = Some(invalid_custom_data);
 
         let validation_result = invalid_custom_data_period.validate();
-        assert!(validation_result.is_err(), "Charging period with invalid custom_data should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Charging period with invalid custom_data should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("custom_data"),
-                "Error should mention custom_data: {}", error);
+        assert!(
+            error.to_string().contains("custom_data"),
+            "Error should mention custom_data: {}",
+            error
+        );
     }
 }

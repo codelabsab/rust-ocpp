@@ -7,10 +7,6 @@ use super::{custom_data::CustomDataType, sales_tariff_entry::SalesTariffEntryTyp
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SalesTariffType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Required. Unique identifier used to identify one or more tariffs.
     #[validate(length(max = 36))]
     pub id: String,
@@ -27,6 +23,10 @@ pub struct SalesTariffType {
     /// Required. List of sales tariff entries.
     #[validate(length(min = 1, max = 1024))]
     pub sales_tariff_entry: Vec<SalesTariffEntryType>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl SalesTariffType {

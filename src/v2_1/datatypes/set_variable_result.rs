@@ -190,7 +190,10 @@ impl SetVariableResultType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_attribute_status(&mut self, attribute_status: SetVariableStatusEnumType) -> &mut Self {
+    pub fn set_attribute_status(
+        &mut self,
+        attribute_status: SetVariableStatusEnumType,
+    ) -> &mut Self {
         self.attribute_status = attribute_status;
         self
     }
@@ -213,7 +216,10 @@ impl SetVariableResultType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_attribute_status_info(&mut self, attribute_status_info: Option<StatusInfoType>) -> &mut Self {
+    pub fn set_attribute_status_info(
+        &mut self,
+        attribute_status_info: Option<StatusInfoType>,
+    ) -> &mut Self {
         self.attribute_status_info = attribute_status_info;
         self
     }
@@ -252,7 +258,11 @@ mod tests {
         let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
         let attribute_status = SetVariableStatusEnumType::Accepted;
 
-        let result = SetVariableResultType::new(component.clone(), variable.clone(), attribute_status.clone());
+        let result = SetVariableResultType::new(
+            component.clone(),
+            variable.clone(),
+            attribute_status.clone(),
+        );
 
         assert_eq!(result.component(), &component);
         assert_eq!(result.variable(), &variable);
@@ -275,10 +285,14 @@ mod tests {
         };
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let result = SetVariableResultType::new(component.clone(), variable.clone(), attribute_status.clone())
-            .with_attribute_type(attribute_type.clone())
-            .with_attribute_status_info(attribute_status_info.clone())
-            .with_custom_data(custom_data.clone());
+        let result = SetVariableResultType::new(
+            component.clone(),
+            variable.clone(),
+            attribute_status.clone(),
+        )
+        .with_attribute_type(attribute_type.clone())
+        .with_attribute_status_info(attribute_status_info.clone())
+        .with_custom_data(custom_data.clone());
 
         assert_eq!(result.component(), &component);
         assert_eq!(result.variable(), &variable);

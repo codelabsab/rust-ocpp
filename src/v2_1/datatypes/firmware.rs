@@ -1,6 +1,6 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use chrono::{DateTime, Utc};
 
 use super::custom_data::CustomDataType;
 
@@ -154,7 +154,10 @@ impl FirmwareType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_retrieve_date_time(&mut self, retrieve_date_time: Option<DateTime<Utc>>) -> &mut Self {
+    pub fn set_retrieve_date_time(
+        &mut self,
+        retrieve_date_time: Option<DateTime<Utc>>,
+    ) -> &mut Self {
         self.retrieve_date_time = retrieve_date_time;
         self
     }
@@ -356,7 +359,10 @@ mod tests {
         let signature = "1.2.3".to_string();
         let firmware = FirmwareType::new(location, signature);
 
-        assert!(firmware.validate().is_ok(), "Valid firmware should pass validation");
+        assert!(
+            firmware.validate().is_ok(),
+            "Valid firmware should pass validation"
+        );
 
         // Valid firmware with all fields
         let location = "https://example.com/firmware/v1.2.3".to_string();
@@ -372,7 +378,10 @@ mod tests {
             .with_signing_certificate(signing_certificate)
             .with_custom_data(custom_data);
 
-        assert!(firmware_with_all.validate().is_ok(), "Firmware with all fields should pass validation");
+        assert!(
+            firmware_with_all.validate().is_ok(),
+            "Firmware with all fields should pass validation"
+        );
     }
 
     #[test]
@@ -384,16 +393,28 @@ mod tests {
         let invalid_firmware = FirmwareType::new(long_location, signature);
 
         let validation_result = invalid_firmware.validate();
-        assert!(validation_result.is_err(), "Firmware with too long location should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Firmware with too long location should fail validation"
+        );
 
         let errors = validation_result.unwrap_err();
         let field_errors = errors.field_errors();
 
         // Verify error is on the location field for length validation
-        assert!(field_errors.contains_key("location"), "Validation errors should contain location field");
+        assert!(
+            field_errors.contains_key("location"),
+            "Validation errors should contain location field"
+        );
         let location_errors = &field_errors["location"];
-        assert!(!location_errors.is_empty(), "location field should have validation errors");
-        assert_eq!(location_errors[0].code, "length", "location field should have a length error");
+        assert!(
+            !location_errors.is_empty(),
+            "location field should have validation errors"
+        );
+        assert_eq!(
+            location_errors[0].code, "length",
+            "location field should have a length error"
+        );
 
         // Test with signature that's too long (>800 chars)
         let location = "https://example.com/firmware/v1.2.3".to_string();
@@ -402,18 +423,24 @@ mod tests {
         let invalid_firmware = FirmwareType::new(location, long_signature);
 
         let validation_result = invalid_firmware.validate();
-        assert!(validation_result.is_err(), "Firmware with too long signature should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Firmware with too long signature should fail validation"
+        );
 
         // Test with signing_certificate that's too long (>5500 chars)
         let location = "https://example.com/firmware/v1.2.3".to_string();
         let signature = "1.2.3".to_string();
         let long_cert = "a".repeat(5501);
 
-        let invalid_firmware = FirmwareType::new(location, signature)
-            .with_signing_certificate(long_cert);
+        let invalid_firmware =
+            FirmwareType::new(location, signature).with_signing_certificate(long_cert);
 
         let validation_result = invalid_firmware.validate();
-        assert!(validation_result.is_err(), "Firmware with too long signing_certificate should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Firmware with too long signing_certificate should fail validation"
+        );
     }
 
     #[test]
@@ -425,12 +452,14 @@ mod tests {
         let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
         let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
 
-        let firmware = FirmwareType::new(location, signature)
-            .with_custom_data(invalid_custom_data);
+        let firmware = FirmwareType::new(location, signature).with_custom_data(invalid_custom_data);
 
         // Validation should fail due to invalid custom_data
         let validation_result = firmware.validate();
-        assert!(validation_result.is_err(), "Firmware with invalid custom_data should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Firmware with invalid custom_data should fail validation"
+        );
     }
 
     #[test]
@@ -491,9 +520,15 @@ mod tests {
         assert!(json_value.get("customData").is_some());
 
         // Check field values
-        assert_eq!(json_value["location"], "https://example.com/firmware/v1.2.3");
+        assert_eq!(
+            json_value["location"],
+            "https://example.com/firmware/v1.2.3"
+        );
         assert_eq!(json_value["signature"], "1.2.3");
-        assert_eq!(json_value["signingCertificate"], "0123456789abcdef0123456789abcdef");
+        assert_eq!(
+            json_value["signingCertificate"],
+            "0123456789abcdef0123456789abcdef"
+        );
         assert_eq!(json_value["customData"]["vendorId"], "VendorX");
         assert_eq!(json_value["customData"]["version"], "1.0");
     }
@@ -521,12 +556,18 @@ mod tests {
         assert_eq!(firmware.signature(), "1.2.3");
         assert!(firmware.retrieve_date_time().is_some());
         assert!(firmware.install_date_time().is_some());
-        assert_eq!(firmware.signing_certificate(), Some("0123456789abcdef0123456789abcdef"));
+        assert_eq!(
+            firmware.signing_certificate(),
+            Some("0123456789abcdef0123456789abcdef")
+        );
         assert_eq!(firmware.custom_data().unwrap().vendor_id(), "TestVendor");
 
         // Check additional properties in custom data
         let custom_data = firmware.custom_data().unwrap();
-        assert_eq!(custom_data.additional_properties()["extraInfo"], json!("Something"));
+        assert_eq!(
+            custom_data.additional_properties()["extraInfo"],
+            json!("Something")
+        );
     }
 
     #[test]
@@ -561,6 +602,9 @@ mod tests {
 
         // Deserialize from JSON string should fail
         let result = serde_json::from_str::<FirmwareType>(json_str);
-        assert!(result.is_err(), "Deserialization should fail with missing required fields");
+        assert!(
+            result.is_err(),
+            "Deserialization should fail with missing required fields"
+        );
     }
 }

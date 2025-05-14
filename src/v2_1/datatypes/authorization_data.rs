@@ -190,8 +190,8 @@ mod tests {
 
         let id_token_info1 = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
 
-        let id_token_info2 = IdTokenInfoType::new(AuthorizationStatusEnumType::Blocked)
-            .with_charging_priority(1);
+        let id_token_info2 =
+            IdTokenInfoType::new(AuthorizationStatusEnumType::Blocked).with_charging_priority(1);
 
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -226,7 +226,10 @@ mod tests {
         let auth_data = AuthorizationData::new(id_token.clone(), id_token_info.clone());
 
         // 验证有效实例
-        assert!(auth_data.validate().is_ok(), "Valid authorization data should pass validation");
+        assert!(
+            auth_data.validate().is_ok(),
+            "Valid authorization data should pass validation"
+        );
 
         // 1. 测试无效的id_token（id_token字段超出长度限制）
         let mut invalid_id_token = id_token.clone();
@@ -235,10 +238,16 @@ mod tests {
         let invalid_auth_data = AuthorizationData::new(invalid_id_token, id_token_info.clone());
 
         let validation_result = invalid_auth_data.validate();
-        assert!(validation_result.is_err(), "Authorization data with invalid id_token should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Authorization data with invalid id_token should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("id_token"),
-                "Error should mention id_token: {}", error);
+        assert!(
+            error.to_string().contains("id_token"),
+            "Error should mention id_token: {}",
+            error
+        );
 
         // 2. 测试无效的id_token_info（charging_priority超出范围）
         let mut invalid_id_token_info = id_token_info.clone();
@@ -247,10 +256,16 @@ mod tests {
         let invalid_auth_data = AuthorizationData::new(id_token.clone(), invalid_id_token_info);
 
         let validation_result = invalid_auth_data.validate();
-        assert!(validation_result.is_err(), "Authorization data with invalid id_token_info should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Authorization data with invalid id_token_info should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("id_token_info"),
-                "Error should mention id_token_info: {}", error);
+        assert!(
+            error.to_string().contains("id_token_info"),
+            "Error should mention id_token_info: {}",
+            error
+        );
 
         // 3. 测试无效的custom_data（vendor_id超出长度限制）
         let mut invalid_custom_data = CustomDataType::new("VendorX".to_string());
@@ -260,9 +275,15 @@ mod tests {
         invalid_auth_data.custom_data = Some(invalid_custom_data);
 
         let validation_result = invalid_auth_data.validate();
-        assert!(validation_result.is_err(), "Authorization data with invalid custom_data should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Authorization data with invalid custom_data should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("custom_data"),
-                "Error should mention custom_data: {}", error);
+        assert!(
+            error.to_string().contains("custom_data"),
+            "Error should mention custom_data: {}",
+            error
+        );
     }
 }

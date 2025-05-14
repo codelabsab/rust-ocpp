@@ -1,7 +1,7 @@
+use super::custom_data::CustomDataType;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use super::custom_data::CustomDataType;
 
 /// Parameters for reactive power control.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -167,7 +167,10 @@ impl ReactivePowerParamsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_autonomous_v_ref_time_constant(&mut self, time_constant: Option<Decimal>) -> &mut Self {
+    pub fn set_autonomous_v_ref_time_constant(
+        &mut self,
+        time_constant: Option<Decimal>,
+    ) -> &mut Self {
         self.autonomous_vref_time_constant = time_constant;
         self
     }
@@ -225,7 +228,10 @@ mod tests {
 
         assert_eq!(params.v_ref(), Some(&v_ref));
         assert_eq!(params.autonomous_v_ref_enable(), Some(&true));
-        assert_eq!(params.autonomous_v_ref_time_constant(), Some(&time_constant));
+        assert_eq!(
+            params.autonomous_v_ref_time_constant(),
+            Some(&time_constant)
+        );
         assert_eq!(params.custom_data(), Some(&custom_data));
     }
 
@@ -245,7 +251,10 @@ mod tests {
 
         assert_eq!(params.v_ref(), Some(&v_ref));
         assert_eq!(params.autonomous_v_ref_enable(), Some(&true));
-        assert_eq!(params.autonomous_v_ref_time_constant(), Some(&time_constant));
+        assert_eq!(
+            params.autonomous_v_ref_time_constant(),
+            Some(&time_constant)
+        );
         assert_eq!(params.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
-use validator::Validate;
-use rust_decimal::Decimal;
-use chrono::{DateTime, Utc};
 use super::custom_data::CustomDataType;
 use super::der_curve::DERCurveType;
+use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
+use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 /// Limit max discharge settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -14,7 +14,10 @@ pub struct LimitMaxDischargeType {
     pub priority: i32,
 
     /// Only for PowerMonitoring. The value specifies a percentage (0 to 100) of the rated maximum discharge power of EV. The PowerMonitoring curve becomes active when power exceeds this percentage.
-    #[serde(with = "rust_decimal::serde::arbitrary_precision", rename = "pctMaxDischargePower")]
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision",
+        rename = "pctMaxDischargePower"
+    )]
     pub pct_max_discharge_power: Decimal,
 
     #[serde(rename = "startTime")]
@@ -27,7 +30,10 @@ pub struct LimitMaxDischargeType {
     )]
     pub duration: Option<Decimal>,
 
-    #[serde(skip_serializing_if = "Option::is_none", rename = "powerMonitoringMustTrip")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        rename = "powerMonitoringMustTrip"
+    )]
     #[validate(nested)]
     pub power_monitoring_must_trip: Option<DERCurveType>,
 
@@ -110,7 +116,10 @@ impl LimitMaxDischargeType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_power_monitoring_must_trip(mut self, power_monitoring_must_trip: DERCurveType) -> Self {
+    pub fn with_power_monitoring_must_trip(
+        mut self,
+        power_monitoring_must_trip: DERCurveType,
+    ) -> Self {
         self.power_monitoring_must_trip = Some(power_monitoring_must_trip);
         self
     }
@@ -225,7 +234,10 @@ impl LimitMaxDischargeType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_power_monitoring_must_trip(&mut self, power_monitoring_must_trip: Option<DERCurveType>) -> &mut Self {
+    pub fn set_power_monitoring_must_trip(
+        &mut self,
+        power_monitoring_must_trip: Option<DERCurveType>,
+    ) -> &mut Self {
         self.power_monitoring_must_trip = power_monitoring_must_trip;
         self
     }
@@ -257,8 +269,8 @@ impl LimitMaxDischargeType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rust_decimal::prelude::*;
     use chrono::TimeZone;
+    use rust_decimal::prelude::*;
 
     #[test]
     fn test_new_limit_max_discharge() {
@@ -304,7 +316,10 @@ mod tests {
         assert_eq!(limit.pct_max_discharge_power(), &pct_max_discharge_power);
         assert_eq!(limit.start_time(), Some(&start_time));
         assert_eq!(limit.duration(), Some(&duration));
-        assert_eq!(limit.power_monitoring_must_trip(), Some(&power_monitoring_must_trip));
+        assert_eq!(
+            limit.power_monitoring_must_trip(),
+            Some(&power_monitoring_must_trip)
+        );
         assert_eq!(limit.custom_data(), Some(&custom_data));
     }
 
@@ -343,7 +358,10 @@ mod tests {
         assert_eq!(limit.pct_max_discharge_power(), &pct_max_discharge_power2);
         assert_eq!(limit.start_time(), Some(&start_time));
         assert_eq!(limit.duration(), Some(&duration));
-        assert_eq!(limit.power_monitoring_must_trip(), Some(&power_monitoring_must_trip));
+        assert_eq!(
+            limit.power_monitoring_must_trip(),
+            Some(&power_monitoring_must_trip)
+        );
         assert_eq!(limit.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
@@ -369,17 +387,20 @@ mod tests {
 
         // Test with invalid priority (negative)
         let invalid_priority = -1;
-        let _limit_invalid_priority = LimitMaxDischargeType::new(invalid_priority, pct_max_discharge_power.clone());
+        let _limit_invalid_priority =
+            LimitMaxDischargeType::new(invalid_priority, pct_max_discharge_power.clone());
         assert!(invalid_priority < 0);
 
         // Test with invalid pctMaxDischargePower (over 100)
         let invalid_pct_over = Decimal::from_str("101.0").unwrap();
-        let _limit_invalid_pct_over = LimitMaxDischargeType::new(priority, invalid_pct_over.clone());
+        let _limit_invalid_pct_over =
+            LimitMaxDischargeType::new(priority, invalid_pct_over.clone());
         assert!(invalid_pct_over > Decimal::from(100));
 
         // Test with invalid pctMaxDischargePower (negative)
         let invalid_pct_negative = Decimal::from_str("-1.0").unwrap();
-        let _limit_invalid_pct_negative = LimitMaxDischargeType::new(priority, invalid_pct_negative.clone());
+        let _limit_invalid_pct_negative =
+            LimitMaxDischargeType::new(priority, invalid_pct_negative.clone());
         assert!(invalid_pct_negative < Decimal::from(0));
     }
 
@@ -407,10 +428,16 @@ mod tests {
 
         // Verify the result is the same as the original object
         assert_eq!(deserialized.priority(), limit.priority());
-        assert_eq!(deserialized.pct_max_discharge_power(), limit.pct_max_discharge_power());
+        assert_eq!(
+            deserialized.pct_max_discharge_power(),
+            limit.pct_max_discharge_power()
+        );
         assert_eq!(deserialized.start_time(), limit.start_time());
         assert_eq!(deserialized.duration(), limit.duration());
-        assert_eq!(deserialized.custom_data().is_some(), limit.custom_data().is_some());
+        assert_eq!(
+            deserialized.custom_data().is_some(),
+            limit.custom_data().is_some()
+        );
         if let Some(custom_data) = deserialized.custom_data() {
             assert_eq!(custom_data.vendor_id, "VendorX");
         }

@@ -451,7 +451,7 @@ mod tests {
         assert_eq!(cost_details.failure_reason(), None);
         assert_eq!(cost_details.custom_data(), None);
     }
-    
+
     #[test]
     fn test_validation() {
         // Valid case
@@ -491,9 +491,12 @@ mod tests {
         );
 
         // Valid instance should pass validation
-        assert!(cost_details.validate().is_ok(), "Valid cost details should pass validation");
+        assert!(
+            cost_details.validate().is_ok(),
+            "Valid cost details should pass validation"
+        );
     }
-    
+
     #[test]
     fn test_empty_charging_periods_validation() {
         let total_cost = TotalCostType {
@@ -523,26 +526,29 @@ mod tests {
             usage_incl_tax: None,
             custom_data: None,
         };
-        
+
         // Create a CostDetailsType with empty charging periods
-        let mut cost_details_empty_periods = CostDetailsType::new(
-            vec![],
-            total_cost.clone(),
-            total_usage.clone(),
-        );
-        
+        let mut cost_details_empty_periods =
+            CostDetailsType::new(vec![], total_cost.clone(), total_usage.clone());
+
         // Manually override the charging_periods to test validation
         // Since the constructor wraps in Some, we manually set to Some(vec![])
         cost_details_empty_periods.charging_periods = Some(vec![]);
-        
+
         let validation_result = cost_details_empty_periods.validate();
-        assert!(validation_result.is_err(), "Empty charging periods should fail validation");
-        
+        assert!(
+            validation_result.is_err(),
+            "Empty charging periods should fail validation"
+        );
+
         let errors = validation_result.unwrap_err();
         let field_errors = errors.field_errors();
-        assert!(field_errors.contains_key("charging_periods"), "Validation errors should contain charging_periods field");
+        assert!(
+            field_errors.contains_key("charging_periods"),
+            "Validation errors should contain charging_periods field"
+        );
     }
-    
+
     #[test]
     fn test_failure_reason_length_validation() {
         let charging_period = ChargingPeriodType::new(chrono::Utc::now(), vec![]);
@@ -573,7 +579,7 @@ mod tests {
             usage_incl_tax: None,
             custom_data: None,
         };
-        
+
         // Valid case with reasonable failure reason length
         let valid_cost_details = CostDetailsType::new(
             vec![charging_period.clone()],
@@ -582,9 +588,12 @@ mod tests {
         )
         .with_failure_to_calculate(true)
         .with_failure_reason("Calculation failed due to network connectivity issue".to_string());
-        
-        assert!(valid_cost_details.validate().is_ok(), "Cost details with valid failure reason should pass validation");
-        
+
+        assert!(
+            valid_cost_details.validate().is_ok(),
+            "Cost details with valid failure reason should pass validation"
+        );
+
         // Invalid case with failure reason exceeding 500 characters
         let too_long_reason = "X".repeat(501);
         let invalid_cost_details = CostDetailsType::new(
@@ -594,15 +603,21 @@ mod tests {
         )
         .with_failure_to_calculate(true)
         .with_failure_reason(too_long_reason);
-        
+
         let validation_result = invalid_cost_details.validate();
-        assert!(validation_result.is_err(), "Cost details with too long failure reason should fail validation");
-        
+        assert!(
+            validation_result.is_err(),
+            "Cost details with too long failure reason should fail validation"
+        );
+
         let errors = validation_result.unwrap_err();
         let field_errors = errors.field_errors();
-        assert!(field_errors.contains_key("failure_reason"), "Validation errors should contain failure_reason field");
+        assert!(
+            field_errors.contains_key("failure_reason"),
+            "Validation errors should contain failure_reason field"
+        );
     }
-    
+
     #[test]
     fn test_custom_data_validation() {
         let charging_period = ChargingPeriodType::new(chrono::Utc::now(), vec![]);
@@ -633,27 +648,30 @@ mod tests {
             usage_incl_tax: None,
             custom_data: None,
         };
-        
+
         // Create custom data with invalid vendor_id (too long)
         let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
         let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
-        
+
         let cost_details = CostDetailsType::new(
             vec![charging_period.clone()],
             total_cost.clone(),
             total_usage.clone(),
         )
         .with_custom_data(invalid_custom_data);
-        
+
         // Validation should fail due to invalid custom_data
         let validation_result = cost_details.validate();
-        assert!(validation_result.is_err(), "Invalid custom_data should cause validation failure");
+        assert!(
+            validation_result.is_err(),
+            "Invalid custom_data should cause validation failure"
+        );
     }
-    
+
     #[test]
     fn test_nested_validation() {
         let charging_period = ChargingPeriodType::new(chrono::Utc::now(), vec![]);
-        
+
         // Create a TotalCostType with invalid currency (exceeds max length of 3)
         let invalid_total_cost = TotalCostType {
             currency: "USDX".to_string(), // Should fail validation - max length is 3
@@ -675,24 +693,27 @@ mod tests {
             reservation_time: None,
             reservation_fixed: None,
         };
-        
+
         let total_usage = TotalUsageType {
             usage: 20.0,
             usage_excl_tax: None,
             usage_incl_tax: None,
             custom_data: None,
         };
-        
+
         let cost_details = CostDetailsType::new(
             vec![charging_period.clone()],
             invalid_total_cost,
             total_usage,
         );
-        
+
         // Validation should fail due to invalid nested total_cost
         let validation_result = cost_details.validate();
-        assert!(validation_result.is_err(), "Invalid nested total_cost should cause validation failure");
-        
+        assert!(
+            validation_result.is_err(),
+            "Invalid nested total_cost should cause validation failure"
+        );
+
         if let Err(errors) = validation_result {
             println!("Validation errors: {:?}", errors);
         }

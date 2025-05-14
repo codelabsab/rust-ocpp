@@ -63,7 +63,10 @@ impl MeterValueType {
     /// This function will panic if `sampled_value` is empty, as the OCPP 2.1 specification
     /// requires at least one sampled value.
     pub fn new(timestamp: DateTime<Utc>, sampled_value: Vec<SampledValueType>) -> Self {
-        assert!(!sampled_value.is_empty(), "sampled_value must contain at least one element");
+        assert!(
+            !sampled_value.is_empty(),
+            "sampled_value must contain at least one element"
+        );
         Self {
             timestamp,
             sampled_value,
@@ -167,7 +170,10 @@ impl MeterValueType {
     /// This function will panic if `sampled_value` is empty, as the OCPP 2.1 specification
     /// requires at least one sampled value.
     pub fn set_sampled_value(&mut self, sampled_value: Vec<SampledValueType>) -> &mut Self {
-        assert!(!sampled_value.is_empty(), "sampled_value must contain at least one element");
+        assert!(
+            !sampled_value.is_empty(),
+            "sampled_value must contain at least one element"
+        );
         self.sampled_value = sampled_value;
         self
     }
@@ -207,11 +213,11 @@ impl MeterValueType {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, Value};
+    use super::*;
     use crate::v2_1::enumerations::{
         LocationEnumType, MeasurandEnumType, PhaseEnumType, ReadingContextEnumType,
     };
-    use super::*;
+    use serde_json::{json, Value};
 
     #[test]
     fn test_new_meter_value() {
@@ -343,18 +349,16 @@ mod tests {
     #[test]
     fn test_serialization() {
         let timestamp = Utc::now();
-        let sampled_value = vec![
-            SampledValueType::new(42.0)
-                .with_context(ReadingContextEnumType::SamplePeriodic)
-                .with_measurand(MeasurandEnumType::CurrentImport)
-                .with_phase(PhaseEnumType::L1)
-                .with_location(LocationEnumType::Outlet),
-        ];
+        let sampled_value = vec![SampledValueType::new(42.0)
+            .with_context(ReadingContextEnumType::SamplePeriodic)
+            .with_measurand(MeasurandEnumType::CurrentImport)
+            .with_phase(PhaseEnumType::L1)
+            .with_location(LocationEnumType::Outlet)];
         let custom_data = CustomDataType::new("VendorX".to_string())
             .with_property("version".to_string(), json!("1.0"));
 
-        let meter_value = MeterValueType::new(timestamp, sampled_value)
-            .with_custom_data(custom_data);
+        let meter_value =
+            MeterValueType::new(timestamp, sampled_value).with_custom_data(custom_data);
 
         // Serialize to JSON
         let serialized = serde_json::to_string(&meter_value).unwrap();
@@ -364,8 +368,14 @@ mod tests {
         assert!(deserialized["timestamp"].is_string());
         assert!(deserialized["sampledValue"].is_array());
         assert_eq!(deserialized["sampledValue"][0]["value"], 42.0);
-        assert_eq!(deserialized["sampledValue"][0]["context"], "Sample.Periodic");
-        assert_eq!(deserialized["sampledValue"][0]["measurand"], "Current.Import");
+        assert_eq!(
+            deserialized["sampledValue"][0]["context"],
+            "Sample.Periodic"
+        );
+        assert_eq!(
+            deserialized["sampledValue"][0]["measurand"],
+            "Current.Import"
+        );
         assert_eq!(deserialized["sampledValue"][0]["phase"], "L1");
         assert_eq!(deserialized["sampledValue"][0]["location"], "Outlet");
         assert_eq!(deserialized["customData"]["vendorId"], "VendorX");
@@ -399,7 +409,10 @@ mod tests {
         let meter_value: MeterValueType = serde_json::from_value(json_with_all_fields).unwrap();
 
         // Check fields
-        assert_eq!(meter_value.timestamp().to_rfc3339(), "2023-01-01T12:00:00+00:00");
+        assert_eq!(
+            meter_value.timestamp().to_rfc3339(),
+            "2023-01-01T12:00:00+00:00"
+        );
         assert_eq!(meter_value.sampled_value().len(), 2);
         assert_eq!(meter_value.sampled_value()[0].value(), 42.0);
         assert_eq!(meter_value.sampled_value()[1].value(), 50.0);
@@ -420,7 +433,10 @@ mod tests {
         let meter_value: MeterValueType = serde_json::from_value(json_required_only).unwrap();
 
         // Check fields
-        assert_eq!(meter_value.timestamp().to_rfc3339(), "2023-01-01T12:00:00+00:00");
+        assert_eq!(
+            meter_value.timestamp().to_rfc3339(),
+            "2023-01-01T12:00:00+00:00"
+        );
         assert_eq!(meter_value.sampled_value().len(), 1);
         assert_eq!(meter_value.sampled_value()[0].value(), 42.0);
         assert!(meter_value.custom_data().is_none());
@@ -432,10 +448,8 @@ mod tests {
         let sampled_values = vec![
             SampledValueType::new(42.0)
                 .with_measurand(MeasurandEnumType::EnergyActiveImportRegister),
-            SampledValueType::new(230.0)
-                .with_measurand(MeasurandEnumType::Voltage),
-            SampledValueType::new(10.5)
-                .with_measurand(MeasurandEnumType::CurrentImport),
+            SampledValueType::new(230.0).with_measurand(MeasurandEnumType::Voltage),
+            SampledValueType::new(10.5).with_measurand(MeasurandEnumType::CurrentImport),
         ];
 
         let meter_value = MeterValueType::new(timestamp, sampled_values.clone());

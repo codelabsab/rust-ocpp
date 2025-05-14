@@ -378,7 +378,10 @@ mod tests {
     fn test_validation() {
         // Valid charging station
         let valid_station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string());
-        assert!(valid_station.validate().is_ok(), "Valid station should pass validation");
+        assert!(
+            valid_station.validate().is_ok(),
+            "Valid station should pass validation"
+        );
 
         // Test model length validation (too long)
         let mut invalid_station = valid_station.clone();
@@ -439,23 +442,29 @@ mod tests {
 
         // Test with maximum allowed lengths
         let station = ChargingStationType::new(
-            "a".repeat(20),  // Max length for model
-            "a".repeat(50),  // Max length for vendor_name
+            "a".repeat(20), // Max length for model
+            "a".repeat(50), // Max length for vendor_name
         )
-        .with_serial_number("a".repeat(25))  // Max length for serial_number
-        .with_firmware_version("a".repeat(50));  // Max length for firmware_version
+        .with_serial_number("a".repeat(25)) // Max length for serial_number
+        .with_firmware_version("a".repeat(50)); // Max length for firmware_version
 
-        assert!(station.validate().is_ok(), "Station with maximum length fields should pass validation");
+        assert!(
+            station.validate().is_ok(),
+            "Station with maximum length fields should pass validation"
+        );
 
         // Test with modem that has maximum length fields
         let modem = ModemType::new(
-            "a".repeat(20),  // Max length for iccid
-            "a".repeat(20),  // Max length for imsi
+            "a".repeat(20), // Max length for iccid
+            "a".repeat(20), // Max length for imsi
         );
         let station = ChargingStationType::new("Model X".to_string(), "Vendor Y".to_string())
             .with_modem(modem);
 
-        assert!(station.validate().is_ok(), "Station with modem having maximum length fields should pass validation");
+        assert!(
+            station.validate().is_ok(),
+            "Station with modem having maximum length fields should pass validation"
+        );
     }
 
     #[test]
@@ -477,7 +486,10 @@ mod tests {
             .with_custom_data(station_custom_data.clone());
 
         // Validate the complex object
-        assert!(station.validate().is_ok(), "Complex station should pass validation");
+        assert!(
+            station.validate().is_ok(),
+            "Complex station should pass validation"
+        );
 
         // Serialize and deserialize
         let serialized = to_string(&station).unwrap();
@@ -485,7 +497,12 @@ mod tests {
 
         // Verify nested custom data is preserved
         assert_eq!(
-            deserialized.modem().unwrap().custom_data().unwrap().vendor_id(),
+            deserialized
+                .modem()
+                .unwrap()
+                .custom_data()
+                .unwrap()
+                .vendor_id(),
             "ModemVendor"
         );
         assert_eq!(

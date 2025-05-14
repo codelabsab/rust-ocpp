@@ -1,8 +1,8 @@
+use super::custom_data::CustomDataType;
+use rust_decimal::prelude::FromPrimitive;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use rust_decimal::prelude::FromPrimitive;
-use super::custom_data::CustomDataType;
 
 /// Gradient settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -202,8 +202,6 @@ impl GradientType {
     }
 }
 
-
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -232,8 +230,14 @@ mod tests {
         let gradient_type = GradientType::new_from_f64(priority, gradient_f64, soft_gradient_f64);
 
         assert_eq!(gradient_type.priority(), priority);
-        assert_eq!(gradient_type.gradient(), Decimal::from_f64(gradient_f64).unwrap());
-        assert_eq!(gradient_type.soft_gradient(), Decimal::from_f64(soft_gradient_f64).unwrap());
+        assert_eq!(
+            gradient_type.gradient(),
+            Decimal::from_f64(gradient_f64).unwrap()
+        );
+        assert_eq!(
+            gradient_type.soft_gradient(),
+            Decimal::from_f64(soft_gradient_f64).unwrap()
+        );
         assert_eq!(gradient_type.custom_data(), None);
     }
 
@@ -295,8 +299,14 @@ mod tests {
             .set_gradient_f64(gradient_f64)
             .set_soft_gradient_f64(soft_gradient_f64);
 
-        assert_eq!(gradient_type.gradient(), Decimal::from_f64(gradient_f64).unwrap());
-        assert_eq!(gradient_type.soft_gradient(), Decimal::from_f64(soft_gradient_f64).unwrap());
+        assert_eq!(
+            gradient_type.gradient(),
+            Decimal::from_f64(gradient_f64).unwrap()
+        );
+        assert_eq!(
+            gradient_type.soft_gradient(),
+            Decimal::from_f64(soft_gradient_f64).unwrap()
+        );
     }
 
     #[test]

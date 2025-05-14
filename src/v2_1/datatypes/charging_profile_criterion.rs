@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{datatypes::CustomDataType, enumerations::{ChargingLimitSourceEnumType, ChargingProfilePurposeEnumType}};
+use crate::v2_1::{
+    datatypes::CustomDataType,
+    enumerations::{ChargingLimitSourceEnumType, ChargingProfilePurposeEnumType},
+};
 
 /// A ChargingProfileCriterionType is a filter for charging profiles to be selected by a GetChargingProfilesRequest.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -103,7 +106,10 @@ impl ChargingProfileCriterionType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_charging_limit_source(mut self, charging_limit_source: ChargingLimitSourceEnumType) -> Self {
+    pub fn with_charging_limit_source(
+        mut self,
+        charging_limit_source: ChargingLimitSourceEnumType,
+    ) -> Self {
         self.charging_limit_source = Some(charging_limit_source);
         self
     }
@@ -212,7 +218,10 @@ impl ChargingProfileCriterionType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_charging_limit_source(&mut self, charging_limit_source: Option<ChargingLimitSourceEnumType>) -> &mut Self {
+    pub fn set_charging_limit_source(
+        &mut self,
+        charging_limit_source: Option<ChargingLimitSourceEnumType>,
+    ) -> &mut Self {
         self.charging_limit_source = charging_limit_source;
         self
     }
@@ -270,7 +279,8 @@ mod tests {
         use crate::v2_1::enumerations::charging_limit_source::StandardChargingLimitSourceEnumType;
 
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let limit_source = ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::EMS);
+        let limit_source =
+            ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::EMS);
 
         let criterion = ChargingProfileCriterionType::new()
             .with_charging_profile_purpose(
@@ -296,7 +306,8 @@ mod tests {
         use crate::v2_1::enumerations::charging_limit_source::StandardChargingLimitSourceEnumType;
 
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let limit_source = ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::SO);
+        let limit_source =
+            ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::SO);
 
         let mut criterion = ChargingProfileCriterionType::new();
 
@@ -341,38 +352,56 @@ mod tests {
             .with_charging_profile_purpose(ChargingProfilePurposeEnumType::TxProfile)
             .with_stack_level(3)
             .with_charging_profile_id(vec![1, 2, 3])
-            .with_charging_limit_source(
-                ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::EMS)
-            )
+            .with_charging_limit_source(ChargingLimitSourceEnumType::Standard(
+                StandardChargingLimitSourceEnumType::EMS,
+            ))
             .with_custom_data(custom_data);
 
-        assert!(valid_criterion.validate().is_ok(), "Valid criterion should pass validation");
+        assert!(
+            valid_criterion.validate().is_ok(),
+            "Valid criterion should pass validation"
+        );
 
         // 2. Test stack_level validation (negative value)
         let mut invalid_stack_level = ChargingProfileCriterionType::new();
         invalid_stack_level.stack_level = Some(-1); // Invalid: must be >= 0
 
         let validation_result = invalid_stack_level.validate();
-        assert!(validation_result.is_err(), "Criterion with negative stack_level should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Criterion with negative stack_level should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("stack_level"),
-                "Error should mention stack_level: {}", error);
+        assert!(
+            error.to_string().contains("stack_level"),
+            "Error should mention stack_level: {}",
+            error
+        );
 
         // 3. Test charging_profile_id validation (empty array)
         let mut invalid_profile_id = ChargingProfileCriterionType::new();
         invalid_profile_id.charging_profile_id = Some(vec![]); // Invalid: must have at least 1 element
 
         let validation_result = invalid_profile_id.validate();
-        assert!(validation_result.is_err(), "Criterion with empty charging_profile_id should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Criterion with empty charging_profile_id should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("charging_profile_id"),
-                "Error should mention charging_profile_id: {}", error);
+        assert!(
+            error.to_string().contains("charging_profile_id"),
+            "Error should mention charging_profile_id: {}",
+            error
+        );
 
         // 4. Test with invalid custom data (nested validation)
         let invalid_custom_data = CustomDataType::new("a".repeat(256)); // Exceeds max length of 255
-        let invalid_criterion = ChargingProfileCriterionType::new()
-            .with_custom_data(invalid_custom_data);
+        let invalid_criterion =
+            ChargingProfileCriterionType::new().with_custom_data(invalid_custom_data);
 
-        assert!(invalid_criterion.validate().is_err(), "Criterion with invalid custom_data should fail validation");
+        assert!(
+            invalid_criterion.validate().is_err(),
+            "Criterion with invalid custom_data should fail validation"
+        );
     }
 }

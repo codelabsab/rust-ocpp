@@ -1,17 +1,9 @@
 use crate::v2_1::{
     datatypes::{
-        ACChargingParametersType,
-        CustomDataType,
-        DCChargingParametersType,
-        V2XChargingParametersType,
-        DERChargingParametersType,
-        EVEnergyOfferType,
+        ACChargingParametersType, CustomDataType, DCChargingParametersType,
+        DERChargingParametersType, EVEnergyOfferType, V2XChargingParametersType,
     },
-    enumerations::{
-        EnergyTransferModeEnumType,
-        ControlModeEnumType,
-        MobilityNeedsModeEnumType,
-    }
+    enumerations::{ControlModeEnumType, EnergyTransferModeEnumType, MobilityNeedsModeEnumType},
 };
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -383,11 +375,12 @@ mod tests {
         let ac_params = ACChargingParametersType::new_from_f64(10000.0, 10.0, 32.0, 400.0);
         let dc_params = DCChargingParametersType::new(400.0, 100.0);
 
-        let valid_needs_with_params = ChargingNeedsType::new(EnergyTransferModeEnumType::ACThreePhase)
-            .with_departure_time(departure_time)
-            .with_ac_charging_parameters(ac_params)
-            .with_dc_charging_parameters(dc_params)
-            .with_custom_data(custom_data);
+        let valid_needs_with_params =
+            ChargingNeedsType::new(EnergyTransferModeEnumType::ACThreePhase)
+                .with_departure_time(departure_time)
+                .with_ac_charging_parameters(ac_params)
+                .with_dc_charging_parameters(dc_params)
+                .with_custom_data(custom_data);
 
         // Validation should pass
         assert!(valid_needs_with_params.validate().is_ok());

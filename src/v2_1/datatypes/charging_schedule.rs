@@ -4,12 +4,9 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::{
-    datatypes::{ChargingSchedulePeriodType,
-        CustomDataType,
-        SalesTariffType,
-        AbsolutePriceScheduleType,
-        PriceLevelScheduleType,
-        LimitAtSoCType,
+    datatypes::{
+        AbsolutePriceScheduleType, ChargingSchedulePeriodType, CustomDataType, LimitAtSoCType,
+        PriceLevelScheduleType, SalesTariffType,
     },
     enumerations::ChargingRateUnitEnumType,
 };
@@ -36,7 +33,7 @@ pub struct ChargingScheduleType {
     pub charging_rate_unit: ChargingRateUnitEnumType,
 
     /// Minimum charging rate supported by the EV. The unit of measure is defined by the chargingRateUnit.
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -44,7 +41,7 @@ pub struct ChargingScheduleType {
     pub min_charging_rate: Option<Decimal>,
 
     /// *(2.1)* Power tolerance when following EVPowerProfile.
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -447,10 +444,11 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
         let start_time = Utc::now();
 
-        let mut schedule = ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()])
-            .with_start_schedule(start_time)
-            .with_duration(3600)
-            .with_custom_data(custom_data.clone());
+        let mut schedule =
+            ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()])
+                .with_start_schedule(start_time)
+                .with_duration(3600)
+                .with_custom_data(custom_data.clone());
 
         schedule.min_charging_rate = Some(dec!(5.0));
         schedule.power_tolerance = Some(dec!(5.0));
@@ -470,7 +468,8 @@ mod tests {
         println!("Serialized JSON: {}", serialized);
 
         // Create a JSON string for deserialization
-        let json = format!(r#"{{
+        let json = format!(
+            r#"{{
             "id": 1,
             "chargingRateUnit": "W",
             "duration": 3600,
@@ -496,19 +495,30 @@ mod tests {
             "customData": {{
                 "vendorId": "VendorX"
             }}
-        }}"#, start_time.to_rfc3339());
+        }}"#,
+            start_time.to_rfc3339()
+        );
 
         // Deserialize back
         let deserialized: ChargingScheduleType = from_str(&json).unwrap();
 
         // Verify the result is the same as the original object
         assert_eq!(schedule.id(), deserialized.id());
-        assert_eq!(schedule.charging_rate_unit(), deserialized.charging_rate_unit());
+        assert_eq!(
+            schedule.charging_rate_unit(),
+            deserialized.charging_rate_unit()
+        );
         assert_eq!(schedule.duration(), deserialized.duration());
         assert_eq!(schedule.min_charging_rate, deserialized.min_charging_rate);
         assert_eq!(schedule.power_tolerance, deserialized.power_tolerance);
-        assert_eq!(schedule.custom_data().unwrap().vendor_id(), deserialized.custom_data().unwrap().vendor_id());
-        assert_eq!(schedule.charging_schedule_period().len(), deserialized.charging_schedule_period().len());
+        assert_eq!(
+            schedule.custom_data().unwrap().vendor_id(),
+            deserialized.custom_data().unwrap().vendor_id()
+        );
+        assert_eq!(
+            schedule.charging_schedule_period().len(),
+            deserialized.charging_schedule_period().len()
+        );
     }
 
     #[test]
@@ -528,7 +538,8 @@ mod tests {
         period.v2x_baseline = Some(dec!(50.0));
 
         // Create a schedule with OCPP 2.1 specific fields
-        let mut schedule = ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
+        let mut schedule =
+            ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
 
         // Set OCPP 2.1 specific fields
         schedule.power_tolerance = Some(dec!(5.0));
@@ -540,7 +551,10 @@ mod tests {
         // Verify fields are set correctly
         assert_eq!(schedule.power_tolerance, Some(dec!(5.0)));
         assert_eq!(schedule.signature_id, Some(42));
-        assert_eq!(schedule.digest_value, Some("base64_encoded_hash_value".to_string()));
+        assert_eq!(
+            schedule.digest_value,
+            Some("base64_encoded_hash_value".to_string())
+        );
         assert_eq!(schedule.use_local_time, Some(true));
         assert_eq!(schedule.randomized_delay, Some(30));
 
@@ -588,7 +602,10 @@ mod tests {
         // Verify OCPP 2.1 specific fields are preserved
         assert_eq!(deserialized.power_tolerance, Some(dec!(5.0)));
         assert_eq!(deserialized.signature_id, Some(42));
-        assert_eq!(deserialized.digest_value, Some("base64_encoded_hash_value".to_string()));
+        assert_eq!(
+            deserialized.digest_value,
+            Some("base64_encoded_hash_value".to_string())
+        );
         assert_eq!(deserialized.use_local_time, Some(true));
         assert_eq!(deserialized.randomized_delay, Some(30));
     }
@@ -598,33 +615,52 @@ mod tests {
         let period = create_test_period();
 
         // Valid schedule
-        let valid_schedule = ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
-        assert!(valid_schedule.validate().is_ok(), "Valid schedule should pass validation");
+        let valid_schedule =
+            ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
+        assert!(
+            valid_schedule.validate().is_ok(),
+            "Valid schedule should pass validation"
+        );
 
         // Test signature_id validation (negative value)
         let mut invalid_schedule = valid_schedule.clone();
         invalid_schedule.signature_id = Some(-1); // Invalid: must be >= 0
-        assert!(invalid_schedule.validate().is_err(), "Schedule with negative signature_id should fail validation");
+        assert!(
+            invalid_schedule.validate().is_err(),
+            "Schedule with negative signature_id should fail validation"
+        );
 
         // Test digest_value validation (too long)
         let mut invalid_schedule = valid_schedule.clone();
         invalid_schedule.digest_value = Some("a".repeat(89)); // Invalid: exceeds max length of 88
-        assert!(invalid_schedule.validate().is_err(), "Schedule with too long digest_value should fail validation");
+        assert!(
+            invalid_schedule.validate().is_err(),
+            "Schedule with too long digest_value should fail validation"
+        );
 
         // Test randomized_delay validation (negative value)
         let mut invalid_schedule = valid_schedule.clone();
         invalid_schedule.randomized_delay = Some(-10); // Invalid: must be >= 0
-        assert!(invalid_schedule.validate().is_err(), "Schedule with negative randomized_delay should fail validation");
+        assert!(
+            invalid_schedule.validate().is_err(),
+            "Schedule with negative randomized_delay should fail validation"
+        );
 
         // Test charging_schedule_period validation (empty array)
         let mut invalid_schedule = valid_schedule.clone();
         invalid_schedule.charging_schedule_period = vec![]; // Invalid: must have at least 1 period
-        assert!(invalid_schedule.validate().is_err(), "Schedule with empty charging_schedule_period should fail validation");
+        assert!(
+            invalid_schedule.validate().is_err(),
+            "Schedule with empty charging_schedule_period should fail validation"
+        );
 
         // Test charging_schedule_period validation (too many periods)
         let mut invalid_schedule = valid_schedule.clone();
         invalid_schedule.charging_schedule_period = vec![period.clone(); 1025]; // Invalid: exceeds max of 1024
-        assert!(invalid_schedule.validate().is_err(), "Schedule with too many periods should fail validation");
+        assert!(
+            invalid_schedule.validate().is_err(),
+            "Schedule with too many periods should fail validation"
+        );
     }
 
     #[test]
@@ -643,18 +679,15 @@ mod tests {
         period.setpoint_reactive_l3 = Some(dec!(7.0));
         period.v2x_baseline = Some(dec!(50.0));
 
-        let mut schedule = ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
+        let mut schedule =
+            ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
 
         // Create time anchor for schedules
         let time_anchor = Utc::now();
 
         // Create mock price rule stack for AbsolutePriceScheduleType
-        use crate::v2_1::{
-            datatypes::{
-                PriceRuleType,
-                PriceRuleStackType,
-                PriceLevelScheduleEntryType,
-            },
+        use crate::v2_1::datatypes::{
+            PriceLevelScheduleEntryType, PriceRuleStackType, PriceRuleType,
         };
 
         let energy_fee = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
@@ -688,7 +721,7 @@ mod tests {
 
         // Create LimitAtSoCType with required fields
         let limit_at_soc = LimitAtSoCType::new(
-            80,      // soc
+            80,           // soc
             dec!(7500.0), // limit
         );
 
@@ -703,9 +736,27 @@ mod tests {
         assert!(schedule.limit_at_so_c.is_some());
 
         // Verify specific field values
-        assert_eq!(schedule.absolute_price_schedule.as_ref().unwrap().price_schedule_id, 123);
-        assert_eq!(schedule.absolute_price_schedule.as_ref().unwrap().currency, "USD");
-        assert_eq!(schedule.price_level_schedule.as_ref().unwrap().price_level_schedule_entries.len(), 2);
+        assert_eq!(
+            schedule
+                .absolute_price_schedule
+                .as_ref()
+                .unwrap()
+                .price_schedule_id,
+            123
+        );
+        assert_eq!(
+            schedule.absolute_price_schedule.as_ref().unwrap().currency,
+            "USD"
+        );
+        assert_eq!(
+            schedule
+                .price_level_schedule
+                .as_ref()
+                .unwrap()
+                .price_level_schedule_entries
+                .len(),
+            2
+        );
         assert_eq!(schedule.limit_at_so_c.as_ref().unwrap().soc, 80);
         assert_eq!(schedule.limit_at_so_c.as_ref().unwrap().limit, dec!(7500.0));
 
@@ -718,7 +769,8 @@ mod tests {
         assert!(serialized.contains(r#""limitAtSoC"#));
 
         // Create a JSON string for deserialization with all required fields
-        let json = format!(r#"{{
+        let json = format!(
+            r#"{{
             "id": 1,
             "chargingRateUnit": "W",
             "chargingSchedulePeriod": [{{
@@ -766,7 +818,10 @@ mod tests {
             }},
             "minChargingRate": 5.0,
             "powerTolerance": 5.0
-        }}"#, time_anchor.to_rfc3339(), time_anchor.to_rfc3339());
+        }}"#,
+            time_anchor.to_rfc3339(),
+            time_anchor.to_rfc3339()
+        );
 
         // Deserialize back
         let deserialized: ChargingScheduleType = from_str(&json).unwrap();
@@ -777,11 +832,36 @@ mod tests {
         assert!(deserialized.limit_at_so_c.is_some());
 
         // Verify specific field values are preserved
-        assert_eq!(deserialized.absolute_price_schedule.as_ref().unwrap().price_schedule_id, 123);
-        assert_eq!(deserialized.absolute_price_schedule.as_ref().unwrap().currency, "USD");
-        assert_eq!(deserialized.price_level_schedule.as_ref().unwrap().price_level_schedule_entries.len(), 2);
+        assert_eq!(
+            deserialized
+                .absolute_price_schedule
+                .as_ref()
+                .unwrap()
+                .price_schedule_id,
+            123
+        );
+        assert_eq!(
+            deserialized
+                .absolute_price_schedule
+                .as_ref()
+                .unwrap()
+                .currency,
+            "USD"
+        );
+        assert_eq!(
+            deserialized
+                .price_level_schedule
+                .as_ref()
+                .unwrap()
+                .price_level_schedule_entries
+                .len(),
+            2
+        );
         assert_eq!(deserialized.limit_at_so_c.as_ref().unwrap().soc, 80);
-        assert_eq!(deserialized.limit_at_so_c.as_ref().unwrap().limit, dec!(7500.0));
+        assert_eq!(
+            deserialized.limit_at_so_c.as_ref().unwrap().limit,
+            dec!(7500.0)
+        );
     }
 
     #[test]
@@ -800,7 +880,8 @@ mod tests {
         period.setpoint_reactive_l3 = Some(dec!(7.0));
         period.v2x_baseline = Some(dec!(50.0));
 
-        let mut schedule = ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
+        let mut schedule =
+            ChargingScheduleType::new(1, ChargingRateUnitEnumType::W, vec![period.clone()]);
 
         // Set min_charging_rate
         schedule.min_charging_rate = Some(dec!(5.0));

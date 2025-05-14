@@ -1,7 +1,7 @@
+use super::custom_data::CustomDataType;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use super::custom_data::CustomDataType;
 
 /// Points defining a DER curve.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -245,8 +245,8 @@ mod tests {
 
     #[test]
     fn test_serialization() {
-        use serde_json::{json, Value};
         use rust_decimal::prelude::*;
+        use serde_json::{json, Value};
 
         // 创建测试数据
         let x = Decimal::from_str("10.5").unwrap();

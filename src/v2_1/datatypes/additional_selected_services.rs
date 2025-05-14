@@ -43,7 +43,10 @@ impl AdditionalSelectedServicesType {
     ///
     /// Panics if `service_name` is longer than 80 characters
     pub fn new(service_fee: RationalNumberType, service_name: String) -> Self {
-        assert!(service_name.len() <= 80, "service_name must not exceed 80 characters");
+        assert!(
+            service_name.len() <= 80,
+            "service_name must not exceed 80 characters"
+        );
 
         Self {
             service_fee,
@@ -121,7 +124,10 @@ impl AdditionalSelectedServicesType {
     ///
     /// Panics if `service_name` is longer than 80 characters
     pub fn set_service_name(&mut self, service_name: String) -> &mut Self {
-        assert!(service_name.len() <= 80, "service_name must not exceed 80 characters");
+        assert!(
+            service_name.len() <= 80,
+            "service_name must not exceed 80 characters"
+        );
         self.service_name = service_name;
         self
     }
@@ -266,10 +272,8 @@ mod tests {
             custom_data: None,
         };
 
-        let mut services = AdditionalSelectedServicesType::new(
-            service_fee,
-            "Premium Charging".to_string(),
-        );
+        let mut services =
+            AdditionalSelectedServicesType::new(service_fee, "Premium Charging".to_string());
 
         // This should panic because service_name is too long
         services.set_service_name("A".repeat(81)); // 81 characters, exceeding the 80 character limit
@@ -283,10 +287,8 @@ mod tests {
             custom_data: None,
         };
 
-        let mut services = AdditionalSelectedServicesType::new(
-            service_fee,
-            "Premium Charging".to_string(),
-        );
+        let mut services =
+            AdditionalSelectedServicesType::new(service_fee, "Premium Charging".to_string());
 
         // Valid service name
         assert!(services.validate().is_ok());
@@ -317,7 +319,10 @@ mod tests {
 
         // Valid instance should pass validation
         let validation_result = Validate::validate(&valid_services);
-        assert!(validation_result.is_ok(), "Valid services should pass validation");
+        assert!(
+            validation_result.is_ok(),
+            "Valid services should pass validation"
+        );
 
         // 2. Test invalid service_name (too long)
         let mut invalid_name_services = valid_services.clone();
@@ -325,10 +330,16 @@ mod tests {
         invalid_name_services.service_name = "A".repeat(81);
 
         let validation_result = Validate::validate(&invalid_name_services);
-        assert!(validation_result.is_err(), "Services with too long name should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Services with too long name should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("service_name"),
-                "Error should mention service_name: {}", error);
+        assert!(
+            error.to_string().contains("service_name"),
+            "Error should mention service_name: {}",
+            error
+        );
 
         // 3. Test invalid custom_data (nested validation failure)
         let mut invalid_services_custom_data = valid_services.clone();
@@ -338,9 +349,15 @@ mod tests {
         invalid_services_custom_data.custom_data = Some(invalid_custom_data);
 
         let validation_result = Validate::validate(&invalid_services_custom_data);
-        assert!(validation_result.is_err(), "Services with invalid custom_data should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Services with invalid custom_data should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("custom_data"),
-                "Error should mention custom_data: {}", error);
+        assert!(
+            error.to_string().contains("custom_data"),
+            "Error should mention custom_data: {}",
+            error
+        );
     }
 }

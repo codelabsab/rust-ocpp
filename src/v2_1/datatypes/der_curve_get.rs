@@ -280,8 +280,14 @@ mod tests {
         let curve_points1 = vec![DERCurvePointsType::default()];
         let curve1 = DERCurveType::new(curve_points1, 1, DERUnitEnumType::PctMaxW);
         let curve_points2 = vec![
-            DERCurvePointsType::new(Decimal::from_str("1.0").unwrap(), Decimal::from_str("2.0").unwrap()),
-            DERCurvePointsType::new(Decimal::from_str("3.0").unwrap(), Decimal::from_str("4.0").unwrap()),
+            DERCurvePointsType::new(
+                Decimal::from_str("1.0").unwrap(),
+                Decimal::from_str("2.0").unwrap(),
+            ),
+            DERCurvePointsType::new(
+                Decimal::from_str("3.0").unwrap(),
+                Decimal::from_str("4.0").unwrap(),
+            ),
         ];
         let curve2 = DERCurveType::new(curve_points2, 2, DERUnitEnumType::PctMaxVar);
         let id1 = "curve1".to_string();
@@ -325,7 +331,7 @@ mod tests {
         // 创建有效的DERCurveGetType实例
         let curve_points = vec![DERCurvePointsType::new(
             Decimal::from_str("1.0").unwrap(),
-            Decimal::from_str("2.0").unwrap()
+            Decimal::from_str("2.0").unwrap(),
         )];
         let curve = DERCurveType::new(curve_points, 1, DERUnitEnumType::PctMaxW);
         let id = "valid_id".to_string();

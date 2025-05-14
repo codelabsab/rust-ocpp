@@ -1,8 +1,8 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use validator::Validate;
-use std::fmt;
 use std::convert::TryFrom;
+use std::fmt;
+use validator::Validate;
 
 use super::{
     custom_data::CustomDataType, ev_absolute_price_schedule_entry::EVAbsolutePriceScheduleEntryType,
@@ -257,7 +257,8 @@ impl TryFrom<String> for EVAbsolutePriceScheduleType {
 
 #[cfg(test)]
 mod tests {
-    use super::*;    #[test]
+    use super::*;
+    #[test]
     fn test_new_ev_absolute_price_schedule() {
         let time_anchor = Utc::now();
         let currency = "EUR".to_string();
@@ -279,7 +280,8 @@ mod tests {
         assert_eq!(schedule.price_algorithm(), price_algorithm);
         assert_eq!(schedule.ev_absolute_price_schedule_entries(), &entries);
         assert_eq!(schedule.custom_data(), None);
-    }    #[test]
+    }
+    #[test]
     fn test_with_custom_data() {
         let time_anchor = Utc::now();
         let currency = "EUR".to_string();
@@ -303,7 +305,8 @@ mod tests {
         assert_eq!(schedule.price_algorithm(), price_algorithm);
         assert_eq!(schedule.ev_absolute_price_schedule_entries(), &entries);
         assert_eq!(schedule.custom_data(), Some(&custom_data));
-    }    #[test]
+    }
+    #[test]
     fn test_setter_methods() {
         let time_anchor1 = Utc::now();
         let currency1 = "EUR".to_string();
@@ -315,7 +318,8 @@ mod tests {
 
         let time_anchor2 = Utc::now();
         let currency2 = "USD".to_string();
-        let price_algorithm2 = "PeakPower".to_string();        let entries2 = vec![
+        let price_algorithm2 = "PeakPower".to_string();
+        let entries2 = vec![
             EVAbsolutePriceScheduleEntryType::new_with_single_price(1800, 0.20, 0.0),
             EVAbsolutePriceScheduleEntryType::new_with_single_price(3600, 0.25, 0.0),
             EVAbsolutePriceScheduleEntryType::new_with_single_price(5400, 0.35, 0.0),
@@ -383,16 +387,13 @@ mod tests {
     fn test_from_to_string() {
         let time_anchor = Utc::now();
         let currency = "USD".to_string();
-        let price_algorithm = "StackedEnergy".to_string();        let entries = vec![
-            EVAbsolutePriceScheduleEntryType::new_with_single_price(3600, 0.25, 0.0),
-        ];
+        let price_algorithm = "StackedEnergy".to_string();
+        let entries = vec![EVAbsolutePriceScheduleEntryType::new_with_single_price(
+            3600, 0.25, 0.0,
+        )];
 
-        let schedule = EVAbsolutePriceScheduleType::new(
-            time_anchor,
-            currency,
-            price_algorithm,
-            entries,
-        );
+        let schedule =
+            EVAbsolutePriceScheduleType::new(time_anchor, currency, price_algorithm, entries);
 
         let json_string = String::from(schedule.clone());
 

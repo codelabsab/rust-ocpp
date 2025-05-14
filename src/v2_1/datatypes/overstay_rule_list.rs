@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{custom_data::CustomDataType, overstay_rule::OverstayRuleType, rational_number::RationalNumberType};
+use super::{
+    custom_data::CustomDataType, overstay_rule::OverstayRuleType,
+    rational_number::RationalNumberType,
+};
 
 /// List of overstay rules for a charging profile.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -69,7 +72,10 @@ impl OverstayRuleListType {
     /// # Returns
     ///
     /// The modified `OverstayRuleListType` instance
-    pub fn with_overstay_power_threshold(mut self, overstay_power_threshold: RationalNumberType) -> Self {
+    pub fn with_overstay_power_threshold(
+        mut self,
+        overstay_power_threshold: RationalNumberType,
+    ) -> Self {
         self.overstay_power_threshold = Some(overstay_power_threshold);
         self
     }
@@ -161,7 +167,10 @@ impl OverstayRuleListType {
     /// # Returns
     ///
     /// The modified `OverstayRuleListType` instance
-    pub fn set_overstay_power_threshold(&mut self, overstay_power_threshold: Option<RationalNumberType>) -> &mut Self {
+    pub fn set_overstay_power_threshold(
+        &mut self,
+        overstay_power_threshold: Option<RationalNumberType>,
+    ) -> &mut Self {
         self.overstay_power_threshold = overstay_power_threshold;
         self
     }
@@ -175,7 +184,10 @@ impl OverstayRuleListType {
     /// # Returns
     ///
     /// The modified `OverstayRuleListType` instance
-    pub fn set_overstay_time_threshold(&mut self, overstay_time_threshold: Option<i32>) -> &mut Self {
+    pub fn set_overstay_time_threshold(
+        &mut self,
+        overstay_time_threshold: Option<i32>,
+    ) -> &mut Self {
         self.overstay_time_threshold = overstay_time_threshold;
         self
     }
@@ -184,7 +196,9 @@ impl OverstayRuleListType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::v2_1::datatypes::{overstay_rule::OverstayRuleType, rational_number::RationalNumberType};
+    use crate::v2_1::datatypes::{
+        overstay_rule::OverstayRuleType, rational_number::RationalNumberType,
+    };
 
     #[test]
     fn test_overstay_rule_list_new() {
@@ -213,8 +227,14 @@ mod tests {
 
         assert_eq!(overstay_rule_list.overstay_rule(), &overstay_rules);
         assert_eq!(overstay_rule_list.custom_data(), Some(&custom_data));
-        assert_eq!(overstay_rule_list.overstay_power_threshold(), Some(&power_threshold));
-        assert_eq!(overstay_rule_list.overstay_time_threshold(), Some(&time_threshold));
+        assert_eq!(
+            overstay_rule_list.overstay_power_threshold(),
+            Some(&power_threshold)
+        );
+        assert_eq!(
+            overstay_rule_list.overstay_time_threshold(),
+            Some(&time_threshold)
+        );
     }
 
     #[test]
@@ -239,8 +259,14 @@ mod tests {
 
         assert_eq!(overstay_rule_list.overstay_rule(), &overstay_rules2);
         assert_eq!(overstay_rule_list.custom_data(), Some(&custom_data));
-        assert_eq!(overstay_rule_list.overstay_power_threshold(), Some(&power_threshold));
-        assert_eq!(overstay_rule_list.overstay_time_threshold(), Some(&time_threshold));
+        assert_eq!(
+            overstay_rule_list.overstay_power_threshold(),
+            Some(&power_threshold)
+        );
+        assert_eq!(
+            overstay_rule_list.overstay_time_threshold(),
+            Some(&time_threshold)
+        );
 
         // Test clearing optional fields
         overstay_rule_list.set_custom_data(None);
@@ -257,7 +283,10 @@ mod tests {
         let overstay_rules = vec![overstay_rule.clone(); 6]; // Exceeds max length of 5
         let overstay_rule_list = OverstayRuleListType::new(overstay_rules);
         let result = overstay_rule_list.validate();
-        assert!(result.is_err(), "Validation should fail for exceeding max length");
+        assert!(
+            result.is_err(),
+            "Validation should fail for exceeding max length"
+        );
     }
 
     #[test]
@@ -265,6 +294,9 @@ mod tests {
         let overstay_rules = vec![];
         let overstay_rule_list = OverstayRuleListType::new(overstay_rules);
         let result = overstay_rule_list.validate();
-        assert!(result.is_err(), "Validation should fail for not meeting min length");
+        assert!(
+            result.is_err(),
+            "Validation should fail for not meeting min length"
+        );
     }
 }

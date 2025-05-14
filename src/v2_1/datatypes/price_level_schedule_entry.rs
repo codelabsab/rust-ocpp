@@ -14,7 +14,7 @@ pub struct PriceLevelScheduleEntryType {
     /// Small values represent a cheaper price level, large values represent a more expensive price level.
     #[validate(range(min = 0, max = 9))]
     pub price_level: i8,
-    
+
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]

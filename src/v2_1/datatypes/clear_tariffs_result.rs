@@ -281,7 +281,10 @@ mod tests {
         println!("Serialized JSON: {}", serialized);
 
         // Verify JSON contains expected fields - use lowercase for enum values
-        assert!(serialized.contains(r#""status":"rejected""#) || serialized.contains(r#""status":"Rejected""#));
+        assert!(
+            serialized.contains(r#""status":"rejected""#)
+                || serialized.contains(r#""status":"Rejected""#)
+        );
         assert!(serialized.contains(r#""tariffId":"tariff-123""#));
         assert!(serialized.contains(r#""reasonCode":"SomeReason""#));
         assert!(serialized.contains(r#""additionalInfo":"Additional details""#));
@@ -312,7 +315,10 @@ mod tests {
         // Valid result
         let valid_result = ClearTariffsResultType::new(TariffClearStatusEnumType::Accepted)
             .with_tariff_id("tariff-123".to_string());
-        assert!(valid_result.validate().is_ok(), "Valid result should pass validation");
+        assert!(
+            valid_result.validate().is_ok(),
+            "Valid result should pass validation"
+        );
 
         // Test tariff_id validation (too long)
         let mut invalid_result = valid_result.clone();
@@ -352,8 +358,9 @@ mod tests {
     #[test]
     fn test_edge_cases() {
         // Test with empty tariff_id
-        let empty_tariff_id_result = ClearTariffsResultType::new(TariffClearStatusEnumType::Accepted)
-            .with_tariff_id("".to_string());
+        let empty_tariff_id_result =
+            ClearTariffsResultType::new(TariffClearStatusEnumType::Accepted)
+                .with_tariff_id("".to_string());
         assert!(
             empty_tariff_id_result.validate().is_ok(),
             "Result with empty tariff_id should pass validation"
@@ -368,8 +375,7 @@ mod tests {
         );
 
         // Test with empty strings in status_info
-        let status_info = StatusInfoType::new("".to_string())
-            .with_additional_info("".to_string());
+        let status_info = StatusInfoType::new("".to_string()).with_additional_info("".to_string());
         let empty_strings_result = ClearTariffsResultType::new(TariffClearStatusEnumType::Accepted)
             .with_status_info(status_info);
         assert!(
@@ -378,8 +384,7 @@ mod tests {
         );
 
         // Test with maximum length strings in status_info
-        let status_info = StatusInfoType::new("a".repeat(50))
-            .with_additional_info("a".repeat(500));
+        let status_info = StatusInfoType::new("a".repeat(50)).with_additional_info("a".repeat(500));
         let max_strings_result = ClearTariffsResultType::new(TariffClearStatusEnumType::Accepted)
             .with_status_info(status_info);
         assert!(
@@ -435,7 +440,10 @@ mod tests {
             .with_custom_data(result_custom_data.clone());
 
         // Validate the complex object
-        assert!(result.validate().is_ok(), "Complex result should pass validation");
+        assert!(
+            result.validate().is_ok(),
+            "Complex result should pass validation"
+        );
 
         // Serialize and deserialize
         let serialized = to_string(&result).unwrap();
@@ -443,7 +451,12 @@ mod tests {
 
         // Verify nested custom data is preserved
         assert_eq!(
-            deserialized.status_info().unwrap().custom_data().unwrap().vendor_id(),
+            deserialized
+                .status_info()
+                .unwrap()
+                .custom_data()
+                .unwrap()
+                .vendor_id(),
             "StatusInfoVendor"
         );
         assert_eq!(
@@ -509,23 +522,39 @@ mod tests {
         let result_with_tariff = ClearTariffsResultType::new(TariffClearStatusEnumType::Accepted)
             .with_tariff_id("tariff-123".to_string());
 
-        assert_eq!(result_with_tariff.status(), &TariffClearStatusEnumType::Accepted);
+        assert_eq!(
+            result_with_tariff.status(),
+            &TariffClearStatusEnumType::Accepted
+        );
         assert_eq!(result_with_tariff.tariff_id(), Some("tariff-123"));
         assert_eq!(result_with_tariff.status_info(), None);
         assert_eq!(result_with_tariff.custom_data(), None);
 
         // Test with only status and status_info
         let status_info = StatusInfoType::new("SomeReason".to_string());
-        let result_with_status_info = ClearTariffsResultType::new(TariffClearStatusEnumType::Rejected)
-            .with_status_info(status_info.clone());
+        let result_with_status_info =
+            ClearTariffsResultType::new(TariffClearStatusEnumType::Rejected)
+                .with_status_info(status_info.clone());
 
-        assert_eq!(result_with_status_info.status(), &TariffClearStatusEnumType::Rejected);
+        assert_eq!(
+            result_with_status_info.status(),
+            &TariffClearStatusEnumType::Rejected
+        );
         assert_eq!(result_with_status_info.tariff_id(), None);
-        assert_eq!(result_with_status_info.status_info().unwrap().reason_code(), "SomeReason");
+        assert_eq!(
+            result_with_status_info.status_info().unwrap().reason_code(),
+            "SomeReason"
+        );
         assert_eq!(result_with_status_info.custom_data(), None);
 
         // Validate all partial objects
-        assert!(result_with_tariff.validate().is_ok(), "Result with only tariff_id should pass validation");
-        assert!(result_with_status_info.validate().is_ok(), "Result with only status_info should pass validation");
+        assert!(
+            result_with_tariff.validate().is_ok(),
+            "Result with only tariff_id should pass validation"
+        );
+        assert!(
+            result_with_status_info.validate().is_ok(),
+            "Result with only status_info should pass validation"
+        );
     }
 }

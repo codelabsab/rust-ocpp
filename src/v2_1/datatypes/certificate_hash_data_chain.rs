@@ -348,13 +348,19 @@ mod tests {
             assert_eq!(&stored_children[1], &child2);
 
             // Check first child properties
-            assert_eq!(stored_children[0].hash_algorithm(), &HashAlgorithmEnumType::SHA384);
+            assert_eq!(
+                stored_children[0].hash_algorithm(),
+                &HashAlgorithmEnumType::SHA384
+            );
             assert_eq!(stored_children[0].issuer_name_hash(), "child1_name_hash");
             assert_eq!(stored_children[0].issuer_key_hash(), "child1_key_hash");
             assert_eq!(stored_children[0].serial_number(), "child1_serial");
 
             // Check second child properties
-            assert_eq!(stored_children[1].hash_algorithm(), &HashAlgorithmEnumType::SHA512);
+            assert_eq!(
+                stored_children[1].hash_algorithm(),
+                &HashAlgorithmEnumType::SHA512
+            );
             assert_eq!(stored_children[1].issuer_name_hash(), "child2_name_hash");
             assert_eq!(stored_children[1].issuer_key_hash(), "child2_key_hash");
             assert_eq!(stored_children[1].serial_number(), "child2_serial");
@@ -383,10 +389,8 @@ mod tests {
         ];
 
         for cert_type in &certificate_types {
-            let cert_chain = CertificateHashDataChainType::new(
-                cert_hash_data.clone(),
-                cert_type.clone(),
-            );
+            let cert_chain =
+                CertificateHashDataChainType::new(cert_hash_data.clone(), cert_type.clone());
 
             assert_eq!(cert_chain.certificate_type(), cert_type);
         }
@@ -430,7 +434,13 @@ mod tests {
             child_certificate_hash_data: Some(empty_vec),
             custom_data: None,
         };
-        assert_eq!(chain_with_empty.child_certificate_hash_data().unwrap().len(), 0);
+        assert_eq!(
+            chain_with_empty
+                .child_certificate_hash_data()
+                .unwrap()
+                .len(),
+            0
+        );
 
         // 3. Test many child certificates (more than 4 should be technically possible)
         let many_children = vec![
@@ -446,7 +456,13 @@ mod tests {
             child_certificate_hash_data: Some(many_children.clone()),
             custom_data: None,
         };
-        assert_eq!(chain_many_children.child_certificate_hash_data().unwrap().len(), 5);
+        assert_eq!(
+            chain_many_children
+                .child_certificate_hash_data()
+                .unwrap()
+                .len(),
+            5
+        );
 
         // 4. Test custom data usage
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -456,7 +472,10 @@ mod tests {
             child_certificate_hash_data: None,
             custom_data: Some(custom_data.clone()),
         };
-        assert_eq!(chain_with_custom.custom_data().unwrap().vendor_id(), "VendorX");
+        assert_eq!(
+            chain_with_custom.custom_data().unwrap().vendor_id(),
+            "VendorX"
+        );
     }
 
     #[test]
@@ -482,8 +501,14 @@ mod tests {
         )
         .with_child_certificate_hash_data(vec![child_cert.clone()]);
 
-        assert_eq!(chain_min_children.child_certificate_hash_data().unwrap().len(), 1,
-                "Chain should have 1 child certificate");
+        assert_eq!(
+            chain_min_children
+                .child_certificate_hash_data()
+                .unwrap()
+                .len(),
+            1,
+            "Chain should have 1 child certificate"
+        );
 
         // Test with 4 child certificates
         let child_certs = vec![
@@ -499,8 +524,14 @@ mod tests {
         )
         .with_child_certificate_hash_data(child_certs);
 
-        assert_eq!(chain_max_children.child_certificate_hash_data().unwrap().len(), 4,
-                "Chain should have 4 child certificates");
+        assert_eq!(
+            chain_max_children
+                .child_certificate_hash_data()
+                .unwrap()
+                .len(),
+            4,
+            "Chain should have 4 child certificates"
+        );
     }
 
     #[test]

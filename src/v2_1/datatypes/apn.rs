@@ -451,47 +451,74 @@ mod tests {
         .with_apn_password("password".to_string())
         .with_preferred_network("20404".to_string());
 
-        assert!(valid_apn.validate().is_ok(), "Valid APN should pass validation");
+        assert!(
+            valid_apn.validate().is_ok(),
+            "Valid APN should pass validation"
+        );
 
         // 2. Test apn length validation (too long)
         let long_apn = "a".repeat(2001); // 2001 characters, exceeds max of 2000
         let mut invalid_apn = valid_apn.clone();
         invalid_apn.apn = long_apn;
 
-        assert!(invalid_apn.validate().is_err(), "APN with too long apn should fail validation");
+        assert!(
+            invalid_apn.validate().is_err(),
+            "APN with too long apn should fail validation"
+        );
         let error = invalid_apn.validate().unwrap_err();
-        assert!(error.to_string().contains("apn"),
-                "Error should mention apn: {}", error);
+        assert!(
+            error.to_string().contains("apn"),
+            "Error should mention apn: {}",
+            error
+        );
 
         // 3. Test apn_user_name length validation (too long)
         let long_username = "a".repeat(51); // 51 characters, exceeds max of 50
         let mut invalid_apn = valid_apn.clone();
         invalid_apn.apn_user_name = Some(long_username);
 
-        assert!(invalid_apn.validate().is_err(), "APN with too long username should fail validation");
+        assert!(
+            invalid_apn.validate().is_err(),
+            "APN with too long username should fail validation"
+        );
         let error = invalid_apn.validate().unwrap_err();
-        assert!(error.to_string().contains("apn_user_name"),
-                "Error should mention apn_user_name: {}", error);
+        assert!(
+            error.to_string().contains("apn_user_name"),
+            "Error should mention apn_user_name: {}",
+            error
+        );
 
         // 4. Test apn_password length validation (too long)
         let long_password = "a".repeat(65); // 65 characters, exceeds max of 64
         let mut invalid_apn = valid_apn.clone();
         invalid_apn.apn_password = Some(long_password);
 
-        assert!(invalid_apn.validate().is_err(), "APN with too long password should fail validation");
+        assert!(
+            invalid_apn.validate().is_err(),
+            "APN with too long password should fail validation"
+        );
         let error = invalid_apn.validate().unwrap_err();
-        assert!(error.to_string().contains("apn_password"),
-                "Error should mention apn_password: {}", error);
+        assert!(
+            error.to_string().contains("apn_password"),
+            "Error should mention apn_password: {}",
+            error
+        );
 
         // 5. Test preferred_network length validation (too long)
         let long_network = "1234567".to_string(); // 7 characters, exceeds max of 6
         let mut invalid_apn = valid_apn.clone();
         invalid_apn.preferred_network = Some(long_network);
 
-        assert!(invalid_apn.validate().is_err(), "APN with too long preferred_network should fail validation");
+        assert!(
+            invalid_apn.validate().is_err(),
+            "APN with too long preferred_network should fail validation"
+        );
         let error = invalid_apn.validate().unwrap_err();
-        assert!(error.to_string().contains("preferred_network"),
-                "Error should mention preferred_network: {}", error);
+        assert!(
+            error.to_string().contains("preferred_network"),
+            "Error should mention preferred_network: {}",
+            error
+        );
 
         // 6. Test custom_data nested validation
         let mut invalid_custom_data = CustomDataType::new("VendorX".to_string());
@@ -501,9 +528,15 @@ mod tests {
         let mut invalid_apn = valid_apn.clone();
         invalid_apn.custom_data = Some(invalid_custom_data);
 
-        assert!(invalid_apn.validate().is_err(), "APN with invalid custom_data should fail validation");
+        assert!(
+            invalid_apn.validate().is_err(),
+            "APN with invalid custom_data should fail validation"
+        );
         let error = invalid_apn.validate().unwrap_err();
-        assert!(error.to_string().contains("custom_data"),
-                "Error should mention custom_data: {}", error);
+        assert!(
+            error.to_string().contains("custom_data"),
+            "Error should mention custom_data: {}",
+            error
+        );
     }
 }

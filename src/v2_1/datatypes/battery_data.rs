@@ -1,8 +1,8 @@
+use super::custom_data::CustomDataType;
+use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::{Validate, ValidationError};
-use rust_decimal::Decimal;
-use chrono::{DateTime, Utc};
-use super::custom_data::CustomDataType;
 
 /// Validates if a Decimal value is within the specified range
 ///
@@ -296,11 +296,11 @@ mod tests {
         let so_h = Decimal::new(750, 1); // 75.0%
 
         let battery_data = BatteryDataType::new(
-            1,                      // evse_id
+            1,                       // evse_id
             "BAT123456".to_string(), // serial_number
-            so_c,                   // so_c
-            so_h,                   // so_h
-            now,                    // production_date
+            so_c,                    // so_c
+            so_h,                    // so_h
+            now,                     // production_date
         );
 
         assert_eq!(battery_data.evse_id(), 1);
@@ -320,11 +320,11 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let battery_data = BatteryDataType::new(
-            1,                      // evse_id
+            1,                       // evse_id
             "BAT123456".to_string(), // serial_number
-            so_c,                   // so_c
-            so_h,                   // so_h
-            now,                    // production_date
+            so_c,                    // so_c
+            so_h,                    // so_h
+            now,                     // production_date
         )
         .with_vendor_info("Vendor specific info".to_string())
         .with_custom_data(custom_data.clone());
@@ -334,7 +334,10 @@ mod tests {
         assert_eq!(battery_data.so_c(), so_c);
         assert_eq!(battery_data.so_h(), so_h);
         assert_eq!(battery_data.production_date(), &now);
-        assert_eq!(battery_data.vendor_info(), Some(&"Vendor specific info".to_string()));
+        assert_eq!(
+            battery_data.vendor_info(),
+            Some(&"Vendor specific info".to_string())
+        );
         assert_eq!(battery_data.custom_data(), Some(&custom_data));
     }
 
@@ -349,11 +352,11 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let mut battery_data = BatteryDataType::new(
-            1,                      // evse_id
+            1,                       // evse_id
             "BAT123456".to_string(), // serial_number
-            so_c1,                  // so_c
-            so_h1,                  // so_h
-            now,                    // production_date
+            so_c1,                   // so_c
+            so_h1,                   // so_h
+            now,                     // production_date
         );
 
         battery_data
@@ -370,13 +373,14 @@ mod tests {
         assert_eq!(battery_data.so_c(), so_c2);
         assert_eq!(battery_data.so_h(), so_h2);
         assert_eq!(battery_data.production_date(), &tomorrow);
-        assert_eq!(battery_data.vendor_info(), Some(&"Updated vendor info".to_string()));
+        assert_eq!(
+            battery_data.vendor_info(),
+            Some(&"Updated vendor info".to_string())
+        );
         assert_eq!(battery_data.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        battery_data
-            .set_vendor_info(None)
-            .set_custom_data(None);
+        battery_data.set_vendor_info(None).set_custom_data(None);
 
         assert_eq!(battery_data.vendor_info(), None);
         assert_eq!(battery_data.custom_data(), None);
@@ -392,84 +396,129 @@ mod tests {
 
         // 1. Valid battery data - should pass validation
         let valid_battery_data = BatteryDataType::new(
-            1,                      // evse_id (valid: >= 0)
+            1,                       // evse_id (valid: >= 0)
             "BAT123456".to_string(), // serial_number (valid: <= 50 chars)
-            so_c,                   // so_c (valid: 0-100%)
-            so_h,                   // so_h (valid: 0-100%)
-            now,                    // production_date
+            so_c,                    // so_c (valid: 0-100%)
+            so_h,                    // so_h (valid: 0-100%)
+            now,                     // production_date
         );
 
-        assert!(valid_battery_data.validate().is_ok(), "Valid battery data should pass validation");
+        assert!(
+            valid_battery_data.validate().is_ok(),
+            "Valid battery data should pass validation"
+        );
 
         // 2. Test evse_id validation (negative value)
         let mut invalid_evse_id_battery = valid_battery_data.clone();
         invalid_evse_id_battery.evse_id = -1;
 
         let validation_result = invalid_evse_id_battery.validate();
-        assert!(validation_result.is_err(), "Battery data with negative evse_id should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Battery data with negative evse_id should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("evse_id"),
-                "Error should mention evse_id: {}", error);
+        assert!(
+            error.to_string().contains("evse_id"),
+            "Error should mention evse_id: {}",
+            error
+        );
 
         // 3. Test serial_number validation (too long)
         let mut invalid_serial_battery = valid_battery_data.clone();
         invalid_serial_battery.serial_number = "A".repeat(51); // 51 characters, exceeds max of 50
 
         let validation_result = invalid_serial_battery.validate();
-        assert!(validation_result.is_err(), "Battery data with too long serial_number should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Battery data with too long serial_number should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("serial_number"),
-                "Error should mention serial_number: {}", error);
+        assert!(
+            error.to_string().contains("serial_number"),
+            "Error should mention serial_number: {}",
+            error
+        );
 
         // 4. Test so_c validation (too high)
         let mut invalid_soc_battery = valid_battery_data.clone();
         invalid_soc_battery.so_c = Decimal::new(1010, 1); // 101.0%, exceeds max of 100.0%
 
         let validation_result = invalid_soc_battery.validate();
-        assert!(validation_result.is_err(), "Battery data with too high so_c should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Battery data with too high so_c should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("so_c"),
-                "Error should mention so_c: {}", error);
+        assert!(
+            error.to_string().contains("so_c"),
+            "Error should mention so_c: {}",
+            error
+        );
 
         // 5. Test so_c validation (negative)
         let mut invalid_soc_battery = valid_battery_data.clone();
         invalid_soc_battery.so_c = Decimal::new(-10, 1); // -1.0%, below min of 0.0%
 
         let validation_result = invalid_soc_battery.validate();
-        assert!(validation_result.is_err(), "Battery data with negative so_c should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Battery data with negative so_c should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("so_c"),
-                "Error should mention so_c: {}", error);
+        assert!(
+            error.to_string().contains("so_c"),
+            "Error should mention so_c: {}",
+            error
+        );
 
         // 6. Test so_h validation (too high)
         let mut invalid_soh_battery = valid_battery_data.clone();
         invalid_soh_battery.so_h = Decimal::new(1010, 1); // 101.0%, exceeds max of 100.0%
 
         let validation_result = invalid_soh_battery.validate();
-        assert!(validation_result.is_err(), "Battery data with too high so_h should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Battery data with too high so_h should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("so_h"),
-                "Error should mention so_h: {}", error);
+        assert!(
+            error.to_string().contains("so_h"),
+            "Error should mention so_h: {}",
+            error
+        );
 
         // 7. Test so_h validation (negative)
         let mut invalid_soh_battery = valid_battery_data.clone();
         invalid_soh_battery.so_h = Decimal::new(-10, 1); // -1.0%, below min of 0.0%
 
         let validation_result = invalid_soh_battery.validate();
-        assert!(validation_result.is_err(), "Battery data with negative so_h should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Battery data with negative so_h should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("so_h"),
-                "Error should mention so_h: {}", error);
+        assert!(
+            error.to_string().contains("so_h"),
+            "Error should mention so_h: {}",
+            error
+        );
 
         // 8. Test vendor_info validation (too long)
         let mut invalid_vendor_info_battery = valid_battery_data.clone();
         invalid_vendor_info_battery.vendor_info = Some("A".repeat(501)); // 501 characters, exceeds max of 500
 
         let validation_result = invalid_vendor_info_battery.validate();
-        assert!(validation_result.is_err(), "Battery data with too long vendor_info should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Battery data with too long vendor_info should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("vendor_info"),
-                "Error should mention vendor_info: {}", error);
+        assert!(
+            error.to_string().contains("vendor_info"),
+            "Error should mention vendor_info: {}",
+            error
+        );
 
         // 9. Test custom_data nested validation
         let mut invalid_custom_data = CustomDataType::new("VendorX".to_string());
@@ -480,9 +529,15 @@ mod tests {
         invalid_custom_data_battery.custom_data = Some(invalid_custom_data);
 
         let validation_result = invalid_custom_data_battery.validate();
-        assert!(validation_result.is_err(), "Battery data with invalid custom_data should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "Battery data with invalid custom_data should fail validation"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("custom_data"),
-                "Error should mention custom_data: {}", error);
+        assert!(
+            error.to_string().contains("custom_data"),
+            "Error should mention custom_data: {}",
+            error
+        );
     }
 }

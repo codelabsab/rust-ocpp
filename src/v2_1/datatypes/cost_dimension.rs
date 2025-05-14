@@ -168,52 +168,75 @@ mod tests {
         dimension.set_custom_data(None);
         assert_eq!(dimension.custom_data(), None);
     }
-    
+
     #[test]
     fn test_validation_basic() {
         // Valid case
         let dimension = CostDimensionType::new(CostDimensionEnumType::Energy, 10.5);
-        assert!(dimension.validate().is_ok(), "Valid cost dimension should pass validation");
-        
+        assert!(
+            dimension.validate().is_ok(),
+            "Valid cost dimension should pass validation"
+        );
+
         // Test with different enum values
         let dimension_max_power = CostDimensionType::new(CostDimensionEnumType::MaxPower, 10.5);
-        assert!(dimension_max_power.validate().is_ok(), "MaxPower cost dimension should pass validation");
-        
+        assert!(
+            dimension_max_power.validate().is_ok(),
+            "MaxPower cost dimension should pass validation"
+        );
+
         let dimension_min_power = CostDimensionType::new(CostDimensionEnumType::MinPower, 10.5);
-        assert!(dimension_min_power.validate().is_ok(), "MinPower cost dimension should pass validation");
-        
-        let dimension_charging_time = CostDimensionType::new(CostDimensionEnumType::ChargingTime, 30.0);
-        assert!(dimension_charging_time.validate().is_ok(), "ChargingTime cost dimension should pass validation");
+        assert!(
+            dimension_min_power.validate().is_ok(),
+            "MinPower cost dimension should pass validation"
+        );
+
+        let dimension_charging_time =
+            CostDimensionType::new(CostDimensionEnumType::ChargingTime, 30.0);
+        assert!(
+            dimension_charging_time.validate().is_ok(),
+            "ChargingTime cost dimension should pass validation"
+        );
     }
-    
+
     #[test]
     fn test_validation_edge_cases() {
         // Zero volume should be valid
         let zero_volume = CostDimensionType::new(CostDimensionEnumType::Energy, 0.0);
-        assert!(zero_volume.validate().is_ok(), "Zero volume should be valid");
-        
+        assert!(
+            zero_volume.validate().is_ok(),
+            "Zero volume should be valid"
+        );
+
         // Negative volume should be valid (might represent reverse energy flow)
         let negative_volume = CostDimensionType::new(CostDimensionEnumType::Energy, -10.5);
-        assert!(negative_volume.validate().is_ok(), "Negative volume should be valid");
-        
+        assert!(
+            negative_volume.validate().is_ok(),
+            "Negative volume should be valid"
+        );
+
         // Large volume should be valid
         let large_volume = CostDimensionType::new(CostDimensionEnumType::Energy, 1_000_000.0);
-        assert!(large_volume.validate().is_ok(), "Large volume should be valid");
+        assert!(
+            large_volume.validate().is_ok(),
+            "Large volume should be valid"
+        );
     }
-    
+
     #[test]
     fn test_custom_data_validation() {
         // Create custom data with invalid vendor_id (too long)
         let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
         let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
-        
+
         let dimension = CostDimensionType::new(CostDimensionEnumType::Energy, 10.5)
             .with_custom_data(invalid_custom_data);
-        
+
         // Validation should fail due to invalid custom_data
         let validation_result = dimension.validate();
-        assert!(validation_result.is_err(), "Invalid custom_data should cause validation failure");
+        assert!(
+            validation_result.is_err(),
+            "Invalid custom_data should cause validation failure"
+        );
     }
 }
-
-

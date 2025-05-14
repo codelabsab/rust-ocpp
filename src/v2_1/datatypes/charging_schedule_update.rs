@@ -1,8 +1,8 @@
+use super::custom_data::CustomDataType;
+use crate::v2_1::helpers::validator::validate_discharge_limit;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use crate::v2_1::helpers::validator::validate_discharge_limit;
-use super::custom_data::CustomDataType;
 
 /// Updates to a ChargingSchedulePeriodType for dynamic charging profiles.
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize, Validate)]
@@ -25,7 +25,7 @@ pub struct ChargingScheduleUpdateType {
 
     /// *(2.1)* Limit in _chargingRateUnit_ that the EV is allowed to discharge with. Note, these are negative values in order to be consistent with _setpoint_, which can be positive and negative.  +\r\nFor AC this field represents the sum of all phases, unless values are provided for L2 and L3, in which case this field represents phase L1.
     #[validate(custom(function = "validate_discharge_limit"))]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -35,7 +35,7 @@ pub struct ChargingScheduleUpdateType {
     /// *(2.1)* Limit in _chargingRateUnit_ on phase L2 that the EV is allowed to discharge with.
     #[serde(rename = "dischargeLimit_L2")]
     #[validate(custom(function = "validate_discharge_limit"))]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -45,7 +45,7 @@ pub struct ChargingScheduleUpdateType {
     /// *(2.1)* Limit in _chargingRateUnit_ on phase L3 that the EV is allowed to discharge with.
     #[serde(rename = "dischargeLimit_L3")]
     #[validate(custom(function = "validate_discharge_limit"))]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -53,7 +53,7 @@ pub struct ChargingScheduleUpdateType {
     pub discharge_limit_l3: Option<Decimal>,
 
     /// *(2.1)* Setpoint in _chargingRateUnit_ that the EV should follow as close as possible. Use negative values for discharging. +\r\nWhen a limit and/or _dischargeLimit_ are given the overshoot when following _setpoint_ must remain within these values.\r\nThis field represents the sum of all phases, unless values are provided for L2 and L3, in which case this field represents phase L1.
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -62,7 +62,7 @@ pub struct ChargingScheduleUpdateType {
 
     /// *(2.1)* Setpoint in _chargingRateUnit_ on phase L2 that the EV should follow as close as possible. Use negative values for discharging.
     #[serde(rename = "setpoint_L2")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -71,7 +71,7 @@ pub struct ChargingScheduleUpdateType {
 
     /// *(2.1)* Setpoint in _chargingRateUnit_ on phase L3 that the EV should follow as close as possible. Use negative values for discharging.
     #[serde(rename = "setpoint_L3")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -79,7 +79,7 @@ pub struct ChargingScheduleUpdateType {
     pub setpoint_l3: Option<Decimal>,
 
     /// *(2.1)* Setpoint for reactive power (or current) in _chargingRateUnit_ that the EV should follow as closely as possible. Positive values for inductive, negative for capacitive reactive power or current.  +\r\nThis field represents the sum of all phases, unless values are provided for L2 and L3, in which case this field represents phase L1.
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -88,7 +88,7 @@ pub struct ChargingScheduleUpdateType {
 
     /// *(2.1)* Setpoint for reactive power (or current) on phase L2 in _chargingRateUnit_ that the EV should follow as closely as possible. Positive values for inductive, negative for capacitive reactive power or current.
     #[serde(rename = "setpointReactive_L2")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -97,7 +97,7 @@ pub struct ChargingScheduleUpdateType {
 
     /// *(2.1)* Setpoint for reactive power (or current) on phase L3 in _chargingRateUnit_ that the EV should follow as closely as possible. Positive values for inductive, negative for capacitive reactive power or current.
     #[serde(rename = "setpointReactive_L3")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -619,8 +619,8 @@ impl ChargingScheduleUpdateType {
 mod tests {
     use super::*;
     use rust_decimal_macros::dec;
+    use serde_json::{from_str, to_string};
     use validator::Validate;
-    use serde_json::{to_string, from_str};
 
     #[test]
     fn test_new_charging_schedule_update() {
@@ -744,42 +744,61 @@ mod tests {
     #[test]
     fn test_discharge_limit_validation() {
         // Valid case: discharge_limit is negative
-        let valid_update_negative = ChargingScheduleUpdateType::new()
-            .with_discharge_limit(dec!(-10.0));
-        assert!(valid_update_negative.validate().is_ok(), "Update with negative discharge limit should be valid");
+        let valid_update_negative =
+            ChargingScheduleUpdateType::new().with_discharge_limit(dec!(-10.0));
+        assert!(
+            valid_update_negative.validate().is_ok(),
+            "Update with negative discharge limit should be valid"
+        );
 
         // Valid case: discharge_limit is zero
-        let valid_update_zero = ChargingScheduleUpdateType::new()
-            .with_discharge_limit(dec!(0.0));
-        assert!(valid_update_zero.validate().is_ok(), "Update with zero discharge limit should be valid");
+        let valid_update_zero = ChargingScheduleUpdateType::new().with_discharge_limit(dec!(0.0));
+        assert!(
+            valid_update_zero.validate().is_ok(),
+            "Update with zero discharge limit should be valid"
+        );
 
         // Invalid case: discharge_limit is positive
-        let invalid_update = ChargingScheduleUpdateType::new()
-            .with_discharge_limit(dec!(5.0));
-        assert!(invalid_update.validate().is_err(), "Update with positive discharge limit should be invalid");
+        let invalid_update = ChargingScheduleUpdateType::new().with_discharge_limit(dec!(5.0));
+        assert!(
+            invalid_update.validate().is_err(),
+            "Update with positive discharge limit should be invalid"
+        );
 
         // Test discharge_limit_l2 validation
-        let invalid_update_l2 = ChargingScheduleUpdateType::new()
-            .with_discharge_limit_l2(dec!(5.0));
-        assert!(invalid_update_l2.validate().is_err(), "Update with positive discharge_limit_l2 should be invalid");
+        let invalid_update_l2 =
+            ChargingScheduleUpdateType::new().with_discharge_limit_l2(dec!(5.0));
+        assert!(
+            invalid_update_l2.validate().is_err(),
+            "Update with positive discharge_limit_l2 should be invalid"
+        );
 
         // Test discharge_limit_l3 validation
-        let invalid_update_l3 = ChargingScheduleUpdateType::new()
-            .with_discharge_limit_l3(dec!(5.0));
-        assert!(invalid_update_l3.validate().is_err(), "Update with positive discharge_limit_l3 should be invalid");
+        let invalid_update_l3 =
+            ChargingScheduleUpdateType::new().with_discharge_limit_l3(dec!(5.0));
+        assert!(
+            invalid_update_l3.validate().is_err(),
+            "Update with positive discharge_limit_l3 should be invalid"
+        );
 
         // Test multiple discharge limits
         let valid_update_multiple = ChargingScheduleUpdateType::new()
             .with_discharge_limit(dec!(-10.0))
             .with_discharge_limit_l2(dec!(-5.0))
             .with_discharge_limit_l3(dec!(-2.0));
-        assert!(valid_update_multiple.validate().is_ok(), "Update with all negative discharge limits should be valid");
+        assert!(
+            valid_update_multiple.validate().is_ok(),
+            "Update with all negative discharge limits should be valid"
+        );
 
         let invalid_update_multiple = ChargingScheduleUpdateType::new()
             .with_discharge_limit(dec!(-10.0))
-            .with_discharge_limit_l2(dec!(5.0))  // Invalid: positive
+            .with_discharge_limit_l2(dec!(5.0)) // Invalid: positive
             .with_discharge_limit_l3(dec!(-2.0));
-        assert!(invalid_update_multiple.validate().is_err(), "Update with one positive discharge limit should be invalid");
+        assert!(
+            invalid_update_multiple.validate().is_err(),
+            "Update with one positive discharge limit should be invalid"
+        );
     }
 
     #[test]
@@ -805,14 +824,26 @@ mod tests {
         assert_eq!(deserialized.limit_l2(), update.limit_l2());
         assert_eq!(deserialized.limit_l3(), update.limit_l3());
         assert_eq!(deserialized.discharge_limit(), update.discharge_limit());
-        assert_eq!(deserialized.discharge_limit_l2(), update.discharge_limit_l2());
-        assert_eq!(deserialized.discharge_limit_l3(), update.discharge_limit_l3());
+        assert_eq!(
+            deserialized.discharge_limit_l2(),
+            update.discharge_limit_l2()
+        );
+        assert_eq!(
+            deserialized.discharge_limit_l3(),
+            update.discharge_limit_l3()
+        );
         assert_eq!(deserialized.setpoint(), update.setpoint());
         assert_eq!(deserialized.setpoint_l2(), update.setpoint_l2());
         assert_eq!(deserialized.setpoint_l3(), update.setpoint_l3());
         assert_eq!(deserialized.setpoint_reactive(), update.setpoint_reactive());
-        assert_eq!(deserialized.setpoint_reactive_l2(), update.setpoint_reactive_l2());
-        assert_eq!(deserialized.setpoint_reactive_l3(), update.setpoint_reactive_l3());
+        assert_eq!(
+            deserialized.setpoint_reactive_l2(),
+            update.setpoint_reactive_l2()
+        );
+        assert_eq!(
+            deserialized.setpoint_reactive_l3(),
+            update.setpoint_reactive_l3()
+        );
     }
 
     #[test]
@@ -828,22 +859,40 @@ mod tests {
         let json = to_string(&update).unwrap();
 
         // Check that the field names in the JSON match the expected camelCase format
-        assert!(json.contains(r#""dischargeLimit_L2":"#), "JSON should contain dischargeLimit_L2 field");
-        assert!(json.contains(r#""dischargeLimit_L3":"#), "JSON should contain dischargeLimit_L3 field");
-        assert!(json.contains(r#""setpoint_L2":"#), "JSON should contain setpoint_L2 field");
-        assert!(json.contains(r#""setpoint_L3":"#), "JSON should contain setpoint_L3 field");
-        assert!(json.contains(r#""setpointReactive_L2":"#), "JSON should contain setpointReactive_L2 field");
-        assert!(json.contains(r#""setpointReactive_L3":"#), "JSON should contain setpointReactive_L3 field");
+        assert!(
+            json.contains(r#""dischargeLimit_L2":"#),
+            "JSON should contain dischargeLimit_L2 field"
+        );
+        assert!(
+            json.contains(r#""dischargeLimit_L3":"#),
+            "JSON should contain dischargeLimit_L3 field"
+        );
+        assert!(
+            json.contains(r#""setpoint_L2":"#),
+            "JSON should contain setpoint_L2 field"
+        );
+        assert!(
+            json.contains(r#""setpoint_L3":"#),
+            "JSON should contain setpoint_L3 field"
+        );
+        assert!(
+            json.contains(r#""setpointReactive_L2":"#),
+            "JSON should contain setpointReactive_L2 field"
+        );
+        assert!(
+            json.contains(r#""setpointReactive_L3":"#),
+            "JSON should contain setpointReactive_L3 field"
+        );
     }
 
     #[test]
     fn test_mixed_values() {
         // Test with a mix of positive and negative values for different fields
         let update = ChargingScheduleUpdateType::new()
-            .with_limit(16.0)  // Positive charging limit
-            .with_discharge_limit(dec!(-10.0))  // Negative discharge limit
-            .with_setpoint(dec!(-5.0))  // Negative setpoint (discharging)
-            .with_setpoint_reactive(dec!(3.0));  // Positive reactive power (inductive)
+            .with_limit(16.0) // Positive charging limit
+            .with_discharge_limit(dec!(-10.0)) // Negative discharge limit
+            .with_setpoint(dec!(-5.0)) // Negative setpoint (discharging)
+            .with_setpoint_reactive(dec!(3.0)); // Positive reactive power (inductive)
 
         assert_eq!(update.limit(), Some(16.0));
         assert_eq!(update.discharge_limit(), Some(&dec!(-10.0)));

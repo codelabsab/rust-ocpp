@@ -1,7 +1,7 @@
+use super::custom_data::CustomDataType;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use super::custom_data::CustomDataType;
 
 /// Limit at State of Charge settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -147,8 +147,8 @@ mod tests {
         let limit_value = dec!(7500.0);
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let limit_at_soc = LimitAtSoCType::new(soc, limit_value.clone())
-            .with_custom_data(custom_data.clone());
+        let limit_at_soc =
+            LimitAtSoCType::new(soc, limit_value.clone()).with_custom_data(custom_data.clone());
 
         assert_eq!(limit_at_soc.soc(), soc);
         assert_eq!(limit_at_soc.limit(), &limit_value);

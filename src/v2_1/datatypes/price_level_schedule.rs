@@ -23,7 +23,7 @@ pub struct PriceLevelScheduleType {
     #[validate(length(min = 1, max = 100))]
     #[validate(nested)]
     pub price_level_schedule_entries: Vec<PriceLevelScheduleEntryType>,
-    
+
     /// Optional. Description of the price schedule.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(length(max = 32))]
@@ -252,7 +252,7 @@ mod tests {
             time_anchor.clone(),
             price_schedule_id,
             number_of_price_levels,
-            entries.clone()
+            entries.clone(),
         );
 
         assert_eq!(schedule.time_anchor(), &time_anchor);
@@ -282,7 +282,7 @@ mod tests {
             time_anchor.clone(),
             price_schedule_id,
             number_of_price_levels,
-            entries.clone()
+            entries.clone(),
         )
         .with_custom_data(custom_data.clone())
         .with_price_schedule_description(description.clone());
@@ -323,7 +323,7 @@ mod tests {
             time_anchor1.clone(),
             price_schedule_id1,
             number_of_price_levels1,
-            entries1.clone()
+            entries1.clone(),
         );
 
         schedule

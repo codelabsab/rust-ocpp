@@ -1,7 +1,7 @@
+use super::{custom_data::CustomDataType, limit_max_discharge::LimitMaxDischargeType};
+use crate::v2_1::helpers::validator::validate_identifier_string;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use crate::v2_1::helpers::validator::validate_identifier_string;
-use super::{custom_data::CustomDataType, limit_max_discharge::LimitMaxDischargeType};
 
 /// Limit max discharge get type for retrieving limit max discharge settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]

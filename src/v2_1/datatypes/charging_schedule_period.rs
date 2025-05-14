@@ -1,14 +1,13 @@
-use serde::{Deserialize, Serialize};
-use validator::{Validate, ValidationError};
-use rust_decimal::Decimal;
-use rust_decimal::prelude::FromPrimitive;
 use crate::v2_1::datatypes::CustomDataType;
 use crate::v2_1::{
     datatypes::{V2XFreqWattPointType, V2XSignalWattPointType},
     enumerations::OperationModeEnumType,
     helpers::validator::validate_discharge_limit,
 };
-
+use rust_decimal::prelude::FromPrimitive;
+use rust_decimal::Decimal;
+use serde::{Deserialize, Serialize};
+use validator::{Validate, ValidationError};
 
 /// Charging schedule period structure defines a time period in a charging schedule.
 /// It is used in: CompositeScheduleType and in ChargingScheduleType.
@@ -32,7 +31,7 @@ pub struct ChargingSchedulePeriodType {
 
     /// Charging rate limit on phase L2 in the applicable chargingRateUnit.
     #[serde(rename = "limit_L2")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -41,7 +40,7 @@ pub struct ChargingSchedulePeriodType {
 
     /// Charging rate limit on phase L3 in the applicable chargingRateUnit.
     #[serde(rename = "limit_L3")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -63,7 +62,7 @@ pub struct ChargingSchedulePeriodType {
 
     /// Limit in _chargingRateUnit_ that the EV is allowed to discharge with. Note, these are negative values in order to be consistent with _setpoint_, which can be positive and negative.  +\r\nFor AC this field represents the sum of all phases, unless values are provided for L2 and L3, in which case this field represents phase L1.
     #[validate(custom(function = "validate_discharge_limit"))]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -73,7 +72,7 @@ pub struct ChargingSchedulePeriodType {
     /// Limit in _chargingRateUnit_ that the EV is allowed to discharge with on phase L2.
     #[serde(rename = "dischargeLimit_L2")]
     #[validate(custom(function = "validate_discharge_limit"))]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -83,7 +82,7 @@ pub struct ChargingSchedulePeriodType {
     /// Limit in _chargingRateUnit_ that the EV is allowed to discharge with on phase L3.
     #[serde(rename = "dischargeLimit_L3")]
     #[validate(custom(function = "validate_discharge_limit"))]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -91,7 +90,7 @@ pub struct ChargingSchedulePeriodType {
     pub discharge_limit_l3: Option<Decimal>,
 
     /// Setpoint in _chargingRateUnit_ that the EV should follow as close as possible. Use negative values for discharging. +\r\nWhen a limit and/or _dischargeLimit_ are given the overshoot when following _setpoint_ must remain within these values.\r\nThis field represents the sum of all phases, unless values are provided for L2 and L3, in which case this field represents phase L1.
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -100,7 +99,7 @@ pub struct ChargingSchedulePeriodType {
 
     /// Setpoint in _chargingRateUnit_ that the EV should follow on phase L2 as close as possible.
     #[serde(rename = "setpoint_L2")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -109,7 +108,7 @@ pub struct ChargingSchedulePeriodType {
 
     /// Setpoint in _chargingRateUnit_ that the EV should follow on phase L3 as close as possible.
     #[serde(rename = "setpoint_L3")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -117,7 +116,7 @@ pub struct ChargingSchedulePeriodType {
     pub setpoint_l3: Option<Decimal>,
 
     /// Setpoint for reactive power (or current) in _chargingRateUnit_ that the EV should follow as closely as possible. Positive values for inductive, negative for capacitive reactive power or current.  +\r\nThis field represents the sum of all phases, unless values are provided for L2 and L3, in which case this field represents phase L1.
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -126,7 +125,7 @@ pub struct ChargingSchedulePeriodType {
 
     /// Setpoint for reactive power (or current) in _chargingRateUnit_ that the EV should follow on phase L2 as closely as possible.
     #[serde(rename = "setpointReactive_L2")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -135,7 +134,7 @@ pub struct ChargingSchedulePeriodType {
 
     /// Setpoint for reactive power (or current) in _chargingRateUnit_ that the EV should follow on phase L3 as closely as possible.
     #[serde(rename = "setpointReactive_L3")]
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -151,7 +150,7 @@ pub struct ChargingSchedulePeriodType {
     pub evse_sleep: Option<bool>,
 
     /// Power value that, when present, is used as a baseline on top of which values from _v2xFreqWattCurve_ and _v2xSignalWattCurve_ are added.
-        #[serde(
+    #[serde(
         with = "rust_decimal::serde::arbitrary_precision_option",
         skip_serializing_if = "Option::is_none",
         default
@@ -226,7 +225,10 @@ impl ChargingSchedulePeriodType {
     ///
     /// A new instance of `ChargingSchedulePeriodType` with optional fields set to `None`
     pub fn new_from_f64(start_period: i32, limit: f64) -> Self {
-        Self::new(start_period, Decimal::from_f64(limit).unwrap_or(Decimal::ZERO))
+        Self::new(
+            start_period,
+            Decimal::from_f64(limit).unwrap_or(Decimal::ZERO),
+        )
     }
 
     /// Sets the limit for the second phase.
@@ -687,7 +689,8 @@ impl ChargingSchedulePeriodType {
         if let Some(curve) = &self.v2x_freq_watt_curve {
             if curve.is_empty() || curve.len() > 20 {
                 let mut error = ValidationError::new("v2x_freq_watt_curve_length");
-                error.message = Some("v2x_freq_watt_curve must have between 1 and 20 points".into());
+                error.message =
+                    Some("v2x_freq_watt_curve must have between 1 and 20 points".into());
                 errors.add("v2x_freq_watt_curve", error);
             }
         }
@@ -696,7 +699,8 @@ impl ChargingSchedulePeriodType {
         if let Some(curve) = &self.v2x_signal_watt_curve {
             if curve.is_empty() || curve.len() > 20 {
                 let mut error = ValidationError::new("v2x_signal_watt_curve_length");
-                error.message = Some("v2x_signal_watt_curve must have between 1 and 20 points".into());
+                error.message =
+                    Some("v2x_signal_watt_curve must have between 1 and 20 points".into());
                 errors.add("v2x_signal_watt_curve", error);
             }
         }
@@ -714,7 +718,7 @@ mod tests {
     use super::*;
     use crate::v2_1::enumerations::OperationModeEnumType;
     use rust_decimal_macros::dec;
-    use serde_json::{to_string, from_str};
+    use serde_json::{from_str, to_string};
 
     #[test]
     fn test_new_charging_schedule_period() {
@@ -847,47 +851,77 @@ mod tests {
     #[test]
     fn test_discharge_limit_validation() {
         // Test the validate_discharge_limit function directly
-        assert!(validate_discharge_limit(&dec!(-10.0)).is_ok(), "Negative discharge limit should be valid");
-        assert!(validate_discharge_limit(&dec!(0.0)).is_ok(), "Zero discharge limit should be valid");
-        assert!(validate_discharge_limit(&dec!(5.0)).is_err(), "Positive discharge limit should be invalid");
+        assert!(
+            validate_discharge_limit(&dec!(-10.0)).is_ok(),
+            "Negative discharge limit should be valid"
+        );
+        assert!(
+            validate_discharge_limit(&dec!(0.0)).is_ok(),
+            "Zero discharge limit should be valid"
+        );
+        assert!(
+            validate_discharge_limit(&dec!(5.0)).is_err(),
+            "Positive discharge limit should be invalid"
+        );
 
         // Valid case: discharge_limit is negative
-        let valid_period_negative = ChargingSchedulePeriodType::new(0, dec!(16.0))
-            .with_discharge_limit(dec!(-10.0));
-        assert!(valid_period_negative.validate().is_ok(), "Period with negative discharge limit should be valid");
+        let valid_period_negative =
+            ChargingSchedulePeriodType::new(0, dec!(16.0)).with_discharge_limit(dec!(-10.0));
+        assert!(
+            valid_period_negative.validate().is_ok(),
+            "Period with negative discharge limit should be valid"
+        );
 
         // Valid case: discharge_limit is zero
-        let valid_period_zero = ChargingSchedulePeriodType::new(0, dec!(16.0))
-            .with_discharge_limit(dec!(0.0));
-        assert!(valid_period_zero.validate().is_ok(), "Period with zero discharge limit should be valid");
+        let valid_period_zero =
+            ChargingSchedulePeriodType::new(0, dec!(16.0)).with_discharge_limit(dec!(0.0));
+        assert!(
+            valid_period_zero.validate().is_ok(),
+            "Period with zero discharge limit should be valid"
+        );
 
         // Invalid case: discharge_limit is positive
-        let invalid_period = ChargingSchedulePeriodType::new(0, dec!(16.0))
-            .with_discharge_limit(dec!(5.0));
-        assert!(invalid_period.validate().is_err(), "Period with positive discharge limit should be invalid");
+        let invalid_period =
+            ChargingSchedulePeriodType::new(0, dec!(16.0)).with_discharge_limit(dec!(5.0));
+        assert!(
+            invalid_period.validate().is_err(),
+            "Period with positive discharge limit should be invalid"
+        );
 
         // Test discharge_limit_l2 validation
-        let invalid_period_l2 = ChargingSchedulePeriodType::new(0, dec!(16.0))
-            .with_discharge_limit_l2(dec!(5.0));
-        assert!(invalid_period_l2.validate().is_err(), "Period with positive discharge_limit_l2 should be invalid");
+        let invalid_period_l2 =
+            ChargingSchedulePeriodType::new(0, dec!(16.0)).with_discharge_limit_l2(dec!(5.0));
+        assert!(
+            invalid_period_l2.validate().is_err(),
+            "Period with positive discharge_limit_l2 should be invalid"
+        );
 
         // Test discharge_limit_l3 validation
-        let invalid_period_l3 = ChargingSchedulePeriodType::new(0, dec!(16.0))
-            .with_discharge_limit_l3(dec!(5.0));
-        assert!(invalid_period_l3.validate().is_err(), "Period with positive discharge_limit_l3 should be invalid");
+        let invalid_period_l3 =
+            ChargingSchedulePeriodType::new(0, dec!(16.0)).with_discharge_limit_l3(dec!(5.0));
+        assert!(
+            invalid_period_l3.validate().is_err(),
+            "Period with positive discharge_limit_l3 should be invalid"
+        );
 
         // Test multiple discharge limits
         let valid_period_multiple = ChargingSchedulePeriodType::new(0, dec!(16.0))
             .with_discharge_limit(dec!(-10.0))
             .with_discharge_limit_l2(dec!(-5.0))
             .with_discharge_limit_l3(dec!(-2.0));
-        assert!(valid_period_multiple.validate().is_ok(), "Period with all negative discharge limits should be valid");
+        assert!(
+            valid_period_multiple.validate().is_ok(),
+            "Period with all negative discharge limits should be valid"
+        );
 
         let invalid_period_multiple = ChargingSchedulePeriodType::new(0, dec!(16.0))
             .with_discharge_limit(dec!(-10.0))
-            .with_discharge_limit_l2(dec!(5.0))  // Invalid: positive
+            .with_discharge_limit_l2(dec!(5.0)) // Invalid: positive
             .with_discharge_limit_l3(dec!(-2.0));
-        assert!(invalid_period_multiple.validate().is_err(), "Period with one positive discharge limit should be invalid");
+        assert!(
+            invalid_period_multiple.validate().is_err(),
+            "Period with one positive discharge limit should be invalid"
+        );
     }
 
     #[test]
@@ -901,8 +935,8 @@ mod tests {
         assert!(valid_period.validate().is_ok());
 
         // Invalid case: discharge_limit is positive
-        let invalid_period = ChargingSchedulePeriodType::new(0, dec!(16.0))
-            .with_discharge_limit(dec!(10.0));
+        let invalid_period =
+            ChargingSchedulePeriodType::new(0, dec!(16.0)).with_discharge_limit(dec!(10.0));
 
         assert!(invalid_period.validate().is_err());
 
@@ -911,11 +945,14 @@ mod tests {
         let field_errors = err.field_errors();
         let discharge_errors = field_errors.get("discharge_limit");
         assert!(discharge_errors.is_some());
-        assert!(discharge_errors.unwrap()[0].message.as_ref().unwrap().contains("less than or equal to zero"));
+        assert!(discharge_errors.unwrap()[0]
+            .message
+            .as_ref()
+            .unwrap()
+            .contains("less than or equal to zero"));
 
         // Invalid case: number_phases out of range
-        let invalid_period = ChargingSchedulePeriodType::new(0, dec!(16.0))
-            .with_number_phases(4); // Valid range is 0-3
+        let invalid_period = ChargingSchedulePeriodType::new(0, dec!(16.0)).with_number_phases(4); // Valid range is 0-3
 
         assert!(invalid_period.validate().is_err());
 
@@ -924,11 +961,14 @@ mod tests {
         let field_errors = err.field_errors();
         let phase_errors = field_errors.get("number_phases");
         assert!(phase_errors.is_some());
-        assert!(phase_errors.unwrap()[0].message.as_ref().unwrap().contains("between 0 and 3"));
+        assert!(phase_errors.unwrap()[0]
+            .message
+            .as_ref()
+            .unwrap()
+            .contains("between 0 and 3"));
 
         // Invalid case: phase_to_use out of range
-        let invalid_period = ChargingSchedulePeriodType::new(0, dec!(16.0))
-            .with_phase_to_use(0); // Valid range is 1-3
+        let invalid_period = ChargingSchedulePeriodType::new(0, dec!(16.0)).with_phase_to_use(0); // Valid range is 1-3
 
         assert!(invalid_period.validate().is_err());
 
@@ -937,7 +977,11 @@ mod tests {
         let field_errors = err.field_errors();
         let phase_errors = field_errors.get("phase_to_use");
         assert!(phase_errors.is_some());
-        assert!(phase_errors.unwrap()[0].message.as_ref().unwrap().contains("between 1 and 3"));
+        assert!(phase_errors.unwrap()[0]
+            .message
+            .as_ref()
+            .unwrap()
+            .contains("between 1 and 3"));
 
         // Invalid case: v2x_freq_watt_curve empty
         let invalid_period = ChargingSchedulePeriodType::new(0, dec!(16.0));
@@ -951,7 +995,11 @@ mod tests {
         let field_errors = err.field_errors();
         let curve_errors = field_errors.get("v2x_freq_watt_curve");
         assert!(curve_errors.is_some());
-        assert!(curve_errors.unwrap()[0].message.as_ref().unwrap().contains("between 1 and 20"));
+        assert!(curve_errors.unwrap()[0]
+            .message
+            .as_ref()
+            .unwrap()
+            .contains("between 1 and 20"));
 
         // Multiple validation errors
         let invalid_period = ChargingSchedulePeriodType::new(0, dec!(16.0))
@@ -1012,16 +1060,28 @@ mod tests {
         assert_eq!(deserialized.limit_l2(), period.limit_l2());
         assert_eq!(deserialized.limit_l3(), period.limit_l3());
         assert_eq!(deserialized.discharge_limit(), period.discharge_limit());
-        assert_eq!(deserialized.discharge_limit_l2(), period.discharge_limit_l2());
-        assert_eq!(deserialized.discharge_limit_l3(), period.discharge_limit_l3());
+        assert_eq!(
+            deserialized.discharge_limit_l2(),
+            period.discharge_limit_l2()
+        );
+        assert_eq!(
+            deserialized.discharge_limit_l3(),
+            period.discharge_limit_l3()
+        );
         assert_eq!(deserialized.number_phases(), period.number_phases());
         assert_eq!(deserialized.phase_to_use(), period.phase_to_use());
         assert_eq!(deserialized.setpoint, period.setpoint);
         assert_eq!(deserialized.setpoint_l2, period.setpoint_l2);
         assert_eq!(deserialized.setpoint_l3, period.setpoint_l3);
         assert_eq!(deserialized.setpoint_reactive, period.setpoint_reactive);
-        assert_eq!(deserialized.setpoint_reactive_l2, period.setpoint_reactive_l2);
-        assert_eq!(deserialized.setpoint_reactive_l3, period.setpoint_reactive_l3);
+        assert_eq!(
+            deserialized.setpoint_reactive_l2,
+            period.setpoint_reactive_l2
+        );
+        assert_eq!(
+            deserialized.setpoint_reactive_l3,
+            period.setpoint_reactive_l3
+        );
         assert_eq!(deserialized.v2x_baseline, period.v2x_baseline);
     }
 
@@ -1036,7 +1096,10 @@ mod tests {
 
         // Test setting operation mode
         period.operation_mode = Some(OperationModeEnumType::CentralSetpoint);
-        assert_eq!(period.operation_mode, Some(OperationModeEnumType::CentralSetpoint));
+        assert_eq!(
+            period.operation_mode,
+            Some(OperationModeEnumType::CentralSetpoint)
+        );
 
         // Test serialization with operation mode
         let json = to_string(&period).unwrap();
@@ -1062,7 +1125,10 @@ mod tests {
             "operationMode":"LocalFrequency"
         }"#;
         let deserialized: ChargingSchedulePeriodType = from_str(json).unwrap();
-        assert_eq!(deserialized.operation_mode, Some(OperationModeEnumType::LocalFrequency));
+        assert_eq!(
+            deserialized.operation_mode,
+            Some(OperationModeEnumType::LocalFrequency)
+        );
     }
 
     #[test]
@@ -1099,13 +1165,23 @@ mod tests {
         assert_eq!(period.v2x_freq_watt_curve.as_ref().unwrap()[1].freq(), 51.0);
 
         assert_eq!(period.v2x_signal_watt_curve.as_ref().unwrap().len(), 2);
-        assert_eq!(period.v2x_signal_watt_curve.as_ref().unwrap()[0].signal(), 75.0);
-        assert_eq!(period.v2x_signal_watt_curve.as_ref().unwrap()[1].signal(), 80.0);
+        assert_eq!(
+            period.v2x_signal_watt_curve.as_ref().unwrap()[0].signal(),
+            75.0
+        );
+        assert_eq!(
+            period.v2x_signal_watt_curve.as_ref().unwrap()[1].signal(),
+            80.0
+        );
 
         // Test serialization with curves
         let json = to_string(&period).unwrap();
-        assert!(json.contains(r#""v2xFreqWattCurve":[{"freq":50.0,"power":-30.0},{"freq":51.0,"power":-20.0}]"#));
-        assert!(json.contains(r#""v2xSignalWattCurve":[{"signal":75.0,"power":-30.0},{"signal":80.0,"power":-20.0}]"#));
+        assert!(json.contains(
+            r#""v2xFreqWattCurve":[{"freq":50.0,"power":-30.0},{"freq":51.0,"power":-20.0}]"#
+        ));
+        assert!(json.contains(
+            r#""v2xSignalWattCurve":[{"signal":75.0,"power":-30.0},{"signal":80.0,"power":-20.0}]"#
+        ));
 
         // Test deserialization with curves
         let json = r#"{
@@ -1129,9 +1205,18 @@ mod tests {
 
         let deserialized: ChargingSchedulePeriodType = from_str(json).unwrap();
         assert_eq!(deserialized.v2x_freq_watt_curve.as_ref().unwrap().len(), 1);
-        assert_eq!(deserialized.v2x_freq_watt_curve.as_ref().unwrap()[0].freq(), 49.5);
-        assert_eq!(deserialized.v2x_signal_watt_curve.as_ref().unwrap().len(), 1);
-        assert_eq!(deserialized.v2x_signal_watt_curve.as_ref().unwrap()[0].signal(), 60.0);
+        assert_eq!(
+            deserialized.v2x_freq_watt_curve.as_ref().unwrap()[0].freq(),
+            49.5
+        );
+        assert_eq!(
+            deserialized.v2x_signal_watt_curve.as_ref().unwrap().len(),
+            1
+        );
+        assert_eq!(
+            deserialized.v2x_signal_watt_curve.as_ref().unwrap()[0].signal(),
+            60.0
+        );
     }
 
     #[test]

@@ -450,6 +450,9 @@ mod tests {
         );
         invalid_address.set_custom_data(Some(invalid_custom_data));
 
-        assert!(invalid_address.validate().is_err(), "Address with invalid custom_data should fail validation");
+        assert!(
+            invalid_address.validate().is_err(),
+            "Address with invalid custom_data should fail validation"
+        );
     }
 }

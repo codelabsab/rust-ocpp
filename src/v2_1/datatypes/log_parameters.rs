@@ -1,7 +1,7 @@
+use super::custom_data::CustomDataType;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::{Validate, ValidationError};
-use chrono::{DateTime, Utc};
-use super::custom_data::CustomDataType;
 
 /// Log parameters for GetLog request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -35,7 +35,10 @@ pub struct LogParametersType {
 /// # Returns
 ///
 /// Returns Ok(()) if the timestamps are valid, otherwise returns Err
-fn validate_timestamps(oldest: &Option<DateTime<Utc>>, latest: &Option<DateTime<Utc>>) -> Result<(), ValidationError> {
+fn validate_timestamps(
+    oldest: &Option<DateTime<Utc>>,
+    latest: &Option<DateTime<Utc>>,
+) -> Result<(), ValidationError> {
     if let (Some(oldest), Some(latest)) = (oldest, latest) {
         if latest <= oldest {
             let mut error = ValidationError::new("latest_timestamp_before_oldest");
@@ -322,13 +325,13 @@ mod tests {
         assert!(invalid_timestamp_params.validate().is_err());
 
         // Test with only oldest timestamp
-        let only_oldest = LogParametersType::new(remote_location.clone())
-            .with_oldest_timestamp(oldest_timestamp);
+        let only_oldest =
+            LogParametersType::new(remote_location.clone()).with_oldest_timestamp(oldest_timestamp);
         assert!(only_oldest.validate().is_ok());
 
         // Test with only latest timestamp
-        let only_latest = LogParametersType::new(remote_location.clone())
-            .with_latest_timestamp(latest_timestamp);
+        let only_latest =
+            LogParametersType::new(remote_location.clone()).with_latest_timestamp(latest_timestamp);
         assert!(only_latest.validate().is_ok());
 
         // Test with same timestamps (should fail)
@@ -360,9 +363,18 @@ mod tests {
 
         // Verify the result is the same as the original object
         assert_eq!(deserialized.remote_location(), log_params.remote_location());
-        assert_eq!(deserialized.oldest_timestamp(), log_params.oldest_timestamp());
-        assert_eq!(deserialized.latest_timestamp(), log_params.latest_timestamp());
-        assert_eq!(deserialized.custom_data().is_some(), log_params.custom_data().is_some());
+        assert_eq!(
+            deserialized.oldest_timestamp(),
+            log_params.oldest_timestamp()
+        );
+        assert_eq!(
+            deserialized.latest_timestamp(),
+            log_params.latest_timestamp()
+        );
+        assert_eq!(
+            deserialized.custom_data().is_some(),
+            log_params.custom_data().is_some()
+        );
         if let Some(custom_data) = deserialized.custom_data() {
             assert_eq!(custom_data.vendor_id, "VendorX");
             assert!(custom_data.additional_properties.contains_key("version"));

@@ -1,8 +1,8 @@
 use std::sync::OnceLock;
 
 use regex::Regex;
-use validator::ValidationError;
 use rust_decimal::Decimal;
+use validator::ValidationError;
 
 static REGEX: OnceLock<Regex> = OnceLock::new();
 

@@ -1,10 +1,10 @@
-use serde::{Deserialize, Serialize};
-use validator::Validate;
-use std::fmt;
-use rust_decimal::Decimal;
-use rust_decimal::prelude::ToPrimitive;
-use chrono::{DateTime, Utc};
 use super::custom_data::CustomDataType;
+use chrono::{DateTime, Utc};
+use rust_decimal::prelude::ToPrimitive;
+use rust_decimal::Decimal;
+use serde::{Deserialize, Serialize};
+use std::fmt;
+use validator::Validate;
 
 /// Fixed power factor settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate, Default)]
@@ -327,9 +327,7 @@ impl fmt::Display for FixedPFType {
         write!(
             f,
             "FixedPFType {{ priority: {}, displacement: {}, excitation: {} }}",
-            self.priority,
-            self.displacement,
-            self.excitation
+            self.priority, self.displacement, self.excitation
         )
     }
 }
@@ -488,7 +486,10 @@ mod tests {
     fn test_validation() {
         // Valid FixedPFType with minimum requirements
         let valid_fixed_pf = FixedPFType::new(1, 0.95, true);
-        assert!(valid_fixed_pf.validate().is_ok(), "Valid FixedPFType should pass validation");
+        assert!(
+            valid_fixed_pf.validate().is_ok(),
+            "Valid FixedPFType should pass validation"
+        );
 
         // Invalid priority (negative)
         let invalid_fixed_pf = FixedPFType {
@@ -499,14 +500,20 @@ mod tests {
             duration: None,
             custom_data: None,
         };
-        assert!(invalid_fixed_pf.validate().is_err(), "FixedPFType with negative priority should fail validation");
+        assert!(
+            invalid_fixed_pf.validate().is_err(),
+            "FixedPFType with negative priority should fail validation"
+        );
 
         // Invalid custom data
         let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
         let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
-        let invalid_fixed_pf = FixedPFType::new(1, 0.95, true)
-            .with_custom_data(invalid_custom_data);
-        assert!(invalid_fixed_pf.validate().is_err(), "FixedPFType with invalid custom data should fail validation");
+        let invalid_fixed_pf =
+            FixedPFType::new(1, 0.95, true).with_custom_data(invalid_custom_data);
+        assert!(
+            invalid_fixed_pf.validate().is_err(),
+            "FixedPFType with invalid custom data should fail validation"
+        );
     }
 
     #[test]
@@ -591,8 +598,7 @@ mod tests {
 
         // Test with very large duration
         let large_duration = 86400.0 * 365.0; // 1 year in seconds
-        let fixed_pf = FixedPFType::new(1, 0.95, true)
-            .with_duration(large_duration);
+        let fixed_pf = FixedPFType::new(1, 0.95, true).with_duration(large_duration);
 
         assert_eq!(fixed_pf.duration_as_f64(), Some(large_duration));
     }

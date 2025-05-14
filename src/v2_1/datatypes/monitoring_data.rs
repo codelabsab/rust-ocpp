@@ -268,7 +268,10 @@ mod tests {
             variable.clone(),
             variable_monitoring.clone(),
         );
-        assert!(valid_monitoring_data.validate().is_ok(), "有效的MonitoringDataType应通过验证");
+        assert!(
+            valid_monitoring_data.validate().is_ok(),
+            "有效的MonitoringDataType应通过验证"
+        );
 
         // 测试空的variable_monitoring数组（应该失败，因为最小长度为1）
         let mut invalid_monitoring_data = valid_monitoring_data.clone();
@@ -290,7 +293,8 @@ mod tests {
         );
 
         // 测试嵌套验证 - 使用无效的VariableType
-        let mut invalid_variable = VariableType::new("Temperature".to_string(), "Outlet".to_string());
+        let mut invalid_variable =
+            VariableType::new("Temperature".to_string(), "Outlet".to_string());
         invalid_variable.name = "a".repeat(51); // 超过最大长度50
 
         let mut monitoring_data_with_invalid_variable = valid_monitoring_data.clone();

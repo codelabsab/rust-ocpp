@@ -313,8 +313,8 @@ mod tests {
 
         // Test with an instance that's too long (>50 chars)
         let long_instance = "A".repeat(51);
-        let invalid_component = ComponentType::new("Connector".to_string())
-            .with_instance(long_instance);
+        let invalid_component =
+            ComponentType::new("Connector".to_string()).with_instance(long_instance);
 
         // This should fail validation
         assert!(invalid_component.validate().is_err());
@@ -327,15 +327,17 @@ mod tests {
         custom_data.set_property("version".to_string(), json!("1.0"));
         custom_data.set_property("features".to_string(), json!(["feature1", "feature2"]));
 
-        let component = ComponentType::new("Connector".to_string())
-            .with_custom_data(custom_data);
+        let component = ComponentType::new("Connector".to_string()).with_custom_data(custom_data);
 
         let serialized = serde_json::to_value(&component).unwrap();
 
         // Check that the custom properties are included in the serialized JSON
         assert_eq!(serialized["customData"]["vendorId"], "VendorX");
         assert_eq!(serialized["customData"]["version"], "1.0");
-        assert_eq!(serialized["customData"]["features"], json!(["feature1", "feature2"]));
+        assert_eq!(
+            serialized["customData"]["features"],
+            json!(["feature1", "feature2"])
+        );
     }
 
     #[test]
@@ -362,8 +364,7 @@ mod tests {
             .with_connector_id(2)
             .with_custom_data(evse_custom_data);
 
-        let component = ComponentType::new("Connector".to_string())
-            .with_evse(evse);
+        let component = ComponentType::new("Connector".to_string()).with_evse(evse);
 
         let serialized = serde_json::to_value(&component).unwrap();
 
@@ -374,14 +375,13 @@ mod tests {
     #[test]
     fn test_component_equality() {
         // Test equality of ComponentType instances
-        let component1 = ComponentType::new("Connector".to_string())
-            .with_instance("Main".to_string());
+        let component1 =
+            ComponentType::new("Connector".to_string()).with_instance("Main".to_string());
 
-        let component2 = ComponentType::new("Connector".to_string())
-            .with_instance("Main".to_string());
+        let component2 =
+            ComponentType::new("Connector".to_string()).with_instance("Main".to_string());
 
-        let component3 = ComponentType::new("Meter".to_string())
-            .with_instance("Main".to_string());
+        let component3 = ComponentType::new("Meter".to_string()).with_instance("Main".to_string());
 
         assert_eq!(component1, component2);
         assert_ne!(component1, component3);
@@ -390,8 +390,8 @@ mod tests {
     #[test]
     fn test_component_clone() {
         // Test cloning of ComponentType
-        let original = ComponentType::new("Connector".to_string())
-            .with_instance("Main".to_string());
+        let original =
+            ComponentType::new("Connector".to_string()).with_instance("Main".to_string());
 
         let cloned = original.clone();
 

@@ -211,15 +211,24 @@ mod tests {
             .with_connector_id(2)
             .with_custom_data(CustomDataType::new("VendorX".to_string()));
 
-        assert!(evse_with_all.validate().is_ok(), "EVSE with all fields should pass validation");
+        assert!(
+            evse_with_all.validate().is_ok(),
+            "EVSE with all fields should pass validation"
+        );
 
         // Valid EVSE with zero ID (minimum allowed value)
         let evse_zero_id = EVSEType::new(0);
-        assert!(evse_zero_id.validate().is_ok(), "EVSE with zero ID should pass validation");
+        assert!(
+            evse_zero_id.validate().is_ok(),
+            "EVSE with zero ID should pass validation"
+        );
 
         // Valid EVSE with zero connector ID (minimum allowed value)
         let evse_zero_connector = EVSEType::new(1).with_connector_id(0);
-        assert!(evse_zero_connector.validate().is_ok(), "EVSE with zero connector ID should pass validation");
+        assert!(
+            evse_zero_connector.validate().is_ok(),
+            "EVSE with zero connector ID should pass validation"
+        );
     }
 
     #[test]
@@ -232,16 +241,28 @@ mod tests {
         };
 
         let validation_result = invalid_id.validate();
-        assert!(validation_result.is_err(), "EVSE with negative ID should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "EVSE with negative ID should fail validation"
+        );
 
         let errors = validation_result.unwrap_err();
         let field_errors = errors.field_errors();
 
         // Verify error is on the id field for range validation
-        assert!(field_errors.contains_key("id"), "Validation errors should contain id field");
+        assert!(
+            field_errors.contains_key("id"),
+            "Validation errors should contain id field"
+        );
         let id_errors = &field_errors["id"];
-        assert!(!id_errors.is_empty(), "id field should have validation errors");
-        assert_eq!(id_errors[0].code, "range", "id field should have a range error");
+        assert!(
+            !id_errors.is_empty(),
+            "id field should have validation errors"
+        );
+        assert_eq!(
+            id_errors[0].code, "range",
+            "id field should have a range error"
+        );
 
         // Invalid EVSE with negative connector ID
         let invalid_connector = EVSEType {
@@ -251,16 +272,28 @@ mod tests {
         };
 
         let validation_result = invalid_connector.validate();
-        assert!(validation_result.is_err(), "EVSE with negative connector ID should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "EVSE with negative connector ID should fail validation"
+        );
 
         let errors = validation_result.unwrap_err();
         let field_errors = errors.field_errors();
 
         // Verify error is on the connector_id field for range validation
-        assert!(field_errors.contains_key("connector_id"), "Validation errors should contain connector_id field");
+        assert!(
+            field_errors.contains_key("connector_id"),
+            "Validation errors should contain connector_id field"
+        );
         let connector_errors = &field_errors["connector_id"];
-        assert!(!connector_errors.is_empty(), "connector_id field should have validation errors");
-        assert_eq!(connector_errors[0].code, "range", "connector_id field should have a range error");
+        assert!(
+            !connector_errors.is_empty(),
+            "connector_id field should have validation errors"
+        );
+        assert_eq!(
+            connector_errors[0].code, "range",
+            "connector_id field should have a range error"
+        );
     }
 
     #[test]
@@ -273,7 +306,10 @@ mod tests {
 
         // Validation should fail due to invalid custom_data
         let validation_result = evse.validate();
-        assert!(validation_result.is_err(), "EVSE with invalid custom_data should fail validation");
+        assert!(
+            validation_result.is_err(),
+            "EVSE with invalid custom_data should fail validation"
+        );
     }
 
     #[test]
@@ -349,7 +385,10 @@ mod tests {
 
         // Check additional properties in custom data
         let custom_data = evse.custom_data().unwrap();
-        assert_eq!(custom_data.additional_properties()["extraInfo"], json!("Something"));
+        assert_eq!(
+            custom_data.additional_properties()["extraInfo"],
+            json!("Something")
+        );
     }
 
     #[test]
@@ -380,7 +419,10 @@ mod tests {
 
         // Deserialize from JSON string should fail
         let result = serde_json::from_str::<EVSEType>(json_str);
-        assert!(result.is_err(), "Deserialization should fail with missing required fields");
+        assert!(
+            result.is_err(),
+            "Deserialization should fail with missing required fields"
+        );
     }
 
     #[test]
@@ -395,7 +437,10 @@ mod tests {
         assert_eq!(evse.connector_id(), Some(large_connector_id));
 
         // Validate should pass
-        assert!(evse.validate().is_ok(), "EVSE with large IDs should pass validation");
+        assert!(
+            evse.validate().is_ok(),
+            "EVSE with large IDs should pass validation"
+        );
 
         // Serialize and deserialize
         let serialized = serde_json::to_string(&evse).unwrap();

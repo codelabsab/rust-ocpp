@@ -7,7 +7,6 @@ use super::custom_data::CustomDataType;
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct RationalNumberType {
-
     /// The exponent to base 10 (dec)
     pub exponent: i32,
 

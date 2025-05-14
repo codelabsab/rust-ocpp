@@ -140,7 +140,16 @@ mod tests {
         let random_delay = Decimal::from_str("2.0").unwrap();
         let ramp_rate = Decimal::from_str("10.0").unwrap();
 
-        let enter_service = EnterServiceType::new(1, high_voltage, low_voltage, high_freq, low_freq, delay, random_delay, ramp_rate);
+        let enter_service = EnterServiceType::new(
+            1,
+            high_voltage,
+            low_voltage,
+            high_freq,
+            low_freq,
+            delay,
+            random_delay,
+            ramp_rate,
+        );
         let id = "setting1".to_string();
 
         let enter_service_get = EnterServiceGetType::new(enter_service.clone(), id.clone());
@@ -162,7 +171,16 @@ mod tests {
         let random_delay = Decimal::from_str("2.0").unwrap();
         let ramp_rate = Decimal::from_str("10.0").unwrap();
 
-        let enter_service = EnterServiceType::new(1, high_voltage, low_voltage, high_freq, low_freq, delay, random_delay, ramp_rate);
+        let enter_service = EnterServiceType::new(
+            1,
+            high_voltage,
+            low_voltage,
+            high_freq,
+            low_freq,
+            delay,
+            random_delay,
+            ramp_rate,
+        );
         let id = "setting1".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -194,8 +212,26 @@ mod tests {
         let random_delay2 = Decimal::from_str("3.0").unwrap();
         let ramp_rate2 = Decimal::from_str("12.0").unwrap();
 
-        let enter_service1 = EnterServiceType::new(1, high_voltage1, low_voltage1, high_freq1, low_freq1, delay1, random_delay1, ramp_rate1);
-        let enter_service2 = EnterServiceType::new(2, high_voltage2, low_voltage2, high_freq2, low_freq2, delay2, random_delay2, ramp_rate2);
+        let enter_service1 = EnterServiceType::new(
+            1,
+            high_voltage1,
+            low_voltage1,
+            high_freq1,
+            low_freq1,
+            delay1,
+            random_delay1,
+            ramp_rate1,
+        );
+        let enter_service2 = EnterServiceType::new(
+            2,
+            high_voltage2,
+            low_voltage2,
+            high_freq2,
+            low_freq2,
+            delay2,
+            random_delay2,
+            ramp_rate2,
+        );
         let id1 = "setting1".to_string();
         let id2 = "setting2".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -229,7 +265,16 @@ mod tests {
         let random_delay = Decimal::from_str("2.0").unwrap();
         let ramp_rate = Decimal::from_str("10.0").unwrap();
 
-        let enter_service = EnterServiceType::new(1, high_voltage, low_voltage, high_freq, low_freq, delay, random_delay, ramp_rate);
+        let enter_service = EnterServiceType::new(
+            1,
+            high_voltage,
+            low_voltage,
+            high_freq,
+            low_freq,
+            delay,
+            random_delay,
+            ramp_rate,
+        );
         let id = "valid_id".to_string();
 
         let valid_enter_service_get = EnterServiceGetType::new(enter_service.clone(), id.clone());
@@ -249,11 +294,18 @@ mod tests {
         assert!(error_message.contains("length"));
 
         // 测试嵌套验证 - enter_service中的priority为负数
-        let invalid_enter_service = EnterServiceType::new(-1, high_voltage, low_voltage, high_freq, low_freq, delay, random_delay, ramp_rate);
-        let enter_service_get_with_invalid_enter_service = EnterServiceGetType::new(
-            invalid_enter_service,
-            id.clone(),
+        let invalid_enter_service = EnterServiceType::new(
+            -1,
+            high_voltage,
+            low_voltage,
+            high_freq,
+            low_freq,
+            delay,
+            random_delay,
+            ramp_rate,
         );
+        let enter_service_get_with_invalid_enter_service =
+            EnterServiceGetType::new(invalid_enter_service, id.clone());
 
         // 验证应该失败，因为enter_service中的priority为负数
         let validation_result = enter_service_get_with_invalid_enter_service.validate();
@@ -293,8 +345,17 @@ mod tests {
         let random_delay = Decimal::from_str("2.0").unwrap();
         let ramp_rate = Decimal::from_str("10.0").unwrap();
 
-        let enter_service = EnterServiceType::new(1, high_voltage, low_voltage, high_freq, low_freq, delay, random_delay, ramp_rate)
-            .with_custom_data(CustomDataType::new("VendorX".to_string()));
+        let enter_service = EnterServiceType::new(
+            1,
+            high_voltage,
+            low_voltage,
+            high_freq,
+            low_freq,
+            delay,
+            random_delay,
+            ramp_rate,
+        )
+        .with_custom_data(CustomDataType::new("VendorX".to_string()));
         let id = "setting1".to_string();
         let custom_data = CustomDataType::new("VendorY".to_string())
             .with_property("version".to_string(), json!("1.0"));
@@ -321,6 +382,4 @@ mod tests {
         assert!(json_value.get("id").is_some());
         assert!(json_value.get("customData").is_some());
     }
-
-
 }

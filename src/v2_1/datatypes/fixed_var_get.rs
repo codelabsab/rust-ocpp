@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
-use validator::Validate;
 use super::super::helpers::validator::validate_identifier_string;
 use super::{custom_data::CustomDataType, fixed_var::FixedVarType};
+use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 /// Fixed VAr get type for retrieving fixed VAr settings.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -31,7 +31,7 @@ impl FixedVarGetType {
     /// Creates a new `FixedVarGetType` with required fields.
     ///
     /// # Arguments
-    /// 
+    ///
     /// * `fixed_var` - The fixed VAr settings
     /// * `id` - Id of the setting
     /// * `is_superseded` - True if this setting is superseded by a higher priority setting
@@ -187,11 +187,12 @@ mod tests {
     #[test]
     fn test_new_fixed_var_get() {
         let fixed_var = FixedVarType::new(1, 100.0);
-        let id = "setting1".to_string(); 
+        let id = "setting1".to_string();
         let is_superseded = false;
         let is_default = true;
 
-        let fixed_var_get = FixedVarGetType::new(fixed_var.clone(), id.clone(), is_superseded, is_default);
+        let fixed_var_get =
+            FixedVarGetType::new(fixed_var.clone(), id.clone(), is_superseded, is_default);
 
         assert_eq!(fixed_var_get.fixed_var(), &fixed_var);
         assert_eq!(fixed_var_get.id(), id);
@@ -204,12 +205,13 @@ mod tests {
     fn test_with_custom_data() {
         let fixed_var = FixedVarType::new(1, 100.0);
         let id = "setting1".to_string();
-        let is_superseded = false; 
+        let is_superseded = false;
         let is_default = true;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let fixed_var_get = FixedVarGetType::new(fixed_var.clone(), id.clone(), is_superseded, is_default)
-            .with_custom_data(custom_data.clone());
+        let fixed_var_get =
+            FixedVarGetType::new(fixed_var.clone(), id.clone(), is_superseded, is_default)
+                .with_custom_data(custom_data.clone());
 
         assert_eq!(fixed_var_get.fixed_var(), &fixed_var);
         assert_eq!(fixed_var_get.id(), id);
@@ -222,11 +224,11 @@ mod tests {
     fn test_setter_methods() {
         let fixed_var1 = FixedVarType::new(1, 100.0);
         let fixed_var2 = FixedVarType::new(2, -50.0);
-        let id1 = "setting1".to_string(); 
-        let id2 = "setting2".to_string(); 
-        let is_superseded1 = false; 
-        let is_superseded2 = true; 
-        let is_default1 = true; 
+        let id1 = "setting1".to_string();
+        let id2 = "setting2".to_string();
+        let is_superseded1 = false;
+        let is_superseded2 = true;
+        let is_default1 = true;
         let is_default2 = false;
         let custom_data = CustomDataType::new("VendorX".to_string());
 

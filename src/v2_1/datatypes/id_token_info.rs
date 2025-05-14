@@ -2,7 +2,10 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{custom_data::CustomDataType, status_info::StatusInfoType, id_token::IdTokenType, message_content::MessageContentType};
+use super::{
+    custom_data::CustomDataType, id_token::IdTokenType, message_content::MessageContentType,
+    status_info::StatusInfoType,
+};
 use crate::v2_1::enumerations::AuthorizationStatusEnumType;
 
 /// Contains status information about an identifier.
@@ -394,7 +397,10 @@ impl IdTokenInfoType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_personal_message(&mut self, personal_message: Option<MessageContentType>) -> &mut Self {
+    pub fn set_personal_message(
+        &mut self,
+        personal_message: Option<MessageContentType>,
+    ) -> &mut Self {
         self.personal_message = personal_message;
         self
     }
@@ -483,7 +489,7 @@ mod tests {
         let message_content = MessageContentType::new(
             "Welcome User!".to_string(),
             MessageFormatEnumType::ASCII,
-            "en".to_string()
+            "en".to_string(),
         );
 
         let evse_ids = vec![1, 2, 3];
@@ -526,7 +532,7 @@ mod tests {
         let message_content = MessageContentType::new(
             "Welcome User!".to_string(),
             MessageFormatEnumType::ASCII,
-            "en".to_string()
+            "en".to_string(),
         );
 
         let evse_ids = vec![1, 2, 3];
@@ -592,8 +598,8 @@ mod tests {
         assert!(token_info.validate().is_ok());
 
         // Test with invalid charging priority
-        let invalid_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted)
-            .with_charging_priority(10); // Outside valid range (-9 to 9)
+        let invalid_token_info =
+            IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted).with_charging_priority(10); // Outside valid range (-9 to 9)
 
         assert!(invalid_token_info.validate().is_err());
     }

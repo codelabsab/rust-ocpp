@@ -382,7 +382,8 @@ mod tests {
         let serialized = serde_json::to_string(&request_info).unwrap();
 
         // Deserialize back
-        let deserialized: CertificateStatusRequestInfoType = serde_json::from_str(&serialized).unwrap();
+        let deserialized: CertificateStatusRequestInfoType =
+            serde_json::from_str(&serialized).unwrap();
 
         // Verify the result is the same as the original object
         assert_eq!(request_info, deserialized);
