@@ -328,6 +328,7 @@ impl ChargingScheduleType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::v2_1::datatypes::rational_number::RationalNumberType;
     use rust_decimal_macros::dec;
     use serde_json::{from_str, to_string};
     use validator::Validate;
@@ -654,19 +655,11 @@ mod tests {
                 PriceRuleStackType,
                 PriceLevelScheduleEntryType,
             },
-            enumerations::EnergyTransferModeEnumType
         };
 
-        let price_rule = PriceRuleType::new(
-            EnergyTransferModeEnumType::DC,
-            0.25,  // energy_fee
-            0.10,  // time_fee
-            0.05,  // parking_fee
-            300,   // minimum_duration
-            7200,  // maximum_duration
-            50.0,  // maximum_power
-            10.0,  // minimum_power
-        );
+        let energy_fee = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
+        let power_range_start = RationalNumberType::new(0, 0);
+        let price_rule = PriceRuleType::new(energy_fee, power_range_start);
 
         let price_rule_stack = PriceRuleStackType::new(3600, vec![price_rule]);
 
@@ -753,14 +746,8 @@ mod tests {
                 "priceRuleStacks": [{{
                     "duration": 3600,
                     "priceRules": [{{
-                        "energyTransferMode": "DC",
-                        "energyFee": 0.25,
-                        "timeFee": 0.10,
-                        "parkingFee": 0.05,
-                        "minimumDuration": 300,
-                        "maximumDuration": 7200,
-                        "maximumPower": 50.0,
-                        "minimumPower": 10.0
+                        "energyFee": {{"exponent": 2, "value": 25}},
+                        "powerRangeStart": {{"exponent": 0, "value": 0}}
                     }}]
                 }}]
             }},
