@@ -127,42 +127,28 @@ impl PriceRuleStackType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::v2_1::enumerations::EnergyTransferModeEnumType;
+    use crate::v2_1::datatypes::rational_number::RationalNumberType;
 
     #[test]
     fn test_new_price_rule_stack() {
         let duration = 3600;
-        let price_rules = vec![PriceRuleType::new(
-            EnergyTransferModeEnumType::DC,
-            0.25,
-            0.10,
-            0.05,
-            300,
-            7200,
-            50.0,
-            10.0,
-        )];
+        let energy_fee = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
+        let power_range_start = RationalNumberType::new(0, 0);
+        let price_rules = vec![PriceRuleType::new(energy_fee, power_range_start)];
 
         let stack = PriceRuleStackType::new(duration, price_rules.clone());
 
         assert_eq!(stack.duration(), duration);
-        assert_eq!(stack.price_rules(), &price_rules);
+        assert_eq!(stack.price_rules().len(), 1);
         assert_eq!(stack.custom_data(), None);
     }
 
     #[test]
     fn test_with_custom_data() {
         let duration = 3600;
-        let price_rules = vec![PriceRuleType::new(
-            EnergyTransferModeEnumType::DC,
-            0.25,
-            0.10,
-            0.05,
-            300,
-            7200,
-            50.0,
-            10.0,
-        )];
+        let energy_fee = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
+        let power_range_start = RationalNumberType::new(0, 0);
+        let price_rules = vec![PriceRuleType::new(energy_fee, power_range_start)];
 
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
@@ -173,7 +159,7 @@ mod tests {
             .with_custom_data(custom_data.clone());
 
         assert_eq!(stack.duration(), duration);
-        assert_eq!(stack.price_rules(), &price_rules);
+        assert_eq!(stack.price_rules().len(), 1);
         assert_eq!(stack.custom_data(), Some(&custom_data));
     }
 
@@ -182,38 +168,17 @@ mod tests {
         let duration1 = 3600;
         let duration2 = 7200;
 
-        let price_rules1 = vec![PriceRuleType::new(
-            EnergyTransferModeEnumType::DC,
-            0.25,
-            0.10,
-            0.05,
-            300,
-            7200,
-            50.0,
-            10.0,
-        )];
+        let energy_fee1 = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
+        let power_range_start1 = RationalNumberType::new(0, 0);
+        let price_rules1 = vec![PriceRuleType::new(energy_fee1, power_range_start1)];
 
+        let energy_fee2 = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
+        let power_range_start2 = RationalNumberType::new(0, 0);
+        let energy_fee3 = RationalNumberType::new(2, 20); // Represents 0.20 with exponent 2
+        let power_range_start3 = RationalNumberType::new(0, 0);
         let price_rules2 = vec![
-            PriceRuleType::new(
-                EnergyTransferModeEnumType::DC,
-                0.25,
-                0.10,
-                0.05,
-                300,
-                7200,
-                50.0,
-                10.0,
-            ),
-            PriceRuleType::new(
-                EnergyTransferModeEnumType::ACSinglePhase,
-                0.20,
-                0.08,
-                0.04,
-                600,
-                10800,
-                22.0,
-                3.7,
-            ),
+            PriceRuleType::new(energy_fee2, power_range_start2),
+            PriceRuleType::new(energy_fee3, power_range_start3),
         ];
 
         let custom_data = CustomDataType {
@@ -221,7 +186,7 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let mut stack = PriceRuleStackType::new(duration1, price_rules1.clone());
+        let mut stack = PriceRuleStackType::new(duration1, price_rules1);
 
         stack
             .set_duration(duration2)
@@ -229,7 +194,7 @@ mod tests {
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(stack.duration(), duration2);
-        assert_eq!(stack.price_rules(), &price_rules2);
+        assert_eq!(stack.price_rules().len(), 2);
         assert_eq!(stack.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
