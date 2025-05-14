@@ -7,15 +7,17 @@ use super::custom_data::CustomDataType;
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct RationalNumberType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
 
-    /// Required. The exponent to base 10 (dec).
+    /// The exponent to base 10 (dec)
     pub exponent: i32,
 
-    /// Required. Value which shall be multiplied.
+    /// Value which shall be multiplied
     pub value: i32,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl RationalNumberType {
@@ -172,5 +174,42 @@ mod tests {
         // Test clearing optional fields
         rational_number.set_custom_data(None);
         assert_eq!(rational_number.custom_data(), None);
+    }
+
+    #[test]
+    fn test_serialization() {
+        let exponent = -2;
+        let value = 5;
+        let rational_number = RationalNumberType::new(exponent, value);
+        let serialized = serde_json::to_string(&rational_number).unwrap();
+        let expected = format!(r#"{{"exponent":{},"value":{}}}"#, exponent, value);
+        assert_eq!(serialized, expected);
+    }
+
+    #[test]
+    fn test_deserialization() {
+        let json_str = r#"{"exponent": 1, "value": 10}"#;
+        let rational_number: RationalNumberType = serde_json::from_str(json_str).unwrap();
+        assert_eq!(rational_number.exponent(), 1);
+        assert_eq!(rational_number.value(), 10);
+        assert_eq!(rational_number.custom_data(), None);
+    }
+
+    #[test]
+    fn test_edge_cases() {
+        // Test with maximum and minimum i32 values
+        let rational_number_max = RationalNumberType::new(i32::MAX, i32::MAX);
+        assert_eq!(rational_number_max.exponent(), i32::MAX);
+        assert_eq!(rational_number_max.value(), i32::MAX);
+
+        let rational_number_min = RationalNumberType::new(i32::MIN, i32::MIN);
+        assert_eq!(rational_number_min.exponent(), i32::MIN);
+        assert_eq!(rational_number_min.value(), i32::MIN);
+    }
+
+    #[test]
+    fn test_validation() {
+        let rational_number = RationalNumberType::new(0, 0);
+        assert!(rational_number.validate().is_ok());
     }
 }

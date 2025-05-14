@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
+
 use super::{custom_data::CustomDataType, price::PriceType, total_price::TotalPriceType};
 use crate::v2_1::enumerations::TariffCostEnumType;
 
@@ -523,7 +524,7 @@ impl TotalCostType {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    use rust_decimal::Decimal;
     #[test]
     fn test_new_total_cost() {
         let currency = "EUR".to_string();
