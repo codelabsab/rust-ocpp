@@ -6,21 +6,24 @@ use super::{
     sales_tariff_entry::SalesTariffEntryType
 };
 
-/// Sales tariff structure defining pricing information.
+/// A SalesTariff provided by a Mobility Operator (EMSP).
+/// NOTE: This dataType is based on dataTypes from ISO 15118-2.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SalesTariffType {
-    /// Required. Unique identifier used to identify one or more tariffs.
-    #[validate(length(max = 36))]
-    pub id: String,
+    /// Required. SalesTariff identifier used to identify one sales tariff. 
+    /// An SAID remains a unique identifier for one schedule throughout a charging session.
+    #[validate(range(min = 0))]
+    pub id: i32,
 
     /// Optional. A human readable title/description of the sales tariff e.g. for HMI display purposes.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(length(max = 32))]
     pub sales_tariff_description: Option<String>,
 
-    /// Optional. The number of time intervals supported for this sales tariff.
+    /// Optional. Defines the overall number of distinct price levels used across all provided SalesTariff elements.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(range(min = 0))]
     pub num_e_price_levels: Option<i32>,
 
     /// Required. List of sales tariff entries.
@@ -38,13 +41,13 @@ impl SalesTariffType {
     ///
     /// # Arguments
     ///
-    /// * `id` - Unique identifier used to identify one or more tariffs
+    /// * `id` - SalesTariff identifier used to identify one sales tariff
     /// * `sales_tariff_entry` - List of sales tariff entries
     ///
     /// # Returns
     ///
     /// A new instance of `SalesTariffType` with optional fields set to `None`
-    pub fn new(id: String, sales_tariff_entry: Vec<SalesTariffEntryType>) -> Self {
+    pub fn new(id: i32, sales_tariff_entry: Vec<SalesTariffEntryType>) -> Self {
         Self {
             custom_data: None,
             id,
@@ -82,11 +85,11 @@ impl SalesTariffType {
         self
     }
 
-    /// Sets the number of time intervals supported for this sales tariff.
+    /// Sets the number of price levels used across all provided SalesTariff elements.
     ///
     /// # Arguments
     ///
-    /// * `num_e_price_levels` - The number of time intervals supported
+    /// * `num_e_price_levels` - The number of distinct price levels
     ///
     /// # Returns
     ///
@@ -100,21 +103,21 @@ impl SalesTariffType {
     ///
     /// # Returns
     ///
-    /// The unique identifier used to identify one or more tariffs
-    pub fn id(&self) -> &str {
-        &self.id
+    /// The sales tariff identifier
+    pub fn id(&self) -> i32 {
+        self.id
     }
 
     /// Sets the ID.
     ///
     /// # Arguments
     ///
-    /// * `id` - Unique identifier used to identify one or more tariffs
+    /// * `id` - SalesTariff identifier
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_id(&mut self, id: String) -> &mut Self {
+    pub fn set_id(&mut self, id: i32) -> &mut Self {
         self.id = id;
         self
     }
@@ -142,20 +145,20 @@ impl SalesTariffType {
         self
     }
 
-    /// Gets the number of time intervals supported.
+    /// Gets the number of price levels.
     ///
     /// # Returns
     ///
-    /// An optional number of time intervals supported for this sales tariff
+    /// An optional number of distinct price levels used across all provided SalesTariff elements
     pub fn num_e_price_levels(&self) -> Option<i32> {
         self.num_e_price_levels
     }
 
-    /// Sets the number of time intervals supported.
+    /// Sets the number of price levels.
     ///
     /// # Arguments
     ///
-    /// * `num_e_price_levels` - The number of time intervals supported, or None to clear
+    /// * `num_e_price_levels` - The number of distinct price levels, or None to clear
     ///
     /// # Returns
     ///
@@ -217,15 +220,15 @@ impl SalesTariffType {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::super::relative_time_interval::RelativeTimeIntervalType;
+    use super::*;
 
     #[test]
     fn test_new_sales_tariff() {
-        let id = "tariff_1".to_string();
+        let id = 1;
         let interval = RelativeTimeIntervalType::new_default();
         let entry = SalesTariffEntryType::new(interval);
-        let sales_tariff = SalesTariffType::new(id.clone(), vec![entry.clone()]);
+        let sales_tariff = SalesTariffType::new(id, vec![entry.clone()]);
 
         assert_eq!(sales_tariff.id(), id);
         assert_eq!(sales_tariff.sales_tariff_description(), None);
@@ -237,7 +240,7 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
-        let id = "tariff_1".to_string();
+        let id = 1;
         let interval = RelativeTimeIntervalType::new_default();
         let entry = SalesTariffEntryType::new(interval);
         let description = "Peak Hours Tariff".to_string();
@@ -247,7 +250,7 @@ mod tests {
             additional_properties: Default::default(),
         };
 
-        let sales_tariff = SalesTariffType::new(id.clone(), vec![entry.clone()])
+        let sales_tariff = SalesTariffType::new(id, vec![entry.clone()])
             .with_sales_tariff_description(description.clone())
             .with_num_e_price_levels(num_levels)
             .with_custom_data(custom_data.clone());
@@ -265,12 +268,12 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let id1 = "tariff_1".to_string();
+        let id1 = 1;
         let interval1 = RelativeTimeIntervalType::new_default();
         let entry1 = SalesTariffEntryType::new(interval1);
         let mut sales_tariff = SalesTariffType::new(id1, vec![entry1]);
 
-        let id2 = "tariff_2".to_string();
+        let id2 = 2;
         let interval2 = RelativeTimeIntervalType::new_default();
         let entry2 = SalesTariffEntryType::new(interval2);
         let description = "Off-peak Hours Tariff".to_string();
@@ -281,7 +284,7 @@ mod tests {
         };
 
         sales_tariff
-            .set_id(id2.clone())
+            .set_id(id2)
             .set_sales_tariff_description(Some(description.clone()))
             .set_num_e_price_levels(Some(num_levels))
             .set_sales_tariff_entry(vec![entry2.clone()])

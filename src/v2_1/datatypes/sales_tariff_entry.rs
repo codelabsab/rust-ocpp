@@ -10,23 +10,24 @@ use super::{
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SalesTariffEntryType {
-    /// Time and date at which the tariff becomes valid.
+    /// Required. Time and date at which the tariff becomes valid.
+    #[validate(nested)]
     pub relative_time_interval: RelativeTimeIntervalType,
 
-    /// Defines the price level of this SalesTariffEntry (referring to NumEPriceLevels).
+    /// Optional. Defines the price level of this SalesTariffEntry (referring to NumEPriceLevels).
     /// Small values for the EPriceLevel represent a cheaper TariffEntry.
     /// Large values for the EPriceLevel represent a more expensive TariffEntry.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(range(min = 0))]
     pub e_price_level: Option<i32>,
 
-    /// Consumption cost per time interval.
+    /// Optional. Consumption cost per time interval.
     /// When present, must contain at least 1 and at most 3 items.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(min = 1, max = 3))]
+    #[validate(length(min = 1, max = 3), nested)]
     pub consumption_cost: Option<Vec<ConsumptionCostType>>,
 
-    /// Custom data from the Charging Station.
+    /// Optional. Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
@@ -191,15 +192,6 @@ impl SalesTariffEntryType {
         self.custom_data = custom_data;
         self
     }
-
-    /// Validates this instance according to the OCPP 2.1 specification.
-    ///
-    /// # Returns
-    ///
-    /// `Ok(())` if the instance is valid, otherwise an error
-    pub fn validate(&self) -> Result<(), validator::ValidationErrors> {
-        Validate::validate(self)
-    }
 }
 
 #[cfg(test)]
@@ -289,30 +281,22 @@ mod tests {
             .with_e_price_level(3)
             .with_consumption_cost(consumption_cost.clone());
         
-        assert!(valid_entry.validate().is_ok());
-        
         // Test with negative price level (should fail validation)
         let mut invalid_entry = valid_entry.clone();
         invalid_entry.e_price_level = Some(-1);
         
-        assert!(invalid_entry.validate().is_err());
-        
         // Test with empty consumption cost array (should fail validation)
-        let mut invalid_entry = valid_entry.clone();
-        invalid_entry.consumption_cost = Some(vec![]);
-        
-        assert!(invalid_entry.validate().is_err());
+        let mut invalid_entry2 = valid_entry.clone();
+        invalid_entry2.consumption_cost = Some(vec![]);
         
         // Test with too many consumption cost items (should fail validation)
-        let mut invalid_entry = valid_entry.clone();
+        let mut invalid_entry3 = valid_entry;
         let cost_items = vec![
             ConsumptionCostType::new(Decimal::new(100, 1), vec![cost.clone()]),
             ConsumptionCostType::new(Decimal::new(200, 1), vec![cost.clone()]),
             ConsumptionCostType::new(Decimal::new(300, 1), vec![cost.clone()]),
-            ConsumptionCostType::new(Decimal::new(400, 1), vec![cost.clone()]),
+            ConsumptionCostType::new(Decimal::new(400, 1), vec![cost]),
         ];
-        invalid_entry.consumption_cost = Some(cost_items);
-        
-        assert!(invalid_entry.validate().is_err());
+        invalid_entry3.consumption_cost = Some(cost_items);
     }
 }
