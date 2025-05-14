@@ -17,6 +17,7 @@ pub struct PeriodicEventStreamParamsType {
     
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
