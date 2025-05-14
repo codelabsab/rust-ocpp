@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-
+use rust_decimal::Decimal;
 use super::{custom_data::CustomDataType, tax_rate::TaxRateType};
 
 /// Price with and without tax. At least one of exclTax, inclTax must be present.
@@ -9,18 +9,20 @@ use super::{custom_data::CustomDataType, tax_rate::TaxRateType};
 pub struct PriceType {
     /// Price/cost excluding tax. Can be absent if inclTax is present.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub excl_tax: Option<f64>,
+    pub excl_tax: Option<Decimal>,
 
     /// Price/cost including tax. Can be absent if exclTax is present.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub incl_tax: Option<f64>,
+    pub incl_tax: Option<Decimal>,
 
     /// List of tax rates used to calculate tax.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 1, max = 5), nested)]
     pub tax_rates: Option<Vec<TaxRateType>>,
 
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -35,7 +37,7 @@ impl PriceType {
     /// # Returns
     ///
     /// A new instance of `PriceType` with optional fields set to `None`
-    pub fn new(price: f64, is_incl_tax: bool) -> Self {
+    pub fn new(price: Decimal, is_incl_tax: bool) -> Self {
         if is_incl_tax {
             Self {
                 excl_tax: None,
@@ -58,7 +60,7 @@ impl PriceType {
     /// # Returns
     ///
     /// An optional reference to the price excluding tax
-    pub fn excl_tax(&self) -> Option<f64> {
+    pub fn excl_tax(&self) -> Option<Decimal> {
         self.excl_tax
     }
 
@@ -67,7 +69,7 @@ impl PriceType {
     /// # Returns
     ///
     /// An optional reference to the price including tax
-    pub fn incl_tax(&self) -> Option<f64> {
+    pub fn incl_tax(&self) -> Option<Decimal> {
         self.incl_tax
     }
 
@@ -98,7 +100,7 @@ impl PriceType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_excl_tax(&mut self, excl_tax: Option<f64>) -> &mut Self {
+    pub fn set_excl_tax(&mut self, excl_tax: Option<Decimal>) -> &mut Self {
         self.excl_tax = excl_tax;
         self
     }
@@ -112,7 +114,7 @@ impl PriceType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_incl_tax(&mut self, incl_tax: Option<f64>) -> &mut Self {
+    pub fn set_incl_tax(&mut self, incl_tax: Option<Decimal>) -> &mut Self {
         self.incl_tax = incl_tax;
         self
     }
@@ -154,7 +156,7 @@ impl PriceType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_excl_tax(mut self, excl_tax: f64) -> Self {
+    pub fn with_excl_tax(mut self, excl_tax: Decimal) -> Self {
         self.excl_tax = Some(excl_tax);
         self
     }
@@ -168,7 +170,7 @@ impl PriceType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_incl_tax(mut self, incl_tax: f64) -> Self {
+    pub fn with_incl_tax(mut self, incl_tax: Decimal) -> Self {
         self.incl_tax = Some(incl_tax);
         self
     }
@@ -208,7 +210,7 @@ mod tests {
 
     #[test]
     fn test_new_price_incl_tax() {
-        let price = 100.0;
+        let price = Decimal::new(1000, 1); // 100.0
         let price_type = PriceType::new(price, true);
 
         assert_eq!(price_type.excl_tax(), None);
@@ -219,7 +221,7 @@ mod tests {
 
     #[test]
     fn test_new_price_excl_tax() {
-        let price = 80.0;
+        let price = Decimal::new(800, 1); // 80.0
         let price_type = PriceType::new(price, false);
 
         assert_eq!(price_type.excl_tax(), Some(price));
@@ -230,8 +232,8 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
-        let price_excl = 80.0;
-        let price_incl = 100.0;
+        let price_excl = Decimal::new(800, 1); // 80.0
+        let price_incl = Decimal::new(1000, 1); // 100.0
         let tax_rate = TaxRateType::new(20.0, "VAT".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -249,17 +251,19 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let mut price_type = PriceType::new(80.0, false);
+        let price_excl = Decimal::new(800, 1); // 80.0
+        let price_incl = Decimal::new(1000, 1); // 100.0
+        let mut price_type = PriceType::new(price_excl, false);
         let tax_rate = TaxRateType::new(20.0, "VAT".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         price_type
-            .set_incl_tax(Some(100.0))
+            .set_incl_tax(Some(price_incl))
             .set_tax_rates(Some(vec![tax_rate.clone()]))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(price_type.excl_tax(), Some(80.0));
-        assert_eq!(price_type.incl_tax(), Some(100.0));
+        assert_eq!(price_type.excl_tax(), Some(price_excl));
+        assert_eq!(price_type.incl_tax(), Some(price_incl));
         assert_eq!(price_type.tax_rates().unwrap().len(), 1);
         assert_eq!(price_type.tax_rates().unwrap()[0], tax_rate);
         assert_eq!(price_type.custom_data(), Some(&custom_data));
@@ -271,7 +275,7 @@ mod tests {
             .set_custom_data(None);
 
         assert_eq!(price_type.excl_tax(), None);
-        assert_eq!(price_type.incl_tax(), Some(100.0));
+        assert_eq!(price_type.incl_tax(), Some(price_incl));
         assert_eq!(price_type.tax_rates(), None);
         assert_eq!(price_type.custom_data(), None);
     }
