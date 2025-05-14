@@ -5,7 +5,7 @@ use super::{
     component::ComponentType, custom_data::CustomDataType, status_info::StatusInfoType,
     variable::VariableType,
 };
-use crate::v2_1::enumerations::SetMonitoringStatusEnumType;
+use crate::v2_1::enumerations::{MonitorEnumType, SetMonitoringStatusEnumType};
 
 /// Class to hold result of SetVariableMonitoring request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -24,9 +24,20 @@ pub struct SetMonitoringResultType {
     /// Required. Variable for which the monitoring status is returned.
     pub variable: VariableType,
 
-    /// Required. Id of the monitor that was set.
+    /// Id given to the VariableMonitor by the Charging Station. The Id is only returned when status is accepted. 
+    /// Installed VariableMonitors should have unique id's but the id's of removed Installed monitors 
+    /// should have unique id's but the id's of removed monitors MAY be reused.
     #[validate(range(min = 0))]
     pub id: i32,
+
+    /// Required. Type of monitor that was set.
+    #[serde(rename = "type")]
+    pub type_: MonitorEnumType,
+
+    /// Required. The severity that will be assigned to an event that is triggered by this monitor. 
+    /// The severity range is 0-9, with 0 as the highest and 9 as the lowest severity level.
+    #[validate(range(min = 0))]
+    pub severity: i32,
 
     /// Optional. Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -42,6 +53,8 @@ impl SetMonitoringResultType {
     /// * `component` - Component for which the monitoring status is returned
     /// * `variable` - Variable for which the monitoring status is returned
     /// * `id` - Id of the monitor that was set
+    /// * `type` - Type of monitor that was set
+    /// * `severity` - The severity that will be assigned to an event that is triggered by this monitor
     ///
     /// # Returns
     ///
@@ -51,6 +64,8 @@ impl SetMonitoringResultType {
         component: ComponentType,
         variable: VariableType,
         id: i32,
+        type_: MonitorEnumType,
+        severity: i32,
     ) -> Self {
         Self {
             custom_data: None,
@@ -58,6 +73,8 @@ impl SetMonitoringResultType {
             component,
             variable,
             id,
+            type_,
+            severity,
             status_info: None,
         }
     }
@@ -87,6 +104,34 @@ impl SetMonitoringResultType {
     /// Self reference for method chaining
     pub fn with_status_info(mut self, status_info: StatusInfoType) -> Self {
         self.status_info = Some(status_info);
+        self
+    }
+
+    /// Sets the type of monitor.
+    ///
+    /// # Arguments
+    ///
+    /// * `type_` - Type of monitor
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_type(mut self, type_: MonitorEnumType) -> Self {
+        self.type_ = type_;
+        self
+    }
+
+    /// Sets the severity of the monitor.
+    ///
+    /// # Arguments
+    ///
+    /// * `severity` - Severity level
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_severity(mut self, severity: i32) -> Self {
+        self.severity = severity;
         self
     }
 
@@ -182,6 +227,52 @@ impl SetMonitoringResultType {
         self
     }
 
+    /// Gets the type of monitor.
+    ///
+    /// # Returns
+    ///
+    /// The type of monitor that was set
+    pub fn type_(&self) -> &MonitorEnumType {
+        &self.type_
+    }
+
+    /// Sets the type of monitor.
+    ///
+    /// # Arguments
+    ///
+    /// * `type_` - Type of monitor to set
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_type(&mut self, type_: MonitorEnumType) -> &mut Self {
+        self.type_ = type_;
+        self
+    }
+
+    /// Gets the severity of the monitor.
+    ///
+    /// # Returns
+    ///
+    /// The severity that will be assigned to an event triggered by this monitor
+    pub fn severity(&self) -> i32 {
+        self.severity
+    }
+
+    /// Sets the severity of the monitor.
+    ///
+    /// # Arguments
+    ///
+    /// * `severity` - Severity to assign to events triggered by this monitor
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_severity(&mut self, severity: i32) -> &mut Self {
+        self.severity = severity;
+        self
+    }
+
     /// Gets the status info.
     ///
     /// # Returns
@@ -239,14 +330,24 @@ mod tests {
         let component = ComponentType::new("component1".to_string());
         let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
         let id = 42;
+        let monitor_type = MonitorEnumType::UpperThreshold;
+        let severity = 5;
 
-        let result =
-            SetMonitoringResultType::new(status.clone(), component.clone(), variable.clone(), id);
+        let result = SetMonitoringResultType::new(
+            status.clone(), 
+            component.clone(), 
+            variable.clone(), 
+            id, 
+            monitor_type.clone(), 
+            severity
+        );
 
         assert_eq!(result.status(), &status);
         assert_eq!(result.component(), &component);
         assert_eq!(result.variable(), &variable);
         assert_eq!(result.id(), id);
+        assert_eq!(result.type_(), &monitor_type);
+        assert_eq!(result.severity(), severity);
         assert_eq!(result.status_info(), None);
         assert_eq!(result.custom_data(), None);
     }
@@ -257,18 +358,32 @@ mod tests {
         let component = ComponentType::new("component1".to_string());
         let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
         let id = 42;
+        let monitor_type = MonitorEnumType::Delta;
+        let severity = 3;
+        let new_monitor_type = MonitorEnumType::Periodic;
+        let new_severity = 7;
         let custom_data = CustomDataType::new("VendorX".to_string());
         let status_info = StatusInfoType::new("SomeReason".to_string());
 
-        let result =
-            SetMonitoringResultType::new(status.clone(), component.clone(), variable.clone(), id)
-                .with_custom_data(custom_data.clone())
-                .with_status_info(status_info.clone());
+        let result = SetMonitoringResultType::new(
+                status.clone(), 
+                component.clone(), 
+                variable.clone(), 
+                id, 
+                monitor_type, 
+                severity
+            )
+            .with_custom_data(custom_data.clone())
+            .with_status_info(status_info.clone())
+            .with_type(new_monitor_type.clone())
+            .with_severity(new_severity);
 
         assert_eq!(result.status(), &status);
         assert_eq!(result.component(), &component);
         assert_eq!(result.variable(), &variable);
         assert_eq!(result.id(), id);
+        assert_eq!(result.type_(), &new_monitor_type);
+        assert_eq!(result.severity(), new_severity);
         assert_eq!(result.status_info(), Some(&status_info));
         assert_eq!(result.custom_data(), Some(&custom_data));
     }
@@ -279,13 +394,17 @@ mod tests {
         let component1 = ComponentType::new("component1".to_string());
         let variable1 = VariableType::new("variable1".to_string(), "instance1".to_string());
         let id1 = 42;
+        let type1 = MonitorEnumType::UpperThreshold;
+        let severity1 = 2;
 
-        let mut result = SetMonitoringResultType::new(status1, component1, variable1, id1);
+        let mut result = SetMonitoringResultType::new(status1, component1, variable1, id1, type1, severity1);
 
         let status2 = SetMonitoringStatusEnumType::UnknownVariable;
         let component2 = ComponentType::new("component2".to_string());
         let variable2 = VariableType::new("variable2".to_string(), "instance2".to_string());
         let id2 = 43;
+        let type2 = MonitorEnumType::PeriodicClockAligned;
+        let severity2 = 9;
         let custom_data = CustomDataType::new("VendorX".to_string());
         let status_info = StatusInfoType::new("NotFound".to_string());
 
@@ -294,6 +413,8 @@ mod tests {
             .set_component(component2.clone())
             .set_variable(variable2.clone())
             .set_id(id2)
+            .set_type(type2.clone())
+            .set_severity(severity2)
             .set_status_info(Some(status_info.clone()))
             .set_custom_data(Some(custom_data.clone()));
 
@@ -301,6 +422,8 @@ mod tests {
         assert_eq!(result.component(), &component2);
         assert_eq!(result.variable(), &variable2);
         assert_eq!(result.id(), id2);
+        assert_eq!(result.type_(), &type2);
+        assert_eq!(result.severity(), severity2);
         assert_eq!(result.status_info(), Some(&status_info));
         assert_eq!(result.custom_data(), Some(&custom_data));
 
