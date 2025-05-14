@@ -688,6 +688,8 @@ mod tests {
 
         let price_level_schedule = PriceLevelScheduleType::new(
             time_anchor,
+            1, // Placeholder for price_schedule_id
+            3, // Placeholder for number_of_price_levels
             price_level_entries,
         );
 
@@ -764,6 +766,8 @@ mod tests {
             }},
             "priceLevelSchedule": {{
                 "timeAnchor": "{}",
+                "priceScheduleId": 1,
+                "numberOfPriceLevels": 3,
                 "priceLevelScheduleEntries": [
                     {{ "duration": 3600, "priceLevel": 1 }},
                     {{ "duration": 7200, "priceLevel": 2 }}
