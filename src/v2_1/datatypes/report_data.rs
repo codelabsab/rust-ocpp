@@ -11,23 +11,27 @@ use super::{
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct ReportDataType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Required. Component for which a report of Variable is requested.
+    #[validate(nested)]
     pub component: ComponentType,
 
     /// Required. Variable for which a report is requested.
+    #[validate(nested)]
     pub variable: VariableType,
 
     /// Required. List of variable attribute types and values.
-    #[validate(length(min = 1, max = 4))]
+    #[validate(length(min = 1, max = 4), nested)]
     pub variable_attribute: Vec<VariableAttributeType>,
 
     /// Optional. Fixed read-only parameters of the variable.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub variable_characteristics: Option<VariableCharacteristicsType>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl ReportDataType {
