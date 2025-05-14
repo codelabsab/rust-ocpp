@@ -431,115 +431,168 @@ mod tests {
         assert_eq!(params.energy_amount(), None);
         assert_eq!(params.custom_data(), None);
     }
-    
+
     #[test]
     fn test_basic_validation() {
         // Valid parameters - should pass validation
         let params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125));
-        assert!(params.validate().is_ok(), "Valid DC charging parameters should pass validation");
-        
+        assert!(
+            params.validate().is_ok(),
+            "Valid DC charging parameters should pass validation"
+        );
+
         // Add optional fields - should still pass validation
-        let params_with_optionals = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125))
-            .with_max_power(Decimal::from(50000))
-            .with_energy_capacity(Decimal::from(75000))
-            .with_energy_amount(Decimal::from(20000));
-        assert!(params_with_optionals.validate().is_ok(), 
-                "DC charging parameters with optional fields should pass validation");
+        let params_with_optionals =
+            DCChargingParametersType::new(Decimal::from(500), Decimal::from(125))
+                .with_max_power(Decimal::from(50000))
+                .with_energy_capacity(Decimal::from(75000))
+                .with_energy_amount(Decimal::from(20000));
+        assert!(
+            params_with_optionals.validate().is_ok(),
+            "DC charging parameters with optional fields should pass validation"
+        );
     }
-    
+
     #[test]
     fn test_state_of_charge_validation() {
         let mut params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125));
-        
+
         // Valid state of charge values (0-100)
         params.state_of_charge = Some(0);
-        assert!(params.validate().is_ok(), "State of charge = 0 should be valid");
-        
+        assert!(
+            params.validate().is_ok(),
+            "State of charge = 0 should be valid"
+        );
+
         params.state_of_charge = Some(50);
-        assert!(params.validate().is_ok(), "State of charge = 50 should be valid");
-        
+        assert!(
+            params.validate().is_ok(),
+            "State of charge = 50 should be valid"
+        );
+
         params.state_of_charge = Some(100);
-        assert!(params.validate().is_ok(), "State of charge = 100 should be valid");
-        
+        assert!(
+            params.validate().is_ok(),
+            "State of charge = 100 should be valid"
+        );
+
         // Invalid state of charge values (outside 0-100 range)
         params.state_of_charge = Some(-1);
-        assert!(params.validate().is_err(), "State of charge = -1 should be invalid");
+        assert!(
+            params.validate().is_err(),
+            "State of charge = -1 should be invalid"
+        );
         let error = params.validate().unwrap_err();
-        assert!(error.to_string().contains("state_of_charge"), 
-                "Error should mention state_of_charge: {}", error);
-        
+        assert!(
+            error.to_string().contains("state_of_charge"),
+            "Error should mention state_of_charge: {}",
+            error
+        );
+
         params.state_of_charge = Some(101);
-        assert!(params.validate().is_err(), "State of charge = 101 should be invalid");
+        assert!(
+            params.validate().is_err(),
+            "State of charge = 101 should be invalid"
+        );
         let error = params.validate().unwrap_err();
-        assert!(error.to_string().contains("state_of_charge"), 
-                "Error should mention state_of_charge: {}", error);
+        assert!(
+            error.to_string().contains("state_of_charge"),
+            "Error should mention state_of_charge: {}",
+            error
+        );
     }
-    
+
     #[test]
     fn test_full_soc_validation() {
         let mut params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125));
-        
+
         // Valid full_so_c values (0-100)
         params.full_so_c = Some(0);
         assert!(params.validate().is_ok(), "full_so_c = 0 should be valid");
-        
+
         params.full_so_c = Some(80);
         assert!(params.validate().is_ok(), "full_so_c = 80 should be valid");
-        
+
         params.full_so_c = Some(100);
         assert!(params.validate().is_ok(), "full_so_c = 100 should be valid");
-        
+
         // Invalid full_so_c values (outside 0-100 range)
         params.full_so_c = Some(-1);
-        assert!(params.validate().is_err(), "full_so_c = -1 should be invalid");
+        assert!(
+            params.validate().is_err(),
+            "full_so_c = -1 should be invalid"
+        );
         let error = params.validate().unwrap_err();
-        assert!(error.to_string().contains("full_so_c"), 
-                "Error should mention full_so_c: {}", error);
-        
+        assert!(
+            error.to_string().contains("full_so_c"),
+            "Error should mention full_so_c: {}",
+            error
+        );
+
         params.full_so_c = Some(101);
-        assert!(params.validate().is_err(), "full_so_c = 101 should be invalid");
+        assert!(
+            params.validate().is_err(),
+            "full_so_c = 101 should be invalid"
+        );
         let error = params.validate().unwrap_err();
-        assert!(error.to_string().contains("full_so_c"), 
-                "Error should mention full_so_c: {}", error);
+        assert!(
+            error.to_string().contains("full_so_c"),
+            "Error should mention full_so_c: {}",
+            error
+        );
     }
-    
+
     #[test]
     fn test_custom_data_validation() {
         // Create custom data with invalid vendor_id (too long)
         let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
         let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
-        
+
         let params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125))
             .with_custom_data(invalid_custom_data);
-        
+
         // Validation should fail due to invalid custom_data
         let validation_result = params.validate();
-        assert!(validation_result.is_err(), "Invalid custom_data should cause validation failure");
+        assert!(
+            validation_result.is_err(),
+            "Invalid custom_data should cause validation failure"
+        );
         let error = validation_result.unwrap_err();
-        assert!(error.to_string().contains("custom_data"), 
-                "Error should mention custom_data: {}", error);
+        assert!(
+            error.to_string().contains("custom_data"),
+            "Error should mention custom_data: {}",
+            error
+        );
     }
-    
+
     #[test]
     fn test_combined_validation() {
         // Test with multiple validation issues
         let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
         let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
-        
+
         let mut params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125))
             .with_custom_data(invalid_custom_data);
-        
+
         // Add invalid state_of_charge and full_so_c
         params.state_of_charge = Some(101);
         params.full_so_c = Some(101);
-        
+
         // Validation should fail
         let validation_result = params.validate();
-        assert!(validation_result.is_err(), "Multiple invalid fields should cause validation failure");
-        
+        assert!(
+            validation_result.is_err(),
+            "Multiple invalid fields should cause validation failure"
+        );
+
         // Error message should contain all validation failures
         let error = validation_result.unwrap_err().to_string();
-        assert!(error.contains("custom_data") || error.contains("state_of_charge") || error.contains("full_so_c"),
-                "Error should mention at least one invalid field: {}", error);
+        assert!(
+            error.contains("custom_data")
+                || error.contains("state_of_charge")
+                || error.contains("full_so_c"),
+            "Error should mention at least one invalid field: {}",
+            error
+        );
     }
 }

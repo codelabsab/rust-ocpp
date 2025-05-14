@@ -2,9 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use super::{
-    component::ComponentType, 
-    custom_data::CustomDataType, 
-    variable::VariableType,
+    component::ComponentType, custom_data::CustomDataType, variable::VariableType,
     variable_attribute::VariableAttributeType,
     variable_characteristics::VariableCharacteristicsType,
 };
@@ -45,9 +43,9 @@ impl ReportDataType {
     ///
     /// A new instance of `ReportDataType` with optional fields set to `None`
     pub fn new(
-        component: ComponentType, 
-        variable: VariableType, 
-        variable_attribute: Vec<VariableAttributeType>
+        component: ComponentType,
+        variable: VariableType,
+        variable_attribute: Vec<VariableAttributeType>,
     ) -> Self {
         Self {
             component,
@@ -81,7 +79,10 @@ impl ReportDataType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_variable_characteristics(mut self, variable_characteristics: VariableCharacteristicsType) -> Self {
+    pub fn with_variable_characteristics(
+        mut self,
+        variable_characteristics: VariableCharacteristicsType,
+    ) -> Self {
         self.variable_characteristics = Some(variable_characteristics);
         self
     }
@@ -150,7 +151,10 @@ impl ReportDataType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_variable_attribute(&mut self, variable_attribute: Vec<VariableAttributeType>) -> &mut Self {
+    pub fn set_variable_attribute(
+        &mut self,
+        variable_attribute: Vec<VariableAttributeType>,
+    ) -> &mut Self {
         self.variable_attribute = variable_attribute;
         self
     }
@@ -173,7 +177,10 @@ impl ReportDataType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_variable_characteristics(&mut self, variable_characteristics: Option<VariableCharacteristicsType>) -> &mut Self {
+    pub fn set_variable_characteristics(
+        &mut self,
+        variable_characteristics: Option<VariableCharacteristicsType>,
+    ) -> &mut Self {
         self.variable_characteristics = variable_characteristics;
         self
     }
@@ -205,29 +212,32 @@ impl ReportDataType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::v2_1::enumerations::MutabilityEnumType;
     use crate::v2_1::datatypes::variable_characteristics::DataEnumType;
+    use crate::v2_1::enumerations::MutabilityEnumType;
 
     #[test]
     fn test_new_report_data() {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
         let attribute = VariableAttributeType::new(
-            "MaxValue".to_string(), 
+            "MaxValue".to_string(),
             "100".to_string(),
             MutabilityEnumType::ReadOnly,
         );
         let variable_attributes = vec![attribute];
 
         let report_data = ReportDataType::new(
-            component.clone(), 
+            component.clone(),
             variable.clone(),
             variable_attributes.clone(),
         );
 
         assert_eq!(report_data.component(), &component);
         assert_eq!(report_data.variable(), &variable);
-        assert_eq!(report_data.variable_attribute(), variable_attributes.as_slice());
+        assert_eq!(
+            report_data.variable_attribute(),
+            variable_attributes.as_slice()
+        );
         assert_eq!(report_data.custom_data(), None);
         assert_eq!(report_data.variable_characteristics(), None);
     }
@@ -238,7 +248,7 @@ mod tests {
         let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
         let attribute = VariableAttributeType::new(
-            "MaxValue".to_string(), 
+            "MaxValue".to_string(),
             "100".to_string(),
             MutabilityEnumType::ReadOnly,
         );
@@ -252,18 +262,24 @@ mod tests {
         );
 
         let report_data = ReportDataType::new(
-            component.clone(), 
+            component.clone(),
             variable.clone(),
             variable_attributes.clone(),
         )
-            .with_custom_data(custom_data.clone())
-            .with_variable_characteristics(variable_characteristics.clone());
+        .with_custom_data(custom_data.clone())
+        .with_variable_characteristics(variable_characteristics.clone());
 
         assert_eq!(report_data.component(), &component);
         assert_eq!(report_data.variable(), &variable);
-        assert_eq!(report_data.variable_attribute(), variable_attributes.as_slice());
+        assert_eq!(
+            report_data.variable_attribute(),
+            variable_attributes.as_slice()
+        );
         assert_eq!(report_data.custom_data(), Some(&custom_data));
-        assert_eq!(report_data.variable_characteristics(), Some(&variable_characteristics));
+        assert_eq!(
+            report_data.variable_characteristics(),
+            Some(&variable_characteristics)
+        );
     }
 
     #[test]
@@ -271,21 +287,21 @@ mod tests {
         let component1 = ComponentType::new("Connector".to_string());
         let variable1 = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
         let attribute1 = VariableAttributeType::new(
-            "MaxValue".to_string(), 
+            "MaxValue".to_string(),
             "100".to_string(),
             MutabilityEnumType::ReadOnly,
         );
         let variable_attributes1 = vec![attribute1];
-        
+
         let component2 = ComponentType::new("Meter".to_string());
         let variable2 = VariableType::new("VoltageLimit".to_string(), "Secondary".to_string());
         let attribute2 = VariableAttributeType::new(
-            "MinValue".to_string(), 
+            "MinValue".to_string(),
             "50".to_string(),
             MutabilityEnumType::ReadWrite,
         );
         let variable_attributes2 = vec![attribute2];
-        
+
         let custom_data = CustomDataType::new("VendorX".to_string());
         let variable_characteristics = VariableCharacteristicsType::new(
             "Volt".to_string(),
@@ -295,11 +311,7 @@ mod tests {
             true,
         );
 
-        let mut report_data = ReportDataType::new(
-            component1, 
-            variable1,
-            variable_attributes1,
-        );
+        let mut report_data = ReportDataType::new(component1, variable1, variable_attributes1);
 
         report_data
             .set_component(component2.clone())
@@ -310,9 +322,15 @@ mod tests {
 
         assert_eq!(report_data.component(), &component2);
         assert_eq!(report_data.variable(), &variable2);
-        assert_eq!(report_data.variable_attribute(), variable_attributes2.as_slice());
+        assert_eq!(
+            report_data.variable_attribute(),
+            variable_attributes2.as_slice()
+        );
         assert_eq!(report_data.custom_data(), Some(&custom_data));
-        assert_eq!(report_data.variable_characteristics(), Some(&variable_characteristics));
+        assert_eq!(
+            report_data.variable_characteristics(),
+            Some(&variable_characteristics)
+        );
 
         // Test clearing optional fields
         report_data
