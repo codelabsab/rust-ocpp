@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{custom_data::CustomDataType, sales_tariff_entry::SalesTariffEntryType};
+use super::{
+    custom_data::CustomDataType, 
+    sales_tariff_entry::SalesTariffEntryType
+};
 
 /// Sales tariff structure defining pricing information.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -21,11 +24,12 @@ pub struct SalesTariffType {
     pub num_e_price_levels: Option<i32>,
 
     /// Required. List of sales tariff entries.
-    #[validate(length(min = 1, max = 1024))]
+    #[validate(length(min = 1, max = 1024), nested)]
     pub sales_tariff_entry: Vec<SalesTariffEntryType>,
 
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -214,11 +218,13 @@ impl SalesTariffType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use super::super::relative_time_interval::RelativeTimeIntervalType;
 
     #[test]
     fn test_new_sales_tariff() {
         let id = "tariff_1".to_string();
-        let entry = SalesTariffEntryType::new(1);
+        let interval = RelativeTimeIntervalType::new_default();
+        let entry = SalesTariffEntryType::new(interval);
         let sales_tariff = SalesTariffType::new(id.clone(), vec![entry.clone()]);
 
         assert_eq!(sales_tariff.id(), id);
@@ -232,7 +238,8 @@ mod tests {
     #[test]
     fn test_with_methods() {
         let id = "tariff_1".to_string();
-        let entry = SalesTariffEntryType::new(1);
+        let interval = RelativeTimeIntervalType::new_default();
+        let entry = SalesTariffEntryType::new(interval);
         let description = "Peak Hours Tariff".to_string();
         let num_levels = 3;
         let custom_data = CustomDataType {
@@ -259,11 +266,13 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let id1 = "tariff_1".to_string();
-        let entry1 = SalesTariffEntryType::new(1);
+        let interval1 = RelativeTimeIntervalType::new_default();
+        let entry1 = SalesTariffEntryType::new(interval1);
         let mut sales_tariff = SalesTariffType::new(id1, vec![entry1]);
 
         let id2 = "tariff_2".to_string();
-        let entry2 = SalesTariffEntryType::new(2);
+        let interval2 = RelativeTimeIntervalType::new_default();
+        let entry2 = SalesTariffEntryType::new(interval2);
         let description = "Off-peak Hours Tariff".to_string();
         let num_levels = 5;
         let custom_data = CustomDataType {

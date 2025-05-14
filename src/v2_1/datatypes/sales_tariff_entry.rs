@@ -10,43 +10,30 @@ use super::{
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SalesTariffEntryType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
-    /// Required. Time and date at which the tariff becomes valid.
+    /// Time and date at which the tariff becomes valid.
     pub relative_time_interval: RelativeTimeIntervalType,
 
-    /// Optional. Consumption cost per time interval.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub consumption_cost: Option<Vec<ConsumptionCostType>>,
-
-    /// Optional. A human readable tariff description.
+    /// Defines the price level of this SalesTariffEntry (referring to NumEPriceLevels).
+    /// Small values for the EPriceLevel represent a cheaper TariffEntry.
+    /// Large values for the EPriceLevel represent a more expensive TariffEntry.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(range(min = 0))]
     pub e_price_level: Option<i32>,
+
+    /// Consumption cost per time interval.
+    /// When present, must contain at least 1 and at most 3 items.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 1, max = 3))]
+    pub consumption_cost: Option<Vec<ConsumptionCostType>>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl SalesTariffEntryType {
     /// Creates a new `SalesTariffEntryType` with required fields.
-    ///
-    /// # Arguments
-    ///
-    /// * `e_price_level` - A human readable tariff description
-    ///
-    /// # Returns
-    ///
-    /// A new instance of `SalesTariffEntryType` with optional fields set to `None`
-    pub fn new(e_price_level: i32) -> Self {
-        Self {
-            custom_data: None,
-            relative_time_interval: RelativeTimeIntervalType::new_default(),
-            consumption_cost: None,
-            e_price_level: Some(e_price_level),
-        }
-    }
-
-    /// Creates a new `SalesTariffEntryType` with a specific relative time interval.
     ///
     /// # Arguments
     ///
@@ -55,13 +42,42 @@ impl SalesTariffEntryType {
     /// # Returns
     ///
     /// A new instance of `SalesTariffEntryType` with optional fields set to `None`
-    pub fn new_with_interval(relative_time_interval: RelativeTimeIntervalType) -> Self {
+    pub fn new(relative_time_interval: RelativeTimeIntervalType) -> Self {
         Self {
-            custom_data: None,
             relative_time_interval,
-            consumption_cost: None,
             e_price_level: None,
+            consumption_cost: None,
+            custom_data: None,
         }
+    }
+
+    /// Sets the price level.
+    ///
+    /// # Arguments
+    ///
+    /// * `e_price_level` - Defines the price level of this SalesTariffEntry.
+    ///   Small values represent a cheaper TariffEntry, large values represent a more expensive TariffEntry.
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_e_price_level(mut self, e_price_level: i32) -> Self {
+        self.e_price_level = Some(e_price_level);
+        self
+    }
+
+    /// Sets the consumption cost.
+    ///
+    /// # Arguments
+    ///
+    /// * `consumption_cost` - Consumption cost per time interval (1-3 items)
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_consumption_cost(mut self, consumption_cost: Vec<ConsumptionCostType>) -> Self {
+        self.consumption_cost = Some(consumption_cost);
+        self
     }
 
     /// Sets the custom data.
@@ -75,20 +91,6 @@ impl SalesTariffEntryType {
     /// Self reference for method chaining
     pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
         self.custom_data = Some(custom_data);
-        self
-    }
-
-    /// Sets the consumption cost.
-    ///
-    /// # Arguments
-    ///
-    /// * `consumption_cost` - Consumption cost per time interval
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_consumption_cost(mut self, consumption_cost: Vec<ConsumptionCostType>) -> Self {
-        self.consumption_cost = Some(consumption_cost);
         self
     }
 
@@ -118,6 +120,29 @@ impl SalesTariffEntryType {
         self
     }
 
+    /// Gets the price level.
+    ///
+    /// # Returns
+    ///
+    /// An optional price level value
+    pub fn e_price_level(&self) -> Option<i32> {
+        self.e_price_level
+    }
+
+    /// Sets the price level.
+    ///
+    /// # Arguments
+    ///
+    /// * `e_price_level` - Defines the price level of this SalesTariffEntry, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_e_price_level(&mut self, e_price_level: Option<i32>) -> &mut Self {
+        self.e_price_level = e_price_level;
+        self
+    }
+
     /// Gets the consumption cost.
     ///
     /// # Returns
@@ -131,7 +156,7 @@ impl SalesTariffEntryType {
     ///
     /// # Arguments
     ///
-    /// * `consumption_cost` - Consumption cost per time interval, or None to clear
+    /// * `consumption_cost` - Consumption cost per time interval (1-3 items), or None to clear
     ///
     /// # Returns
     ///
@@ -141,29 +166,6 @@ impl SalesTariffEntryType {
         consumption_cost: Option<Vec<ConsumptionCostType>>,
     ) -> &mut Self {
         self.consumption_cost = consumption_cost;
-        self
-    }
-
-    /// Gets the price level.
-    ///
-    /// # Returns
-    ///
-    /// An optional human readable tariff description
-    pub fn e_price_level(&self) -> Option<i32> {
-        self.e_price_level
-    }
-
-    /// Sets the price level.
-    ///
-    /// # Arguments
-    ///
-    /// * `e_price_level` - A human readable tariff description, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_e_price_level(&mut self, e_price_level: Option<i32>) -> &mut Self {
-        self.e_price_level = e_price_level;
         self
     }
 
@@ -189,6 +191,15 @@ impl SalesTariffEntryType {
         self.custom_data = custom_data;
         self
     }
+
+    /// Validates this instance according to the OCPP 2.1 specification.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` if the instance is valid, otherwise an error
+    pub fn validate(&self) -> Result<(), validator::ValidationErrors> {
+        Validate::validate(self)
+    }
 }
 
 #[cfg(test)]
@@ -200,18 +211,8 @@ mod tests {
 
     #[test]
     fn test_new_sales_tariff_entry() {
-        let price_level = 3;
-        let entry = SalesTariffEntryType::new(price_level);
-
-        assert_eq!(entry.e_price_level(), Some(price_level));
-        assert_eq!(entry.consumption_cost(), None);
-        assert_eq!(entry.custom_data(), None);
-    }
-
-    #[test]
-    fn test_new_with_interval() {
         let interval = RelativeTimeIntervalType::new_default();
-        let entry = SalesTariffEntryType::new_with_interval(interval.clone());
+        let entry = SalesTariffEntryType::new(interval.clone());
 
         assert_eq!(entry.relative_time_interval(), &interval);
         assert_eq!(entry.e_price_level(), None);
@@ -221,18 +222,21 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
+        let interval = RelativeTimeIntervalType::new_default();
         let price_level = 3;
         let cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
-        let consumption_cost = vec![ConsumptionCostType::new(Decimal::new(100, 1), vec![cost])];
+        let consumption_cost = vec![ConsumptionCostType::new(Decimal::new(100, 1), vec![cost.clone()])];
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
         };
 
-        let entry = SalesTariffEntryType::new(price_level)
+        let entry = SalesTariffEntryType::new(interval.clone())
+            .with_e_price_level(price_level)
             .with_consumption_cost(consumption_cost.clone())
             .with_custom_data(custom_data.clone());
 
+        assert_eq!(entry.relative_time_interval(), &interval);
         assert_eq!(entry.e_price_level(), Some(price_level));
         assert_eq!(entry.consumption_cost().unwrap().len(), 1);
         assert_eq!(entry.custom_data(), Some(&custom_data));
@@ -240,26 +244,26 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let price_level1 = 3;
-        let mut entry = SalesTariffEntryType::new(price_level1);
+        let interval1 = RelativeTimeIntervalType::new_default();
+        let mut entry = SalesTariffEntryType::new(interval1.clone());
 
-        let interval = RelativeTimeIntervalType::new_default();
-        let price_level2 = 5;
+        let interval2 = RelativeTimeIntervalType::new(10, 0);
+        let price_level = 5;
         let cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
-        let consumption_cost = vec![ConsumptionCostType::new(Decimal::new(100, 1), vec![cost])];
+        let consumption_cost = vec![ConsumptionCostType::new(Decimal::new(100, 1), vec![cost.clone()])];
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
         };
 
         entry
-            .set_relative_time_interval(interval.clone())
-            .set_e_price_level(Some(price_level2))
+            .set_relative_time_interval(interval2.clone())
+            .set_e_price_level(Some(price_level))
             .set_consumption_cost(Some(consumption_cost.clone()))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(entry.relative_time_interval(), &interval);
-        assert_eq!(entry.e_price_level(), Some(price_level2));
+        assert_eq!(entry.relative_time_interval(), &interval2);
+        assert_eq!(entry.e_price_level(), Some(price_level));
         assert_eq!(entry.consumption_cost().unwrap().len(), 1);
         assert_eq!(entry.custom_data(), Some(&custom_data));
 
@@ -272,5 +276,43 @@ mod tests {
         assert_eq!(entry.e_price_level(), None);
         assert_eq!(entry.consumption_cost(), None);
         assert_eq!(entry.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // Valid entry
+        let interval = RelativeTimeIntervalType::new_default();
+        let cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
+        let consumption_cost = vec![ConsumptionCostType::new(Decimal::new(100, 1), vec![cost.clone()])];
+        
+        let valid_entry = SalesTariffEntryType::new(interval.clone())
+            .with_e_price_level(3)
+            .with_consumption_cost(consumption_cost.clone());
+        
+        assert!(valid_entry.validate().is_ok());
+        
+        // Test with negative price level (should fail validation)
+        let mut invalid_entry = valid_entry.clone();
+        invalid_entry.e_price_level = Some(-1);
+        
+        assert!(invalid_entry.validate().is_err());
+        
+        // Test with empty consumption cost array (should fail validation)
+        let mut invalid_entry = valid_entry.clone();
+        invalid_entry.consumption_cost = Some(vec![]);
+        
+        assert!(invalid_entry.validate().is_err());
+        
+        // Test with too many consumption cost items (should fail validation)
+        let mut invalid_entry = valid_entry.clone();
+        let cost_items = vec![
+            ConsumptionCostType::new(Decimal::new(100, 1), vec![cost.clone()]),
+            ConsumptionCostType::new(Decimal::new(200, 1), vec![cost.clone()]),
+            ConsumptionCostType::new(Decimal::new(300, 1), vec![cost.clone()]),
+            ConsumptionCostType::new(Decimal::new(400, 1), vec![cost.clone()]),
+        ];
+        invalid_entry.consumption_cost = Some(cost_items);
+        
+        assert!(invalid_entry.validate().is_err());
     }
 }
