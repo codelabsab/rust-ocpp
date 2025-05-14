@@ -8,10 +8,6 @@ use crate::v2_1::datatypes::rational_number::RationalNumberType;
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct PriceRuleType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// The duration of the parking fee period (in seconds).
     /// When the time enters into a ParkingFeePeriod, the ParkingFee will apply to the session.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -28,14 +24,22 @@ pub struct PriceRuleType {
     pub renewable_generation_percentage: Option<i32>,
 
     /// Required. Energy fee for this price rule.
+    #[validate(nested)]
     pub energy_fee: RationalNumberType,
 
     /// Parking fee for this price rule.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub parking_fee: Option<RationalNumberType>,
 
     /// Required. Start of the power range for this price rule.
+    #[validate(nested)]
     pub power_range_start: RationalNumberType,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl PriceRuleType {
