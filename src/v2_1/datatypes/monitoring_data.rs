@@ -10,18 +10,22 @@ use super::{
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct MonitoringDataType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Required. Component for which a variable is monitored.
+    #[validate(nested)]
     pub component: ComponentType,
 
     /// Required. Variable that is monitored.
+    #[validate(nested)]
     pub variable: VariableType,
 
     /// Required. The type of this monitor, e.g. a threshold, delta or periodic monitor.
+    #[validate(length(min = 1), nested)]
     pub variable_monitoring: Vec<VariableMonitoringType>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl MonitoringDataType {
@@ -57,7 +61,7 @@ impl MonitoringDataType {
     ///
     /// # Returns
     ///
-    /// Self reference for method chaining
+    /// Self for method chaining
     pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
         self.custom_data = Some(custom_data);
         self
@@ -80,7 +84,7 @@ impl MonitoringDataType {
     ///
     /// # Returns
     ///
-    /// Self reference for method chaining
+    /// Mutable reference to self for method chaining
     pub fn set_component(&mut self, component: ComponentType) -> &mut Self {
         self.component = component;
         self
@@ -103,7 +107,7 @@ impl MonitoringDataType {
     ///
     /// # Returns
     ///
-    /// Self reference for method chaining
+    /// Mutable reference to self for method chaining
     pub fn set_variable(&mut self, variable: VariableType) -> &mut Self {
         self.variable = variable;
         self
@@ -126,7 +130,7 @@ impl MonitoringDataType {
     ///
     /// # Returns
     ///
-    /// Self reference for method chaining
+    /// Mutable reference to self for method chaining
     pub fn set_variable_monitoring(
         &mut self,
         variable_monitoring: Vec<VariableMonitoringType>,
@@ -152,7 +156,7 @@ impl MonitoringDataType {
     ///
     /// # Returns
     ///
-    /// Self reference for method chaining
+    /// Mutable reference to self for method chaining
     pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
         self.custom_data = custom_data;
         self
@@ -163,6 +167,7 @@ impl MonitoringDataType {
 mod tests {
     use super::*;
     use crate::v2_1::enumerations::MonitorEnumType;
+    use validator::Validate;
 
     #[test]
     fn test_new_monitoring_data() {
@@ -195,10 +200,7 @@ mod tests {
             MonitorEnumType::UpperThreshold,
             80.0,
         )];
-        let custom_data = CustomDataType {
-            vendor_id: "VendorX".to_string(),
-            additional_properties: Default::default(),
-        };
+        let custom_data = CustomDataType::new("VendorX".to_string());
 
         let monitoring_data = MonitoringDataType::new(
             component.clone(),
@@ -229,10 +231,7 @@ mod tests {
             VariableMonitoringType::new(2, MonitorEnumType::LowerThreshold, 5.0),
             VariableMonitoringType::new(3, MonitorEnumType::UpperThreshold, 32.0),
         ];
-        let custom_data = CustomDataType {
-            vendor_id: "VendorX".to_string(),
-            additional_properties: Default::default(),
-        };
+        let custom_data = CustomDataType::new("VendorX".to_string());
 
         let mut monitoring_data =
             MonitoringDataType::new(component1, variable1, variable_monitoring1);
@@ -251,5 +250,65 @@ mod tests {
         // Test clearing optional fields
         monitoring_data.set_custom_data(None);
         assert_eq!(monitoring_data.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // 有效的MonitoringDataType实例
+        let component = ComponentType::new("Connector".to_string());
+        let variable = VariableType::new("Temperature".to_string(), "Outlet".to_string());
+        let variable_monitoring = vec![VariableMonitoringType::new(
+            1,
+            MonitorEnumType::UpperThreshold,
+            80.0,
+        )];
+
+        let valid_monitoring_data = MonitoringDataType::new(
+            component.clone(),
+            variable.clone(),
+            variable_monitoring.clone(),
+        );
+        assert!(valid_monitoring_data.validate().is_ok(), "有效的MonitoringDataType应通过验证");
+
+        // 测试空的variable_monitoring数组（应该失败，因为最小长度为1）
+        let mut invalid_monitoring_data = valid_monitoring_data.clone();
+        invalid_monitoring_data.variable_monitoring = vec![];
+        assert!(
+            invalid_monitoring_data.validate().is_err(),
+            "空的variable_monitoring数组应验证失败"
+        );
+
+        // 测试嵌套验证 - 使用无效的ComponentType
+        let mut invalid_component = ComponentType::new("Connector".to_string());
+        invalid_component.name = "a".repeat(51); // 超过最大长度50
+
+        let mut monitoring_data_with_invalid_component = valid_monitoring_data.clone();
+        monitoring_data_with_invalid_component.component = invalid_component;
+        assert!(
+            monitoring_data_with_invalid_component.validate().is_err(),
+            "包含无效Component的MonitoringDataType应验证失败"
+        );
+
+        // 测试嵌套验证 - 使用无效的VariableType
+        let mut invalid_variable = VariableType::new("Temperature".to_string(), "Outlet".to_string());
+        invalid_variable.name = "a".repeat(51); // 超过最大长度50
+
+        let mut monitoring_data_with_invalid_variable = valid_monitoring_data.clone();
+        monitoring_data_with_invalid_variable.variable = invalid_variable;
+        assert!(
+            monitoring_data_with_invalid_variable.validate().is_err(),
+            "包含无效Variable的MonitoringDataType应验证失败"
+        );
+
+        // 测试嵌套验证 - 使用无效的CustomDataType
+        let too_long_vendor_id = "X".repeat(256); // 超过255字符限制
+        let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
+
+        let mut monitoring_data_with_invalid_custom_data = valid_monitoring_data.clone();
+        monitoring_data_with_invalid_custom_data.custom_data = Some(invalid_custom_data);
+        assert!(
+            monitoring_data_with_invalid_custom_data.validate().is_err(),
+            "包含无效CustomData的MonitoringDataType应验证失败"
+        );
     }
 }
