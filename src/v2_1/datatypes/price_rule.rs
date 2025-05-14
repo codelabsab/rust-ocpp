@@ -2,9 +2,9 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use super::custom_data::CustomDataType;
-use crate::v2_1::enumerations::EnergyTransferModeEnumType;
+use crate::v2_1::datatypes::rational_number::RationalNumberType;
 
-/// Rule that describes the price of charging.
+/// Part of ISO 15118-20 price schedule.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct PriceRuleType {
@@ -12,32 +12,30 @@ pub struct PriceRuleType {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomDataType>,
 
-    /// Required. Mode of energy transfer for which this price rule applies.
-    pub energy_transfer_mode: EnergyTransferModeEnumType,
+    /// The duration of the parking fee period (in seconds).
+    /// When the time enters into a ParkingFeePeriod, the ParkingFee will apply to the session.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parking_fee_period: Option<i32>,
 
-    /// Required. Price per energy unit, excluding taxes, in the specified currency.
-    pub energy_fee: f64,
-
-    /// Required. Price per time unit, excluding taxes, in the specified currency.
-    pub time_fee: f64,
-
-    /// Required. Price for parking time, excluding taxes, in the specified currency.
-    /// Only applicable when the EV is not charging.
-    pub parking_fee: f64,
-
-    /// Required. Minimum duration in seconds that a charging session SHALL last to benefit from this price rule.
+    /// Number of grams of CO2 per kWh.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(range(min = 0))]
-    pub minimum_duration: i32,
+    pub carbon_dioxide_emission: Option<i32>,
 
-    /// Required. Maximum duration in seconds that a charging session can last under this price rule.
-    #[validate(range(min = 0))]
-    pub maximum_duration: i32,
+    /// Percentage of the power that is created by renewable resources.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(range(min = 0, max = 100))]
+    pub renewable_generation_percentage: Option<i32>,
 
-    /// Required. Maximum power in kW that can be delivered under this price rule.
-    pub maximum_power: f64,
+    /// Required. Energy fee for this price rule.
+    pub energy_fee: RationalNumberType,
 
-    /// Required. Minimum power in kW that must be delivered under this price rule.
-    pub minimum_power: f64,
+    /// Parking fee for this price rule.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parking_fee: Option<RationalNumberType>,
+
+    /// Required. Start of the power range for this price rule.
+    pub power_range_start: RationalNumberType,
 }
 
 impl PriceRuleType {
@@ -45,38 +43,21 @@ impl PriceRuleType {
     ///
     /// # Arguments
     ///
-    /// * `energy_transfer_mode` - Mode of energy transfer for which this price rule applies
-    /// * `energy_fee` - Price per energy unit, excluding taxes
-    /// * `time_fee` - Price per time unit, excluding taxes
-    /// * `parking_fee` - Price for parking time, excluding taxes
-    /// * `minimum_duration` - Minimum duration in seconds that a charging session must last
-    /// * `maximum_duration` - Maximum duration in seconds that a charging session can last
-    /// * `maximum_power` - Maximum power in kW that can be delivered
-    /// * `minimum_power` - Minimum power in kW that must be delivered
+    /// * `energy_fee` - Energy fee for this price rule
+    /// * `power_range_start` - Start of the power range for this price rule
     ///
     /// # Returns
     ///
     /// A new instance of `PriceRuleType` with optional fields set to `None`
-    pub fn new(
-        energy_transfer_mode: EnergyTransferModeEnumType,
-        energy_fee: f64,
-        time_fee: f64,
-        parking_fee: f64,
-        minimum_duration: i32,
-        maximum_duration: i32,
-        maximum_power: f64,
-        minimum_power: f64,
-    ) -> Self {
+    pub fn new(energy_fee: RationalNumberType, power_range_start: RationalNumberType) -> Self {
         Self {
             custom_data: None,
-            energy_transfer_mode,
+            parking_fee_period: None,
+            carbon_dioxide_emission: None,
+            renewable_generation_percentage: None,
             energy_fee,
-            time_fee,
-            parking_fee,
-            minimum_duration,
-            maximum_duration,
-            maximum_power,
-            minimum_power,
+            parking_fee: None,
+            power_range_start,
         }
     }
 
@@ -117,29 +98,72 @@ impl PriceRuleType {
         self
     }
 
-    /// Gets the energy transfer mode.
+    /// Gets the parking fee period.
     ///
     /// # Returns
     ///
-    /// The mode of energy transfer for which this price rule applies
-    pub fn energy_transfer_mode(&self) -> EnergyTransferModeEnumType {
-        self.energy_transfer_mode.clone()
+    /// The duration of the parking fee period in seconds, if set
+    pub fn parking_fee_period(&self) -> Option<i32> {
+        self.parking_fee_period
     }
 
-    /// Sets the energy transfer mode.
+    /// Sets the parking fee period.
     ///
     /// # Arguments
     ///
-    /// * `energy_transfer_mode` - Mode of energy transfer for which this price rule applies
+    /// * `parking_fee_period` - Duration of the parking fee period in seconds, or None to clear
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_energy_transfer_mode(
-        &mut self,
-        energy_transfer_mode: EnergyTransferModeEnumType,
-    ) -> &mut Self {
-        self.energy_transfer_mode = energy_transfer_mode;
+    pub fn set_parking_fee_period(&mut self, parking_fee_period: Option<i32>) -> &mut Self {
+        self.parking_fee_period = parking_fee_period;
+        self
+    }
+
+    /// Gets the carbon dioxide emission.
+    ///
+    /// # Returns
+    ///
+    /// The number of grams of CO2 per kWh, if set
+    pub fn carbon_dioxide_emission(&self) -> Option<i32> {
+        self.carbon_dioxide_emission
+    }
+
+    /// Sets the carbon dioxide emission.
+    ///
+    /// # Arguments
+    ///
+    /// * `carbon_dioxide_emission` - Number of grams of CO2 per kWh, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_carbon_dioxide_emission(&mut self, carbon_dioxide_emission: Option<i32>) -> &mut Self {
+        self.carbon_dioxide_emission = carbon_dioxide_emission;
+        self
+    }
+
+    /// Gets the renewable generation percentage.
+    ///
+    /// # Returns
+    ///
+    /// The percentage of power from renewable resources, if set
+    pub fn renewable_generation_percentage(&self) -> Option<i32> {
+        self.renewable_generation_percentage
+    }
+
+    /// Sets the renewable generation percentage.
+    ///
+    /// # Arguments
+    ///
+    /// * `renewable_generation_percentage` - Percentage of power from renewable resources, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_renewable_generation_percentage(&mut self, renewable_generation_percentage: Option<i32>) -> &mut Self {
+        self.renewable_generation_percentage = renewable_generation_percentage;
         self
     }
 
@@ -147,45 +171,22 @@ impl PriceRuleType {
     ///
     /// # Returns
     ///
-    /// The price per energy unit, excluding taxes
-    pub fn energy_fee(&self) -> f64 {
-        self.energy_fee
+    /// The energy fee for this price rule
+    pub fn energy_fee(&self) -> &RationalNumberType {
+        &self.energy_fee
     }
 
     /// Sets the energy fee.
     ///
     /// # Arguments
     ///
-    /// * `energy_fee` - Price per energy unit, excluding taxes
+    /// * `energy_fee` - Energy fee for this price rule
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_energy_fee(&mut self, energy_fee: f64) -> &mut Self {
+    pub fn set_energy_fee(&mut self, energy_fee: RationalNumberType) -> &mut Self {
         self.energy_fee = energy_fee;
-        self
-    }
-
-    /// Gets the time fee.
-    ///
-    /// # Returns
-    ///
-    /// The price per time unit, excluding taxes
-    pub fn time_fee(&self) -> f64 {
-        self.time_fee
-    }
-
-    /// Sets the time fee.
-    ///
-    /// # Arguments
-    ///
-    /// * `time_fee` - Price per time unit, excluding taxes
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_time_fee(&mut self, time_fee: f64) -> &mut Self {
-        self.time_fee = time_fee;
         self
     }
 
@@ -193,114 +194,45 @@ impl PriceRuleType {
     ///
     /// # Returns
     ///
-    /// The price for parking time, excluding taxes
-    pub fn parking_fee(&self) -> f64 {
-        self.parking_fee
+    /// The parking fee for this price rule, if set
+    pub fn parking_fee(&self) -> Option<&RationalNumberType> {
+        self.parking_fee.as_ref()
     }
 
     /// Sets the parking fee.
     ///
     /// # Arguments
     ///
-    /// * `parking_fee` - Price for parking time, excluding taxes
+    /// * `parking_fee` - Parking fee for this price rule, or None to clear
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_parking_fee(&mut self, parking_fee: f64) -> &mut Self {
+    pub fn set_parking_fee(&mut self, parking_fee: Option<RationalNumberType>) -> &mut Self {
         self.parking_fee = parking_fee;
         self
     }
 
-    /// Gets the minimum duration.
+    /// Gets the power range start.
     ///
     /// # Returns
     ///
-    /// The minimum duration in seconds that a charging session must last
-    pub fn minimum_duration(&self) -> i32 {
-        self.minimum_duration
+    /// The start of the power range for this price rule
+    pub fn power_range_start(&self) -> &RationalNumberType {
+        &self.power_range_start
     }
 
-    /// Sets the minimum duration.
+    /// Sets the power range start.
     ///
     /// # Arguments
     ///
-    /// * `minimum_duration` - Minimum duration in seconds that a charging session must last
+    /// * `power_range_start` - Start of the power range for this price rule
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_minimum_duration(&mut self, minimum_duration: i32) -> &mut Self {
-        self.minimum_duration = minimum_duration;
-        self
-    }
-
-    /// Gets the maximum duration.
-    ///
-    /// # Returns
-    ///
-    /// The maximum duration in seconds that a charging session can last
-    pub fn maximum_duration(&self) -> i32 {
-        self.maximum_duration
-    }
-
-    /// Sets the maximum duration.
-    ///
-    /// # Arguments
-    ///
-    /// * `maximum_duration` - Maximum duration in seconds that a charging session can last
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_maximum_duration(&mut self, maximum_duration: i32) -> &mut Self {
-        self.maximum_duration = maximum_duration;
-        self
-    }
-
-    /// Gets the maximum power.
-    ///
-    /// # Returns
-    ///
-    /// The maximum power in kW that can be delivered
-    pub fn maximum_power(&self) -> f64 {
-        self.maximum_power
-    }
-
-    /// Sets the maximum power.
-    ///
-    /// # Arguments
-    ///
-    /// * `maximum_power` - Maximum power in kW that can be delivered
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_maximum_power(&mut self, maximum_power: f64) -> &mut Self {
-        self.maximum_power = maximum_power;
-        self
-    }
-
-    /// Gets the minimum power.
-    ///
-    /// # Returns
-    ///
-    /// The minimum power in kW that must be delivered
-    pub fn minimum_power(&self) -> f64 {
-        self.minimum_power
-    }
-
-    /// Sets the minimum power.
-    ///
-    /// # Arguments
-    ///
-    /// * `minimum_power` - Minimum power in kW that must be delivered
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_minimum_power(&mut self, minimum_power: f64) -> &mut Self {
-        self.minimum_power = minimum_power;
+    pub fn set_power_range_start(&mut self, power_range_start: RationalNumberType) -> &mut Self {
+        self.power_range_start = power_range_start;
         self
     }
 }
@@ -311,134 +243,89 @@ mod tests {
 
     #[test]
     fn test_new_price_rule() {
-        let energy_transfer_mode = EnergyTransferModeEnumType::DC;
-        let energy_fee = 0.25;
-        let time_fee = 0.10;
-        let parking_fee = 0.05;
-        let minimum_duration = 300;
-        let maximum_duration = 7200;
-        let maximum_power = 50.0;
-        let minimum_power = 10.0;
+        let energy_fee = RationalNumberType::new(0, 10);
+        let power_range_start = RationalNumberType::new(0, 0);
 
-        let price_rule = PriceRuleType::new(
-            energy_transfer_mode.clone(),
-            energy_fee,
-            time_fee,
-            parking_fee,
-            minimum_duration,
-            maximum_duration,
-            maximum_power,
-            minimum_power,
-        );
+        let price_rule = PriceRuleType::new(energy_fee.clone(), power_range_start.clone());
 
-        assert_eq!(price_rule.energy_transfer_mode(), energy_transfer_mode);
-        assert_eq!(price_rule.energy_fee(), energy_fee);
-        assert_eq!(price_rule.time_fee(), time_fee);
-        assert_eq!(price_rule.parking_fee(), parking_fee);
-        assert_eq!(price_rule.minimum_duration(), minimum_duration);
-        assert_eq!(price_rule.maximum_duration(), maximum_duration);
-        assert_eq!(price_rule.maximum_power(), maximum_power);
-        assert_eq!(price_rule.minimum_power(), minimum_power);
+        assert_eq!(price_rule.energy_fee().value(), energy_fee.value());
+        assert_eq!(price_rule.energy_fee().exponent(), energy_fee.exponent());
+        assert_eq!(price_rule.power_range_start().value(), power_range_start.value());
+        assert_eq!(price_rule.power_range_start().exponent(), power_range_start.exponent());
         assert_eq!(price_rule.custom_data(), None);
+        assert_eq!(price_rule.parking_fee_period(), None);
+        assert_eq!(price_rule.carbon_dioxide_emission(), None);
+        assert_eq!(price_rule.renewable_generation_percentage(), None);
+        assert_eq!(price_rule.parking_fee(), None);
     }
 
     #[test]
     fn test_with_custom_data() {
-        let energy_transfer_mode = EnergyTransferModeEnumType::DC;
-        let energy_fee = 0.25;
-        let time_fee = 0.10;
-        let parking_fee = 0.05;
-        let minimum_duration = 300;
-        let maximum_duration = 7200;
-        let maximum_power = 50.0;
-        let minimum_power = 10.0;
-
+        let energy_fee = RationalNumberType::new(0, 10);
+        let power_range_start = RationalNumberType::new(0, 0);
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
         };
 
-        let price_rule = PriceRuleType::new(
-            energy_transfer_mode.clone(),
-            energy_fee,
-            time_fee,
-            parking_fee,
-            minimum_duration,
-            maximum_duration,
-            maximum_power,
-            minimum_power,
-        )
-        .with_custom_data(custom_data.clone());
+        let price_rule = PriceRuleType::new(energy_fee.clone(), power_range_start.clone())
+            .with_custom_data(custom_data.clone());
 
-        assert_eq!(price_rule.energy_transfer_mode(), energy_transfer_mode);
-        assert_eq!(price_rule.energy_fee(), energy_fee);
-        assert_eq!(price_rule.time_fee(), time_fee);
-        assert_eq!(price_rule.parking_fee(), parking_fee);
-        assert_eq!(price_rule.minimum_duration(), minimum_duration);
-        assert_eq!(price_rule.maximum_duration(), maximum_duration);
-        assert_eq!(price_rule.maximum_power(), maximum_power);
-        assert_eq!(price_rule.minimum_power(), minimum_power);
+        assert_eq!(price_rule.energy_fee().value(), energy_fee.value());
+        assert_eq!(price_rule.energy_fee().exponent(), energy_fee.exponent());
+        assert_eq!(price_rule.power_range_start().value(), power_range_start.value());
+        assert_eq!(price_rule.power_range_start().exponent(), power_range_start.exponent());
         assert_eq!(price_rule.custom_data(), Some(&custom_data));
     }
 
     #[test]
     fn test_setter_methods() {
-        let energy_transfer_mode1 = EnergyTransferModeEnumType::DC;
-        let energy_transfer_mode2 = EnergyTransferModeEnumType::ACSinglePhase;
-        let energy_fee1 = 0.25;
-        let energy_fee2 = 0.30;
-        let time_fee1 = 0.10;
-        let time_fee2 = 0.15;
-        let parking_fee1 = 0.05;
-        let parking_fee2 = 0.08;
-        let minimum_duration1 = 300;
-        let minimum_duration2 = 600;
-        let maximum_duration1 = 7200;
-        let maximum_duration2 = 10800;
-        let maximum_power1 = 50.0;
-        let maximum_power2 = 75.0;
-        let minimum_power1 = 10.0;
-        let minimum_power2 = 15.0;
-
+        let energy_fee1 = RationalNumberType::new(0, 10);
+        let energy_fee2 = RationalNumberType::new(0, 15);
+        let power_range_start1 = RationalNumberType::new(0, 0);
+        let power_range_start2 = RationalNumberType::new(0, 5);
+        let parking_fee = RationalNumberType::new(0, 2);
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
         };
+        let parking_fee_period = 3600;
+        let carbon_dioxide_emission = 50;
+        let renewable_generation_percentage = 75;
 
-        let mut price_rule = PriceRuleType::new(
-            energy_transfer_mode1,
-            energy_fee1,
-            time_fee1,
-            parking_fee1,
-            minimum_duration1,
-            maximum_duration1,
-            maximum_power1,
-            minimum_power1,
-        );
+        let mut price_rule = PriceRuleType::new(energy_fee1.clone(), power_range_start1.clone());
 
         price_rule
-            .set_energy_transfer_mode(energy_transfer_mode2.clone())
-            .set_energy_fee(energy_fee2)
-            .set_time_fee(time_fee2)
-            .set_parking_fee(parking_fee2)
-            .set_minimum_duration(minimum_duration2)
-            .set_maximum_duration(maximum_duration2)
-            .set_maximum_power(maximum_power2)
-            .set_minimum_power(minimum_power2)
-            .set_custom_data(Some(custom_data.clone()));
+            .set_custom_data(Some(custom_data.clone()))
+            .set_parking_fee_period(Some(parking_fee_period))
+            .set_carbon_dioxide_emission(Some(carbon_dioxide_emission))
+            .set_renewable_generation_percentage(Some(renewable_generation_percentage))
+            .set_energy_fee(energy_fee2.clone())
+            .set_parking_fee(Some(parking_fee.clone()))
+            .set_power_range_start(power_range_start2.clone());
 
-        assert_eq!(price_rule.energy_transfer_mode(), energy_transfer_mode2);
-        assert_eq!(price_rule.energy_fee(), energy_fee2);
-        assert_eq!(price_rule.time_fee(), time_fee2);
-        assert_eq!(price_rule.parking_fee(), parking_fee2);
-        assert_eq!(price_rule.minimum_duration(), minimum_duration2);
-        assert_eq!(price_rule.maximum_duration(), maximum_duration2);
-        assert_eq!(price_rule.maximum_power(), maximum_power2);
-        assert_eq!(price_rule.minimum_power(), minimum_power2);
         assert_eq!(price_rule.custom_data(), Some(&custom_data));
+        assert_eq!(price_rule.parking_fee_period(), Some(parking_fee_period));
+        assert_eq!(price_rule.carbon_dioxide_emission(), Some(carbon_dioxide_emission));
+        assert_eq!(price_rule.renewable_generation_percentage(), Some(renewable_generation_percentage));
+        assert_eq!(price_rule.energy_fee().value(), energy_fee2.value());
+        assert_eq!(price_rule.energy_fee().exponent(), energy_fee2.exponent());
+        assert_eq!(price_rule.parking_fee().unwrap().value(), parking_fee.value());
+        assert_eq!(price_rule.parking_fee().unwrap().exponent(), parking_fee.exponent());
+        assert_eq!(price_rule.power_range_start().value(), power_range_start2.value());
+        assert_eq!(price_rule.power_range_start().exponent(), power_range_start2.exponent());
 
         // Test clearing optional fields
         price_rule.set_custom_data(None);
+        price_rule.set_parking_fee_period(None);
+        price_rule.set_carbon_dioxide_emission(None);
+        price_rule.set_renewable_generation_percentage(None);
+        price_rule.set_parking_fee(None);
+
         assert_eq!(price_rule.custom_data(), None);
+        assert_eq!(price_rule.parking_fee_period(), None);
+        assert_eq!(price_rule.carbon_dioxide_emission(), None);
+        assert_eq!(price_rule.renewable_generation_percentage(), None);
+        assert_eq!(price_rule.parking_fee(), None);
     }
 }
