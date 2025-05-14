@@ -285,7 +285,7 @@ impl ChargingNeedsType {
 mod tests {
     use super::*;
     use chrono::TimeZone;
-
+    use rust_decimal::Decimal;
     #[test]
     fn test_new_charging_needs() {
         let needs = ChargingNeedsType::new(EnergyTransferModeEnumType::DC);
@@ -305,7 +305,7 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
         let departure_time = Utc.with_ymd_and_hms(2023, 1, 1, 12, 0, 0).unwrap();
         let ac_params = ACChargingParametersType::new_from_f64(10000.0, 10.0, 32.0, 400.0);
-        let dc_params = DCChargingParametersType::new(400.0, 100.0);
+        let dc_params = DCChargingParametersType::new(Decimal::from(400), Decimal::from(100));
 
         let needs = ChargingNeedsType::new(EnergyTransferModeEnumType::ACThreePhase)
             .with_departure_time(departure_time)
@@ -328,7 +328,7 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
         let departure_time = Utc.with_ymd_and_hms(2023, 1, 1, 12, 0, 0).unwrap();
         let ac_params = ACChargingParametersType::new_from_f64(10000.0, 10.0, 32.0, 400.0);
-        let dc_params = DCChargingParametersType::new(400.0, 100.0);
+        let dc_params = DCChargingParametersType::new(Decimal::from(400), Decimal::from(100));
 
         let mut needs = ChargingNeedsType::new(EnergyTransferModeEnumType::ACSinglePhase);
 
@@ -373,7 +373,7 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
         let departure_time = Utc.with_ymd_and_hms(2023, 1, 1, 12, 0, 0).unwrap();
         let ac_params = ACChargingParametersType::new_from_f64(10000.0, 10.0, 32.0, 400.0);
-        let dc_params = DCChargingParametersType::new(400.0, 100.0);
+        let dc_params = DCChargingParametersType::new(Decimal::from(400), Decimal::from(100));
 
         let valid_needs_with_params =
             ChargingNeedsType::new(EnergyTransferModeEnumType::ACThreePhase)
@@ -399,7 +399,7 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string());
         let departure_time = Utc.with_ymd_and_hms(2023, 1, 1, 12, 0, 0).unwrap();
         let ac_params = ACChargingParametersType::new_from_f64(10000.0, 10.0, 32.0, 400.0);
-        let dc_params = DCChargingParametersType::new(400.0, 100.0);
+        let dc_params = DCChargingParametersType::new(Decimal::from(400), Decimal::from(100));
 
         let needs = ChargingNeedsType::new(EnergyTransferModeEnumType::ACThreePhase)
             .with_departure_time(departure_time)

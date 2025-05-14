@@ -1,7 +1,13 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{component::ComponentType, custom_data::CustomDataType, variable::VariableType};
+use super::{
+    component::ComponentType, 
+    custom_data::CustomDataType, 
+    variable::VariableType,
+    variable_attribute::VariableAttributeType,
+    variable_characteristics::VariableCharacteristicsType,
+};
 
 /// Class to report components, variables and variable attributes and characteristics.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -17,15 +23,13 @@ pub struct ReportDataType {
     /// Required. Variable for which a report is requested.
     pub variable: VariableType,
 
-    /// Optional. The actual value of the variable.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 2500))]
-    pub variable_value: Option<String>,
+    /// Required. List of variable attribute types and values.
+    #[validate(length(min = 1, max = 4))]
+    pub variable_attribute: Vec<VariableAttributeType>,
 
-    /// Optional. The attribute type for which a report of variable attribute value is requested.
+    /// Optional. Fixed read-only parameters of the variable.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 50))]
-    pub variable_attribute: Option<String>,
+    pub variable_characteristics: Option<VariableCharacteristicsType>,
 }
 
 impl ReportDataType {
@@ -35,17 +39,22 @@ impl ReportDataType {
     ///
     /// * `component` - Component for which a report of Variable is requested
     /// * `variable` - Variable for which a report is requested
+    /// * `variable_attribute` - List of variable attribute types and values
     ///
     /// # Returns
     ///
     /// A new instance of `ReportDataType` with optional fields set to `None`
-    pub fn new(component: ComponentType, variable: VariableType) -> Self {
+    pub fn new(
+        component: ComponentType, 
+        variable: VariableType, 
+        variable_attribute: Vec<VariableAttributeType>
+    ) -> Self {
         Self {
             component,
             variable,
+            variable_attribute,
+            variable_characteristics: None,
             custom_data: None,
-            variable_value: None,
-            variable_attribute: None,
         }
     }
 
@@ -63,31 +72,17 @@ impl ReportDataType {
         self
     }
 
-    /// Sets the variable value.
+    /// Sets the variable characteristics.
     ///
     /// # Arguments
     ///
-    /// * `variable_value` - The actual value of the variable
+    /// * `variable_characteristics` - Fixed read-only parameters of the variable
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_variable_value(mut self, variable_value: String) -> Self {
-        self.variable_value = Some(variable_value);
-        self
-    }
-
-    /// Sets the variable attribute.
-    ///
-    /// # Arguments
-    ///
-    /// * `variable_attribute` - The attribute type for which a report of variable attribute value is requested
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_variable_attribute(mut self, variable_attribute: String) -> Self {
-        self.variable_attribute = Some(variable_attribute);
+    pub fn with_variable_characteristics(mut self, variable_characteristics: VariableCharacteristicsType) -> Self {
+        self.variable_characteristics = Some(variable_characteristics);
         self
     }
 
@@ -137,49 +132,49 @@ impl ReportDataType {
         self
     }
 
-    /// Gets the variable value.
+    /// Gets the variable attributes.
     ///
     /// # Returns
     ///
-    /// An optional reference to the variable value
-    pub fn variable_value(&self) -> Option<&str> {
-        self.variable_value.as_deref()
+    /// A reference to the list of variable attributes
+    pub fn variable_attribute(&self) -> &[VariableAttributeType] {
+        &self.variable_attribute
     }
 
-    /// Sets the variable value.
+    /// Sets the variable attributes.
     ///
     /// # Arguments
     ///
-    /// * `variable_value` - The actual value of the variable, or None to clear
+    /// * `variable_attribute` - List of variable attribute types and values
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_variable_value(&mut self, variable_value: Option<String>) -> &mut Self {
-        self.variable_value = variable_value;
+    pub fn set_variable_attribute(&mut self, variable_attribute: Vec<VariableAttributeType>) -> &mut Self {
+        self.variable_attribute = variable_attribute;
         self
     }
 
-    /// Gets the variable attribute.
+    /// Gets the variable characteristics.
     ///
     /// # Returns
     ///
-    /// An optional reference to the variable attribute
-    pub fn variable_attribute(&self) -> Option<&str> {
-        self.variable_attribute.as_deref()
+    /// An optional reference to the variable characteristics
+    pub fn variable_characteristics(&self) -> Option<&VariableCharacteristicsType> {
+        self.variable_characteristics.as_ref()
     }
 
-    /// Sets the variable attribute.
+    /// Sets the variable characteristics.
     ///
     /// # Arguments
     ///
-    /// * `variable_attribute` - The attribute type for which a report of variable attribute value is requested, or None to clear
+    /// * `variable_characteristics` - Fixed read-only parameters of the variable, or None to clear
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_variable_attribute(&mut self, variable_attribute: Option<String>) -> &mut Self {
-        self.variable_attribute = variable_attribute;
+    pub fn set_variable_characteristics(&mut self, variable_characteristics: Option<VariableCharacteristicsType>) -> &mut Self {
+        self.variable_characteristics = variable_characteristics;
         self
     }
 
@@ -210,19 +205,31 @@ impl ReportDataType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::v2_1::enumerations::MutabilityEnumType;
+    use crate::v2_1::datatypes::variable_characteristics::DataEnumType;
 
     #[test]
     fn test_new_report_data() {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
+        let attribute = VariableAttributeType::new(
+            "MaxValue".to_string(), 
+            "100".to_string(),
+            MutabilityEnumType::ReadOnly,
+        );
+        let variable_attributes = vec![attribute];
 
-        let report_data = ReportDataType::new(component.clone(), variable.clone());
+        let report_data = ReportDataType::new(
+            component.clone(), 
+            variable.clone(),
+            variable_attributes.clone(),
+        );
 
         assert_eq!(report_data.component(), &component);
         assert_eq!(report_data.variable(), &variable);
+        assert_eq!(report_data.variable_attribute(), variable_attributes.as_slice());
         assert_eq!(report_data.custom_data(), None);
-        assert_eq!(report_data.variable_value(), None);
-        assert_eq!(report_data.variable_attribute(), None);
+        assert_eq!(report_data.variable_characteristics(), None);
     }
 
     #[test]
@@ -230,60 +237,89 @@ mod tests {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let variable_value = "100".to_string();
-        let variable_attribute = "MaxValue".to_string();
+        let attribute = VariableAttributeType::new(
+            "MaxValue".to_string(), 
+            "100".to_string(),
+            MutabilityEnumType::ReadOnly,
+        );
+        let variable_attributes = vec![attribute];
+        let variable_characteristics = VariableCharacteristicsType::new(
+            "Ampere".to_string(),
+            DataEnumType::Integer,
+            "0".to_string(),
+            "100".to_string(),
+            true,
+        );
 
-        let report_data = ReportDataType::new(component.clone(), variable.clone())
+        let report_data = ReportDataType::new(
+            component.clone(), 
+            variable.clone(),
+            variable_attributes.clone(),
+        )
             .with_custom_data(custom_data.clone())
-            .with_variable_value(variable_value.clone())
-            .with_variable_attribute(variable_attribute.clone());
+            .with_variable_characteristics(variable_characteristics.clone());
 
         assert_eq!(report_data.component(), &component);
         assert_eq!(report_data.variable(), &variable);
+        assert_eq!(report_data.variable_attribute(), variable_attributes.as_slice());
         assert_eq!(report_data.custom_data(), Some(&custom_data));
-        assert_eq!(report_data.variable_value(), Some(variable_value.as_str()));
-        assert_eq!(
-            report_data.variable_attribute(),
-            Some(variable_attribute.as_str())
-        );
+        assert_eq!(report_data.variable_characteristics(), Some(&variable_characteristics));
     }
 
     #[test]
     fn test_setter_methods() {
         let component1 = ComponentType::new("Connector".to_string());
         let variable1 = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
+        let attribute1 = VariableAttributeType::new(
+            "MaxValue".to_string(), 
+            "100".to_string(),
+            MutabilityEnumType::ReadOnly,
+        );
+        let variable_attributes1 = vec![attribute1];
+        
         let component2 = ComponentType::new("Meter".to_string());
         let variable2 = VariableType::new("VoltageLimit".to_string(), "Secondary".to_string());
+        let attribute2 = VariableAttributeType::new(
+            "MinValue".to_string(), 
+            "50".to_string(),
+            MutabilityEnumType::ReadWrite,
+        );
+        let variable_attributes2 = vec![attribute2];
+        
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let variable_value = "100".to_string();
-        let variable_attribute = "MaxValue".to_string();
+        let variable_characteristics = VariableCharacteristicsType::new(
+            "Volt".to_string(),
+            DataEnumType::Integer,
+            "0".to_string(),
+            "500".to_string(),
+            true,
+        );
 
-        let mut report_data = ReportDataType::new(component1, variable1);
+        let mut report_data = ReportDataType::new(
+            component1, 
+            variable1,
+            variable_attributes1,
+        );
 
         report_data
             .set_component(component2.clone())
             .set_variable(variable2.clone())
+            .set_variable_attribute(variable_attributes2.clone())
             .set_custom_data(Some(custom_data.clone()))
-            .set_variable_value(Some(variable_value.clone()))
-            .set_variable_attribute(Some(variable_attribute.clone()));
+            .set_variable_characteristics(Some(variable_characteristics.clone()));
 
         assert_eq!(report_data.component(), &component2);
         assert_eq!(report_data.variable(), &variable2);
+        assert_eq!(report_data.variable_attribute(), variable_attributes2.as_slice());
         assert_eq!(report_data.custom_data(), Some(&custom_data));
-        assert_eq!(report_data.variable_value(), Some(variable_value.as_str()));
-        assert_eq!(
-            report_data.variable_attribute(),
-            Some(variable_attribute.as_str())
-        );
+        assert_eq!(report_data.variable_characteristics(), Some(&variable_characteristics));
 
         // Test clearing optional fields
         report_data
             .set_custom_data(None)
-            .set_variable_value(None)
-            .set_variable_attribute(None);
+            .set_variable_characteristics(None);
 
         assert_eq!(report_data.custom_data(), None);
-        assert_eq!(report_data.variable_value(), None);
-        assert_eq!(report_data.variable_attribute(), None);
+        assert_eq!(report_data.variable_characteristics(), None);
     }
 }

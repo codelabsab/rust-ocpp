@@ -69,13 +69,15 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// A new instance of `DCChargingParametersType` with optional fields set to `None`
-    pub fn new(ev_max_voltage: f64, ev_max_current: f64) -> Self {
+    pub fn new(ev_max_voltage: Decimal, ev_max_current: Decimal) -> Self {
         Self {
             ev_max_voltage,
             ev_max_current,
             ev_max_power: None,
             ev_energy_capacity: None,
             energy_amount: None,
+            state_of_charge: None,
+            full_so_c: None,
             custom_data: None,
         }
     }
@@ -89,7 +91,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_max_power(mut self, ev_max_power: f64) -> Self {
+    pub fn with_max_power(mut self, ev_max_power: Decimal) -> Self {
         self.ev_max_power = Some(ev_max_power);
         self
     }
@@ -103,7 +105,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_energy_capacity(mut self, ev_energy_capacity: f64) -> Self {
+    pub fn with_energy_capacity(mut self, ev_energy_capacity: Decimal) -> Self {
         self.ev_energy_capacity = Some(ev_energy_capacity);
         self
     }
@@ -117,7 +119,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_energy_amount(mut self, energy_amount: f64) -> Self {
+    pub fn with_energy_amount(mut self, energy_amount: Decimal) -> Self {
         self.energy_amount = Some(energy_amount);
         self
     }
@@ -169,7 +171,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// The maximum voltage supported by the electric vehicle
-    pub fn ev_max_voltage(&self) -> f64 {
+    pub fn ev_max_voltage(&self) -> Decimal {
         self.ev_max_voltage
     }
 
@@ -182,7 +184,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_ev_max_voltage(&mut self, ev_max_voltage: f64) -> &mut Self {
+    pub fn set_ev_max_voltage(&mut self, ev_max_voltage: Decimal) -> &mut Self {
         self.ev_max_voltage = ev_max_voltage;
         self
     }
@@ -192,7 +194,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// The maximum current (in A) supported by the electric vehicle
-    pub fn ev_max_current(&self) -> f64 {
+    pub fn ev_max_current(&self) -> Decimal {
         self.ev_max_current
     }
 
@@ -205,7 +207,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_ev_max_current(&mut self, ev_max_current: f64) -> &mut Self {
+    pub fn set_ev_max_current(&mut self, ev_max_current: Decimal) -> &mut Self {
         self.ev_max_current = ev_max_current;
         self
     }
@@ -215,7 +217,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// An optional value representing the maximum power (in W) supported by the electric vehicle
-    pub fn ev_max_power(&self) -> Option<f64> {
+    pub fn ev_max_power(&self) -> Option<Decimal> {
         self.ev_max_power
     }
 
@@ -228,7 +230,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_ev_max_power(&mut self, ev_max_power: Option<f64>) -> &mut Self {
+    pub fn set_ev_max_power(&mut self, ev_max_power: Option<Decimal>) -> &mut Self {
         self.ev_max_power = ev_max_power;
         self
     }
@@ -238,7 +240,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// An optional value representing the capacity of the electric vehicle battery (in Wh)
-    pub fn ev_energy_capacity(&self) -> Option<f64> {
+    pub fn ev_energy_capacity(&self) -> Option<Decimal> {
         self.ev_energy_capacity
     }
 
@@ -251,7 +253,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_ev_energy_capacity(&mut self, ev_energy_capacity: Option<f64>) -> &mut Self {
+    pub fn set_ev_energy_capacity(&mut self, ev_energy_capacity: Option<Decimal>) -> &mut Self {
         self.ev_energy_capacity = ev_energy_capacity;
         self
     }
@@ -261,7 +263,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// An optional value representing the amount of energy requested (in Wh)
-    pub fn energy_amount(&self) -> Option<f64> {
+    pub fn energy_amount(&self) -> Option<Decimal> {
         self.energy_amount
     }
 
@@ -274,7 +276,7 @@ impl DCChargingParametersType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_energy_amount(&mut self, energy_amount: Option<f64>) -> &mut Self {
+    pub fn set_energy_amount(&mut self, energy_amount: Option<Decimal>) -> &mut Self {
         self.energy_amount = energy_amount;
         self
     }
@@ -358,10 +360,10 @@ mod tests {
 
     #[test]
     fn test_new_dc_charging_parameters() {
-        let params = DCChargingParametersType::new(500.0, 125.0);
+        let params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125));
 
-        assert_eq!(params.ev_max_voltage(), 500.0);
-        assert_eq!(params.ev_max_current(), 125.0);
+        assert_eq!(params.ev_max_voltage(), Decimal::from(500));
+        assert_eq!(params.ev_max_current(), Decimal::from(125));
         assert_eq!(params.ev_max_power(), None);
         assert_eq!(params.ev_energy_capacity(), None);
         assert_eq!(params.energy_amount(), None);
@@ -372,19 +374,19 @@ mod tests {
     fn test_with_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let params = DCChargingParametersType::new(500.0, 125.0)
-            .with_max_power(50000.0)
-            .with_energy_capacity(75000.0)
-            .with_energy_amount(20000.0)
+        let params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125))
+            .with_max_power(Decimal::from(50000))
+            .with_energy_capacity(Decimal::from(75000))
+            .with_energy_amount(Decimal::from(20000))
             .with_state_of_charge(80)
             .with_full_so_c(95)
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(params.ev_max_voltage(), 500.0);
-        assert_eq!(params.ev_max_current(), 125.0);
-        assert_eq!(params.ev_max_power(), Some(50000.0));
-        assert_eq!(params.ev_energy_capacity(), Some(75000.0));
-        assert_eq!(params.energy_amount(), Some(20000.0));
+        assert_eq!(params.ev_max_voltage(), Decimal::from(500));
+        assert_eq!(params.ev_max_current(), Decimal::from(125));
+        assert_eq!(params.ev_max_power(), Some(Decimal::from(50000)));
+        assert_eq!(params.ev_energy_capacity(), Some(Decimal::from(75000)));
+        assert_eq!(params.energy_amount(), Some(Decimal::from(20000)));
         assert_eq!(params.state_of_charge(), Some(80));
         assert_eq!(params.full_so_c(), Some(95));
         assert_eq!(params.custom_data(), Some(&custom_data));
@@ -394,23 +396,23 @@ mod tests {
     fn test_setter_methods() {
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut params = DCChargingParametersType::new(500.0, 125.0);
+        let mut params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125));
 
         params
-            .set_ev_max_voltage(550.0)
-            .set_ev_max_current(150.0)
-            .set_ev_max_power(Some(60000.0))
-            .set_ev_energy_capacity(Some(80000.0))
-            .set_energy_amount(Some(25000.0))
+            .set_ev_max_voltage(Decimal::from(550))
+            .set_ev_max_current(Decimal::from(150))
+            .set_ev_max_power(Some(Decimal::from(60000)))
+            .set_ev_energy_capacity(Some(Decimal::from(80000)))
+            .set_energy_amount(Some(Decimal::from(25000)))
             .set_state_of_charge(Some(70))
             .set_full_so_c(Some(90))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(params.ev_max_voltage(), 550.0);
-        assert_eq!(params.ev_max_current(), 150.0);
-        assert_eq!(params.ev_max_power(), Some(60000.0));
-        assert_eq!(params.ev_energy_capacity(), Some(80000.0));
-        assert_eq!(params.energy_amount(), Some(25000.0));
+        assert_eq!(params.ev_max_voltage(), Decimal::from(550));
+        assert_eq!(params.ev_max_current(), Decimal::from(150));
+        assert_eq!(params.ev_max_power(), Some(Decimal::from(60000)));
+        assert_eq!(params.ev_energy_capacity(), Some(Decimal::from(80000)));
+        assert_eq!(params.energy_amount(), Some(Decimal::from(25000)));
         assert_eq!(params.state_of_charge(), Some(70));
         assert_eq!(params.full_so_c(), Some(90));
         assert_eq!(params.custom_data(), Some(&custom_data));
@@ -427,27 +429,27 @@ mod tests {
         assert_eq!(params.ev_max_power(), None);
         assert_eq!(params.ev_energy_capacity(), None);
         assert_eq!(params.energy_amount(), None);
-        assert_eq!(params.state_custom_data(), None);
+        assert_eq!(params.custom_data(), None);
     }
     
     #[test]
     fn test_basic_validation() {
         // Valid parameters - should pass validation
-        let params = DCChargingParametersType::new(500.0, 125.0);
+        let params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125));
         assert!(params.validate().is_ok(), "Valid DC charging parameters should pass validation");
         
         // Add optional fields - should still pass validation
-        let params_with_optionals = DCChargingParametersType::new(500.0, 125.0)
-            .with_max_power(50000.0)
-            .with_energy_capacity(75000.0)
-            .with_energy_amount(20000.0);
+        let params_with_optionals = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125))
+            .with_max_power(Decimal::from(50000))
+            .with_energy_capacity(Decimal::from(75000))
+            .with_energy_amount(Decimal::from(20000));
         assert!(params_with_optionals.validate().is_ok(), 
                 "DC charging parameters with optional fields should pass validation");
     }
     
     #[test]
     fn test_state_of_charge_validation() {
-        let mut params = DCChargingParametersType::new(500.0, 125.0);
+        let mut params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125));
         
         // Valid state of charge values (0-100)
         params.state_of_charge = Some(0);
@@ -475,7 +477,7 @@ mod tests {
     
     #[test]
     fn test_full_soc_validation() {
-        let mut params = DCChargingParametersType::new(500.0, 125.0);
+        let mut params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125));
         
         // Valid full_so_c values (0-100)
         params.full_so_c = Some(0);
@@ -507,7 +509,7 @@ mod tests {
         let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
         let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
         
-        let params = DCChargingParametersType::new(500.0, 125.0)
+        let params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125))
             .with_custom_data(invalid_custom_data);
         
         // Validation should fail due to invalid custom_data
@@ -524,7 +526,7 @@ mod tests {
         let too_long_vendor_id = "X".repeat(256); // Exceeds 255 character limit
         let invalid_custom_data = CustomDataType::new(too_long_vendor_id);
         
-        let mut params = DCChargingParametersType::new(500.0, 125.0)
+        let mut params = DCChargingParametersType::new(Decimal::from(500), Decimal::from(125))
             .with_custom_data(invalid_custom_data);
         
         // Add invalid state_of_charge and full_so_c
