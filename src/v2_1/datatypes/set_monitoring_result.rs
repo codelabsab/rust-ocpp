@@ -24,8 +24,8 @@ pub struct SetMonitoringResultType {
     /// Required. Variable for which the monitoring status is returned.
     pub variable: VariableType,
 
-    /// Id given to the VariableMonitor by the Charging Station. The Id is only returned when status is accepted. 
-    /// Installed VariableMonitors should have unique id's but the id's of removed Installed monitors 
+    /// Id given to the VariableMonitor by the Charging Station. The Id is only returned when status is accepted.
+    /// Installed VariableMonitors should have unique id's but the id's of removed Installed monitors
     /// should have unique id's but the id's of removed monitors MAY be reused.
     #[validate(range(min = 0))]
     pub id: i32,
@@ -34,7 +34,7 @@ pub struct SetMonitoringResultType {
     #[serde(rename = "type")]
     pub type_: MonitorEnumType,
 
-    /// Required. The severity that will be assigned to an event that is triggered by this monitor. 
+    /// Required. The severity that will be assigned to an event that is triggered by this monitor.
     /// The severity range is 0-9, with 0 as the highest and 9 as the lowest severity level.
     #[validate(range(min = 0))]
     pub severity: i32,
@@ -334,12 +334,12 @@ mod tests {
         let severity = 5;
 
         let result = SetMonitoringResultType::new(
-            status.clone(), 
-            component.clone(), 
-            variable.clone(), 
-            id, 
-            monitor_type.clone(), 
-            severity
+            status.clone(),
+            component.clone(),
+            variable.clone(),
+            id,
+            monitor_type.clone(),
+            severity,
         );
 
         assert_eq!(result.status(), &status);
@@ -366,17 +366,17 @@ mod tests {
         let status_info = StatusInfoType::new("SomeReason".to_string());
 
         let result = SetMonitoringResultType::new(
-                status.clone(), 
-                component.clone(), 
-                variable.clone(), 
-                id, 
-                monitor_type, 
-                severity
-            )
-            .with_custom_data(custom_data.clone())
-            .with_status_info(status_info.clone())
-            .with_type(new_monitor_type.clone())
-            .with_severity(new_severity);
+            status.clone(),
+            component.clone(),
+            variable.clone(),
+            id,
+            monitor_type,
+            severity,
+        )
+        .with_custom_data(custom_data.clone())
+        .with_status_info(status_info.clone())
+        .with_type(new_monitor_type.clone())
+        .with_severity(new_severity);
 
         assert_eq!(result.status(), &status);
         assert_eq!(result.component(), &component);
@@ -397,7 +397,8 @@ mod tests {
         let type1 = MonitorEnumType::UpperThreshold;
         let severity1 = 2;
 
-        let mut result = SetMonitoringResultType::new(status1, component1, variable1, id1, type1, severity1);
+        let mut result =
+            SetMonitoringResultType::new(status1, component1, variable1, id1, type1, severity1);
 
         let status2 = SetMonitoringStatusEnumType::UnknownVariable;
         let component2 = ComponentType::new("component2".to_string());

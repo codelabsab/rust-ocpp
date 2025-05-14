@@ -3,7 +3,8 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use super::{
-    component::ComponentType, custom_data::CustomDataType, periodic_event_stream_params::PeriodicEventStreamParamsType, variable::VariableType,
+    component::ComponentType, custom_data::CustomDataType,
+    periodic_event_stream_params::PeriodicEventStreamParamsType, variable::VariableType,
 };
 use crate::v2_1::enumerations::monitor::MonitorEnumType;
 
@@ -120,7 +121,10 @@ impl SetMonitoringDataType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_periodic_event_stream(mut self, periodic_event_stream: PeriodicEventStreamParamsType) -> Self {
+    pub fn with_periodic_event_stream(
+        mut self,
+        periodic_event_stream: PeriodicEventStreamParamsType,
+    ) -> Self {
         self.periodic_event_stream = Some(periodic_event_stream);
         self
     }
@@ -203,7 +207,10 @@ impl SetMonitoringDataType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_periodic_event_stream(&mut self, periodic_event_stream: Option<PeriodicEventStreamParamsType>) -> &mut Self {
+    pub fn set_periodic_event_stream(
+        &mut self,
+        periodic_event_stream: Option<PeriodicEventStreamParamsType>,
+    ) -> &mut Self {
         self.periodic_event_stream = periodic_event_stream;
         self
     }
@@ -349,9 +356,9 @@ impl SetMonitoringDataType {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
-    use rust_decimal::prelude::*;
     use super::*;
+    use rust_decimal::prelude::*;
+    use serde_json::json;
 
     #[test]
     fn test_new_set_monitoring_data() {
@@ -411,7 +418,10 @@ mod tests {
         assert_eq!(monitoring_data.variable(), &variable);
         assert_eq!(monitoring_data.id(), Some(id));
         assert_eq!(monitoring_data.transaction(), Some(transaction));
-        assert_eq!(monitoring_data.periodic_event_stream(), Some(&periodic_params));
+        assert_eq!(
+            monitoring_data.periodic_event_stream(),
+            Some(&periodic_params)
+        );
         assert_eq!(monitoring_data.custom_data(), Some(&custom_data));
     }
 
@@ -423,13 +433,8 @@ mod tests {
         let kind1 = MonitorEnumType::UpperThreshold;
         let severity1 = 2;
 
-        let mut monitoring_data = SetMonitoringDataType::new(
-            value1,
-            kind1,
-            severity1,
-            component1,
-            variable1,
-        );
+        let mut monitoring_data =
+            SetMonitoringDataType::new(value1, kind1, severity1, component1, variable1);
 
         let component2 = ComponentType::new("component2".to_string());
         let variable2 = VariableType::new("variable2".to_string(), "instance2".to_string());
@@ -459,7 +464,10 @@ mod tests {
         assert_eq!(monitoring_data.variable(), &variable2);
         assert_eq!(monitoring_data.id(), Some(id));
         assert_eq!(monitoring_data.transaction(), Some(transaction));
-        assert_eq!(monitoring_data.periodic_event_stream(), Some(&periodic_params));
+        assert_eq!(
+            monitoring_data.periodic_event_stream(),
+            Some(&periodic_params)
+        );
         assert_eq!(monitoring_data.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
@@ -488,17 +496,12 @@ mod tests {
         let custom_data = CustomDataType::new("VendorX".to_string())
             .with_property("version".to_string(), json!("1.0"));
 
-        let monitoring_data = SetMonitoringDataType::new(
-            value,
-            kind.clone(),
-            severity,
-            component,
-            variable,
-        )
-        .with_id(id)
-        .with_transaction(transaction)
-        .with_periodic_event_stream(periodic_params)
-        .with_custom_data(custom_data);
+        let monitoring_data =
+            SetMonitoringDataType::new(value, kind.clone(), severity, component, variable)
+                .with_id(id)
+                .with_transaction(transaction)
+                .with_periodic_event_stream(periodic_params)
+                .with_custom_data(custom_data);
 
         let serialized = serde_json::to_string(&monitoring_data).unwrap();
         let deserialized: SetMonitoringDataType = serde_json::from_str(&serialized).unwrap();

@@ -2,9 +2,8 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use super::{
-    custom_data::CustomDataType, 
-    signed_meter_value::SignedMeterValueType,
-    unit_of_measure::UnitOfMeasureType
+    custom_data::CustomDataType, signed_meter_value::SignedMeterValueType,
+    unit_of_measure::UnitOfMeasureType,
 };
 use crate::v2_1::enumerations::{
     LocationEnumType, MeasurandEnumType, PhaseEnumType, ReadingContextEnumType,
@@ -305,10 +304,7 @@ impl SampledValueType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_unit_of_measure(
-        &mut self,
-        unit_of_measure: Option<UnitOfMeasureType>,
-    ) -> &mut Self {
+    pub fn set_unit_of_measure(&mut self, unit_of_measure: Option<UnitOfMeasureType>) -> &mut Self {
         self.unit_of_measure = unit_of_measure;
         self
     }
@@ -392,7 +388,7 @@ mod tests {
         let context = ReadingContextEnumType::SamplePeriodic;
         let phase = PhaseEnumType::L1;
         let location = LocationEnumType::Outlet;
-        
+
         let signed_meter_value = SignedMeterValueType {
             signed_meter_data: "signed_data".to_string(),
             signing_method: SigningMethodEnumType::Custom("signing_method".to_string()),
@@ -402,7 +398,7 @@ mod tests {
         };
 
         let unit_of_measure = UnitOfMeasureType::new("Wh".to_string());
-        
+
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -440,7 +436,7 @@ mod tests {
         let context = ReadingContextEnumType::SamplePeriodic;
         let phase = PhaseEnumType::L1;
         let location = LocationEnumType::Outlet;
-        
+
         let signed_meter_value = SignedMeterValueType {
             signed_meter_data: "signed_data".to_string(),
             signing_method: SigningMethodEnumType::Custom("signing_method".to_string()),
@@ -450,7 +446,7 @@ mod tests {
         };
 
         let unit_of_measure = UnitOfMeasureType::new("Wh".to_string());
-        
+
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),

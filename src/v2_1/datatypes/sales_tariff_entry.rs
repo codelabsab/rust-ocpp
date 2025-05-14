@@ -217,7 +217,10 @@ mod tests {
         let interval = RelativeTimeIntervalType::new_default();
         let price_level = 3;
         let cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
-        let consumption_cost = vec![ConsumptionCostType::new(Decimal::new(100, 1), vec![cost.clone()])];
+        let consumption_cost = vec![ConsumptionCostType::new(
+            Decimal::new(100, 1),
+            vec![cost.clone()],
+        )];
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -242,7 +245,10 @@ mod tests {
         let interval2 = RelativeTimeIntervalType::new(10, 0);
         let price_level = 5;
         let cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
-        let consumption_cost = vec![ConsumptionCostType::new(Decimal::new(100, 1), vec![cost.clone()])];
+        let consumption_cost = vec![ConsumptionCostType::new(
+            Decimal::new(100, 1),
+            vec![cost.clone()],
+        )];
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
             additional_properties: Default::default(),
@@ -275,20 +281,23 @@ mod tests {
         // Valid entry
         let interval = RelativeTimeIntervalType::new_default();
         let cost = CostType::new(CostKindEnumType::CarbonDioxideEmission, 100);
-        let consumption_cost = vec![ConsumptionCostType::new(Decimal::new(100, 1), vec![cost.clone()])];
-        
+        let consumption_cost = vec![ConsumptionCostType::new(
+            Decimal::new(100, 1),
+            vec![cost.clone()],
+        )];
+
         let valid_entry = SalesTariffEntryType::new(interval.clone())
             .with_e_price_level(3)
             .with_consumption_cost(consumption_cost.clone());
-        
+
         // Test with negative price level (should fail validation)
         let mut invalid_entry = valid_entry.clone();
         invalid_entry.e_price_level = Some(-1);
-        
+
         // Test with empty consumption cost array (should fail validation)
         let mut invalid_entry2 = valid_entry.clone();
         invalid_entry2.consumption_cost = Some(vec![]);
-        
+
         // Test with too many consumption cost items (should fail validation)
         let mut invalid_entry3 = valid_entry;
         let cost_items = vec![

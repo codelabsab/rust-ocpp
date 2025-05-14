@@ -1,17 +1,14 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{
-    custom_data::CustomDataType, 
-    sales_tariff_entry::SalesTariffEntryType
-};
+use super::{custom_data::CustomDataType, sales_tariff_entry::SalesTariffEntryType};
 
 /// A SalesTariff provided by a Mobility Operator (EMSP).
 /// NOTE: This dataType is based on dataTypes from ISO 15118-2.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SalesTariffType {
-    /// Required. SalesTariff identifier used to identify one sales tariff. 
+    /// Required. SalesTariff identifier used to identify one sales tariff.
     /// An SAID remains a unique identifier for one schedule throughout a charging session.
     #[validate(range(min = 0))]
     pub id: i32,
