@@ -490,7 +490,6 @@ impl AbsolutePriceScheduleType {
 mod tests {
     use super::*;
     use crate::v2_1::datatypes::price_rule::PriceRuleType;
-    use crate::v2_1::enumerations::EnergyTransferModeEnumType;
 
     #[test]
     fn test_new_absolute_price_schedule() {
@@ -500,16 +499,9 @@ mod tests {
             .with_timezone(&Utc);
 
         // Create a simple price rule for testing
-        let price_rule = PriceRuleType::new(
-            EnergyTransferModeEnumType::DC,
-            0.25,  // energy_fee
-            0.10,  // time_fee
-            0.05,  // parking_fee
-            300,   // minimum_duration
-            7200,  // maximum_duration
-            50.0,  // maximum_power
-            10.0,  // minimum_power
-        );
+        let energy_fee = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
+        let power_range_start = RationalNumberType::new(0, 0);
+        let price_rule = PriceRuleType::new(energy_fee, power_range_start);
 
         // Create a simple price rule stack for testing
         let price_rule_stack = PriceRuleStackType::new(3600, vec![price_rule]);
@@ -540,16 +532,9 @@ mod tests {
             .with_timezone(&Utc);
 
         // Create a simple price rule for testing
-        let price_rule = PriceRuleType::new(
-            EnergyTransferModeEnumType::DC,
-            0.25,  // energy_fee
-            0.10,  // time_fee
-            0.05,  // parking_fee
-            300,   // minimum_duration
-            7200,  // maximum_duration
-            50.0,  // maximum_power
-            10.0,  // minimum_power
-        );
+        let energy_fee = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
+        let power_range_start = RationalNumberType::new(0, 0);
+        let price_rule = PriceRuleType::new(energy_fee, power_range_start);
 
         // Create a simple price rule stack for testing
         let price_rule_stack = PriceRuleStackType::new(3600, vec![price_rule]);
@@ -583,16 +568,9 @@ mod tests {
             .with_timezone(&Utc);
 
         // Create a simple price rule for testing
-        let price_rule = PriceRuleType::new(
-            EnergyTransferModeEnumType::DC,
-            0.25,  // energy_fee
-            0.10,  // time_fee
-            0.05,  // parking_fee
-            300,   // minimum_duration
-            7200,  // maximum_duration
-            50.0,  // maximum_power
-            10.0,  // minimum_power
-        );
+        let energy_fee = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
+        let power_range_start = RationalNumberType::new(0, 0);
+        let price_rule = PriceRuleType::new(energy_fee, power_range_start);
 
         // Create a simple price rule stack for testing
         let price_rule_stack = PriceRuleStackType::new(3600, vec![price_rule]);
@@ -641,16 +619,9 @@ mod tests {
             .with_timezone(&Utc);
 
         // Create a simple price rule for testing
-        let price_rule = PriceRuleType::new(
-            EnergyTransferModeEnumType::DC,
-            0.25,  // energy_fee
-            0.10,  // time_fee
-            0.05,  // parking_fee
-            300,   // minimum_duration
-            7200,  // maximum_duration
-            50.0,  // maximum_power
-            10.0,  // minimum_power
-        );
+        let energy_fee = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
+        let power_range_start = RationalNumberType::new(0, 0);
+        let price_rule = PriceRuleType::new(energy_fee, power_range_start);
 
         // Create a simple price rule stack for testing
         let price_rule_stack1 = PriceRuleStackType::new(3600, vec![price_rule.clone()]);
@@ -700,16 +671,9 @@ mod tests {
             .with_timezone(&Utc);
 
         // Create a simple price rule for testing
-        let price_rule = PriceRuleType::new(
-            EnergyTransferModeEnumType::DC,
-            0.25,  // energy_fee
-            0.10,  // time_fee
-            0.05,  // parking_fee
-            300,   // minimum_duration
-            7200,  // maximum_duration
-            50.0,  // maximum_power
-            10.0,  // minimum_power
-        );
+        let energy_fee = RationalNumberType::new(2, 25); // Represents 0.25 with exponent 2
+        let power_range_start = RationalNumberType::new(0, 0);
+        let price_rule = PriceRuleType::new(energy_fee, power_range_start);
 
         // Create a simple price rule stack for testing
         let price_rule_stack = PriceRuleStackType::new(3600, vec![price_rule.clone()]);
