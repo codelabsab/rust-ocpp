@@ -643,7 +643,7 @@ mod tests {
             tariff.description().unwrap()[0].content(),
             "Standard Tariff"
         );
-        assert_eq!(tariff.energy().unwrap().prices()[0].price, 0.25);
+        assert_eq!(tariff.energy().unwrap().prices()[0].price_kwh, 0.25);
         assert!(tariff.valid_from().is_some());
         assert_eq!(tariff.charging_time().unwrap().time_price.price, 5.0);
         assert_eq!(tariff.idle_time().unwrap().time_price.price, 10.0);
@@ -708,7 +708,7 @@ mod tests {
             tariff.description().unwrap()[0].content(),
             "Standard Tariff"
         );
-        assert_eq!(tariff.energy().unwrap().prices()[0].price, 0.25);
+        assert_eq!(tariff.energy().unwrap().prices()[0].price_kwh, 0.25);
         assert!(tariff.valid_from().is_some());
         assert_eq!(tariff.charging_time().unwrap().time_price.price, 5.0);
         assert_eq!(tariff.idle_time().unwrap().time_price.price, 10.0);
