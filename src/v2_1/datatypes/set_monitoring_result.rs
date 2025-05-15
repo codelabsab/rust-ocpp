@@ -11,24 +11,23 @@ use crate::v2_1::enumerations::{MonitorEnumType, SetMonitoringStatusEnumType};
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SetMonitoringResultType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Required. Status indicating whether the Charging Station accepts the monitoring request.
     pub status: SetMonitoringStatusEnumType,
 
     /// Required. Component for which the monitoring status is returned.
+    #[validate(nested)]
     pub component: ComponentType,
 
     /// Required. Variable for which the monitoring status is returned.
+    #[validate(nested)]
     pub variable: VariableType,
 
     /// Id given to the VariableMonitor by the Charging Station. The Id is only returned when status is accepted.
     /// Installed VariableMonitors should have unique id's but the id's of removed Installed monitors
     /// should have unique id's but the id's of removed monitors MAY be reused.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(range(min = 0))]
-    pub id: i32,
+    pub id: Option<i32>,
 
     /// Required. Type of monitor that was set.
     #[serde(rename = "type")]
@@ -36,12 +35,40 @@ pub struct SetMonitoringResultType {
 
     /// Required. The severity that will be assigned to an event that is triggered by this monitor.
     /// The severity range is 0-9, with 0 as the highest and 9 as the lowest severity level.
+    ///
+    /// The severity levels have the following meaning:
+    /// *0-Danger*
+    /// Indicates lives are potentially in danger. Urgent attention is needed and action should be taken immediately.
+    /// *1-Hardware Failure*
+    /// Indicates that the Charging Station is unable to continue regular operations due to Hardware issues. Action is required.
+    /// *2-System Failure*
+    /// Indicates that the Charging Station is unable to continue regular operations due to software or minor hardware issues. Action is required.
+    /// *3-Critical*
+    /// Indicates a critical error. Action is required.
+    /// *4-Error*
+    /// Indicates a non-urgent error. Action is required.
+    /// *5-Alert*
+    /// Indicates an alert event. Default severity for any type of monitoring event.
+    /// *6-Warning*
+    /// Indicates a warning event. Action may be required.
+    /// *7-Notice*
+    /// Indicates an unusual event. No immediate action is required.
+    /// *8-Informational*
+    /// Indicates a regular operational event. May be used for reporting, measuring throughput, etc. No action is required.
+    /// *9-Debug*
+    /// Indicates information useful to developers for debugging, not useful during operations.
     #[validate(range(min = 0))]
     pub severity: i32,
 
     /// Optional. Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub status_info: Option<StatusInfoType>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl SetMonitoringResultType {
@@ -52,8 +79,7 @@ impl SetMonitoringResultType {
     /// * `status` - Status indicating whether the Charging Station accepts the monitoring request
     /// * `component` - Component for which the monitoring status is returned
     /// * `variable` - Variable for which the monitoring status is returned
-    /// * `id` - Id of the monitor that was set
-    /// * `type` - Type of monitor that was set
+    /// * `type_` - Type of monitor that was set
     /// * `severity` - The severity that will be assigned to an event that is triggered by this monitor
     ///
     /// # Returns
@@ -63,7 +89,6 @@ impl SetMonitoringResultType {
         status: SetMonitoringStatusEnumType,
         component: ComponentType,
         variable: VariableType,
-        id: i32,
         type_: MonitorEnumType,
         severity: i32,
     ) -> Self {
@@ -72,11 +97,25 @@ impl SetMonitoringResultType {
             status,
             component,
             variable,
-            id,
+            id: None,
             type_,
             severity,
             status_info: None,
         }
+    }
+
+    /// Sets the id.
+    ///
+    /// # Arguments
+    ///
+    /// * `id` - Id of the monitor that was set
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_id(mut self, id: i32) -> Self {
+        self.id = Some(id);
+        self
     }
 
     /// Sets the custom data.
@@ -208,8 +247,8 @@ impl SetMonitoringResultType {
     ///
     /// # Returns
     ///
-    /// The id of the monitor that was set
-    pub fn id(&self) -> i32 {
+    /// The optional id of the monitor that was set
+    pub fn id(&self) -> Option<i32> {
         self.id
     }
 
@@ -217,12 +256,12 @@ impl SetMonitoringResultType {
     ///
     /// # Arguments
     ///
-    /// * `id` - Id of the monitor that was set
+    /// * `id` - Optional id of the monitor that was set
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_id(&mut self, id: i32) -> &mut Self {
+    pub fn set_id(&mut self, id: Option<i32>) -> &mut Self {
         self.id = id;
         self
     }
@@ -329,7 +368,6 @@ mod tests {
         let status = SetMonitoringStatusEnumType::Accepted;
         let component = ComponentType::new("component1".to_string());
         let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
-        let id = 42;
         let monitor_type = MonitorEnumType::UpperThreshold;
         let severity = 5;
 
@@ -337,7 +375,6 @@ mod tests {
             status.clone(),
             component.clone(),
             variable.clone(),
-            id,
             monitor_type.clone(),
             severity,
         );
@@ -345,7 +382,7 @@ mod tests {
         assert_eq!(result.status(), &status);
         assert_eq!(result.component(), &component);
         assert_eq!(result.variable(), &variable);
-        assert_eq!(result.id(), id);
+        assert_eq!(result.id(), None);
         assert_eq!(result.type_(), &monitor_type);
         assert_eq!(result.severity(), severity);
         assert_eq!(result.status_info(), None);
@@ -369,10 +406,10 @@ mod tests {
             status.clone(),
             component.clone(),
             variable.clone(),
-            id,
             monitor_type,
             severity,
         )
+        .with_id(id)
         .with_custom_data(custom_data.clone())
         .with_status_info(status_info.clone())
         .with_type(new_monitor_type.clone())
@@ -381,7 +418,7 @@ mod tests {
         assert_eq!(result.status(), &status);
         assert_eq!(result.component(), &component);
         assert_eq!(result.variable(), &variable);
-        assert_eq!(result.id(), id);
+        assert_eq!(result.id(), Some(id));
         assert_eq!(result.type_(), &new_monitor_type);
         assert_eq!(result.severity(), new_severity);
         assert_eq!(result.status_info(), Some(&status_info));
@@ -393,12 +430,11 @@ mod tests {
         let status1 = SetMonitoringStatusEnumType::Accepted;
         let component1 = ComponentType::new("component1".to_string());
         let variable1 = VariableType::new("variable1".to_string(), "instance1".to_string());
-        let id1 = 42;
         let type1 = MonitorEnumType::UpperThreshold;
         let severity1 = 2;
 
         let mut result =
-            SetMonitoringResultType::new(status1, component1, variable1, id1, type1, severity1);
+            SetMonitoringResultType::new(status1, component1, variable1, type1, severity1);
 
         let status2 = SetMonitoringStatusEnumType::UnknownVariable;
         let component2 = ComponentType::new("component2".to_string());
@@ -413,7 +449,7 @@ mod tests {
             .set_status(status2.clone())
             .set_component(component2.clone())
             .set_variable(variable2.clone())
-            .set_id(id2)
+            .set_id(Some(id2))
             .set_type(type2.clone())
             .set_severity(severity2)
             .set_status_info(Some(status_info.clone()))
@@ -422,15 +458,19 @@ mod tests {
         assert_eq!(result.status(), &status2);
         assert_eq!(result.component(), &component2);
         assert_eq!(result.variable(), &variable2);
-        assert_eq!(result.id(), id2);
+        assert_eq!(result.id(), Some(id2));
         assert_eq!(result.type_(), &type2);
         assert_eq!(result.severity(), severity2);
         assert_eq!(result.status_info(), Some(&status_info));
         assert_eq!(result.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        result.set_status_info(None).set_custom_data(None);
+        result
+            .set_id(None)
+            .set_status_info(None)
+            .set_custom_data(None);
 
+        assert_eq!(result.id(), None);
         assert_eq!(result.status_info(), None);
         assert_eq!(result.custom_data(), None);
     }

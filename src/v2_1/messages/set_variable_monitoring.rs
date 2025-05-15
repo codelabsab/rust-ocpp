@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    component::ComponentType, custom_data::CustomDataType, 
+    component::ComponentType, custom_data::CustomDataType,
     set_monitoring_data::SetMonitoringDataType, status_info::StatusInfoType,
     variable::VariableType,
 };
@@ -511,9 +511,9 @@ impl SetVariableMonitoringResponse {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::v2_1::enumerations::monitor::MonitorEnumType;
     use rust_decimal::prelude::*;
     use serde_json::json;
-    use crate::v2_1::enumerations::monitor::MonitorEnumType;
 
     #[test]
     fn test_set_monitoring_result_type() {
@@ -642,15 +642,9 @@ mod tests {
         let request = SetVariableMonitoringRequest::new(vec![monitoring_data])
             .with_custom_data(custom_data.clone());
 
-        let result = SetMonitoringResultType::new(
-            status,
-            kind,
-            component,
-            variable,
-            severity,
-        )
-        .with_id(id)
-        .with_custom_data(custom_data);
+        let result = SetMonitoringResultType::new(status, kind, component, variable, severity)
+            .with_id(id)
+            .with_custom_data(custom_data);
 
         let response = SetVariableMonitoringResponse::new(vec![result]);
 

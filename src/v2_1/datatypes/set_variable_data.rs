@@ -2,29 +2,37 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use super::{component::ComponentType, custom_data::CustomDataType, variable::VariableType};
+use crate::v2_1::enumerations::attribute::AttributeEnumType;
 
 /// Class to hold parameters of SetVariable request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SetVariableDataType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Required. Component for which the variable is set.
+    #[validate(nested)]
     pub component: ComponentType,
 
     /// Required. Variable which holds the attribute value.
+    #[validate(nested)]
     pub variable: VariableType,
 
     /// Required. Value to be assigned to attribute of variable.
-    #[validate(length(max = 1000))]
+    /// This value is allowed to be an empty string ("").
+    ///
+    /// The Configuration Variable <<configkey-configuration-value-size,ConfigurationValueSize>>
+    /// can be used to limit SetVariableData.attributeValue and VariableCharacteristics.valuesList.
+    /// The max size of these values will always remain equal.
+    #[validate(length(max = 2500))]
     pub attribute_value: String,
 
     /// Optional. Type of attribute that is set.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 50))]
-    pub attribute_type: Option<String>,
+    pub attribute_type: Option<AttributeEnumType>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl SetVariableDataType {
@@ -72,7 +80,7 @@ impl SetVariableDataType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_attribute_type(mut self, attribute_type: String) -> Self {
+    pub fn with_attribute_type(mut self, attribute_type: AttributeEnumType) -> Self {
         self.attribute_type = Some(attribute_type);
         self
     }
@@ -151,8 +159,8 @@ impl SetVariableDataType {
     /// # Returns
     ///
     /// An optional type of attribute that is set
-    pub fn attribute_type(&self) -> Option<&str> {
-        self.attribute_type.as_deref()
+    pub fn attribute_type(&self) -> Option<&AttributeEnumType> {
+        self.attribute_type.as_ref()
     }
 
     /// Sets the attribute type.
@@ -164,7 +172,7 @@ impl SetVariableDataType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_attribute_type(&mut self, attribute_type: Option<String>) -> &mut Self {
+    pub fn set_attribute_type(&mut self, attribute_type: Option<AttributeEnumType>) -> &mut Self {
         self.attribute_type = attribute_type;
         self
     }
@@ -218,7 +226,7 @@ mod tests {
         let component = ComponentType::new("component1".to_string());
         let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
         let attribute_value = "value1".to_string();
-        let attribute_type = "ActualValue".to_string();
+        let attribute_type = AttributeEnumType::Actual;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let data =
@@ -229,7 +237,7 @@ mod tests {
         assert_eq!(data.component(), &component);
         assert_eq!(data.variable(), &variable);
         assert_eq!(data.attribute_value(), attribute_value);
-        assert_eq!(data.attribute_type(), Some(attribute_type.as_str()));
+        assert_eq!(data.attribute_type(), Some(&attribute_type));
         assert_eq!(data.custom_data(), Some(&custom_data));
     }
 
@@ -244,7 +252,7 @@ mod tests {
         let component2 = ComponentType::new("component2".to_string());
         let variable2 = VariableType::new("variable2".to_string(), "instance2".to_string());
         let attribute_value2 = "value2".to_string();
-        let attribute_type = "MinValue".to_string();
+        let attribute_type = AttributeEnumType::MinSet;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         data.set_component(component2.clone())
@@ -256,7 +264,7 @@ mod tests {
         assert_eq!(data.component(), &component2);
         assert_eq!(data.variable(), &variable2);
         assert_eq!(data.attribute_value(), attribute_value2);
-        assert_eq!(data.attribute_type(), Some(attribute_type.as_str()));
+        assert_eq!(data.attribute_type(), Some(&attribute_type));
         assert_eq!(data.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

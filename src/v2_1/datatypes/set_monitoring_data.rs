@@ -2,7 +2,10 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{component::ComponentType, custom_data::CustomDataType, periodic_event_stream_params::PeriodicEventStreamParamsType, variable::VariableType};
+use super::{
+    component::ComponentType, custom_data::CustomDataType,
+    periodic_event_stream_params::PeriodicEventStreamParamsType, variable::VariableType,
+};
 use crate::v2_1::enumerations::monitor::MonitorEnumType;
 
 /// Class to hold parameters of SetVariableMonitoring request.
@@ -439,7 +442,10 @@ mod tests {
         assert_eq!(monitoring_data.variable(), &variable);
         assert_eq!(monitoring_data.id(), Some(id));
         assert_eq!(monitoring_data.transaction(), Some(transaction));
-        assert_eq!(monitoring_data.periodic_event_stream(), Some(&periodic_params));
+        assert_eq!(
+            monitoring_data.periodic_event_stream(),
+            Some(&periodic_params)
+        );
         assert_eq!(monitoring_data.custom_data(), Some(&custom_data));
     }
 
@@ -482,7 +488,10 @@ mod tests {
         assert_eq!(monitoring_data.variable(), &variable2);
         assert_eq!(monitoring_data.id(), Some(id));
         assert_eq!(monitoring_data.transaction(), Some(transaction));
-        assert_eq!(monitoring_data.periodic_event_stream(), Some(&periodic_params));
+        assert_eq!(
+            monitoring_data.periodic_event_stream(),
+            Some(&periodic_params)
+        );
         assert_eq!(monitoring_data.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
