@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -146,7 +147,7 @@ mod tests {
 
     #[test]
     fn test_new_tariff_energy() {
-        let price = TariffEnergyPriceType::new(10.0);
+        let price = TariffEnergyPriceType::new(Decimal::new(100, 1)); // 10.0
         let prices = vec![price.clone()];
         let tariff_energy = TariffEnergyType::new(prices.clone());
 
@@ -157,12 +158,12 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
-        let price1 = TariffEnergyPriceType::new(10.0);
-        let price2 = TariffEnergyPriceType::new(15.0);
+        let price1 = TariffEnergyPriceType::new(Decimal::new(100, 1)); // 10.0
+        let price2 = TariffEnergyPriceType::new(Decimal::new(150, 1)); // 15.0
         let prices = vec![price1.clone(), price2.clone()];
 
-        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
-        let tax_rate2 = TaxRateType::new(5.0, "GST".to_string());
+        let tax_rate1 = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
+        let tax_rate2 = TaxRateType::new(Decimal::new(50, 1), "GST".to_string()); // 5.0
         let tax_rates = vec![tax_rate1.clone(), tax_rate2.clone()];
 
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -178,15 +179,15 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let price1 = TariffEnergyPriceType::new(10.0);
+        let price1 = TariffEnergyPriceType::new(Decimal::new(100, 1)); // 10.0
         let prices1 = vec![price1.clone()];
 
-        let price2 = TariffEnergyPriceType::new(15.0);
-        let price3 = TariffEnergyPriceType::new(20.0);
+        let price2 = TariffEnergyPriceType::new(Decimal::new(150, 1)); // 15.0
+        let price3 = TariffEnergyPriceType::new(Decimal::new(200, 1)); // 20.0
         let prices2 = vec![price2.clone(), price3.clone()];
 
-        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
-        let tax_rate2 = TaxRateType::new(5.0, "GST".to_string());
+        let tax_rate1 = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
+        let tax_rate2 = TaxRateType::new(Decimal::new(50, 1), "GST".to_string()); // 5.0
         let tax_rates = vec![tax_rate1.clone(), tax_rate2.clone()];
 
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -212,7 +213,7 @@ mod tests {
     #[test]
     fn test_validation() {
         // Test with valid prices
-        let price = TariffEnergyPriceType::new(10.0);
+        let price = TariffEnergyPriceType::new(Decimal::new(100, 1)); // 10.0
         let prices = vec![price.clone()];
         let tariff_energy = TariffEnergyType::new(prices);
         assert!(tariff_energy.validate().is_ok());
@@ -227,7 +228,7 @@ mod tests {
         assert!(invalid_tariff.validate().is_err());
 
         // Test with valid tax rates
-        let tax_rate = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
         let tax_rates = vec![tax_rate];
         let valid_tariff = TariffEnergyType::new(vec![price.clone()]).with_tax_rates(tax_rates);
         assert!(valid_tariff.validate().is_ok());
@@ -239,12 +240,12 @@ mod tests {
         assert!(invalid_tariff.validate().is_err());
 
         // Test with too many tax rates (invalid)
-        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
-        let tax_rate2 = TaxRateType::new(5.0, "GST".to_string());
-        let tax_rate3 = TaxRateType::new(3.0, "PST".to_string());
-        let tax_rate4 = TaxRateType::new(2.0, "HST".to_string());
-        let tax_rate5 = TaxRateType::new(1.0, "QST".to_string());
-        let tax_rate6 = TaxRateType::new(0.5, "RST".to_string()); // One too many
+        let tax_rate1 = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
+        let tax_rate2 = TaxRateType::new(Decimal::new(50, 1), "GST".to_string()); // 5.0
+        let tax_rate3 = TaxRateType::new(Decimal::new(30, 1), "PST".to_string()); // 3.0
+        let tax_rate4 = TaxRateType::new(Decimal::new(20, 1), "HST".to_string()); // 2.0
+        let tax_rate5 = TaxRateType::new(Decimal::new(10, 1), "QST".to_string()); // 1.0
+        let tax_rate6 = TaxRateType::new(Decimal::new(5, 1), "RST".to_string()); // 0.5, One too many
 
         let too_many_tax_rates = vec![
             tax_rate1, tax_rate2, tax_rate3, tax_rate4, tax_rate5, tax_rate6,

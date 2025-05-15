@@ -1,14 +1,15 @@
+use super::{custom_data::CustomDataType, tariff_conditions_fixed::TariffConditionsFixedType};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-
-use super::{custom_data::CustomDataType, tariff_conditions_fixed::TariffConditionsFixedType};
 
 /// Tariff with optional conditions for a fixed price.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct TariffFixedPriceType {
     /// Required. Fixed price for this element e.g. a start fee.
-    pub price_fixed: f64,
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
+    pub price_fixed: Decimal,
 
     /// Optional. Conditions when this tariff element applies.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -31,7 +32,7 @@ impl TariffFixedPriceType {
     /// # Returns
     ///
     /// A new instance of `TariffFixedPriceType` with optional fields set to `None`
-    pub fn new(price_fixed: f64) -> Self {
+    pub fn new(price_fixed: Decimal) -> Self {
         Self {
             price_fixed,
             conditions: None,
@@ -72,7 +73,7 @@ impl TariffFixedPriceType {
     /// # Returns
     ///
     /// The fixed price for this element
-    pub fn price_fixed(&self) -> f64 {
+    pub fn price_fixed(&self) -> Decimal {
         self.price_fixed
     }
 
@@ -85,7 +86,7 @@ impl TariffFixedPriceType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_price_fixed(&mut self, price_fixed: f64) -> &mut Self {
+    pub fn set_price_fixed(&mut self, price_fixed: Decimal) -> &mut Self {
         self.price_fixed = price_fixed;
         self
     }
@@ -143,7 +144,7 @@ mod tests {
 
     #[test]
     fn test_new_tariff_fixed_price() {
-        let price_fixed = 10.0;
+        let price_fixed = Decimal::new(100, 1); // 10.0
         let tariff_fixed_price = TariffFixedPriceType::new(price_fixed);
 
         assert_eq!(tariff_fixed_price.price_fixed(), price_fixed);
@@ -153,7 +154,7 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
-        let price_fixed = 10.0;
+        let price_fixed = Decimal::new(100, 1); // 10.0
         let conditions = TariffConditionsFixedType::new();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -168,8 +169,8 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let price_fixed1 = 10.0;
-        let price_fixed2 = 15.0;
+        let price_fixed1 = Decimal::new(100, 1); // 10.0
+        let price_fixed2 = Decimal::new(150, 1); // 15.0
         let conditions = TariffConditionsFixedType::new();
         let custom_data = CustomDataType::new("VendorX".to_string());
 

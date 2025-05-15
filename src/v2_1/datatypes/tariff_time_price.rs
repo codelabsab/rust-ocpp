@@ -1,26 +1,25 @@
+use super::{custom_data::CustomDataType, tariff_conditions::TariffConditionsType};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::custom_data::CustomDataType;
-
-/// Time-based price for a tariff.
+/// Tariff with optional conditions for a time duration price.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct TariffTimePriceType {
-    /// Custom data from the Charging Station.
+    /// Required. Price per minute (excl. tax) for this element.
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
+    pub price_minute: Decimal,
+
+    /// Optional. Conditions when this tariff element applies.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub conditions: Option<TariffConditionsType>,
+
+    /// Optional. Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
-
-    /// Required. Price per hour in the currency specified.
-    pub price: f64,
-
-    /// Optional. Price per hour in the currency specified, excluding taxes.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub price_excl_tax: Option<f64>,
-
-    /// Optional. Price per hour in the currency specified, including taxes.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub price_incl_tax: Option<f64>,
 }
 
 impl TariffTimePriceType {
@@ -28,18 +27,31 @@ impl TariffTimePriceType {
     ///
     /// # Arguments
     ///
-    /// * `price` - Price per hour in the currency specified
+    /// * `price_minute` - Price per minute (excl. tax) for this element
     ///
     /// # Returns
     ///
     /// A new instance of `TariffTimePriceType` with optional fields set to `None`
-    pub fn new(price: f64) -> Self {
+    pub fn new(price_minute: Decimal) -> Self {
         Self {
-            price,
+            price_minute,
+            conditions: None,
             custom_data: None,
-            price_excl_tax: None,
-            price_incl_tax: None,
         }
+    }
+
+    /// Sets the conditions when this tariff element applies.
+    ///
+    /// # Arguments
+    ///
+    /// * `conditions` - Conditions when this tariff element applies
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_conditions(mut self, conditions: TariffConditionsType) -> Self {
+        self.conditions = Some(conditions);
+        self
     }
 
     /// Sets the custom data.
@@ -56,100 +68,49 @@ impl TariffTimePriceType {
         self
     }
 
-    /// Sets the price excluding tax.
+    /// Gets the price per minute.
+    ///
+    /// # Returns
+    ///
+    /// The price per minute (excl. tax) for this element
+    pub fn price_minute(&self) -> Decimal {
+        self.price_minute
+    }
+
+    /// Sets the price per minute.
     ///
     /// # Arguments
     ///
-    /// * `price_excl_tax` - Price per hour in the currency specified, excluding taxes
+    /// * `price_minute` - Price per minute (excl. tax) for this element
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_price_excl_tax(mut self, price_excl_tax: f64) -> Self {
-        self.price_excl_tax = Some(price_excl_tax);
+    pub fn set_price_minute(&mut self, price_minute: Decimal) -> &mut Self {
+        self.price_minute = price_minute;
         self
     }
 
-    /// Sets the price including tax.
+    /// Gets the conditions.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the conditions when this tariff element applies
+    pub fn conditions(&self) -> Option<&TariffConditionsType> {
+        self.conditions.as_ref()
+    }
+
+    /// Sets the conditions.
     ///
     /// # Arguments
     ///
-    /// * `price_incl_tax` - Price per hour in the currency specified, including taxes
+    /// * `conditions` - Conditions when this tariff element applies, or None to clear
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_price_incl_tax(mut self, price_incl_tax: f64) -> Self {
-        self.price_incl_tax = Some(price_incl_tax);
-        self
-    }
-
-    /// Gets the price.
-    ///
-    /// # Returns
-    ///
-    /// The price per hour in the currency specified
-    pub fn price(&self) -> f64 {
-        self.price
-    }
-
-    /// Sets the price.
-    ///
-    /// # Arguments
-    ///
-    /// * `price` - Price per hour in the currency specified
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_price(&mut self, price: f64) -> &mut Self {
-        self.price = price;
-        self
-    }
-
-    /// Gets the price excluding tax.
-    ///
-    /// # Returns
-    ///
-    /// An optional price per hour in the currency specified, excluding taxes
-    pub fn price_excl_tax(&self) -> Option<f64> {
-        self.price_excl_tax
-    }
-
-    /// Sets the price excluding tax.
-    ///
-    /// # Arguments
-    ///
-    /// * `price_excl_tax` - Price per hour in the currency specified, excluding taxes, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_price_excl_tax(&mut self, price_excl_tax: Option<f64>) -> &mut Self {
-        self.price_excl_tax = price_excl_tax;
-        self
-    }
-
-    /// Gets the price including tax.
-    ///
-    /// # Returns
-    ///
-    /// An optional price per hour in the currency specified, including taxes
-    pub fn price_incl_tax(&self) -> Option<f64> {
-        self.price_incl_tax
-    }
-
-    /// Sets the price including tax.
-    ///
-    /// # Arguments
-    ///
-    /// * `price_incl_tax` - Price per hour in the currency specified, including taxes, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_price_incl_tax(&mut self, price_incl_tax: Option<f64>) -> &mut Self {
-        self.price_incl_tax = price_incl_tax;
+    pub fn set_conditions(&mut self, conditions: Option<TariffConditionsType>) -> &mut Self {
+        self.conditions = conditions;
         self
     }
 
@@ -183,62 +144,51 @@ mod tests {
 
     #[test]
     fn test_new_tariff_time_price() {
-        let price = 10.0;
-        let tariff_time_price = TariffTimePriceType::new(price);
+        let price_minute = Decimal::new(100, 1); // 10.0
+        let tariff_time_price = TariffTimePriceType::new(price_minute);
 
-        assert_eq!(tariff_time_price.price(), price);
-        assert_eq!(tariff_time_price.price_excl_tax(), None);
-        assert_eq!(tariff_time_price.price_incl_tax(), None);
+        assert_eq!(tariff_time_price.price_minute(), price_minute);
+        assert_eq!(tariff_time_price.conditions(), None);
         assert_eq!(tariff_time_price.custom_data(), None);
     }
 
     #[test]
     fn test_with_methods() {
-        let price = 10.0;
-        let price_excl_tax = 8.0;
-        let price_incl_tax = 12.0;
+        let price_minute = Decimal::new(100, 1); // 10.0
+        let conditions = TariffConditionsType::new();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let tariff_time_price = TariffTimePriceType::new(price)
-            .with_price_excl_tax(price_excl_tax)
-            .with_price_incl_tax(price_incl_tax)
+        let tariff_time_price = TariffTimePriceType::new(price_minute)
+            .with_conditions(conditions.clone())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(tariff_time_price.price(), price);
-        assert_eq!(tariff_time_price.price_excl_tax(), Some(price_excl_tax));
-        assert_eq!(tariff_time_price.price_incl_tax(), Some(price_incl_tax));
+        assert_eq!(tariff_time_price.price_minute(), price_minute);
+        assert_eq!(tariff_time_price.conditions(), Some(&conditions));
         assert_eq!(tariff_time_price.custom_data(), Some(&custom_data));
     }
 
     #[test]
     fn test_setter_methods() {
-        let price1 = 10.0;
-        let price2 = 15.0;
-        let price_excl_tax = 8.0;
-        let price_incl_tax = 12.0;
+        let price_minute1 = Decimal::new(100, 1); // 10.0
+        let price_minute2 = Decimal::new(150, 1); // 15.0
+        let conditions = TariffConditionsType::new();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut tariff_time_price = TariffTimePriceType::new(price1);
+        let mut tariff_time_price = TariffTimePriceType::new(price_minute1);
 
         tariff_time_price
-            .set_price(price2)
-            .set_price_excl_tax(Some(price_excl_tax))
-            .set_price_incl_tax(Some(price_incl_tax))
+            .set_price_minute(price_minute2)
+            .set_conditions(Some(conditions.clone()))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(tariff_time_price.price(), price2);
-        assert_eq!(tariff_time_price.price_excl_tax(), Some(price_excl_tax));
-        assert_eq!(tariff_time_price.price_incl_tax(), Some(price_incl_tax));
+        assert_eq!(tariff_time_price.price_minute(), price_minute2);
+        assert_eq!(tariff_time_price.conditions(), Some(&conditions));
         assert_eq!(tariff_time_price.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        tariff_time_price
-            .set_price_excl_tax(None)
-            .set_price_incl_tax(None)
-            .set_custom_data(None);
+        tariff_time_price.set_conditions(None).set_custom_data(None);
 
-        assert_eq!(tariff_time_price.price_excl_tax(), None);
-        assert_eq!(tariff_time_price.price_incl_tax(), None);
+        assert_eq!(tariff_time_price.conditions(), None);
         assert_eq!(tariff_time_price.custom_data(), None);
     }
 }

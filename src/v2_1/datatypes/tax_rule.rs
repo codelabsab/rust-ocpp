@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -185,7 +186,7 @@ mod tests {
 
     #[test]
     fn test_new_tax_rule() {
-        let tax_rate = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
         let tax_rule = TaxRuleType::new(tax_rate.clone());
 
         assert_eq!(tax_rule.tax_rate(), &tax_rate);
@@ -196,7 +197,7 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
-        let tax_rate = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
         let energy_source_type = "Solar".to_string();
         let consumption_type = "Residential".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -217,8 +218,8 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
-        let tax_rate2 = TaxRateType::new(20.0, "GST".to_string());
+        let tax_rate1 = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
+        let tax_rate2 = TaxRateType::new(Decimal::new(200, 1), "GST".to_string()); // 20.0
         let energy_source_type = "Solar".to_string();
         let consumption_type = "Residential".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());

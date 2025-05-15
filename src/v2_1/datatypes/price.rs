@@ -234,7 +234,7 @@ mod tests {
     fn test_with_methods() {
         let price_excl = Decimal::new(800, 1); // 80.0
         let price_incl = Decimal::new(1000, 1); // 100.0
-        let tax_rate = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let price_type = PriceType::new(price_excl, false)
@@ -254,7 +254,7 @@ mod tests {
         let price_excl = Decimal::new(800, 1); // 80.0
         let price_incl = Decimal::new(1000, 1); // 100.0
         let mut price_type = PriceType::new(price_excl, false);
-        let tax_rate = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         price_type

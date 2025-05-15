@@ -1,14 +1,15 @@
+use super::{custom_data::CustomDataType, tariff_conditions::TariffConditionsType};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-
-use super::{custom_data::CustomDataType, tariff_conditions::TariffConditionsType};
 
 /// Tariff with optional conditions for an energy price.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct TariffEnergyPriceType {
     /// Required. Price per kWh (excl. tax) for this element.
-    pub price_kwh: f64,
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
+    pub price_kwh: Decimal,
 
     /// Optional. Conditions when this tariff element applies.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -31,7 +32,7 @@ impl TariffEnergyPriceType {
     /// # Returns
     ///
     /// A new instance of `TariffEnergyPriceType` with optional fields set to `None`
-    pub fn new(price_kwh: f64) -> Self {
+    pub fn new(price_kwh: Decimal) -> Self {
         Self {
             price_kwh,
             conditions: None,
@@ -72,7 +73,7 @@ impl TariffEnergyPriceType {
     /// # Returns
     ///
     /// The price per kWh (excl. tax) for this element
-    pub fn price_kwh(&self) -> f64 {
+    pub fn price_kwh(&self) -> Decimal {
         self.price_kwh
     }
 
@@ -85,7 +86,7 @@ impl TariffEnergyPriceType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_price_kwh(&mut self, price_kwh: f64) -> &mut Self {
+    pub fn set_price_kwh(&mut self, price_kwh: Decimal) -> &mut Self {
         self.price_kwh = price_kwh;
         self
     }
@@ -143,7 +144,7 @@ mod tests {
 
     #[test]
     fn test_new_tariff_energy_price() {
-        let price_kwh = 10.0;
+        let price_kwh = Decimal::new(100, 1); // 10.0
         let tariff_energy_price = TariffEnergyPriceType::new(price_kwh);
 
         assert_eq!(tariff_energy_price.price_kwh(), price_kwh);
@@ -153,7 +154,7 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
-        let price_kwh = 10.0;
+        let price_kwh = Decimal::new(100, 1); // 10.0
         let conditions = TariffConditionsType::new();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -168,8 +169,8 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let price_kwh1 = 10.0;
-        let price_kwh2 = 15.0;
+        let price_kwh1 = Decimal::new(100, 1); // 10.0
+        let price_kwh2 = Decimal::new(150, 1); // 15.0
         let conditions = TariffConditionsType::new();
         let custom_data = CustomDataType::new("VendorX".to_string());
 

@@ -1,7 +1,7 @@
+use super::custom_data::CustomDataType;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-
-use super::custom_data::CustomDataType;
 
 /// Class representing a data element for a stream.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -9,8 +9,8 @@ use super::custom_data::CustomDataType;
 pub struct StreamDataElementType {
     /// Required. Offset relative to _basetime_ of this message.
     /// _basetime_ + _t_ is timestamp of recorded value.
-    #[serde(rename = "t")]
-    pub offset: f64,
+    #[serde(rename = "t", with = "rust_decimal::serde::arbitrary_precision")]
+    pub offset: Decimal,
 
     /// Required. The value.
     #[serde(rename = "v")]
@@ -34,7 +34,7 @@ impl StreamDataElementType {
     /// # Returns
     ///
     /// A new instance of `StreamDataElementType` with optional fields set to `None`
-    pub fn new(offset: f64, value: String) -> Self {
+    pub fn new(offset: Decimal, value: String) -> Self {
         Self {
             offset,
             value,
@@ -61,7 +61,7 @@ impl StreamDataElementType {
     /// # Returns
     ///
     /// The offset relative to basetime of this message
-    pub fn offset(&self) -> f64 {
+    pub fn offset(&self) -> Decimal {
         self.offset
     }
 
@@ -74,7 +74,7 @@ impl StreamDataElementType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_offset(&mut self, offset: f64) -> &mut Self {
+    pub fn set_offset(&mut self, offset: Decimal) -> &mut Self {
         self.offset = offset;
         self
     }
@@ -132,7 +132,7 @@ mod tests {
 
     #[test]
     fn test_new_stream_data_element() {
-        let offset = 42.5;
+        let offset = Decimal::new(425, 1);
         let value = "test_value".to_string();
 
         let element = StreamDataElementType::new(offset, value.clone());
@@ -144,7 +144,7 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
-        let offset = 42.5;
+        let offset = Decimal::new(425, 1);
         let value = "test_value".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -158,12 +158,12 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let offset1 = 42.5;
+        let offset1 = Decimal::new(425, 1);
         let value1 = "test_value1".to_string();
 
         let mut element = StreamDataElementType::new(offset1, value1);
 
-        let offset2 = 84.0;
+        let offset2 = Decimal::new(840, 1);
         let value2 = "test_value2".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -184,7 +184,7 @@ mod tests {
 
     #[test]
     fn test_serialization() {
-        let offset = 42.5;
+        let offset = Decimal::new(425, 1);
         let value = "test_value".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -208,7 +208,7 @@ mod tests {
 
         let element: StreamDataElementType = serde_json::from_str(json).unwrap();
 
-        assert_eq!(element.offset(), 42.5);
+        assert_eq!(element.offset(), Decimal::new(425, 1));
         assert_eq!(element.value(), "test_value");
         assert_eq!(element.custom_data().unwrap().vendor_id(), "VendorX");
     }

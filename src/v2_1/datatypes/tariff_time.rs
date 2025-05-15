@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -146,7 +147,7 @@ mod tests {
 
     #[test]
     fn test_new_tariff_time() {
-        let price = TariffTimePriceType::new(10.0);
+        let price = TariffTimePriceType::new(Decimal::new(100, 1)); // 10.0
         let prices = vec![price.clone()];
         let tariff_time = TariffTimeType::new(prices.clone());
 
@@ -157,12 +158,12 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
-        let price1 = TariffTimePriceType::new(10.0);
-        let price2 = TariffTimePriceType::new(15.0);
+        let price1 = TariffTimePriceType::new(Decimal::new(100, 1)); // 10.0
+        let price2 = TariffTimePriceType::new(Decimal::new(150, 1)); // 15.0
         let prices = vec![price1.clone(), price2.clone()];
 
-        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
-        let tax_rate2 = TaxRateType::new(5.0, "GST".to_string());
+        let tax_rate1 = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
+        let tax_rate2 = TaxRateType::new(Decimal::new(50, 1), "GST".to_string()); // 5.0
         let tax_rates = vec![tax_rate1.clone(), tax_rate2.clone()];
 
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -178,15 +179,15 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let price1 = TariffTimePriceType::new(10.0);
+        let price1 = TariffTimePriceType::new(Decimal::new(100, 1)); // 10.0
         let prices1 = vec![price1.clone()];
 
-        let price2 = TariffTimePriceType::new(15.0);
-        let price3 = TariffTimePriceType::new(20.0);
+        let price2 = TariffTimePriceType::new(Decimal::new(150, 1)); // 15.0
+        let price3 = TariffTimePriceType::new(Decimal::new(200, 1)); // 20.0
         let prices2 = vec![price2.clone(), price3.clone()];
 
-        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
-        let tax_rate2 = TaxRateType::new(5.0, "GST".to_string());
+        let tax_rate1 = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
+        let tax_rate2 = TaxRateType::new(Decimal::new(50, 1), "GST".to_string()); // 5.0
         let tax_rates = vec![tax_rate1.clone(), tax_rate2.clone()];
 
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -212,7 +213,7 @@ mod tests {
     #[test]
     fn test_validation() {
         // Test with valid prices
-        let price = TariffTimePriceType::new(10.0);
+        let price = TariffTimePriceType::new(Decimal::new(100, 1)); // 10.0
         let prices = vec![price.clone()];
         let tariff_time = TariffTimeType::new(prices);
         assert!(tariff_time.validate().is_ok());
@@ -236,7 +237,7 @@ mod tests {
         assert!(invalid_tariff.validate().is_err());
 
         // Test with too many tax rates (invalid)
-        let tax_rate = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0
         let too_many_tax_rates = vec![
             tax_rate.clone(),
             tax_rate.clone(),

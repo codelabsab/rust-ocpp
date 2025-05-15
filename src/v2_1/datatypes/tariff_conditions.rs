@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
-use validator::Validate;
-
 use super::custom_data::CustomDataType;
 use crate::v2_1::enumerations::{day_of_week::DayOfWeekEnumType, evse_kind::EvseKindEnumType};
+use rust_decimal::Decimal;
+use serde::{Deserialize, Serialize};
+use validator::Validate;
 
 /// These conditions describe if and when a TariffEnergyType or TariffTimeType applies during a transaction.
 ///
@@ -47,41 +47,65 @@ pub struct TariffConditionsType {
 
     /// Optional. Minimum consumed energy in Wh, for example 20000 Wh.
     /// Valid from this amount of energy (inclusive) being used.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub min_energy: Option<f64>,
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
+    pub min_energy: Option<Decimal>,
 
     /// Optional. Maximum consumed energy in Wh, for example 50000 Wh.
     /// Valid until this amount of energy (exclusive) being used.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_energy: Option<f64>,
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
+    pub max_energy: Option<Decimal>,
 
     /// Optional. Sum of the minimum current (in Amperes) over all phases, for example 5 A.
     /// When the EV is charging with more than, or equal to, the defined amount of current, this price is/becomes active.
     /// If the charging current is or becomes lower, this price is not or no longer valid and becomes inactive.
     /// This is NOT about the minimum current over the entire transaction.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub min_current: Option<f64>,
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
+    pub min_current: Option<Decimal>,
 
     /// Optional. Sum of the maximum current (in Amperes) over all phases, for example 20 A.
     /// When the EV is charging with less than the defined amount of current, this price becomes/is active.
     /// If the charging current is or becomes higher, this price is not or no longer valid and becomes inactive.
     /// This is NOT about the maximum current over the entire transaction.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_current: Option<f64>,
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
+    pub max_current: Option<Decimal>,
 
     /// Optional. Minimum power in W, for example 5000 W.
     /// When the EV is charging with more than, or equal to, the defined amount of power, this price is/becomes active.
     /// If the charging power is or becomes lower, this price is not or no longer valid and becomes inactive.
     /// This is NOT about the minimum power over the entire transaction.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub min_power: Option<f64>,
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
+    pub min_power: Option<Decimal>,
 
     /// Optional. Maximum power in W, for example 20000 W.
     /// When the EV is charging with less than the defined amount of power, this price becomes/is active.
     /// If the charging power is or becomes higher, this price is not or no longer valid and becomes inactive.
     /// This is NOT about the maximum power over the entire transaction.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_power: Option<f64>,
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
+    pub max_power: Option<Decimal>,
 
     /// Optional. Minimum duration in seconds the transaction (charging & idle) MUST last (inclusive).
     /// When the duration of a transaction is longer than the defined value, this price is or becomes active.
@@ -248,7 +272,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_min_energy(mut self, min_energy: f64) -> Self {
+    pub fn with_min_energy(mut self, min_energy: Decimal) -> Self {
         self.min_energy = Some(min_energy);
         self
     }
@@ -262,7 +286,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_max_energy(mut self, max_energy: f64) -> Self {
+    pub fn with_max_energy(mut self, max_energy: Decimal) -> Self {
         self.max_energy = Some(max_energy);
         self
     }
@@ -276,7 +300,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_min_current(mut self, min_current: f64) -> Self {
+    pub fn with_min_current(mut self, min_current: Decimal) -> Self {
         self.min_current = Some(min_current);
         self
     }
@@ -290,7 +314,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_max_current(mut self, max_current: f64) -> Self {
+    pub fn with_max_current(mut self, max_current: Decimal) -> Self {
         self.max_current = Some(max_current);
         self
     }
@@ -304,7 +328,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_min_power(mut self, min_power: f64) -> Self {
+    pub fn with_min_power(mut self, min_power: Decimal) -> Self {
         self.min_power = Some(min_power);
         self
     }
@@ -318,7 +342,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_max_power(mut self, max_power: f64) -> Self {
+    pub fn with_max_power(mut self, max_power: Decimal) -> Self {
         self.max_power = Some(max_power);
         self
     }
@@ -564,7 +588,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// An optional minimum consumed energy in Wh
-    pub fn min_energy(&self) -> Option<f64> {
+    pub fn min_energy(&self) -> Option<Decimal> {
         self.min_energy
     }
 
@@ -577,7 +601,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_min_energy(&mut self, min_energy: Option<f64>) -> &mut Self {
+    pub fn set_min_energy(&mut self, min_energy: Option<Decimal>) -> &mut Self {
         self.min_energy = min_energy;
         self
     }
@@ -587,7 +611,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// An optional maximum consumed energy in Wh
-    pub fn max_energy(&self) -> Option<f64> {
+    pub fn max_energy(&self) -> Option<Decimal> {
         self.max_energy
     }
 
@@ -600,7 +624,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_max_energy(&mut self, max_energy: Option<f64>) -> &mut Self {
+    pub fn set_max_energy(&mut self, max_energy: Option<Decimal>) -> &mut Self {
         self.max_energy = max_energy;
         self
     }
@@ -610,7 +634,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// An optional sum of the minimum current (in Amperes) over all phases
-    pub fn min_current(&self) -> Option<f64> {
+    pub fn min_current(&self) -> Option<Decimal> {
         self.min_current
     }
 
@@ -623,7 +647,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_min_current(&mut self, min_current: Option<f64>) -> &mut Self {
+    pub fn set_min_current(&mut self, min_current: Option<Decimal>) -> &mut Self {
         self.min_current = min_current;
         self
     }
@@ -633,7 +657,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// An optional sum of the maximum current (in Amperes) over all phases
-    pub fn max_current(&self) -> Option<f64> {
+    pub fn max_current(&self) -> Option<Decimal> {
         self.max_current
     }
 
@@ -646,7 +670,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_max_current(&mut self, max_current: Option<f64>) -> &mut Self {
+    pub fn set_max_current(&mut self, max_current: Option<Decimal>) -> &mut Self {
         self.max_current = max_current;
         self
     }
@@ -656,7 +680,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// An optional minimum power in W
-    pub fn min_power(&self) -> Option<f64> {
+    pub fn min_power(&self) -> Option<Decimal> {
         self.min_power
     }
 
@@ -669,7 +693,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_min_power(&mut self, min_power: Option<f64>) -> &mut Self {
+    pub fn set_min_power(&mut self, min_power: Option<Decimal>) -> &mut Self {
         self.min_power = min_power;
         self
     }
@@ -679,7 +703,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// An optional maximum power in W
-    pub fn max_power(&self) -> Option<f64> {
+    pub fn max_power(&self) -> Option<Decimal> {
         self.max_power
     }
 
@@ -692,7 +716,7 @@ impl TariffConditionsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_max_power(&mut self, max_power: Option<f64>) -> &mut Self {
+    pub fn set_max_power(&mut self, max_power: Option<Decimal>) -> &mut Self {
         self.max_power = max_power;
         self
     }
@@ -902,12 +926,12 @@ mod tests {
         let valid_from_date = "2023-01-01".to_string();
         let valid_to_date = "2023-12-31".to_string();
         let evse_kind = EvseKindEnumType::AC;
-        let min_energy = 1000.0;
-        let max_energy = 50000.0;
-        let min_current = 5.0;
-        let max_current = 32.0;
-        let min_power = 3700.0;
-        let max_power = 22000.0;
+        let min_energy = Decimal::new(10000, 1); // 1000.0
+        let max_energy = Decimal::new(500000, 1); // 50000.0
+        let min_current = Decimal::new(50, 1); // 5.0
+        let max_current = Decimal::new(320, 1); // 32.0
+        let min_power = Decimal::new(37000, 1); // 3700.0
+        let max_power = Decimal::new(220000, 1); // 22000.0
         let min_time = 300;
         let max_time = 18000;
         let min_charging_time = 600;
@@ -986,12 +1010,12 @@ mod tests {
         let valid_from_date = "2023-01-01".to_string();
         let valid_to_date = "2023-12-31".to_string();
         let evse_kind = EvseKindEnumType::AC;
-        let min_energy = 1000.0;
-        let max_energy = 50000.0;
-        let min_current = 5.0;
-        let max_current = 32.0;
-        let min_power = 3700.0;
-        let max_power = 22000.0;
+        let min_energy = Decimal::new(10000, 1); // 1000.0
+        let max_energy = Decimal::new(500000, 1); // 50000.0
+        let min_current = Decimal::new(50, 1); // 5.0
+        let max_current = Decimal::new(320, 1); // 32.0
+        let min_power = Decimal::new(37000, 1); // 3700.0
+        let max_power = Decimal::new(220000, 1); // 22000.0
         let min_time = 300;
         let max_time = 18000;
         let min_charging_time = 600;

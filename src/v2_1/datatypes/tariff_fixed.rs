@@ -1,3 +1,4 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -99,7 +100,7 @@ mod tests {
 
     #[test]
     fn test_new_tariff_fixed() {
-        let fixed_price = TariffFixedPriceType::new(10.0);
+        let fixed_price = TariffFixedPriceType::new(Decimal::new(100, 1)); // 10.0
         let tariff_fixed = TariffFixedType::new(fixed_price.clone());
 
         assert_eq!(tariff_fixed.fixed_price(), &fixed_price);
@@ -108,7 +109,7 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
-        let fixed_price = TariffFixedPriceType::new(10.0);
+        let fixed_price = TariffFixedPriceType::new(Decimal::new(100, 1)); // 10.0
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let tariff_fixed =
@@ -120,8 +121,8 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let fixed_price1 = TariffFixedPriceType::new(10.0);
-        let fixed_price2 = TariffFixedPriceType::new(15.0);
+        let fixed_price1 = TariffFixedPriceType::new(Decimal::new(100, 1)); // 10.0
+        let fixed_price2 = TariffFixedPriceType::new(Decimal::new(150, 1)); // 15.0
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let mut tariff_fixed = TariffFixedType::new(fixed_price1);

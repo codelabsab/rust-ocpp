@@ -1,22 +1,33 @@
+use super::custom_data::CustomDataType;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::custom_data::CustomDataType;
-
-/// Tax rate structure defining tax rate details.
+/// Tax percentage
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct TaxRateType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
-    /// Required. Tax rate in percent.
-    pub tax_rate: f64,
-
-    /// Required. Tax rate name.
+    /// Required. Type of this tax, e.g. "Federal", "State", for information on receipt.
     #[validate(length(max = 20))]
-    pub tax_rate_name: String,
+    #[serde(rename = "type")]
+    pub type_: String,
+
+    /// Required. Tax percentage
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
+    pub tax: Decimal,
+
+    /// Optional. Stack level for this type of tax. Default value, when absent, is 0.
+    /// stack = 0: tax on net price;
+    /// stack = 1: tax added on top of stack 0;
+    /// stack = 2: tax added on top of stack 1, etc.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(range(min = 0))]
+    pub stack: Option<i32>,
+
+    /// Optional. Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl TaxRateType {
@@ -24,18 +35,33 @@ impl TaxRateType {
     ///
     /// # Arguments
     ///
-    /// * `tax_rate` - Tax rate in percent
-    /// * `tax_rate_name` - Tax rate name
+    /// * `tax` - Tax percentage
+    /// * `type_` - Type of this tax
     ///
     /// # Returns
     ///
     /// A new instance of `TaxRateType` with optional fields set to `None`
-    pub fn new(tax_rate: f64, tax_rate_name: String) -> Self {
+    pub fn new(tax: Decimal, type_: String) -> Self {
         Self {
-            tax_rate,
-            tax_rate_name,
+            type_,
+            tax,
+            stack: None,
             custom_data: None,
         }
+    }
+
+    /// Sets the stack level for this type of tax.
+    ///
+    /// # Arguments
+    ///
+    /// * `stack` - Stack level for this type of tax
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_stack(mut self, stack: i32) -> Self {
+        self.stack = Some(stack);
+        self
     }
 
     /// Sets the custom data.
@@ -52,49 +78,72 @@ impl TaxRateType {
         self
     }
 
-    /// Gets the tax rate.
+    /// Gets the type of this tax.
     ///
     /// # Returns
     ///
-    /// The tax rate in percent
-    pub fn tax_rate(&self) -> f64 {
-        self.tax_rate
+    /// The type of this tax
+    pub fn type_(&self) -> &str {
+        &self.type_
     }
 
-    /// Sets the tax rate.
+    /// Sets the type of this tax.
     ///
     /// # Arguments
     ///
-    /// * `tax_rate` - Tax rate in percent
+    /// * `type_` - Type of this tax
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_tax_rate(&mut self, tax_rate: f64) -> &mut Self {
-        self.tax_rate = tax_rate;
+    pub fn set_type(&mut self, type_: String) -> &mut Self {
+        self.type_ = type_;
         self
     }
 
-    /// Gets the tax rate name.
+    /// Gets the tax percentage.
     ///
     /// # Returns
     ///
-    /// The tax rate name
-    pub fn tax_rate_name(&self) -> &str {
-        &self.tax_rate_name
+    /// The tax percentage
+    pub fn tax(&self) -> Decimal {
+        self.tax
     }
 
-    /// Sets the tax rate name.
+    /// Sets the tax percentage.
     ///
     /// # Arguments
     ///
-    /// * `tax_rate_name` - Tax rate name
+    /// * `tax` - Tax percentage
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_tax_rate_name(&mut self, tax_rate_name: String) -> &mut Self {
-        self.tax_rate_name = tax_rate_name;
+    pub fn set_tax(&mut self, tax: Decimal) -> &mut Self {
+        self.tax = tax;
+        self
+    }
+
+    /// Gets the stack level for this type of tax.
+    ///
+    /// # Returns
+    ///
+    /// An optional stack level for this type of tax
+    pub fn stack(&self) -> Option<i32> {
+        self.stack
+    }
+
+    /// Sets the stack level for this type of tax.
+    ///
+    /// # Arguments
+    ///
+    /// * `stack` - Stack level for this type of tax, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_stack(&mut self, stack: Option<i32>) -> &mut Self {
+        self.stack = stack;
         self
     }
 
@@ -128,51 +177,77 @@ mod tests {
 
     #[test]
     fn test_new_tax_rate() {
-        let tax_rate = 21.0;
-        let tax_rate_name = "VAT".to_string();
+        let tax = Decimal::new(210, 1); // 21.0
+        let type_ = "VAT".to_string();
 
-        let tax_rate_type = TaxRateType::new(tax_rate, tax_rate_name.clone());
+        let tax_rate = TaxRateType::new(tax, type_.clone());
 
-        assert_eq!(tax_rate_type.tax_rate(), tax_rate);
-        assert_eq!(tax_rate_type.tax_rate_name(), tax_rate_name);
-        assert_eq!(tax_rate_type.custom_data(), None);
+        assert_eq!(tax_rate.tax(), tax);
+        assert_eq!(tax_rate.type_(), type_);
+        assert_eq!(tax_rate.stack(), None);
+        assert_eq!(tax_rate.custom_data(), None);
     }
 
     #[test]
-    fn test_with_custom_data() {
-        let tax_rate = 21.0;
-        let tax_rate_name = "VAT".to_string();
+    fn test_with_methods() {
+        let tax = Decimal::new(210, 1); // 21.0
+        let type_ = "VAT".to_string();
+        let stack = 1;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let tax_rate_type =
-            TaxRateType::new(tax_rate, tax_rate_name.clone()).with_custom_data(custom_data.clone());
+        let tax_rate = TaxRateType::new(tax, type_.clone())
+            .with_stack(stack)
+            .with_custom_data(custom_data.clone());
 
-        assert_eq!(tax_rate_type.tax_rate(), tax_rate);
-        assert_eq!(tax_rate_type.tax_rate_name(), tax_rate_name);
-        assert_eq!(tax_rate_type.custom_data(), Some(&custom_data));
+        assert_eq!(tax_rate.tax(), tax);
+        assert_eq!(tax_rate.type_(), type_);
+        assert_eq!(tax_rate.stack(), Some(stack));
+        assert_eq!(tax_rate.custom_data(), Some(&custom_data));
     }
 
     #[test]
     fn test_setter_methods() {
-        let tax_rate1 = 21.0;
-        let tax_rate_name1 = "VAT".to_string();
-        let tax_rate2 = 15.0;
-        let tax_rate_name2 = "GST".to_string();
+        let tax1 = Decimal::new(210, 1); // 21.0
+        let type1 = "VAT".to_string();
+        let tax2 = Decimal::new(150, 1); // 15.0
+        let type2 = "GST".to_string();
+        let stack = 1;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut tax_rate_type = TaxRateType::new(tax_rate1, tax_rate_name1);
+        let mut tax_rate = TaxRateType::new(tax1, type1);
 
-        tax_rate_type
-            .set_tax_rate(tax_rate2)
-            .set_tax_rate_name(tax_rate_name2.clone())
+        tax_rate
+            .set_tax(tax2)
+            .set_type(type2.clone())
+            .set_stack(Some(stack))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(tax_rate_type.tax_rate(), tax_rate2);
-        assert_eq!(tax_rate_type.tax_rate_name(), tax_rate_name2);
-        assert_eq!(tax_rate_type.custom_data(), Some(&custom_data));
+        assert_eq!(tax_rate.tax(), tax2);
+        assert_eq!(tax_rate.type_(), type2);
+        assert_eq!(tax_rate.stack(), Some(stack));
+        assert_eq!(tax_rate.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        tax_rate_type.set_custom_data(None);
-        assert_eq!(tax_rate_type.custom_data(), None);
+        tax_rate.set_stack(None).set_custom_data(None);
+        assert_eq!(tax_rate.stack(), None);
+        assert_eq!(tax_rate.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // Valid tax rate
+        let tax_rate = TaxRateType::new(Decimal::new(210, 1), "VAT".to_string());
+        assert!(tax_rate.validate().is_ok());
+
+        // Test with invalid type (too long)
+        let mut invalid_tax_rate = TaxRateType::new(
+            Decimal::new(210, 1),
+            "ThisTaxTypeNameIsTooLongAndExceedsTheMaximumLength".to_string(),
+        );
+        assert!(invalid_tax_rate.validate().is_err());
+
+        // Test with invalid stack (negative value)
+        invalid_tax_rate = TaxRateType::new(Decimal::new(210, 1), "VAT".to_string()).with_stack(-1);
+        assert!(invalid_tax_rate.validate().is_err());
     }
 }
