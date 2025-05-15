@@ -223,7 +223,6 @@ impl TariffFixedType {
 
 #[cfg(test)]
 mod tests {
-    #[allow(unused_imports)]
     use super::*;
     use rust_decimal::Decimal;
 

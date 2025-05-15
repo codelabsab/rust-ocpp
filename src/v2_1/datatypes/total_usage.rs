@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 use rust_decimal::Decimal;
+use rust_decimal::prelude::FromPrimitive;
 
 use super::custom_data::CustomDataType;
 
@@ -23,6 +24,7 @@ pub struct TotalUsageType {
 
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -31,6 +33,17 @@ impl TotalUsageType {
     pub fn new(energy: Decimal, charging_time: i32, idle_time: i32) -> Self {
         Self {
             energy,
+            charging_time,
+            idle_time,
+            reservation_time: None,
+            custom_data: None,
+        }
+    }
+
+    /// Creates a new `TotalUsageType` from a floating-point energy value.
+    pub fn new_from_f64(energy: f64, charging_time: i32, idle_time: i32) -> Self {
+        Self {
+            energy: Decimal::from_f64(energy).unwrap_or_else(|| Decimal::new(0, 0)),
             charging_time,
             idle_time,
             reservation_time: None,
@@ -51,12 +64,12 @@ impl TotalUsageType {
         self
     }
 
-    /// Gets the charging time value.
+    /// Gets the charging time value in seconds.
     pub fn charging_time(&self) -> i32 {
         self.charging_time
     }
 
-    /// Sets the charging time value.
+    /// Sets the charging time value in seconds.
     ///
     /// Returns a mutable reference to self for method chaining.
     pub fn set_charging_time(&mut self, charging_time: i32) -> &mut Self {
@@ -64,12 +77,12 @@ impl TotalUsageType {
         self
     }
 
-    /// Gets the idle time value.
+    /// Gets the idle time value in seconds.
     pub fn idle_time(&self) -> i32 {
         self.idle_time
     }
 
-    /// Sets the idle time value.
+    /// Sets the idle time value in seconds.
     ///
     /// Returns a mutable reference to self for method chaining.
     pub fn set_idle_time(&mut self, idle_time: i32) -> &mut Self {
@@ -77,12 +90,12 @@ impl TotalUsageType {
         self
     }
 
-    /// Gets the reservation time value.
+    /// Gets the reservation time value in seconds.
     pub fn reservation_time(&self) -> Option<i32> {
         self.reservation_time
     }
 
-    /// Sets the reservation time value.
+    /// Sets the reservation time value in seconds.
     ///
     /// Returns a mutable reference to self for method chaining.
     pub fn set_reservation_time(&mut self, reservation_time: Option<i32>) -> &mut Self {
@@ -126,8 +139,7 @@ mod tests {
 
     #[test]
     fn test_new_total_usage() {
-        // 10.5 as Decimal
-        let energy = Decimal::new(105, 1);
+        let energy = Decimal::from_f64(10.5).unwrap();
         let charging_time = 3600;
         let idle_time = 600;
 
@@ -141,9 +153,24 @@ mod tests {
     }
 
     #[test]
+    fn test_new_from_f64() {
+        let energy_f64 = 10.5;
+        let energy_decimal = Decimal::from_f64(energy_f64).unwrap();
+        let charging_time = 3600;
+        let idle_time = 600;
+
+        let total_usage = TotalUsageType::new_from_f64(energy_f64, charging_time, idle_time);
+
+        assert_eq!(total_usage.energy(), energy_decimal);
+        assert_eq!(total_usage.charging_time(), charging_time);
+        assert_eq!(total_usage.idle_time(), idle_time);
+        assert_eq!(total_usage.reservation_time(), None);
+        assert_eq!(total_usage.custom_data(), None);
+    }
+
+    #[test]
     fn test_with_methods() {
-        // 10.5 as Decimal
-        let energy = Decimal::new(105, 1);
+        let energy = Decimal::from_f64(10.5).unwrap();
         let charging_time = 3600;
         let idle_time = 600;
         let reservation_time = 1800;
@@ -162,12 +189,10 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        // 10.5 as Decimal
-        let energy = Decimal::new(105, 1);
+        let energy = Decimal::from_f64(10.5).unwrap();
         let charging_time = 3600;
         let idle_time = 600;
-        // 15.0 as Decimal
-        let new_energy = Decimal::new(150, 1);
+        let new_energy = Decimal::from_f64(15.0).unwrap();
         let new_charging_time = 4800;
         let new_idle_time = 900;
         let reservation_time = 1800;
@@ -195,5 +220,21 @@ mod tests {
 
         assert_eq!(total_usage.reservation_time(), None);
         assert_eq!(total_usage.custom_data(), None);
+    }
+
+    #[test]
+    fn test_serde() {
+        let energy = Decimal::from_f64(10.5).unwrap();
+        let charging_time = 3600;
+        let idle_time = 600;
+        let reservation_time = 1800;
+
+        let total_usage = TotalUsageType::new(energy, charging_time, idle_time)
+            .with_reservation_time(reservation_time);
+
+        let json = serde_json::to_string(&total_usage).unwrap();
+        let deserialized: TotalUsageType = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(deserialized, total_usage);
     }
 }
