@@ -1152,8 +1152,8 @@ mod tests {
         // Create test points
         let freq_point1 = V2XFreqWattPointType::new_from_f64(50.0, -30.0);
         let freq_point2 = V2XFreqWattPointType::new_from_f64(51.0, -20.0);
-        let signal_point1 = V2XSignalWattPointType::new(75.0, -30.0);
-        let signal_point2 = V2XSignalWattPointType::new(80.0, -20.0);
+        let signal_point1 = V2XSignalWattPointType::new_with_f64_power(75, -30.0);
+        let signal_point2 = V2XSignalWattPointType::new_with_f64_power(80, -20.0);
 
         // Set the curves
         period.v2x_freq_watt_curve = Some(vec![freq_point1.clone(), freq_point2.clone()]);
@@ -1167,11 +1167,11 @@ mod tests {
         assert_eq!(period.v2x_signal_watt_curve.as_ref().unwrap().len(), 2);
         assert_eq!(
             period.v2x_signal_watt_curve.as_ref().unwrap()[0].signal(),
-            75.0
+            75
         );
         assert_eq!(
             period.v2x_signal_watt_curve.as_ref().unwrap()[1].signal(),
-            80.0
+            80
         );
 
         // Test serialization with curves
@@ -1211,7 +1211,7 @@ mod tests {
             "setpointReactive_L3": 7.0,
             "v2xBaseline": 50.0,
             "v2xFreqWattCurve": [{"frequency": 49.5, "power": -25.0}],
-            "v2xSignalWattCurve": [{"signal": 60.0, "power": -15.0}]
+            "v2xSignalWattCurve": [{"signal": 60, "power": -15.0}]
         }"#;
 
         let deserialized: ChargingSchedulePeriodType = from_str(json).unwrap();
@@ -1226,7 +1226,7 @@ mod tests {
         );
         assert_eq!(
             deserialized.v2x_signal_watt_curve.as_ref().unwrap()[0].signal(),
-            60.0
+            60
         );
     }
 

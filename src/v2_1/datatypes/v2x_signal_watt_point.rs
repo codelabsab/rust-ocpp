@@ -1,123 +1,81 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::FromPrimitive;
 
 use super::custom_data::CustomDataType;
 
-/// Point in a signal-watt curve for V2X.
+/// *(2.1)* A point of a signal-watt curve.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct V2XSignalWattPointType {
+    /// Signal value from an AFRRSignalRequest.
+    pub signal: i32,
+
+    /// Power in W to charge (positive) or discharge (negative) at specified frequency.
+    pub power: Decimal,
+
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
-
-    /// Required. Signal value between 0 and 100 percent.
-    #[validate(range(min = 0.0, max = 100.0))]
-    pub signal: f64,
-
-    /// Required. Power in percent of maximum power. Negative values indicate power being discharged from the EV.
-    pub power: f64,
 }
 
 impl V2XSignalWattPointType {
     /// Creates a new `V2XSignalWattPointType` with the required fields.
-    ///
-    /// # Arguments
-    ///
-    /// * `signal` - Signal value between 0 and 100 percent
-    /// * `power` - Power in percent of maximum power (negative values indicate power being discharged from the EV)
-    ///
-    /// # Returns
-    ///
-    /// A new `V2XSignalWattPointType` instance with optional fields set to `None`
-    pub fn new(signal: f64, power: f64) -> Self {
+    pub fn new(signal: i32, power: Decimal) -> Self {
         Self {
-            custom_data: None,
             signal,
             power,
+            custom_data: None,
         }
     }
 
-    /// Sets the custom data field.
-    ///
-    /// # Arguments
-    ///
-    /// * `custom_data` - Custom data from the Charging Station
-    ///
-    /// # Returns
-    ///
-    /// The modified `V2XSignalWattPointType` instance
-    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
-        self.custom_data = Some(custom_data);
-        self
-    }
-
-    /// Gets the custom data.
-    ///
-    /// # Returns
-    ///
-    /// An optional reference to the custom data
-    pub fn custom_data(&self) -> Option<&CustomDataType> {
-        self.custom_data.as_ref()
-    }
-
-    /// Sets the custom data.
-    ///
-    /// # Arguments
-    ///
-    /// * `custom_data` - Custom data from the Charging Station
-    ///
-    /// # Returns
-    ///
-    /// The modified `V2XSignalWattPointType` instance
-    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
-        self.custom_data = custom_data;
-        self
+    /// Creates a new `V2XSignalWattPointType` from floating-point power value.
+    pub fn new_with_f64_power(signal: i32, power: f64) -> Self {
+        Self {
+            signal,
+            power: Decimal::from_f64(power).unwrap_or_else(|| Decimal::new(0, 0)),
+            custom_data: None,
+        }
     }
 
     /// Gets the signal value.
-    ///
-    /// # Returns
-    ///
-    /// The signal value between 0 and 100 percent
-    pub fn signal(&self) -> f64 {
+    pub fn signal(&self) -> i32 {
         self.signal
     }
 
     /// Sets the signal value.
-    ///
-    /// # Arguments
-    ///
-    /// * `signal` - Signal value between 0 and 100 percent
-    ///
-    /// # Returns
-    ///
-    /// The modified `V2XSignalWattPointType` instance
-    pub fn set_signal(&mut self, signal: f64) -> &mut Self {
+    pub fn set_signal(&mut self, signal: i32) -> &mut Self {
         self.signal = signal;
         self
     }
 
     /// Gets the power value.
-    ///
-    /// # Returns
-    ///
-    /// The power in percent of maximum power
-    pub fn power(&self) -> f64 {
+    pub fn power(&self) -> Decimal {
         self.power
     }
 
     /// Sets the power value.
-    ///
-    /// # Arguments
-    ///
-    /// * `power` - Power in percent of maximum power (negative values indicate power being discharged from the EV)
-    ///
-    /// # Returns
-    ///
-    /// The modified `V2XSignalWattPointType` instance
-    pub fn set_power(&mut self, power: f64) -> &mut Self {
+    pub fn set_power(&mut self, power: Decimal) -> &mut Self {
         self.power = power;
+        self
+    }
+
+    /// Gets the custom data.
+    pub fn custom_data(&self) -> Option<&CustomDataType> {
+        self.custom_data.as_ref()
+    }
+
+    /// Sets the custom data.
+    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
+        self.custom_data = custom_data;
+        self
+    }
+
+    /// Sets the custom data using the builder pattern.
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
         self
     }
 }
@@ -127,31 +85,80 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_v2x_signal_watt_point_new() {
-        let point = V2XSignalWattPointType::new(75.0, -30.0);
+    fn test_new() {
+        let signal = 75;
+        let power = Decimal::from_f64(-3000.0).unwrap();
+        
+        let point = V2XSignalWattPointType::new(signal, power);
 
-        assert_eq!(point.signal(), 75.0);
-        assert_eq!(point.power(), -30.0);
+        assert_eq!(point.signal(), signal);
+        assert_eq!(point.power(), power);
         assert_eq!(point.custom_data(), None);
     }
 
     #[test]
-    fn test_v2x_signal_watt_point_with_methods() {
-        let custom_data = CustomDataType::new("Vendor".to_string());
-        let point = V2XSignalWattPointType::new(50.0, -40.0).with_custom_data(custom_data.clone());
+    fn test_new_with_f64_power() {
+        let signal = 50;
+        let power_f64 = -3000.0;
+        
+        let point = V2XSignalWattPointType::new_with_f64_power(signal, power_f64);
 
-        assert_eq!(point.signal(), 50.0);
-        assert_eq!(point.power(), -40.0);
+        assert_eq!(point.signal(), signal);
+        assert_eq!(point.power(), Decimal::from_f64(power_f64).unwrap());
+        assert_eq!(point.custom_data(), None);
+    }
+
+    #[test]
+    fn test_with_methods() {
+        let signal = 75;
+        let power = Decimal::from_f64(-3000.0).unwrap();
+        let custom_data = CustomDataType::new("VendorX".to_string());
+        
+        let point = V2XSignalWattPointType::new(signal, power)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(point.signal(), signal);
+        assert_eq!(point.power(), power);
         assert_eq!(point.custom_data(), Some(&custom_data));
     }
 
     #[test]
-    fn test_v2x_signal_watt_point_setters() {
-        let mut point = V2XSignalWattPointType::new(75.0, -30.0);
+    fn test_setter_methods() {
+        let initial_signal = 75;
+        let initial_power = Decimal::from_f64(-3000.0).unwrap();
+        
+        let new_signal = 80;
+        let new_power = Decimal::from_f64(-2500.0).unwrap();
+        
+        let custom_data = CustomDataType::new("VendorX".to_string());
+        
+        let mut point = V2XSignalWattPointType::new(initial_signal, initial_power);
 
-        point.set_signal(80.0).set_power(-25.0);
+        point
+            .set_signal(new_signal)
+            .set_power(new_power)
+            .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(point.signal(), 80.0);
-        assert_eq!(point.power(), -25.0);
+        assert_eq!(point.signal(), new_signal);
+        assert_eq!(point.power(), new_power);
+        assert_eq!(point.custom_data(), Some(&custom_data));
+        
+        // Test clearing optional fields
+        point.set_custom_data(None);
+        
+        assert_eq!(point.custom_data(), None);
+    }
+    
+    #[test]
+    fn test_serialization() {
+        let signal = 75;
+        let power = Decimal::from_f64(-3000.0).unwrap();
+        
+        let point = V2XSignalWattPointType::new(signal, power);
+        
+        let json = serde_json::to_string(&point).unwrap();
+        let deserialized: V2XSignalWattPointType = serde_json::from_str(&json).unwrap();
+        
+        assert_eq!(deserialized, point);
     }
 }
