@@ -1,8 +1,13 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{component::ComponentType, custom_data::CustomDataType, status_info::StatusInfoType, variable::VariableType};
-use crate::v2_1::enumerations::{attribute::AttributeEnumType, set_variable_status::SetVariableStatusEnumType};
+use super::{
+    component::ComponentType, custom_data::CustomDataType, status_info::StatusInfoType,
+    variable::VariableType,
+};
+use crate::v2_1::enumerations::{
+    attribute::AttributeEnumType, set_variable_status::SetVariableStatusEnumType,
+};
 
 /// Class to hold result of SetVariable request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -167,7 +172,10 @@ impl SetVariableResultType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_attribute_status(&mut self, attribute_status: SetVariableStatusEnumType) -> &mut Self {
+    pub fn set_attribute_status(
+        &mut self,
+        attribute_status: SetVariableStatusEnumType,
+    ) -> &mut Self {
         self.attribute_status = attribute_status;
         self
     }

@@ -1,30 +1,37 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{datatypes::CustomDataType, enumerations::signing_method::SigningMethodEnumType};
+use super::custom_data::CustomDataType;
 
-/// Contains a signed version of the meter value.
+/// Represent a signed version of the meter value.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SignedMeterValueType {
-    /// Optional. Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
-    /// Required. Base64 encoded, contains the signed data that needs to be verified.
+    /// Required. Base64 encoded, contains the signed data from the meter in the format specified in _encodingMethod_,
+    /// which might contain more then just the meter value. It can contain information like timestamps,
+    /// reference to a customer etc.
     #[validate(length(max = 32768))]
     pub signed_meter_data: String,
 
-    /// Required. Method used to create the digital signature.
-    pub signing_method: SigningMethodEnumType,
-
-    /// Required. Base64 encoded, contains the public key to verify the signature.
+    /// Required. Format used by the energy meter to encode the meter data. For example: OCMF or EDL.
     #[validate(length(max = 50))]
     pub encoding_method: String,
 
-    /// Required. Base64 encoded SHA256 hash of the public key that is used for the encoding method.
+    /// Optional. *(2.1)* Method used to create the digital signature. Optional, if already included in _signedMeterData_.
+    /// Standard values for this are defined in Appendix as SigningMethodEnumStringType.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(max = 50))]
+    pub signing_method: Option<String>,
+
+    /// Optional. *(2.1)* Base64 encoded, sending depends on configuration variable _PublicKeyWithSignedMeterValue_.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(length(max = 2500))]
-    pub public_key: String,
+    pub public_key: Option<String>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl SignedMeterValueType {
@@ -32,27 +39,48 @@ impl SignedMeterValueType {
     ///
     /// # Arguments
     ///
-    /// * `signed_meter_data` - Base64 encoded, contains the signed data that needs to be verified
-    /// * `signing_method` - Method used to create the digital signature
-    /// * `encoding_method` - Base64 encoded, contains the public key to verify the signature
-    /// * `public_key` - Base64 encoded SHA256 hash of the public key that is used for the encoding method
+    /// * `signed_meter_data` - Base64 encoded, contains the signed data from the meter
+    /// * `encoding_method` - Format used by the energy meter to encode the meter data
     ///
     /// # Returns
     ///
     /// A new instance of `SignedMeterValueType` with optional fields set to `None`
-    pub fn new(
-        signed_meter_data: String,
-        signing_method: SigningMethodEnumType,
-        encoding_method: String,
-        public_key: String,
-    ) -> Self {
+    pub fn new(signed_meter_data: String, encoding_method: String) -> Self {
         Self {
-            custom_data: None,
             signed_meter_data,
-            signing_method,
             encoding_method,
-            public_key,
+            signing_method: None,
+            public_key: None,
+            custom_data: None,
         }
+    }
+
+    /// Sets the signing method.
+    ///
+    /// # Arguments
+    ///
+    /// * `signing_method` - Method used to create the digital signature
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_signing_method(mut self, signing_method: String) -> Self {
+        self.signing_method = Some(signing_method);
+        self
+    }
+
+    /// Sets the public key.
+    ///
+    /// # Arguments
+    ///
+    /// * `public_key` - Base64 encoded public key
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_public_key(mut self, public_key: String) -> Self {
+        self.public_key = Some(public_key);
+        self
     }
 
     /// Sets the custom data.
@@ -73,7 +101,7 @@ impl SignedMeterValueType {
     ///
     /// # Returns
     ///
-    /// The Base64 encoded signed data that needs to be verified
+    /// The Base64 encoded signed data from the meter
     pub fn signed_meter_data(&self) -> &str {
         &self.signed_meter_data
     }
@@ -82,7 +110,7 @@ impl SignedMeterValueType {
     ///
     /// # Arguments
     ///
-    /// * `signed_meter_data` - Base64 encoded, contains the signed data that needs to be verified
+    /// * `signed_meter_data` - Base64 encoded, contains the signed data from the meter
     ///
     /// # Returns
     ///
@@ -92,34 +120,11 @@ impl SignedMeterValueType {
         self
     }
 
-    /// Gets the signing method.
-    ///
-    /// # Returns
-    ///
-    /// The method used to create the digital signature
-    pub fn signing_method(&self) -> &SigningMethodEnumType {
-        &self.signing_method
-    }
-
-    /// Sets the signing method.
-    ///
-    /// # Arguments
-    ///
-    /// * `signing_method` - Method used to create the digital signature
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_signing_method(&mut self, signing_method: SigningMethodEnumType) -> &mut Self {
-        self.signing_method = signing_method;
-        self
-    }
-
     /// Gets the encoding method.
     ///
     /// # Returns
     ///
-    /// The Base64 encoded public key to verify the signature
+    /// The format used by the energy meter to encode the meter data
     pub fn encoding_method(&self) -> &str {
         &self.encoding_method
     }
@@ -128,7 +133,7 @@ impl SignedMeterValueType {
     ///
     /// # Arguments
     ///
-    /// * `encoding_method` - Base64 encoded, contains the public key to verify the signature
+    /// * `encoding_method` - Format used by the energy meter to encode the meter data
     ///
     /// # Returns
     ///
@@ -138,25 +143,48 @@ impl SignedMeterValueType {
         self
     }
 
+    /// Gets the signing method.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the method used to create the digital signature
+    pub fn signing_method(&self) -> Option<&str> {
+        self.signing_method.as_deref()
+    }
+
+    /// Sets the signing method.
+    ///
+    /// # Arguments
+    ///
+    /// * `signing_method` - Method used to create the digital signature, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_signing_method(&mut self, signing_method: Option<String>) -> &mut Self {
+        self.signing_method = signing_method;
+        self
+    }
+
     /// Gets the public key.
     ///
     /// # Returns
     ///
-    /// The Base64 encoded SHA256 hash of the public key
-    pub fn public_key(&self) -> &str {
-        &self.public_key
+    /// An optional reference to the Base64 encoded public key
+    pub fn public_key(&self) -> Option<&str> {
+        self.public_key.as_deref()
     }
 
     /// Sets the public key.
     ///
     /// # Arguments
     ///
-    /// * `public_key` - Base64 encoded SHA256 hash of the public key that is used for the encoding method
+    /// * `public_key` - Base64 encoded public key, or None to clear
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_public_key(&mut self, public_key: String) -> &mut Self {
+    pub fn set_public_key(&mut self, public_key: Option<String>) -> &mut Self {
         self.public_key = public_key;
         self
     }
@@ -192,83 +220,71 @@ mod tests {
     #[test]
     fn test_new_signed_meter_value() {
         let signed_meter_data = "signed_data".to_string();
-        let signing_method = SigningMethodEnumType::Custom("ECDSA-256".to_string());
-        let encoding_method = "encoding_method".to_string();
-        let public_key = "public_key".to_string();
+        let encoding_method = "OCMF".to_string();
 
-        let value = SignedMeterValueType::new(
-            signed_meter_data.clone(),
-            signing_method.clone(),
-            encoding_method.clone(),
-            public_key.clone(),
-        );
+        let value = SignedMeterValueType::new(signed_meter_data.clone(), encoding_method.clone());
 
         assert_eq!(value.signed_meter_data(), signed_meter_data);
-        assert_eq!(value.signing_method(), &signing_method);
         assert_eq!(value.encoding_method(), encoding_method);
-        assert_eq!(value.public_key(), public_key);
+        assert_eq!(value.signing_method(), None);
+        assert_eq!(value.public_key(), None);
         assert_eq!(value.custom_data(), None);
     }
 
     #[test]
     fn test_with_methods() {
         let signed_meter_data = "signed_data".to_string();
-        let signing_method = SigningMethodEnumType::Custom("ECDSA-256".to_string());
-        let encoding_method = "encoding_method".to_string();
-        let public_key = "public_key".to_string();
+        let encoding_method = "OCMF".to_string();
+        let signing_method = "ECDSA-secp256r1-SHA256".to_string();
+        let public_key = "public_key_base64".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let value = SignedMeterValueType::new(
-            signed_meter_data.clone(),
-            signing_method.clone(),
-            encoding_method.clone(),
-            public_key.clone(),
-        )
-        .with_custom_data(custom_data.clone());
+        let value = SignedMeterValueType::new(signed_meter_data.clone(), encoding_method.clone())
+            .with_signing_method(signing_method.clone())
+            .with_public_key(public_key.clone())
+            .with_custom_data(custom_data.clone());
 
         assert_eq!(value.signed_meter_data(), signed_meter_data);
-        assert_eq!(value.signing_method(), &signing_method);
         assert_eq!(value.encoding_method(), encoding_method);
-        assert_eq!(value.public_key(), public_key);
+        assert_eq!(value.signing_method(), Some(signing_method.as_str()));
+        assert_eq!(value.public_key(), Some(public_key.as_str()));
         assert_eq!(value.custom_data(), Some(&custom_data));
     }
 
     #[test]
     fn test_setter_methods() {
         let signed_meter_data1 = "signed_data1".to_string();
-        let signing_method1 = SigningMethodEnumType::Custom("ECDSA-256".to_string());
-        let encoding_method1 = "encoding_method1".to_string();
-        let public_key1 = "public_key1".to_string();
+        let encoding_method1 = "OCMF".to_string();
 
-        let mut value = SignedMeterValueType::new(
-            signed_meter_data1,
-            signing_method1,
-            encoding_method1,
-            public_key1,
-        );
+        let mut value = SignedMeterValueType::new(signed_meter_data1, encoding_method1);
 
         let signed_meter_data2 = "signed_data2".to_string();
-        let signing_method2 = SigningMethodEnumType::Custom("ECDSA-512".to_string());
-        let encoding_method2 = "encoding_method2".to_string();
-        let public_key2 = "public_key2".to_string();
+        let encoding_method2 = "EDL".to_string();
+        let signing_method = "ECDSA-secp256r1-SHA256".to_string();
+        let public_key = "public_key_base64".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         value
             .set_signed_meter_data(signed_meter_data2.clone())
-            .set_signing_method(signing_method2.clone())
             .set_encoding_method(encoding_method2.clone())
-            .set_public_key(public_key2.clone())
+            .set_signing_method(Some(signing_method.clone()))
+            .set_public_key(Some(public_key.clone()))
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(value.signed_meter_data(), signed_meter_data2);
-        assert_eq!(value.signing_method(), &signing_method2);
         assert_eq!(value.encoding_method(), encoding_method2);
-        assert_eq!(value.public_key(), public_key2);
+        assert_eq!(value.signing_method(), Some(signing_method.as_str()));
+        assert_eq!(value.public_key(), Some(public_key.as_str()));
         assert_eq!(value.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        value.set_custom_data(None);
+        value
+            .set_signing_method(None)
+            .set_public_key(None)
+            .set_custom_data(None);
 
+        assert_eq!(value.signing_method(), None);
+        assert_eq!(value.public_key(), None);
         assert_eq!(value.custom_data(), None);
     }
 }

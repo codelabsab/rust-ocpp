@@ -364,7 +364,6 @@ impl SampledValueType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::v2_1::enumerations::signing_method::SigningMethodEnumType;
 
     #[test]
     fn test_new_sampled_value() {
@@ -389,13 +388,10 @@ mod tests {
         let phase = PhaseEnumType::L1;
         let location = LocationEnumType::Outlet;
 
-        let signed_meter_value = SignedMeterValueType {
-            signed_meter_data: "signed_data".to_string(),
-            signing_method: SigningMethodEnumType::Custom("signing_method".to_string()),
-            encoding_method: "encoding_method".to_string(),
-            public_key: "public_key".to_string(),
-            custom_data: None,
-        };
+        let signed_meter_value =
+            SignedMeterValueType::new("signed_data".to_string(), "encoding_method".to_string())
+                .with_signing_method("signing_method".to_string())
+                .with_public_key("public_key".to_string());
 
         let unit_of_measure = UnitOfMeasureType::new("Wh".to_string());
 
@@ -437,13 +433,10 @@ mod tests {
         let phase = PhaseEnumType::L1;
         let location = LocationEnumType::Outlet;
 
-        let signed_meter_value = SignedMeterValueType {
-            signed_meter_data: "signed_data".to_string(),
-            signing_method: SigningMethodEnumType::Custom("signing_method".to_string()),
-            encoding_method: "encoding_method".to_string(),
-            public_key: "public_key".to_string(),
-            custom_data: None,
-        };
+        let signed_meter_value =
+            SignedMeterValueType::new("signed_data".to_string(), "encoding_method".to_string())
+                .with_signing_method("signing_method".to_string())
+                .with_public_key("public_key".to_string());
 
         let unit_of_measure = UnitOfMeasureType::new("Wh".to_string());
 
