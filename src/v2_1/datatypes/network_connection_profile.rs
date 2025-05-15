@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use super::{apn::APNType, custom_data::CustomDataType, vpn::VPNType};
+use crate::v2_1::enumerations::vpn::VPNEnumType;
 
 /// The NetworkConnectionProfile defines the functional and technical parameters of a communication link.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -484,7 +485,7 @@ mod tests {
             "vpnuser".to_string(),
             "vpnpass".to_string(),
             "vpnkey".to_string(),
-            "IKEv2".to_string(),
+            VPNEnumType::IKEv2,
         );
 
         let profile = NetworkConnectionProfileType::new(
@@ -543,7 +544,7 @@ mod tests {
             "vpnuser".to_string(),
             "vpnpass".to_string(),
             "vpnkey".to_string(),
-            "IKEv2".to_string(),
+            VPNEnumType::IKEv2,
         );
 
         let mut profile = NetworkConnectionProfileType::new(
@@ -677,11 +678,11 @@ mod tests {
 
         // 测试嵌套验证 - 使用无效的VPNType
         let invalid_vpn = VPNType::new(
-            "a".repeat(513), // 超过最大长度512
+            "a".repeat(2001), // 超过最大长度2000
             "user".to_string(),
             "password".to_string(),
             "key".to_string(),
-            "IKEv2".to_string(),
+            VPNEnumType::IKEv2,
         );
 
         let mut profile_with_invalid_vpn = valid_profile.clone();

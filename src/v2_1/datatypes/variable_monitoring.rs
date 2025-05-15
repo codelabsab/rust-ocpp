@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
+use rust_decimal::Decimal;
 
 use super::custom_data::CustomDataType;
 use crate::v2_1::enumerations::monitor::MonitorEnumType;
@@ -12,19 +13,20 @@ pub struct VariableMonitoringType {
     /// Required. Identifies the monitor.
     pub id: i32,
 
-    /// Required. Monitor only active when a transaction is ongoing on a component 
+    /// Required. Monitor only active when a transaction is ongoing on a component
     /// relevant to this transaction.
     pub transaction: bool,
 
     /// Required. Value for threshold or delta monitoring.
     /// For Periodic or PeriodicClockAligned this is the interval in seconds.
-    pub value: f64,
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
+    pub value: Decimal,
 
     /// Required. Monitor type of the variable.
     #[serde(rename = "type")]
     pub type_: MonitorEnumType,
 
-    /// Required. The severity that will be assigned to an event that is triggered 
+    /// Required. The severity that will be assigned to an event that is triggered
     /// by this monitor.
     /// The severity range is 0-9, with 0 as the highest and 9 as the lowest severity level.
     pub severity: i32,
@@ -34,6 +36,7 @@ pub struct VariableMonitoringType {
 
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
@@ -55,7 +58,7 @@ impl VariableMonitoringType {
     pub fn new(
         id: i32,
         transaction: bool,
-        value: f64,
+        value: Decimal,
         type_: MonitorEnumType,
         severity: i32,
         event_notification_type: EventNotificationEnumType,
@@ -136,8 +139,8 @@ impl VariableMonitoringType {
     /// # Returns
     ///
     /// The value for threshold or delta of the monitor
-    pub fn value(&self) -> f64 {
-        self.value
+    pub fn value(&self) -> &Decimal {
+        &self.value
     }
 
     /// Sets the value for threshold or delta.
@@ -149,7 +152,7 @@ impl VariableMonitoringType {
     /// # Returns
     ///
     /// The modified `VariableMonitoringType` instance
-    pub fn set_value(&mut self, value: f64) -> &mut Self {
+    pub fn set_value(&mut self, value: Decimal) -> &mut Self {
         self.value = value;
         self
     }
@@ -250,12 +253,13 @@ impl VariableMonitoringType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rust_decimal_macros::dec;
 
     #[test]
     fn test_variable_monitoring_new() {
         let id = 42;
         let transaction = true;
-        let value = 100.0;
+        let value = dec!(100.0);
         let monitor_type = MonitorEnumType::UpperThreshold;
         let severity = 5;
         let event_notification_type = EventNotificationEnumType::CustomMonitor;
@@ -263,7 +267,7 @@ mod tests {
         let monitoring = VariableMonitoringType::new(
             id,
             transaction,
-            value,
+            value.clone(),
             monitor_type.clone(),
             severity,
             event_notification_type.clone()
@@ -271,7 +275,7 @@ mod tests {
 
         assert_eq!(monitoring.id(), id);
         assert_eq!(monitoring.transaction(), transaction);
-        assert_eq!(monitoring.value(), value);
+        assert_eq!(monitoring.value(), &value);
         assert_eq!(monitoring.type_(), &monitor_type);
         assert_eq!(monitoring.severity(), severity);
         assert_eq!(monitoring.event_notification_type(), &event_notification_type);
@@ -282,7 +286,7 @@ mod tests {
     fn test_variable_monitoring_with_custom_data() {
         let id = 42;
         let transaction = true;
-        let value = 100.0;
+        let value = dec!(100.0);
         let monitor_type = MonitorEnumType::UpperThreshold;
         let severity = 5;
         let event_notification_type = EventNotificationEnumType::CustomMonitor;
@@ -291,7 +295,7 @@ mod tests {
         let monitoring = VariableMonitoringType::new(
             id,
             transaction,
-            value,
+            value.clone(),
             monitor_type.clone(),
             severity,
             event_notification_type.clone()
@@ -300,7 +304,7 @@ mod tests {
 
         assert_eq!(monitoring.id(), id);
         assert_eq!(monitoring.transaction(), transaction);
-        assert_eq!(monitoring.value(), value);
+        assert_eq!(monitoring.value(), &value);
         assert_eq!(monitoring.type_(), &monitor_type);
         assert_eq!(monitoring.severity(), severity);
         assert_eq!(monitoring.event_notification_type(), &event_notification_type);
@@ -311,7 +315,7 @@ mod tests {
     fn test_variable_monitoring_setters() {
         let id1 = 42;
         let transaction1 = true;
-        let value1 = 100.0;
+        let value1 = dec!(100.0);
         let monitor_type1 = MonitorEnumType::UpperThreshold;
         let severity1 = 5;
         let event_notification_type1 = EventNotificationEnumType::CustomMonitor;
@@ -327,7 +331,7 @@ mod tests {
 
         let id2 = 43;
         let transaction2 = false;
-        let value2 = 50.0;
+        let value2 = dec!(50.0);
         let monitor_type2 = MonitorEnumType::LowerThreshold;
         let severity2 = 3;
         let event_notification_type2 = EventNotificationEnumType::HardWiredMonitor;
@@ -336,7 +340,7 @@ mod tests {
         monitoring
             .set_id(id2)
             .set_transaction(transaction2)
-            .set_value(value2)
+            .set_value(value2.clone())
             .set_type(monitor_type2.clone())
             .set_severity(severity2)
             .set_event_notification_type(event_notification_type2.clone())
@@ -344,7 +348,7 @@ mod tests {
 
         assert_eq!(monitoring.id(), id2);
         assert_eq!(monitoring.transaction(), transaction2);
-        assert_eq!(monitoring.value(), value2);
+        assert_eq!(monitoring.value(), &value2);
         assert_eq!(monitoring.type_(), &monitor_type2);
         assert_eq!(monitoring.severity(), severity2);
         assert_eq!(monitoring.event_notification_type(), &event_notification_type2);

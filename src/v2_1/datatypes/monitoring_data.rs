@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
+use rust_decimal::Decimal;
+use rust_decimal_macros::dec;
 
 use super::{
     component::ComponentType, custom_data::CustomDataType, variable::VariableType,
@@ -176,7 +178,7 @@ mod tests {
         let variable_monitoring = vec![VariableMonitoringType::new(
             1,
             false,
-            80.0,
+            dec!(80.0),
             MonitorEnumType::UpperThreshold,
             0,
             crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
@@ -201,7 +203,7 @@ mod tests {
         let variable_monitoring = vec![VariableMonitoringType::new(
             1,
             false,
-            80.0,
+            dec!(80.0),
             MonitorEnumType::UpperThreshold,
             0,
             crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
@@ -228,7 +230,7 @@ mod tests {
         let variable_monitoring1 = vec![VariableMonitoringType::new(
             1,
             false,
-            80.0,
+            dec!(80.0),
             MonitorEnumType::UpperThreshold,
             0,
             crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
@@ -240,7 +242,7 @@ mod tests {
             VariableMonitoringType::new(
                 2,
                 false,
-                5.0,
+                dec!(5.0),
                 MonitorEnumType::LowerThreshold,
                 0,
                 crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
@@ -248,7 +250,7 @@ mod tests {
             VariableMonitoringType::new(
                 3,
                 false,
-                32.0,
+                dec!(32.0),
                 MonitorEnumType::UpperThreshold,
                 0,
                 crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
@@ -283,7 +285,7 @@ mod tests {
         let variable_monitoring = vec![VariableMonitoringType::new(
             1,
             false,
-            80.0,
+            dec!(80.0),
             MonitorEnumType::UpperThreshold,
             0,
             crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,

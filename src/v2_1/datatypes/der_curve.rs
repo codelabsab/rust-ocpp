@@ -675,7 +675,9 @@ mod tests {
             custom_data: Some(custom_data),
             hysteresis: Some(HysteresisType::new().with_hysteresis_high(dec!(0.5))),
             reactive_power_params: Some(ReactivePowerParamsType::new()),
-            voltage_params: Some(VoltageParamsType::new(220.0, 240.0, 250.0, 230.0)),
+            voltage_params: Some(VoltageParamsType::new()
+                .with_hv10_min_mean_value(dec!(220.0))
+                .with_hv10_min_mean_trip_delay(dec!(240.0))),
             response_time: Some(response_time),
             start_time: Some(start_time),
             duration: Some(duration),

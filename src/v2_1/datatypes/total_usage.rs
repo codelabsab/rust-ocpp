@@ -10,6 +10,7 @@ use super::custom_data::CustomDataType;
 #[serde(rename_all = "camelCase")]
 pub struct TotalUsageType {
     /// Energy usage in kWh.
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
     pub energy: Decimal,
 
     /// Total duration of the charging session (including the duration of charging and not charging), in seconds.
