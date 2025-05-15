@@ -1,26 +1,27 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{custom_data::CustomDataType, tariff_time_price::TariffTimePriceType};
+use super::{
+    custom_data::CustomDataType, tariff_time_price::TariffTimePriceType, tax_rate::TaxRateType,
+};
 
-/// Time tariff structure defining time-based costs.
+/// Price elements and tax for time
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct TariffTimeType {
-    /// Custom data from the Charging Station.
+    /// Required. List of time price elements.
+    #[validate(length(min = 1), nested)]
+    pub prices: Vec<TariffTimePriceType>,
+
+    /// Optional. List of tax rates applicable to time.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 1, max = 5), nested)]
+    pub tax_rates: Option<Vec<TaxRateType>>,
+
+    /// Optional. Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
-
-    /// Required. Time-based price per hour.
-    pub time_price: TariffTimePriceType,
-
-    /// Optional. Maximum duration in seconds that can be charged under this tariff.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_duration: Option<i32>,
-
-    /// Optional. Minimum duration in seconds that must be charged under this tariff.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub min_duration: Option<i32>,
 }
 
 impl TariffTimeType {
@@ -28,18 +29,31 @@ impl TariffTimeType {
     ///
     /// # Arguments
     ///
-    /// * `time_price` - Time-based price per hour
+    /// * `prices` - List of time price elements
     ///
     /// # Returns
     ///
     /// A new instance of `TariffTimeType` with optional fields set to `None`
-    pub fn new(time_price: TariffTimePriceType) -> Self {
+    pub fn new(prices: Vec<TariffTimePriceType>) -> Self {
         Self {
-            time_price,
+            prices,
+            tax_rates: None,
             custom_data: None,
-            max_duration: None,
-            min_duration: None,
         }
+    }
+
+    /// Sets the tax rates.
+    ///
+    /// # Arguments
+    ///
+    /// * `tax_rates` - List of tax rates applicable to time
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_tax_rates(mut self, tax_rates: Vec<TaxRateType>) -> Self {
+        self.tax_rates = Some(tax_rates);
+        self
     }
 
     /// Sets the custom data.
@@ -56,100 +70,49 @@ impl TariffTimeType {
         self
     }
 
-    /// Sets the maximum duration.
+    /// Gets the prices.
+    ///
+    /// # Returns
+    ///
+    /// A reference to the list of time price elements
+    pub fn prices(&self) -> &Vec<TariffTimePriceType> {
+        &self.prices
+    }
+
+    /// Sets the prices.
     ///
     /// # Arguments
     ///
-    /// * `max_duration` - Maximum duration in seconds that can be charged under this tariff
+    /// * `prices` - List of time price elements
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_max_duration(mut self, max_duration: i32) -> Self {
-        self.max_duration = Some(max_duration);
+    pub fn set_prices(&mut self, prices: Vec<TariffTimePriceType>) -> &mut Self {
+        self.prices = prices;
         self
     }
 
-    /// Sets the minimum duration.
+    /// Gets the tax rates.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the list of tax rates applicable to time
+    pub fn tax_rates(&self) -> Option<&Vec<TaxRateType>> {
+        self.tax_rates.as_ref()
+    }
+
+    /// Sets the tax rates.
     ///
     /// # Arguments
     ///
-    /// * `min_duration` - Minimum duration in seconds that must be charged under this tariff
+    /// * `tax_rates` - List of tax rates applicable to time, or None to clear
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_min_duration(mut self, min_duration: i32) -> Self {
-        self.min_duration = Some(min_duration);
-        self
-    }
-
-    /// Gets the time price.
-    ///
-    /// # Returns
-    ///
-    /// A reference to the time-based price per hour
-    pub fn time_price(&self) -> &TariffTimePriceType {
-        &self.time_price
-    }
-
-    /// Sets the time price.
-    ///
-    /// # Arguments
-    ///
-    /// * `time_price` - Time-based price per hour
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_time_price(&mut self, time_price: TariffTimePriceType) -> &mut Self {
-        self.time_price = time_price;
-        self
-    }
-
-    /// Gets the maximum duration.
-    ///
-    /// # Returns
-    ///
-    /// An optional maximum duration in seconds that can be charged under this tariff
-    pub fn max_duration(&self) -> Option<i32> {
-        self.max_duration
-    }
-
-    /// Sets the maximum duration.
-    ///
-    /// # Arguments
-    ///
-    /// * `max_duration` - Maximum duration in seconds that can be charged under this tariff, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_max_duration(&mut self, max_duration: Option<i32>) -> &mut Self {
-        self.max_duration = max_duration;
-        self
-    }
-
-    /// Gets the minimum duration.
-    ///
-    /// # Returns
-    ///
-    /// An optional minimum duration in seconds that must be charged under this tariff
-    pub fn min_duration(&self) -> Option<i32> {
-        self.min_duration
-    }
-
-    /// Sets the minimum duration.
-    ///
-    /// # Arguments
-    ///
-    /// * `min_duration` - Minimum duration in seconds that must be charged under this tariff, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_min_duration(&mut self, min_duration: Option<i32>) -> &mut Self {
-        self.min_duration = min_duration;
+    pub fn set_tax_rates(&mut self, tax_rates: Option<Vec<TaxRateType>>) -> &mut Self {
+        self.tax_rates = tax_rates;
         self
     }
 
@@ -183,62 +146,110 @@ mod tests {
 
     #[test]
     fn test_new_tariff_time() {
-        let time_price = TariffTimePriceType::new(10.0);
-        let tariff_time = TariffTimeType::new(time_price.clone());
+        let price = TariffTimePriceType::new(10.0);
+        let prices = vec![price.clone()];
+        let tariff_time = TariffTimeType::new(prices.clone());
 
-        assert_eq!(tariff_time.time_price(), &time_price);
-        assert_eq!(tariff_time.max_duration(), None);
-        assert_eq!(tariff_time.min_duration(), None);
+        assert_eq!(tariff_time.prices(), &prices);
+        assert_eq!(tariff_time.tax_rates(), None);
         assert_eq!(tariff_time.custom_data(), None);
     }
 
     #[test]
     fn test_with_methods() {
-        let time_price = TariffTimePriceType::new(10.0);
-        let max_duration = 3600;
-        let min_duration = 300;
+        let price1 = TariffTimePriceType::new(10.0);
+        let price2 = TariffTimePriceType::new(15.0);
+        let prices = vec![price1.clone(), price2.clone()];
+
+        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate2 = TaxRateType::new(5.0, "GST".to_string());
+        let tax_rates = vec![tax_rate1.clone(), tax_rate2.clone()];
+
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let tariff_time = TariffTimeType::new(time_price.clone())
-            .with_max_duration(max_duration)
-            .with_min_duration(min_duration)
+        let tariff_time = TariffTimeType::new(prices.clone())
+            .with_tax_rates(tax_rates.clone())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(tariff_time.time_price(), &time_price);
-        assert_eq!(tariff_time.max_duration(), Some(max_duration));
-        assert_eq!(tariff_time.min_duration(), Some(min_duration));
+        assert_eq!(tariff_time.prices(), &prices);
+        assert_eq!(tariff_time.tax_rates(), Some(&tax_rates));
         assert_eq!(tariff_time.custom_data(), Some(&custom_data));
     }
 
     #[test]
     fn test_setter_methods() {
-        let time_price1 = TariffTimePriceType::new(10.0);
-        let time_price2 = TariffTimePriceType::new(15.0);
-        let max_duration = 3600;
-        let min_duration = 300;
+        let price1 = TariffTimePriceType::new(10.0);
+        let prices1 = vec![price1.clone()];
+
+        let price2 = TariffTimePriceType::new(15.0);
+        let price3 = TariffTimePriceType::new(20.0);
+        let prices2 = vec![price2.clone(), price3.clone()];
+
+        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate2 = TaxRateType::new(5.0, "GST".to_string());
+        let tax_rates = vec![tax_rate1.clone(), tax_rate2.clone()];
+
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut tariff_time = TariffTimeType::new(time_price1);
+        let mut tariff_time = TariffTimeType::new(prices1);
 
         tariff_time
-            .set_time_price(time_price2.clone())
-            .set_max_duration(Some(max_duration))
-            .set_min_duration(Some(min_duration))
+            .set_prices(prices2.clone())
+            .set_tax_rates(Some(tax_rates.clone()))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(tariff_time.time_price(), &time_price2);
-        assert_eq!(tariff_time.max_duration(), Some(max_duration));
-        assert_eq!(tariff_time.min_duration(), Some(min_duration));
+        assert_eq!(tariff_time.prices(), &prices2);
+        assert_eq!(tariff_time.tax_rates(), Some(&tax_rates));
         assert_eq!(tariff_time.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        tariff_time
-            .set_max_duration(None)
-            .set_min_duration(None)
-            .set_custom_data(None);
+        tariff_time.set_tax_rates(None).set_custom_data(None);
 
-        assert_eq!(tariff_time.max_duration(), None);
-        assert_eq!(tariff_time.min_duration(), None);
+        assert_eq!(tariff_time.tax_rates(), None);
         assert_eq!(tariff_time.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // Test with valid prices
+        let price = TariffTimePriceType::new(10.0);
+        let prices = vec![price.clone()];
+        let tariff_time = TariffTimeType::new(prices);
+        assert!(tariff_time.validate().is_ok());
+
+        // Test with empty prices (invalid)
+        let empty_prices: Vec<TariffTimePriceType> = vec![];
+        let invalid_tariff = TariffTimeType {
+            prices: empty_prices,
+            tax_rates: None,
+            custom_data: None,
+        };
+        assert!(invalid_tariff.validate().is_err());
+
+        // Test with empty tax rates (invalid)
+        let empty_tax_rates: Vec<TaxRateType> = vec![];
+        let invalid_tariff = TariffTimeType {
+            prices: vec![price.clone()],
+            tax_rates: Some(empty_tax_rates),
+            custom_data: None,
+        };
+        assert!(invalid_tariff.validate().is_err());
+
+        // Test with too many tax rates (invalid)
+        let tax_rate = TaxRateType::new(20.0, "VAT".to_string());
+        let too_many_tax_rates = vec![
+            tax_rate.clone(),
+            tax_rate.clone(),
+            tax_rate.clone(),
+            tax_rate.clone(),
+            tax_rate.clone(),
+            tax_rate.clone(), // Exceeds the max of 5
+        ];
+        let invalid_tariff = TariffTimeType {
+            prices: vec![price],
+            tax_rates: Some(too_many_tax_rates),
+            custom_data: None,
+        };
+        assert!(invalid_tariff.validate().is_err());
     }
 }

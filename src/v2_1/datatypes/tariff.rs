@@ -614,10 +614,10 @@ mod tests {
         )];
         let energy = TariffEnergyType::new(vec![TariffEnergyPriceType::new(0.25)]); // 0.25
         let valid_from = Utc::now();
-        let charging_time = TariffTimeType::new(TariffTimePriceType::new(5.0)); // 5.0
-        let idle_time = TariffTimeType::new(TariffTimePriceType::new(10.0)); // 10.0
+        let charging_time = TariffTimeType::new(vec![TariffTimePriceType::new(5.0)]); // 5.0
+        let idle_time = TariffTimeType::new(vec![TariffTimePriceType::new(10.0)]); // 10.0
         let fixed_fee = TariffFixedType::new(TariffFixedPriceType::new(10.0)); // 10.0
-        let reservation_time = TariffTimeType::new(TariffTimePriceType::new(2.0)); // 2.0
+        let reservation_time = TariffTimeType::new(vec![TariffTimePriceType::new(2.0)]); // 2.0
         let reservation_fixed = TariffFixedType::new(TariffFixedPriceType::new(5.0)); // 5.0
         let min_cost = PriceType::new(Decimal::new(50, 1), false); // 5.0 excl tax
         let max_cost = PriceType::new(Decimal::new(500, 1), false); // 50.0 excl tax
@@ -645,10 +645,10 @@ mod tests {
         );
         assert_eq!(tariff.energy().unwrap().prices()[0].price_kwh, 0.25);
         assert!(tariff.valid_from().is_some());
-        assert_eq!(tariff.charging_time().unwrap().time_price.price, 5.0);
-        assert_eq!(tariff.idle_time().unwrap().time_price.price, 10.0);
+        assert_eq!(tariff.charging_time().unwrap().prices()[0].price, 5.0);
+        assert_eq!(tariff.idle_time().unwrap().prices()[0].price, 10.0);
         assert_eq!(tariff.fixed_fee().unwrap().fixed_price.price_fixed, 10.0);
-        assert_eq!(tariff.reservation_time().unwrap().time_price.price, 2.0);
+        assert_eq!(tariff.reservation_time().unwrap().prices()[0].price, 2.0);
         assert_eq!(
             tariff.reservation_fixed().unwrap().fixed_price.price_fixed,
             5.0
@@ -678,10 +678,10 @@ mod tests {
         )];
         let energy = TariffEnergyType::new(vec![TariffEnergyPriceType::new(0.25)]); // 0.25
         let valid_from = Utc::now();
-        let charging_time = TariffTimeType::new(TariffTimePriceType::new(5.0)); // 5.0
-        let idle_time = TariffTimeType::new(TariffTimePriceType::new(10.0)); // 10.0
+        let charging_time = TariffTimeType::new(vec![TariffTimePriceType::new(5.0)]); // 5.0
+        let idle_time = TariffTimeType::new(vec![TariffTimePriceType::new(10.0)]); // 10.0
         let fixed_fee = TariffFixedType::new(TariffFixedPriceType::new(10.0)); // 10.0
-        let reservation_time = TariffTimeType::new(TariffTimePriceType::new(2.0)); // 2.0
+        let reservation_time = TariffTimeType::new(vec![TariffTimePriceType::new(2.0)]); // 2.0
         let reservation_fixed = TariffFixedType::new(TariffFixedPriceType::new(5.0)); // 5.0
         let min_cost = PriceType::new(Decimal::new(50, 1), false); // 5.0 excl tax
         let max_cost = PriceType::new(Decimal::new(500, 1), false); // 50.0 excl tax
@@ -713,10 +713,10 @@ mod tests {
         );
         assert_eq!(tariff.energy().unwrap().prices()[0].price_kwh, 0.25);
         assert!(tariff.valid_from().is_some());
-        assert_eq!(tariff.charging_time().unwrap().time_price.price, 5.0);
-        assert_eq!(tariff.idle_time().unwrap().time_price.price, 10.0);
+        assert_eq!(tariff.charging_time().unwrap().prices()[0].price, 5.0);
+        assert_eq!(tariff.idle_time().unwrap().prices()[0].price, 10.0);
         assert_eq!(tariff.fixed_fee().unwrap().fixed_price.price_fixed, 10.0);
-        assert_eq!(tariff.reservation_time().unwrap().time_price.price, 2.0);
+        assert_eq!(tariff.reservation_time().unwrap().prices()[0].price, 2.0);
         assert_eq!(
             tariff.reservation_fixed().unwrap().fixed_price.price_fixed,
             5.0
