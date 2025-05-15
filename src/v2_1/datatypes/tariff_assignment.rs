@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -7,20 +8,21 @@ use super::custom_data::CustomDataType;
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct TariffAssignmentType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// Required. Unique identifier used to identify one or more tariffs.
-    #[validate(length(max = 36))]
-    pub id: String,
+    #[validate(length(max = 60))]
+    pub tariff_id: String,
 
     /// Required. Start date and time of the tariff assignment.
-    pub start: String,
+    pub start_date_time: DateTime<Utc>,
 
     /// Optional. End date and time of the tariff assignment.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub expiry_date: Option<String>,
+    pub expiry_date_time: Option<DateTime<Utc>>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl TariffAssignmentType {
@@ -28,19 +30,33 @@ impl TariffAssignmentType {
     ///
     /// # Arguments
     ///
-    /// * `id` - Unique identifier used to identify one or more tariffs
-    /// * `start` - Start date and time of the tariff assignment
+    /// * `tariff_id` - Unique identifier used to identify one or more tariffs
+    /// * `start_date_time` - Start date and time of the tariff assignment
     ///
     /// # Returns
     ///
     /// A new instance of `TariffAssignmentType` with optional fields set to `None`
-    pub fn new(id: String, start: String) -> Self {
+    pub fn new(tariff_id: String, start_date_time: DateTime<Utc>) -> Self {
         Self {
-            id,
-            start,
+            tariff_id,
+            start_date_time,
+            expiry_date_time: None,
             custom_data: None,
-            expiry_date: None,
         }
+    }
+
+    /// Sets the expiry date and time.
+    ///
+    /// # Arguments
+    ///
+    /// * `expiry_date_time` - End date and time of the tariff assignment
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_expiry_date_time(mut self, expiry_date_time: DateTime<Utc>) -> Self {
+        self.expiry_date_time = Some(expiry_date_time);
+        self
     }
 
     /// Sets the custom data.
@@ -57,40 +73,26 @@ impl TariffAssignmentType {
         self
     }
 
-    /// Sets the expiry date.
-    ///
-    /// # Arguments
-    ///
-    /// * `expiry_date` - End date and time of the tariff assignment
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_expiry_date(mut self, expiry_date: String) -> Self {
-        self.expiry_date = Some(expiry_date);
-        self
-    }
-
     /// Gets the tariff identifier.
     ///
     /// # Returns
     ///
     /// The unique identifier used to identify one or more tariffs
-    pub fn id(&self) -> &str {
-        &self.id
+    pub fn tariff_id(&self) -> &str {
+        &self.tariff_id
     }
 
     /// Sets the tariff identifier.
     ///
     /// # Arguments
     ///
-    /// * `id` - Unique identifier used to identify one or more tariffs
+    /// * `tariff_id` - Unique identifier used to identify one or more tariffs
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_id(&mut self, id: String) -> &mut Self {
-        self.id = id;
+    pub fn set_tariff_id(&mut self, tariff_id: String) -> &mut Self {
+        self.tariff_id = tariff_id;
         self
     }
 
@@ -99,44 +101,44 @@ impl TariffAssignmentType {
     /// # Returns
     ///
     /// The start date and time of the tariff assignment
-    pub fn start(&self) -> &str {
-        &self.start
+    pub fn start_date_time(&self) -> &DateTime<Utc> {
+        &self.start_date_time
     }
 
     /// Sets the start date and time.
     ///
     /// # Arguments
     ///
-    /// * `start` - Start date and time of the tariff assignment
+    /// * `start_date_time` - Start date and time of the tariff assignment
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_start(&mut self, start: String) -> &mut Self {
-        self.start = start;
+    pub fn set_start_date_time(&mut self, start_date_time: DateTime<Utc>) -> &mut Self {
+        self.start_date_time = start_date_time;
         self
     }
 
-    /// Gets the expiry date.
+    /// Gets the expiry date and time.
     ///
     /// # Returns
     ///
     /// An optional reference to the end date and time of the tariff assignment
-    pub fn expiry_date(&self) -> Option<&str> {
-        self.expiry_date.as_deref()
+    pub fn expiry_date_time(&self) -> Option<&DateTime<Utc>> {
+        self.expiry_date_time.as_ref()
     }
 
-    /// Sets the expiry date.
+    /// Sets the expiry date and time.
     ///
     /// # Arguments
     ///
-    /// * `expiry_date` - End date and time of the tariff assignment, or None to clear
+    /// * `expiry_date_time` - End date and time of the tariff assignment, or None to clear
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_expiry_date(&mut self, expiry_date: Option<String>) -> &mut Self {
-        self.expiry_date = expiry_date;
+    pub fn set_expiry_date_time(&mut self, expiry_date_time: Option<DateTime<Utc>>) -> &mut Self {
+        self.expiry_date_time = expiry_date_time;
         self
     }
 
@@ -167,65 +169,82 @@ impl TariffAssignmentType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::TimeZone;
 
     #[test]
     fn test_new_tariff_assignment() {
-        let id = "tariff-123".to_string();
-        let start = "2023-01-01T00:00:00Z".to_string();
+        let tariff_id = "tariff-123".to_string();
+        let start_date_time = Utc.with_ymd_and_hms(2023, 1, 1, 0, 0, 0).unwrap();
 
-        let tariff_assignment = TariffAssignmentType::new(id.clone(), start.clone());
+        let tariff_assignment = TariffAssignmentType::new(tariff_id.clone(), start_date_time);
 
-        assert_eq!(tariff_assignment.id(), id);
-        assert_eq!(tariff_assignment.start(), start);
-        assert_eq!(tariff_assignment.expiry_date(), None);
+        assert_eq!(tariff_assignment.tariff_id(), tariff_id);
+        assert_eq!(tariff_assignment.start_date_time(), &start_date_time);
+        assert_eq!(tariff_assignment.expiry_date_time(), None);
         assert_eq!(tariff_assignment.custom_data(), None);
     }
 
     #[test]
     fn test_with_methods() {
-        let id = "tariff-123".to_string();
-        let start = "2023-01-01T00:00:00Z".to_string();
-        let expiry_date = "2023-12-31T23:59:59Z".to_string();
+        let tariff_id = "tariff-123".to_string();
+        let start_date_time = Utc.with_ymd_and_hms(2023, 1, 1, 0, 0, 0).unwrap();
+        let expiry_date_time = Utc.with_ymd_and_hms(2023, 12, 31, 23, 59, 59).unwrap();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let tariff_assignment = TariffAssignmentType::new(id.clone(), start.clone())
-            .with_expiry_date(expiry_date.clone())
+        let tariff_assignment = TariffAssignmentType::new(tariff_id.clone(), start_date_time)
+            .with_expiry_date_time(expiry_date_time)
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(tariff_assignment.id(), id);
-        assert_eq!(tariff_assignment.start(), start);
-        assert_eq!(tariff_assignment.expiry_date(), Some(expiry_date.as_str()));
+        assert_eq!(tariff_assignment.tariff_id(), tariff_id);
+        assert_eq!(tariff_assignment.start_date_time(), &start_date_time);
+        assert_eq!(tariff_assignment.expiry_date_time().unwrap(), &expiry_date_time);
         assert_eq!(tariff_assignment.custom_data(), Some(&custom_data));
     }
 
     #[test]
     fn test_setter_methods() {
-        let id1 = "tariff-123".to_string();
-        let start1 = "2023-01-01T00:00:00Z".to_string();
-        let id2 = "tariff-456".to_string();
-        let start2 = "2023-02-01T00:00:00Z".to_string();
-        let expiry_date = "2023-12-31T23:59:59Z".to_string();
+        let tariff_id1 = "tariff-123".to_string();
+        let start_date_time1 = Utc.with_ymd_and_hms(2023, 1, 1, 0, 0, 0).unwrap();
+        let tariff_id2 = "tariff-456".to_string();
+        let start_date_time2 = Utc.with_ymd_and_hms(2023, 2, 1, 0, 0, 0).unwrap();
+        let expiry_date_time = Utc.with_ymd_and_hms(2023, 12, 31, 23, 59, 59).unwrap();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut tariff_assignment = TariffAssignmentType::new(id1, start1);
+        let mut tariff_assignment = TariffAssignmentType::new(tariff_id1, start_date_time1);
 
         tariff_assignment
-            .set_id(id2.clone())
-            .set_start(start2.clone())
-            .set_expiry_date(Some(expiry_date.clone()))
+            .set_tariff_id(tariff_id2.clone())
+            .set_start_date_time(start_date_time2)
+            .set_expiry_date_time(Some(expiry_date_time))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(tariff_assignment.id(), id2);
-        assert_eq!(tariff_assignment.start(), start2);
-        assert_eq!(tariff_assignment.expiry_date(), Some(expiry_date.as_str()));
+        assert_eq!(tariff_assignment.tariff_id(), tariff_id2);
+        assert_eq!(tariff_assignment.start_date_time(), &start_date_time2);
+        assert_eq!(tariff_assignment.expiry_date_time().unwrap(), &expiry_date_time);
         assert_eq!(tariff_assignment.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
         tariff_assignment
-            .set_expiry_date(None)
+            .set_expiry_date_time(None)
             .set_custom_data(None);
 
-        assert_eq!(tariff_assignment.expiry_date(), None);
+        assert_eq!(tariff_assignment.expiry_date_time(), None);
         assert_eq!(tariff_assignment.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // Test with valid tariff assignment
+        let tariff_id = "tariff-123".to_string();
+        let start_date_time = Utc.with_ymd_and_hms(2023, 1, 1, 0, 0, 0).unwrap();
+        let tariff_assignment = TariffAssignmentType::new(tariff_id, start_date_time);
+
+        assert!(tariff_assignment.validate().is_ok());
+
+        // Test with tariff_id that exceeds max length (60 characters)
+        let long_id = "a".repeat(61);
+        let invalid_assignment = TariffAssignmentType::new(long_id, start_date_time);
+        
+        assert!(invalid_assignment.validate().is_err());
     }
 }
