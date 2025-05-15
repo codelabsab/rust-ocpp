@@ -299,7 +299,7 @@ mod tests {
         // Test status_info validation (too long reason_code)
         let mut invalid_result = valid_result.clone();
         let invalid_status_info = StatusInfoType {
-            reason_code: "a".repeat(51), // Exceeds max length of 50
+            reason_code: "a".repeat(21), // Exceeds max length of 20
             additional_info: None,
             custom_data: None,
         };
@@ -313,7 +313,7 @@ mod tests {
         let mut invalid_result = valid_result.clone();
         let invalid_status_info = StatusInfoType {
             reason_code: "ValidReason".to_string(),
-            additional_info: Some("a".repeat(501)), // Exceeds max length of 500
+            additional_info: Some("a".repeat(1025)), // Exceeds max length of 1024
             custom_data: None,
         };
         invalid_result.status_info = Some(invalid_status_info);
@@ -352,7 +352,8 @@ mod tests {
         );
 
         // Test with maximum length strings in status_info
-        let status_info = StatusInfoType::new("a".repeat(50)).with_additional_info("a".repeat(500));
+        let status_info =
+            StatusInfoType::new("a".repeat(20)).with_additional_info("a".repeat(1024));
         let max_strings_result =
             ClearMonitoringResultType::new(ClearMonitoringStatusEnumType::Accepted, 42)
                 .with_status_info(status_info);

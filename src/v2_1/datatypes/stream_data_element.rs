@@ -1,26 +1,26 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{custom_data::CustomDataType, variable::VariableType};
+use super::custom_data::CustomDataType;
 
-/// Class to report components, variables and variable attributes and characteristics.
+/// Class representing a data element for a stream.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct StreamDataElementType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
+    /// Required. Offset relative to _basetime_ of this message. 
+    /// _basetime_ + _t_ is timestamp of recorded value.
+    #[serde(rename = "t")]
+    pub offset: f64,
 
-    /// Required. Variable for which the stream data is reported.
-    pub variable: VariableType,
-
-    /// Required. The value for the variable.
+    /// Required. The value.
+    #[serde(rename = "v")]
     #[validate(length(max = 2500))]
     pub value: String,
 
-    /// Required. Sequence number for stream data.
-    #[validate(range(min = 0))]
-    pub sequence_id: i32,
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl StreamDataElementType {
@@ -28,19 +28,17 @@ impl StreamDataElementType {
     ///
     /// # Arguments
     ///
-    /// * `variable` - Variable for which the stream data is reported
-    /// * `value` - The value for the variable
-    /// * `sequence_id` - Sequence number for stream data
+    /// * `offset` - Offset relative to basetime of this message
+    /// * `value` - The value
     ///
     /// # Returns
     ///
     /// A new instance of `StreamDataElementType` with optional fields set to `None`
-    pub fn new(variable: VariableType, value: String, sequence_id: i32) -> Self {
+    pub fn new(offset: f64, value: String) -> Self {
         Self {
-            custom_data: None,
-            variable,
+            offset,
             value,
-            sequence_id,
+            custom_data: None,
         }
     }
 
@@ -58,26 +56,26 @@ impl StreamDataElementType {
         self
     }
 
-    /// Gets the variable.
+    /// Gets the offset.
     ///
     /// # Returns
     ///
-    /// A reference to the variable for which the stream data is reported
-    pub fn variable(&self) -> &VariableType {
-        &self.variable
+    /// The offset relative to basetime of this message
+    pub fn offset(&self) -> f64 {
+        self.offset
     }
 
-    /// Sets the variable.
+    /// Sets the offset.
     ///
     /// # Arguments
     ///
-    /// * `variable` - Variable for which the stream data is reported
+    /// * `offset` - Offset relative to basetime of this message
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_variable(&mut self, variable: VariableType) -> &mut Self {
-        self.variable = variable;
+    pub fn set_offset(&mut self, offset: f64) -> &mut Self {
+        self.offset = offset;
         self
     }
 
@@ -85,7 +83,7 @@ impl StreamDataElementType {
     ///
     /// # Returns
     ///
-    /// The value for the variable
+    /// The value
     pub fn value(&self) -> &str {
         &self.value
     }
@@ -94,36 +92,13 @@ impl StreamDataElementType {
     ///
     /// # Arguments
     ///
-    /// * `value` - The value for the variable
+    /// * `value` - The value
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
     pub fn set_value(&mut self, value: String) -> &mut Self {
         self.value = value;
-        self
-    }
-
-    /// Gets the sequence ID.
-    ///
-    /// # Returns
-    ///
-    /// The sequence number for stream data
-    pub fn sequence_id(&self) -> i32 {
-        self.sequence_id
-    }
-
-    /// Sets the sequence ID.
-    ///
-    /// # Arguments
-    ///
-    /// * `sequence_id` - Sequence number for stream data
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_sequence_id(&mut self, sequence_id: i32) -> &mut Self {
-        self.sequence_id = sequence_id;
         self
     }
 
@@ -157,61 +132,85 @@ mod tests {
 
     #[test]
     fn test_new_stream_data_element() {
-        let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
-        let value = "42.5".to_string();
-        let sequence_id = 1;
+        let offset = 42.5;
+        let value = "test_value".to_string();
 
-        let element = StreamDataElementType::new(variable.clone(), value.clone(), sequence_id);
+        let element = StreamDataElementType::new(offset, value.clone());
 
-        assert_eq!(element.variable(), &variable);
+        assert_eq!(element.offset(), offset);
         assert_eq!(element.value(), value);
-        assert_eq!(element.sequence_id(), sequence_id);
         assert_eq!(element.custom_data(), None);
     }
 
     #[test]
     fn test_with_methods() {
-        let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
-        let value = "42.5".to_string();
-        let sequence_id = 1;
+        let offset = 42.5;
+        let value = "test_value".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let element = StreamDataElementType::new(variable.clone(), value.clone(), sequence_id)
+        let element = StreamDataElementType::new(offset, value.clone())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(element.variable(), &variable);
+        assert_eq!(element.offset(), offset);
         assert_eq!(element.value(), value);
-        assert_eq!(element.sequence_id(), sequence_id);
         assert_eq!(element.custom_data(), Some(&custom_data));
     }
 
     #[test]
     fn test_setter_methods() {
-        let variable1 = VariableType::new("variable1".to_string(), "instance1".to_string());
-        let value1 = "42.5".to_string();
-        let sequence_id1 = 1;
+        let offset1 = 42.5;
+        let value1 = "test_value1".to_string();
 
-        let mut element = StreamDataElementType::new(variable1, value1, sequence_id1);
+        let mut element = StreamDataElementType::new(offset1, value1);
 
-        let variable2 = VariableType::new("variable2".to_string(), "instance2".to_string());
-        let value2 = "84.0".to_string();
-        let sequence_id2 = 2;
+        let offset2 = 84.0;
+        let value2 = "test_value2".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         element
-            .set_variable(variable2.clone())
+            .set_offset(offset2)
             .set_value(value2.clone())
-            .set_sequence_id(sequence_id2)
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(element.variable(), &variable2);
+        assert_eq!(element.offset(), offset2);
         assert_eq!(element.value(), value2);
-        assert_eq!(element.sequence_id(), sequence_id2);
         assert_eq!(element.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
         element.set_custom_data(None);
 
         assert_eq!(element.custom_data(), None);
+    }
+
+    #[test]
+    fn test_serialization() {
+        let offset = 42.5;
+        let value = "test_value".to_string();
+        let custom_data = CustomDataType::new("VendorX".to_string());
+
+        let element = StreamDataElementType::new(offset, value)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&element).unwrap();
+        
+        // Check field names are correctly serialized
+        assert!(json.contains(r#""t":"#));
+        assert!(json.contains(r#""v":"#));
+        assert!(json.contains(r#""customData":"#));
+        
+        // Check field names are not using internal names
+        assert!(!json.contains(r#""offset":"#));
+        assert!(!json.contains(r#""value":"#));
+    }
+
+    #[test]
+    fn test_deserialization() {
+        let json = r#"{"t":42.5,"v":"test_value","customData":{"vendorId":"VendorX"}}"#;
+        
+        let element: StreamDataElementType = serde_json::from_str(json).unwrap();
+        
+        assert_eq!(element.offset(), 42.5);
+        assert_eq!(element.value(), "test_value");
+        assert_eq!(element.custom_data().unwrap().vendor_id(), "VendorX");
     }
 }

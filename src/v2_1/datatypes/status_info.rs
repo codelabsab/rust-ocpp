@@ -7,18 +7,20 @@ use super::custom_data::CustomDataType;
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct StatusInfoType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
-    /// Required. A predefined string value describing the error.
-    #[validate(length(max = 50))]
+    /// Required. A predefined code for the reason why the status is returned in this response.
+    /// The string is case-insensitive.
+    #[validate(length(max = 20))]
     pub reason_code: String,
 
     /// Optional. Additional text to provide detailed information.
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 500))]
+    #[validate(length(max = 1024))]
     pub additional_info: Option<String>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl StatusInfoType {
@@ -26,7 +28,7 @@ impl StatusInfoType {
     ///
     /// # Arguments
     ///
-    /// * `reason_code` - A predefined string value describing the error
+    /// * `reason_code` - A predefined code for the reason why the status is returned
     ///
     /// # Returns
     ///
@@ -71,7 +73,7 @@ impl StatusInfoType {
     ///
     /// # Returns
     ///
-    /// A reference to the predefined string value describing the error
+    /// A reference to the predefined code for the reason why the status is returned
     pub fn reason_code(&self) -> &str {
         &self.reason_code
     }
@@ -80,7 +82,7 @@ impl StatusInfoType {
     ///
     /// # Arguments
     ///
-    /// * `reason_code` - A predefined string value describing the error
+    /// * `reason_code` - A predefined code for the reason why the status is returned
     ///
     /// # Returns
     ///
