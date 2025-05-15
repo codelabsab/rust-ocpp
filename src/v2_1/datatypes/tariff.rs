@@ -1,52 +1,87 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use super::{
-    custom_data::CustomDataType, tariff_conditions::TariffConditionsType,
+    custom_data::CustomDataType, message_content::MessageContentType, price::PriceType,
     tariff_energy::TariffEnergyType, tariff_fixed::TariffFixedType, tariff_time::TariffTimeType,
 };
 
-/// A tariff defines price and price rules for charging sessions.
+/// A tariff is described by fields with prices for:
+/// energy,
+/// charging time,
+/// idle time,
+/// fixed fee,
+/// reservation time,
+/// reservation fixed fee.
+///
+/// Each of these fields may have (optional) conditions that specify when a price is applicable.
+/// The _description_ contains a human-readable explanation of the tariff to be shown to the user.
+/// The other fields are parameters that define the tariff. These are used by the charging station to calculate the price.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct TariffType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
+    /// Required. Unique id of tariff
+    #[validate(length(max = 60))]
+    pub tariff_id: String,
 
-    /// Required. Unique identifier used to identify one or more tariffs.
-    #[validate(length(max = 36))]
-    pub id: String,
-
-    /// Optional. Currency of the price in ISO 4217 format.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    /// Required. Currency code according to ISO 4217
     #[validate(length(max = 3))]
-    pub currency: Option<String>,
+    pub currency: String,
 
-    /// Optional. Language identifier of the language used in the description fields.
+    /// Optional. Description of the tariff in different languages
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 8))]
-    pub language: Option<String>,
+    #[validate(length(min = 1, max = 10), nested)]
+    pub description: Option<Vec<MessageContentType>>,
 
-    /// Optional. Display text of the tariff.
+    /// Optional. Energy costs of the tariff
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 100))]
-    pub display_text: Option<String>,
-
-    /// Required. Conditions under which this tariff applies.
-    pub conditions: TariffConditionsType,
-
-    /// Optional. Fixed costs of the tariff.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fixed: Option<TariffFixedType>,
-
-    /// Optional. Energy costs of the tariff.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub energy: Option<TariffEnergyType>,
 
-    /// Optional. Time costs of the tariff.
+    /// Optional. Time when this tariff becomes active. When absent, it is immediately active.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub time: Option<TariffTimeType>,
+    pub valid_from: Option<DateTime<Utc>>,
+
+    /// Optional. Charging time costs of the tariff
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub charging_time: Option<TariffTimeType>,
+
+    /// Optional. Idle time costs of the tariff
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub idle_time: Option<TariffTimeType>,
+
+    /// Optional. Fixed costs of the tariff
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub fixed_fee: Option<TariffFixedType>,
+
+    /// Optional. Reservation time costs of the tariff
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub reservation_time: Option<TariffTimeType>,
+
+    /// Optional. Fixed costs for a reservation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub reservation_fixed: Option<TariffFixedType>,
+
+    /// Optional. Minimum cost for a charging session
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub min_cost: Option<PriceType>,
+
+    /// Optional. Maximum cost for a charging session
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub max_cost: Option<PriceType>,
+
+    /// Optional. Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl TariffType {
@@ -54,93 +89,41 @@ impl TariffType {
     ///
     /// # Arguments
     ///
-    /// * `id` - Unique identifier used to identify one or more tariffs
-    /// * `conditions` - Conditions under which this tariff applies
+    /// * `tariff_id` - Unique id of tariff
+    /// * `currency` - Currency code according to ISO 4217
     ///
     /// # Returns
     ///
     /// A new instance of `TariffType` with optional fields set to `None`
-    pub fn new(id: String, conditions: TariffConditionsType) -> Self {
+    pub fn new(tariff_id: String, currency: String) -> Self {
         Self {
-            id,
-            conditions,
-            custom_data: None,
-            currency: None,
-            language: None,
-            display_text: None,
-            fixed: None,
+            tariff_id,
+            currency,
+            description: None,
             energy: None,
-            time: None,
+            valid_from: None,
+            charging_time: None,
+            idle_time: None,
+            fixed_fee: None,
+            reservation_time: None,
+            reservation_fixed: None,
+            min_cost: None,
+            max_cost: None,
+            custom_data: None,
         }
     }
 
-    /// Sets the custom data.
+    /// Sets the description.
     ///
     /// # Arguments
     ///
-    /// * `custom_data` - Custom data for this tariff
+    /// * `description` - Description of the tariff in different languages
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
-        self.custom_data = Some(custom_data);
-        self
-    }
-
-    /// Sets the currency.
-    ///
-    /// # Arguments
-    ///
-    /// * `currency` - Currency of the price in ISO 4217 format
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_currency(mut self, currency: String) -> Self {
-        self.currency = Some(currency);
-        self
-    }
-
-    /// Sets the language.
-    ///
-    /// # Arguments
-    ///
-    /// * `language` - Language identifier of the language used in the description fields
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_language(mut self, language: String) -> Self {
-        self.language = Some(language);
-        self
-    }
-
-    /// Sets the display text.
-    ///
-    /// # Arguments
-    ///
-    /// * `display_text` - Display text of the tariff
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_display_text(mut self, display_text: String) -> Self {
-        self.display_text = Some(display_text);
-        self
-    }
-
-    /// Sets the fixed costs.
-    ///
-    /// # Arguments
-    ///
-    /// * `fixed` - Fixed costs of the tariff
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_fixed(mut self, fixed: TariffFixedType) -> Self {
-        self.fixed = Some(fixed);
+    pub fn with_description(mut self, description: Vec<MessageContentType>) -> Self {
+        self.description = Some(description);
         self
     }
 
@@ -158,63 +141,152 @@ impl TariffType {
         self
     }
 
-    /// Sets the time costs.
+    /// Sets the valid from date.
     ///
     /// # Arguments
     ///
-    /// * `time` - Time costs of the tariff
+    /// * `valid_from` - Time when this tariff becomes active
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_time(mut self, time: TariffTimeType) -> Self {
-        self.time = Some(time);
+    pub fn with_valid_from(mut self, valid_from: DateTime<Utc>) -> Self {
+        self.valid_from = Some(valid_from);
         self
     }
 
-    /// Gets the tariff identifier.
-    ///
-    /// # Returns
-    ///
-    /// The unique identifier used to identify one or more tariffs
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-
-    /// Sets the tariff identifier.
+    /// Sets the charging time costs.
     ///
     /// # Arguments
     ///
-    /// * `id` - Unique identifier used to identify one or more tariffs
+    /// * `charging_time` - Charging time costs of the tariff
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_id(&mut self, id: String) -> &mut Self {
-        self.id = id;
+    pub fn with_charging_time(mut self, charging_time: TariffTimeType) -> Self {
+        self.charging_time = Some(charging_time);
         self
     }
 
-    /// Gets the conditions.
-    ///
-    /// # Returns
-    ///
-    /// A reference to the conditions under which this tariff applies
-    pub fn conditions(&self) -> &TariffConditionsType {
-        &self.conditions
-    }
-
-    /// Sets the conditions.
+    /// Sets the idle time costs.
     ///
     /// # Arguments
     ///
-    /// * `conditions` - Conditions under which this tariff applies
+    /// * `idle_time` - Idle time costs of the tariff
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_conditions(&mut self, conditions: TariffConditionsType) -> &mut Self {
-        self.conditions = conditions;
+    pub fn with_idle_time(mut self, idle_time: TariffTimeType) -> Self {
+        self.idle_time = Some(idle_time);
+        self
+    }
+
+    /// Sets the fixed fee.
+    ///
+    /// # Arguments
+    ///
+    /// * `fixed_fee` - Fixed costs of the tariff
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_fixed_fee(mut self, fixed_fee: TariffFixedType) -> Self {
+        self.fixed_fee = Some(fixed_fee);
+        self
+    }
+
+    /// Sets the reservation time costs.
+    ///
+    /// # Arguments
+    ///
+    /// * `reservation_time` - Reservation time costs of the tariff
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_reservation_time(mut self, reservation_time: TariffTimeType) -> Self {
+        self.reservation_time = Some(reservation_time);
+        self
+    }
+
+    /// Sets the reservation fixed costs.
+    ///
+    /// # Arguments
+    ///
+    /// * `reservation_fixed` - Fixed costs for a reservation
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_reservation_fixed(mut self, reservation_fixed: TariffFixedType) -> Self {
+        self.reservation_fixed = Some(reservation_fixed);
+        self
+    }
+
+    /// Sets the minimum cost.
+    ///
+    /// # Arguments
+    ///
+    /// * `min_cost` - Minimum cost for a charging session
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_min_cost(mut self, min_cost: PriceType) -> Self {
+        self.min_cost = Some(min_cost);
+        self
+    }
+
+    /// Sets the maximum cost.
+    ///
+    /// # Arguments
+    ///
+    /// * `max_cost` - Maximum cost for a charging session
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_max_cost(mut self, max_cost: PriceType) -> Self {
+        self.max_cost = Some(max_cost);
+        self
+    }
+
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data for this tariff
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
+        self
+    }
+
+    /// Gets the tariff id.
+    ///
+    /// # Returns
+    ///
+    /// The unique id of the tariff
+    pub fn tariff_id(&self) -> &str {
+        &self.tariff_id
+    }
+
+    /// Sets the tariff id.
+    ///
+    /// # Arguments
+    ///
+    /// * `tariff_id` - Unique id of tariff
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_tariff_id(&mut self, tariff_id: String) -> &mut Self {
+        self.tariff_id = tariff_id;
         self
     }
 
@@ -222,91 +294,45 @@ impl TariffType {
     ///
     /// # Returns
     ///
-    /// An optional reference to the currency of the price in ISO 4217 format
-    pub fn currency(&self) -> Option<&str> {
-        self.currency.as_deref()
+    /// The currency code according to ISO 4217
+    pub fn currency(&self) -> &str {
+        &self.currency
     }
 
     /// Sets the currency.
     ///
     /// # Arguments
     ///
-    /// * `currency` - Currency of the price in ISO 4217 format, or None to clear
+    /// * `currency` - Currency code according to ISO 4217
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_currency(&mut self, currency: Option<String>) -> &mut Self {
+    pub fn set_currency(&mut self, currency: String) -> &mut Self {
         self.currency = currency;
         self
     }
 
-    /// Gets the language.
+    /// Gets the description.
     ///
     /// # Returns
     ///
-    /// An optional reference to the language identifier of the language used in the description fields
-    pub fn language(&self) -> Option<&str> {
-        self.language.as_deref()
+    /// An optional reference to the description of the tariff in different languages
+    pub fn description(&self) -> Option<&Vec<MessageContentType>> {
+        self.description.as_ref()
     }
 
-    /// Sets the language.
+    /// Sets the description.
     ///
     /// # Arguments
     ///
-    /// * `language` - Language identifier of the language used in the description fields, or None to clear
+    /// * `description` - Description of the tariff in different languages, or None to clear
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_language(&mut self, language: Option<String>) -> &mut Self {
-        self.language = language;
-        self
-    }
-
-    /// Gets the display text.
-    ///
-    /// # Returns
-    ///
-    /// An optional reference to the display text of the tariff
-    pub fn display_text(&self) -> Option<&str> {
-        self.display_text.as_deref()
-    }
-
-    /// Sets the display text.
-    ///
-    /// # Arguments
-    ///
-    /// * `display_text` - Display text of the tariff, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_display_text(&mut self, display_text: Option<String>) -> &mut Self {
-        self.display_text = display_text;
-        self
-    }
-
-    /// Gets the fixed costs.
-    ///
-    /// # Returns
-    ///
-    /// An optional reference to the fixed costs of the tariff
-    pub fn fixed(&self) -> Option<&TariffFixedType> {
-        self.fixed.as_ref()
-    }
-
-    /// Sets the fixed costs.
-    ///
-    /// # Arguments
-    ///
-    /// * `fixed` - Fixed costs of the tariff, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_fixed(&mut self, fixed: Option<TariffFixedType>) -> &mut Self {
-        self.fixed = fixed;
+    pub fn set_description(&mut self, description: Option<Vec<MessageContentType>>) -> &mut Self {
+        self.description = description;
         self
     }
 
@@ -333,26 +359,190 @@ impl TariffType {
         self
     }
 
-    /// Gets the time costs.
+    /// Gets the valid from date.
     ///
     /// # Returns
     ///
-    /// An optional reference to the time costs of the tariff
-    pub fn time(&self) -> Option<&TariffTimeType> {
-        self.time.as_ref()
+    /// An optional reference to the time when this tariff becomes active
+    pub fn valid_from(&self) -> Option<&DateTime<Utc>> {
+        self.valid_from.as_ref()
     }
 
-    /// Sets the time costs.
+    /// Sets the valid from date.
     ///
     /// # Arguments
     ///
-    /// * `time` - Time costs of the tariff, or None to clear
+    /// * `valid_from` - Time when this tariff becomes active, or None to clear
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_time(&mut self, time: Option<TariffTimeType>) -> &mut Self {
-        self.time = time;
+    pub fn set_valid_from(&mut self, valid_from: Option<DateTime<Utc>>) -> &mut Self {
+        self.valid_from = valid_from;
+        self
+    }
+
+    /// Gets the charging time costs.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the charging time costs of the tariff
+    pub fn charging_time(&self) -> Option<&TariffTimeType> {
+        self.charging_time.as_ref()
+    }
+
+    /// Sets the charging time costs.
+    ///
+    /// # Arguments
+    ///
+    /// * `charging_time` - Charging time costs of the tariff, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_charging_time(&mut self, charging_time: Option<TariffTimeType>) -> &mut Self {
+        self.charging_time = charging_time;
+        self
+    }
+
+    /// Gets the idle time costs.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the idle time costs of the tariff
+    pub fn idle_time(&self) -> Option<&TariffTimeType> {
+        self.idle_time.as_ref()
+    }
+
+    /// Sets the idle time costs.
+    ///
+    /// # Arguments
+    ///
+    /// * `idle_time` - Idle time costs of the tariff, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_idle_time(&mut self, idle_time: Option<TariffTimeType>) -> &mut Self {
+        self.idle_time = idle_time;
+        self
+    }
+
+    /// Gets the fixed fee.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the fixed costs of the tariff
+    pub fn fixed_fee(&self) -> Option<&TariffFixedType> {
+        self.fixed_fee.as_ref()
+    }
+
+    /// Sets the fixed fee.
+    ///
+    /// # Arguments
+    ///
+    /// * `fixed_fee` - Fixed costs of the tariff, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_fixed_fee(&mut self, fixed_fee: Option<TariffFixedType>) -> &mut Self {
+        self.fixed_fee = fixed_fee;
+        self
+    }
+
+    /// Gets the reservation time costs.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the reservation time costs of the tariff
+    pub fn reservation_time(&self) -> Option<&TariffTimeType> {
+        self.reservation_time.as_ref()
+    }
+
+    /// Sets the reservation time costs.
+    ///
+    /// # Arguments
+    ///
+    /// * `reservation_time` - Reservation time costs of the tariff, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_reservation_time(&mut self, reservation_time: Option<TariffTimeType>) -> &mut Self {
+        self.reservation_time = reservation_time;
+        self
+    }
+
+    /// Gets the reservation fixed costs.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the fixed costs for a reservation
+    pub fn reservation_fixed(&self) -> Option<&TariffFixedType> {
+        self.reservation_fixed.as_ref()
+    }
+
+    /// Sets the reservation fixed costs.
+    ///
+    /// # Arguments
+    ///
+    /// * `reservation_fixed` - Fixed costs for a reservation, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_reservation_fixed(
+        &mut self,
+        reservation_fixed: Option<TariffFixedType>,
+    ) -> &mut Self {
+        self.reservation_fixed = reservation_fixed;
+        self
+    }
+
+    /// Gets the minimum cost.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the minimum cost for a charging session
+    pub fn min_cost(&self) -> Option<&PriceType> {
+        self.min_cost.as_ref()
+    }
+
+    /// Sets the minimum cost.
+    ///
+    /// # Arguments
+    ///
+    /// * `min_cost` - Minimum cost for a charging session, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_min_cost(&mut self, min_cost: Option<PriceType>) -> &mut Self {
+        self.min_cost = min_cost;
+        self
+    }
+
+    /// Gets the maximum cost.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the maximum cost for a charging session
+    pub fn max_cost(&self) -> Option<&PriceType> {
+        self.max_cost.as_ref()
+    }
+
+    /// Sets the maximum cost.
+    ///
+    /// # Arguments
+    ///
+    /// * `max_cost` - Maximum cost for a charging session, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_max_cost(&mut self, max_cost: Option<PriceType>) -> &mut Self {
+        self.max_cost = max_cost;
         self
     }
 
@@ -388,111 +578,193 @@ mod tests {
             tariff_energy_price::TariffEnergyPriceType, tariff_fixed_price::TariffFixedPriceType,
             tariff_time_price::TariffTimePriceType,
         },
-        enumerations::EnergyTransferModeEnumType,
+        enumerations::MessageFormatEnumType,
     };
+    use rust_decimal::Decimal;
 
     #[test]
     fn test_new_tariff() {
-        let id = "tariff-123".to_string();
-        let conditions = TariffConditionsType::new(EnergyTransferModeEnumType::DC);
-        let tariff = TariffType::new(id.clone(), conditions.clone());
+        let tariff_id = "tariff-123".to_string();
+        let currency = "EUR".to_string();
+        let tariff = TariffType::new(tariff_id.clone(), currency.clone());
 
-        assert_eq!(tariff.id(), id);
-        assert_eq!(tariff.conditions(), &conditions);
-        assert_eq!(tariff.currency(), None);
-        assert_eq!(tariff.language(), None);
-        assert_eq!(tariff.display_text(), None);
-        assert_eq!(tariff.fixed(), None);
+        assert_eq!(tariff.tariff_id(), tariff_id);
+        assert_eq!(tariff.currency(), currency);
+        assert_eq!(tariff.description(), None);
         assert_eq!(tariff.energy(), None);
-        assert_eq!(tariff.time(), None);
+        assert_eq!(tariff.valid_from(), None);
+        assert_eq!(tariff.charging_time(), None);
+        assert_eq!(tariff.idle_time(), None);
+        assert_eq!(tariff.fixed_fee(), None);
+        assert_eq!(tariff.reservation_time(), None);
+        assert_eq!(tariff.reservation_fixed(), None);
+        assert_eq!(tariff.min_cost(), None);
+        assert_eq!(tariff.max_cost(), None);
         assert_eq!(tariff.custom_data(), None);
     }
 
     #[test]
     fn test_with_methods() {
-        let id = "tariff-123".to_string();
-        let conditions = TariffConditionsType::new(EnergyTransferModeEnumType::DC);
+        let tariff_id = "tariff-123".to_string();
         let currency = "EUR".to_string();
-        let language = "en".to_string();
-        let display_text = "Standard Tariff".to_string();
-        let fixed = TariffFixedType::new(TariffFixedPriceType::new(10.0));
-        let energy = TariffEnergyType::new(TariffEnergyPriceType::new(0.25));
-        let time = TariffTimeType::new(TariffTimePriceType::new(5.0));
+        let description = vec![MessageContentType::new(
+            "Standard Tariff".to_string(),
+            MessageFormatEnumType::ASCII,
+            "en".to_string(),
+        )];
+        let energy = TariffEnergyType::new(TariffEnergyPriceType::new(0.25)); // 0.25
+        let valid_from = Utc::now();
+        let charging_time = TariffTimeType::new(TariffTimePriceType::new(5.0)); // 5.0
+        let idle_time = TariffTimeType::new(TariffTimePriceType::new(10.0)); // 10.0
+        let fixed_fee = TariffFixedType::new(TariffFixedPriceType::new(10.0)); // 10.0
+        let reservation_time = TariffTimeType::new(TariffTimePriceType::new(2.0)); // 2.0
+        let reservation_fixed = TariffFixedType::new(TariffFixedPriceType::new(5.0)); // 5.0
+        let min_cost = PriceType::new(Decimal::new(50, 1), false); // 5.0 excl tax
+        let max_cost = PriceType::new(Decimal::new(500, 1), false); // 50.0 excl tax
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let tariff = TariffType::new(id.clone(), conditions.clone())
-            .with_currency(currency.clone())
-            .with_language(language.clone())
-            .with_display_text(display_text.clone())
-            .with_fixed(fixed.clone())
+        let tariff = TariffType::new(tariff_id.clone(), currency.clone())
+            .with_description(description.clone())
             .with_energy(energy.clone())
-            .with_time(time.clone())
+            .with_valid_from(valid_from)
+            .with_charging_time(charging_time.clone())
+            .with_idle_time(idle_time.clone())
+            .with_fixed_fee(fixed_fee.clone())
+            .with_reservation_time(reservation_time.clone())
+            .with_reservation_fixed(reservation_fixed.clone())
+            .with_min_cost(min_cost.clone())
+            .with_max_cost(max_cost.clone())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(tariff.id(), id);
-        assert_eq!(tariff.conditions(), &conditions);
-        assert_eq!(tariff.currency(), Some(currency.as_str()));
-        assert_eq!(tariff.language(), Some(language.as_str()));
-        assert_eq!(tariff.display_text(), Some(display_text.as_str()));
-        assert_eq!(tariff.fixed(), Some(&fixed));
-        assert_eq!(tariff.energy(), Some(&energy));
-        assert_eq!(tariff.time(), Some(&time));
-        assert_eq!(tariff.custom_data(), Some(&custom_data));
+        assert_eq!(tariff.tariff_id(), tariff_id);
+        assert_eq!(tariff.currency(), currency);
+        assert_eq!(tariff.description().unwrap().len(), 1);
+        assert_eq!(
+            tariff.description().unwrap()[0].content(),
+            "Standard Tariff"
+        );
+        assert_eq!(tariff.energy().unwrap().energy_price.price, 0.25);
+        assert!(tariff.valid_from().is_some());
+        assert_eq!(tariff.charging_time().unwrap().time_price.price, 5.0);
+        assert_eq!(tariff.idle_time().unwrap().time_price.price, 10.0);
+        assert_eq!(tariff.fixed_fee().unwrap().fixed_price.price, 10.0);
+        assert_eq!(tariff.reservation_time().unwrap().time_price.price, 2.0);
+        assert_eq!(tariff.reservation_fixed().unwrap().fixed_price.price, 5.0);
+        assert_eq!(
+            tariff.min_cost().unwrap().excl_tax(),
+            Some(Decimal::new(50, 1))
+        );
+        assert_eq!(
+            tariff.max_cost().unwrap().excl_tax(),
+            Some(Decimal::new(500, 1))
+        );
+        assert_eq!(tariff.custom_data().unwrap().vendor_id(), "VendorX");
     }
 
     #[test]
     fn test_setter_methods() {
-        let id1 = "tariff-123".to_string();
-        let conditions1 = TariffConditionsType::new(EnergyTransferModeEnumType::DC);
-        let id2 = "tariff-456".to_string();
-        let conditions2 = TariffConditionsType::new(EnergyTransferModeEnumType::ACBPT);
-        let currency = "EUR".to_string();
-        let language = "en".to_string();
-        let display_text = "Standard Tariff".to_string();
-        let fixed = TariffFixedType::new(TariffFixedPriceType::new(10.0));
-        let energy = TariffEnergyType::new(TariffEnergyPriceType::new(0.25));
-        let time = TariffTimeType::new(TariffTimePriceType::new(5.0));
+        let tariff_id1 = "tariff-123".to_string();
+        let currency1 = "EUR".to_string();
+        let tariff_id2 = "tariff-456".to_string();
+        let currency2 = "USD".to_string();
+
+        let description = vec![MessageContentType::new(
+            "Standard Tariff".to_string(),
+            MessageFormatEnumType::ASCII,
+            "en".to_string(),
+        )];
+        let energy = TariffEnergyType::new(TariffEnergyPriceType::new(0.25)); // 0.25
+        let valid_from = Utc::now();
+        let charging_time = TariffTimeType::new(TariffTimePriceType::new(5.0)); // 5.0
+        let idle_time = TariffTimeType::new(TariffTimePriceType::new(10.0)); // 10.0
+        let fixed_fee = TariffFixedType::new(TariffFixedPriceType::new(10.0)); // 10.0
+        let reservation_time = TariffTimeType::new(TariffTimePriceType::new(2.0)); // 2.0
+        let reservation_fixed = TariffFixedType::new(TariffFixedPriceType::new(5.0)); // 5.0
+        let min_cost = PriceType::new(Decimal::new(50, 1), false); // 5.0 excl tax
+        let max_cost = PriceType::new(Decimal::new(500, 1), false); // 50.0 excl tax
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut tariff = TariffType::new(id1, conditions1);
+        let mut tariff = TariffType::new(tariff_id1, currency1);
 
         tariff
-            .set_id(id2.clone())
-            .set_conditions(conditions2.clone())
-            .set_currency(Some(currency.clone()))
-            .set_language(Some(language.clone()))
-            .set_display_text(Some(display_text.clone()))
-            .set_fixed(Some(fixed.clone()))
+            .set_tariff_id(tariff_id2.clone())
+            .set_currency(currency2.clone())
+            .set_description(Some(description.clone()))
             .set_energy(Some(energy.clone()))
-            .set_time(Some(time.clone()))
+            .set_valid_from(Some(valid_from))
+            .set_charging_time(Some(charging_time.clone()))
+            .set_idle_time(Some(idle_time.clone()))
+            .set_fixed_fee(Some(fixed_fee.clone()))
+            .set_reservation_time(Some(reservation_time.clone()))
+            .set_reservation_fixed(Some(reservation_fixed.clone()))
+            .set_min_cost(Some(min_cost.clone()))
+            .set_max_cost(Some(max_cost.clone()))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(tariff.id(), id2);
-        assert_eq!(tariff.conditions(), &conditions2);
-        assert_eq!(tariff.currency(), Some(currency.as_str()));
-        assert_eq!(tariff.language(), Some(language.as_str()));
-        assert_eq!(tariff.display_text(), Some(display_text.as_str()));
-        assert_eq!(tariff.fixed(), Some(&fixed));
-        assert_eq!(tariff.energy(), Some(&energy));
-        assert_eq!(tariff.time(), Some(&time));
-        assert_eq!(tariff.custom_data(), Some(&custom_data));
+        assert_eq!(tariff.tariff_id(), tariff_id2);
+        assert_eq!(tariff.currency(), currency2);
+        assert_eq!(tariff.description().unwrap().len(), 1);
+        assert_eq!(
+            tariff.description().unwrap()[0].content(),
+            "Standard Tariff"
+        );
+        assert_eq!(tariff.energy().unwrap().energy_price.price, 0.25);
+        assert!(tariff.valid_from().is_some());
+        assert_eq!(tariff.charging_time().unwrap().time_price.price, 5.0);
+        assert_eq!(tariff.idle_time().unwrap().time_price.price, 10.0);
+        assert_eq!(tariff.fixed_fee().unwrap().fixed_price.price, 10.0);
+        assert_eq!(tariff.reservation_time().unwrap().time_price.price, 2.0);
+        assert_eq!(tariff.reservation_fixed().unwrap().fixed_price.price, 5.0);
+        assert_eq!(
+            tariff.min_cost().unwrap().excl_tax(),
+            Some(Decimal::new(50, 1))
+        );
+        assert_eq!(
+            tariff.max_cost().unwrap().excl_tax(),
+            Some(Decimal::new(500, 1))
+        );
+        assert_eq!(tariff.custom_data().unwrap().vendor_id(), "VendorX");
 
         // Test clearing optional fields
         tariff
-            .set_currency(None)
-            .set_language(None)
-            .set_display_text(None)
-            .set_fixed(None)
+            .set_description(None)
             .set_energy(None)
-            .set_time(None)
+            .set_valid_from(None)
+            .set_charging_time(None)
+            .set_idle_time(None)
+            .set_fixed_fee(None)
+            .set_reservation_time(None)
+            .set_reservation_fixed(None)
+            .set_min_cost(None)
+            .set_max_cost(None)
             .set_custom_data(None);
 
-        assert_eq!(tariff.currency(), None);
-        assert_eq!(tariff.language(), None);
-        assert_eq!(tariff.display_text(), None);
-        assert_eq!(tariff.fixed(), None);
+        assert_eq!(tariff.description(), None);
         assert_eq!(tariff.energy(), None);
-        assert_eq!(tariff.time(), None);
+        assert_eq!(tariff.valid_from(), None);
+        assert_eq!(tariff.charging_time(), None);
+        assert_eq!(tariff.idle_time(), None);
+        assert_eq!(tariff.fixed_fee(), None);
+        assert_eq!(tariff.reservation_time(), None);
+        assert_eq!(tariff.reservation_fixed(), None);
+        assert_eq!(tariff.min_cost(), None);
+        assert_eq!(tariff.max_cost(), None);
         assert_eq!(tariff.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // Test with valid tariff
+        let tariff = TariffType::new("tariff-123".to_string(), "EUR".to_string());
+        assert!(tariff.validate().is_ok());
+
+        // Test with tariff_id too long (max 60 characters)
+        let long_id = "a".repeat(61);
+        let invalid_tariff = TariffType::new(long_id, "EUR".to_string());
+        assert!(invalid_tariff.validate().is_err());
+
+        // Test with currency too long (max 3 characters)
+        let invalid_tariff = TariffType::new("tariff-123".to_string(), "EURO".to_string());
+        assert!(invalid_tariff.validate().is_err());
     }
 }
