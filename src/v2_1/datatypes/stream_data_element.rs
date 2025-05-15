@@ -7,7 +7,7 @@ use super::custom_data::CustomDataType;
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct StreamDataElementType {
-    /// Required. Offset relative to _basetime_ of this message. 
+    /// Required. Offset relative to _basetime_ of this message.
     /// _basetime_ + _t_ is timestamp of recorded value.
     #[serde(rename = "t")]
     pub offset: f64,
@@ -148,8 +148,8 @@ mod tests {
         let value = "test_value".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let element = StreamDataElementType::new(offset, value.clone())
-            .with_custom_data(custom_data.clone());
+        let element =
+            StreamDataElementType::new(offset, value.clone()).with_custom_data(custom_data.clone());
 
         assert_eq!(element.offset(), offset);
         assert_eq!(element.value(), value);
@@ -188,16 +188,15 @@ mod tests {
         let value = "test_value".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let element = StreamDataElementType::new(offset, value)
-            .with_custom_data(custom_data);
+        let element = StreamDataElementType::new(offset, value).with_custom_data(custom_data);
 
         let json = serde_json::to_string(&element).unwrap();
-        
+
         // Check field names are correctly serialized
         assert!(json.contains(r#""t":"#));
         assert!(json.contains(r#""v":"#));
         assert!(json.contains(r#""customData":"#));
-        
+
         // Check field names are not using internal names
         assert!(!json.contains(r#""offset":"#));
         assert!(!json.contains(r#""value":"#));
@@ -206,9 +205,9 @@ mod tests {
     #[test]
     fn test_deserialization() {
         let json = r#"{"t":42.5,"v":"test_value","customData":{"vendorId":"VendorX"}}"#;
-        
+
         let element: StreamDataElementType = serde_json::from_str(json).unwrap();
-        
+
         assert_eq!(element.offset(), 42.5);
         assert_eq!(element.value(), "test_value");
         assert_eq!(element.custom_data().unwrap().vendor_id(), "VendorX");
