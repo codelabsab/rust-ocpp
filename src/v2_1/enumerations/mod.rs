@@ -108,6 +108,7 @@ pub mod update;
 pub mod update_firmware_status;
 pub mod upload_log_status;
 pub mod vpn;
+pub mod data_enum;
 
 pub use apn_authentication::APNAuthenticationEnumType;
 pub use attribute::AttributeEnumType;

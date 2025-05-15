@@ -216,15 +216,15 @@ impl ReportDataType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::v2_1::datatypes::variable_characteristics::DataEnumType;
-    use crate::v2_1::enumerations::MutabilityEnumType;
+    use crate::v2_1::enumerations::data_enum::DataEnumType;
+    use crate::v2_1::enumerations::{attribute::AttributeEnumType, mutability::MutabilityEnumType};
 
     #[test]
     fn test_new_report_data() {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
-        let attribute = VariableAttributeType::new(
-            "MaxValue".to_string(),
+        let attribute = VariableAttributeType::new_with_value(
+            AttributeEnumType::MaxSet,
             "100".to_string(),
             MutabilityEnumType::ReadOnly,
         );
@@ -251,19 +251,19 @@ mod tests {
         let component = ComponentType::new("Connector".to_string());
         let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let attribute = VariableAttributeType::new(
-            "MaxValue".to_string(),
+        let attribute = VariableAttributeType::new_with_value(
+            AttributeEnumType::MaxSet,
             "100".to_string(),
             MutabilityEnumType::ReadOnly,
         );
         let variable_attributes = vec![attribute];
         let variable_characteristics = VariableCharacteristicsType::new(
-            "Ampere".to_string(),
             DataEnumType::Integer,
-            "0".to_string(),
-            "100".to_string(),
             true,
-        );
+        )
+        .with_unit("Ampere".to_string())
+        .with_min_limit(0.0)
+        .with_max_limit(100.0);
 
         let report_data = ReportDataType::new(
             component.clone(),
@@ -290,8 +290,8 @@ mod tests {
     fn test_setter_methods() {
         let component1 = ComponentType::new("Connector".to_string());
         let variable1 = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
-        let attribute1 = VariableAttributeType::new(
-            "MaxValue".to_string(),
+        let attribute1 = VariableAttributeType::new_with_value(
+            AttributeEnumType::MaxSet,
             "100".to_string(),
             MutabilityEnumType::ReadOnly,
         );
@@ -299,8 +299,8 @@ mod tests {
 
         let component2 = ComponentType::new("Meter".to_string());
         let variable2 = VariableType::new_with_instance("VoltageLimit".to_string(), "Secondary".to_string());
-        let attribute2 = VariableAttributeType::new(
-            "MinValue".to_string(),
+        let attribute2 = VariableAttributeType::new_with_value(
+            AttributeEnumType::MinSet,
             "50".to_string(),
             MutabilityEnumType::ReadWrite,
         );
@@ -308,12 +308,12 @@ mod tests {
 
         let custom_data = CustomDataType::new("VendorX".to_string());
         let variable_characteristics = VariableCharacteristicsType::new(
-            "Volt".to_string(),
             DataEnumType::Integer,
-            "0".to_string(),
-            "500".to_string(),
             true,
-        );
+        )
+        .with_unit("Volt".to_string())
+        .with_min_limit(0.0)
+        .with_max_limit(500.0);
 
         let mut report_data = ReportDataType::new(component1, variable1, variable_attributes1);
 
