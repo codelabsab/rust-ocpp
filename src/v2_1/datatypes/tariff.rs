@@ -647,9 +647,9 @@ mod tests {
         assert!(tariff.valid_from().is_some());
         assert_eq!(tariff.charging_time().unwrap().time_price.price, 5.0);
         assert_eq!(tariff.idle_time().unwrap().time_price.price, 10.0);
-        assert_eq!(tariff.fixed_fee().unwrap().fixed_price.price, 10.0);
+        assert_eq!(tariff.fixed_fee().unwrap().fixed_price.price_fixed, 10.0);
         assert_eq!(tariff.reservation_time().unwrap().time_price.price, 2.0);
-        assert_eq!(tariff.reservation_fixed().unwrap().fixed_price.price, 5.0);
+        assert_eq!(tariff.reservation_fixed().unwrap().fixed_price.price_fixed, 5.0);
         assert_eq!(
             tariff.min_cost().unwrap().excl_tax(),
             Some(Decimal::new(50, 1))
@@ -712,9 +712,9 @@ mod tests {
         assert!(tariff.valid_from().is_some());
         assert_eq!(tariff.charging_time().unwrap().time_price.price, 5.0);
         assert_eq!(tariff.idle_time().unwrap().time_price.price, 10.0);
-        assert_eq!(tariff.fixed_fee().unwrap().fixed_price.price, 10.0);
+        assert_eq!(tariff.fixed_fee().unwrap().fixed_price.price_fixed, 10.0);
         assert_eq!(tariff.reservation_time().unwrap().time_price.price, 2.0);
-        assert_eq!(tariff.reservation_fixed().unwrap().fixed_price.price, 5.0);
+        assert_eq!(tariff.reservation_fixed().unwrap().fixed_price.price_fixed, 5.0);
         assert_eq!(
             tariff.min_cost().unwrap().excl_tax(),
             Some(Decimal::new(50, 1))
