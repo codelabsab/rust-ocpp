@@ -272,18 +272,18 @@ mod tests {
             reservation_time: None,
             reservation_fixed: None,
             total: TotalPriceType {
-                price: 10.5,
-                price_excl_tax: None,
-                price_incl_tax: None,
+                excl_tax: Some(10.5),
+                incl_tax: None,
                 custom_data: None,
             },
             custom_data: None,
         };
 
         let total_usage = TotalUsageType {
-            usage: 20.0,
-            usage_excl_tax: None,
-            usage_incl_tax: None,
+            energy: 20.0,
+            charging_time: 3600,
+            idle_time: 600,
+            reservation_time: None,
             custom_data: None,
         };
 
@@ -295,7 +295,7 @@ mod tests {
 
         assert_eq!(cost_details.charging_periods().len(), 1);
         assert_eq!(cost_details.total_cost().currency, "EUR");
-        assert_eq!(cost_details.total_usage().usage, 20.0);
+        assert_eq!(cost_details.total_usage().energy, 20.0);
         assert_eq!(cost_details.failure_to_calculate(), None);
         assert_eq!(cost_details.failure_reason(), None);
         assert_eq!(cost_details.custom_data(), None);
@@ -315,18 +315,18 @@ mod tests {
             reservation_time: None,
             reservation_fixed: None,
             total: TotalPriceType {
-                price: 10.5,
-                price_excl_tax: None,
-                price_incl_tax: None,
+                excl_tax: Some(10.5),
+                incl_tax: None,
                 custom_data: None,
             },
             custom_data: None,
         };
 
         let total_usage = TotalUsageType {
-            usage: 20.0,
-            usage_excl_tax: None,
-            usage_incl_tax: None,
+            energy: 20.0,
+            charging_time: 3600,
+            idle_time: 600,
+            reservation_time: None,
             custom_data: None,
         };
 
@@ -343,7 +343,7 @@ mod tests {
 
         assert_eq!(cost_details.charging_periods().len(), 1);
         assert_eq!(cost_details.total_cost().currency, "EUR");
-        assert_eq!(cost_details.total_usage().usage, 20.0);
+        assert_eq!(cost_details.total_usage().energy, 20.0);
         assert_eq!(cost_details.failure_to_calculate(), Some(true));
         assert_eq!(cost_details.failure_reason(), Some("Calculation error"));
         assert_eq!(cost_details.custom_data(), Some(&custom_data));
@@ -366,9 +366,8 @@ mod tests {
             reservation_time: None,
             reservation_fixed: None,
             total: TotalPriceType {
-                price: 10.5,
-                price_excl_tax: None,
-                price_incl_tax: None,
+                excl_tax: Some(10.5),
+                incl_tax: None,
                 custom_data: None,
             },
             custom_data: None,
@@ -384,25 +383,26 @@ mod tests {
             reservation_time: None,
             reservation_fixed: None,
             total: TotalPriceType {
-                price: 12.0,
-                price_excl_tax: None,
-                price_incl_tax: None,
+                excl_tax: Some(12.0),
+                incl_tax: None,
                 custom_data: None,
             },
             custom_data: None,
         };
 
         let total_usage1 = TotalUsageType {
-            usage: 20.0,
-            usage_excl_tax: None,
-            usage_incl_tax: None,
+            energy: 20.0,
+            charging_time: 3600,
+            idle_time: 600,
+            reservation_time: None,
             custom_data: None,
         };
 
         let total_usage2 = TotalUsageType {
-            usage: 25.0,
-            usage_excl_tax: None,
-            usage_incl_tax: None,
+            energy: 25.0,
+            charging_time: 3600,
+            idle_time: 600,
+            reservation_time: None,
             custom_data: None,
         };
 
@@ -424,7 +424,7 @@ mod tests {
 
         assert_eq!(cost_details.charging_periods().len(), 2);
         assert_eq!(cost_details.total_cost().currency, "USD");
-        assert_eq!(cost_details.total_usage().usage, 25.0);
+        assert_eq!(cost_details.total_usage().energy, 25.0);
         assert_eq!(cost_details.failure_to_calculate(), Some(true));
         assert_eq!(cost_details.failure_reason(), Some("Calculation error"));
         assert_eq!(cost_details.custom_data(), Some(&custom_data));
@@ -448,9 +448,8 @@ mod tests {
             currency: "EUR".to_string(),
             type_of_cost: TariffCostEnumType::NormalCost,
             total: TotalPriceType {
-                price: 10.5,
-                price_excl_tax: None,
-                price_incl_tax: None,
+                excl_tax: Some(10.5),
+                incl_tax: None,
                 custom_data: None,
             },
             custom_data: None,
@@ -463,9 +462,10 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            usage: 20.0,
-            usage_excl_tax: None,
-            usage_incl_tax: None,
+            energy: 20.0,
+            charging_time: 3600,
+            idle_time: 600,
+            reservation_time: None,
             custom_data: None,
         };
 
@@ -488,9 +488,8 @@ mod tests {
             currency: "EUR".to_string(),
             type_of_cost: TariffCostEnumType::NormalCost,
             total: TotalPriceType {
-                price: 10.5,
-                price_excl_tax: None,
-                price_incl_tax: None,
+                excl_tax: Some(10.5),
+                incl_tax: None,
                 custom_data: None,
             },
             custom_data: None,
@@ -503,9 +502,10 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            usage: 20.0,
-            usage_excl_tax: None,
-            usage_incl_tax: None,
+            energy: 20.0,
+            charging_time: 3600,
+            idle_time: 600,
+            reservation_time: None,
             custom_data: None,
         };
 
@@ -538,9 +538,8 @@ mod tests {
             currency: "EUR".to_string(),
             type_of_cost: TariffCostEnumType::NormalCost,
             total: TotalPriceType {
-                price: 10.5,
-                price_excl_tax: None,
-                price_incl_tax: None,
+                excl_tax: Some(10.5),
+                incl_tax: None,
                 custom_data: None,
             },
             custom_data: None,
@@ -553,9 +552,10 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            usage: 20.0,
-            usage_excl_tax: None,
-            usage_incl_tax: None,
+            energy: 20.0,
+            charging_time: 3600,
+            idle_time: 600,
+            reservation_time: None,
             custom_data: None,
         };
 
@@ -604,9 +604,8 @@ mod tests {
             currency: "EUR".to_string(),
             type_of_cost: TariffCostEnumType::NormalCost,
             total: TotalPriceType {
-                price: 10.5,
-                price_excl_tax: None,
-                price_incl_tax: None,
+                excl_tax: Some(10.5),
+                incl_tax: None,
                 custom_data: None,
             },
             custom_data: None,
@@ -619,9 +618,10 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            usage: 20.0,
-            usage_excl_tax: None,
-            usage_incl_tax: None,
+            energy: 20.0,
+            charging_time: 3600,
+            idle_time: 600,
+            reservation_time: None,
             custom_data: None,
         };
 
@@ -653,9 +653,8 @@ mod tests {
             currency: "USDX".to_string(), // Should fail validation - max length is 3
             type_of_cost: TariffCostEnumType::NormalCost,
             total: TotalPriceType {
-                price: 10.5,
-                price_excl_tax: None,
-                price_incl_tax: None,
+                excl_tax: Some(10.5),
+                incl_tax: None,
                 custom_data: None,
             },
             custom_data: None,
@@ -668,9 +667,10 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            usage: 20.0,
-            usage_excl_tax: None,
-            usage_incl_tax: None,
+            energy: 20.0,
+            charging_time: 3600,
+            idle_time: 600,
+            reservation_time: None,
             custom_data: None,
         };
 
