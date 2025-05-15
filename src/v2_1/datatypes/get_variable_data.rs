@@ -175,7 +175,8 @@ mod tests {
     #[test]
     fn test_new_get_variable_data() {
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
 
         let get_variable_data = GetVariableDataType::new(component.clone(), variable.clone());
 
@@ -188,7 +189,8 @@ mod tests {
     #[test]
     fn test_with_methods() {
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let attribute_type = AttributeEnumType::Actual;
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
@@ -208,10 +210,12 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let component1 = ComponentType::new("Connector".to_string());
-        let variable1 = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable1 =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
 
         let component2 = ComponentType::new("Meter".to_string());
-        let variable2 = VariableType::new_with_instance("Voltage".to_string(), "Secondary".to_string());
+        let variable2 =
+            VariableType::new_with_instance("Voltage".to_string(), "Secondary".to_string());
         let attribute_type = AttributeEnumType::Target;
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
@@ -244,7 +248,8 @@ mod tests {
     fn test_serde_serialization() {
         use serde_json;
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let attribute_type = AttributeEnumType::Actual;
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),

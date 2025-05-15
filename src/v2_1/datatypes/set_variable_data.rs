@@ -208,7 +208,8 @@ mod tests {
     #[test]
     fn test_new_set_variable_data() {
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
+        let variable =
+            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let attribute_value = "value1".to_string();
 
         let data =
@@ -224,7 +225,8 @@ mod tests {
     #[test]
     fn test_with_methods() {
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
+        let variable =
+            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let attribute_value = "value1".to_string();
         let attribute_type = AttributeEnumType::Actual;
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -244,13 +246,15 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let component1 = ComponentType::new("component1".to_string());
-        let variable1 = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
+        let variable1 =
+            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let attribute_value1 = "value1".to_string();
 
         let mut data = SetVariableDataType::new(component1, variable1, attribute_value1);
 
         let component2 = ComponentType::new("component2".to_string());
-        let variable2 = VariableType::new_with_instance("variable2".to_string(), "instance2".to_string());
+        let variable2 =
+            VariableType::new_with_instance("variable2".to_string(), "instance2".to_string());
         let attribute_value2 = "value2".to_string();
         let attribute_type = AttributeEnumType::MinSet;
         let custom_data = CustomDataType::new("VendorX".to_string());

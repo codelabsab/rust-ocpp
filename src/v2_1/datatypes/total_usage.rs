@@ -1,7 +1,7 @@
+use rust_decimal::prelude::FromPrimitive;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use rust_decimal::prelude::FromPrimitive;
 
 use super::custom_data::CustomDataType;
 
@@ -215,9 +215,7 @@ mod tests {
         assert_eq!(total_usage.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        total_usage
-            .set_reservation_time(None)
-            .set_custom_data(None);
+        total_usage.set_reservation_time(None).set_custom_data(None);
 
         assert_eq!(total_usage.reservation_time(), None);
         assert_eq!(total_usage.custom_data(), None);

@@ -260,7 +260,8 @@ mod tests {
     #[test]
     fn test_new_set_variable_result() {
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
+        let variable =
+            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let attribute_status = SetVariableStatusEnumType::Accepted;
 
         let result = SetVariableResultType::new(
@@ -280,7 +281,8 @@ mod tests {
     #[test]
     fn test_with_methods() {
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
+        let variable =
+            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let attribute_status = SetVariableStatusEnumType::Accepted;
         let attribute_type = AttributeEnumType::Actual;
         let attribute_status_info = StatusInfoType::new("SomeReason".to_string());
@@ -306,13 +308,15 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let component1 = ComponentType::new("component1".to_string());
-        let variable1 = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
+        let variable1 =
+            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let attribute_status1 = SetVariableStatusEnumType::Accepted;
 
         let mut result = SetVariableResultType::new(component1, variable1, attribute_status1);
 
         let component2 = ComponentType::new("component2".to_string());
-        let variable2 = VariableType::new_with_instance("variable2".to_string(), "instance2".to_string());
+        let variable2 =
+            VariableType::new_with_instance("variable2".to_string(), "instance2".to_string());
         let attribute_status2 = SetVariableStatusEnumType::Rejected;
         let attribute_type = AttributeEnumType::MinSet;
         let attribute_status_info = StatusInfoType::new("Reason".to_string());

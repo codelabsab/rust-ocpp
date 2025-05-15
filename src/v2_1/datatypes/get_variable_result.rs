@@ -403,7 +403,8 @@ mod tests {
     #[test]
     fn test_new_get_variable_result() {
         let component = ComponentType::new("TestComponent".to_string());
-        let variable = VariableType::new_with_instance("TestVariable".to_string(), "instance1".to_string());
+        let variable =
+            VariableType::new_with_instance("TestVariable".to_string(), "instance1".to_string());
         let status = GetVariableStatusEnumType::Accepted;
 
         let result =
@@ -423,7 +424,8 @@ mod tests {
     #[test]
     fn test_with_methods() {
         let component = ComponentType::new("TestComponent".to_string());
-        let variable = VariableType::new_with_instance("TestVariable".to_string(), "instance1".to_string());
+        let variable =
+            VariableType::new_with_instance("TestVariable".to_string(), "instance1".to_string());
         let status = GetVariableStatusEnumType::Accepted;
         let custom_data = CustomDataType::new("Vendor".to_string());
         let status_info = StatusInfoType {
@@ -450,7 +452,8 @@ mod tests {
     #[test]
     fn test_set_methods() {
         let component = ComponentType::new("TestComponent".to_string());
-        let variable = VariableType::new_with_instance("TestVariable".to_string(), "instance1".to_string());
+        let variable =
+            VariableType::new_with_instance("TestVariable".to_string(), "instance1".to_string());
         let status = GetVariableStatusEnumType::Accepted;
         let custom_data = CustomDataType::new("Vendor".to_string());
         let status_info = StatusInfoType {
@@ -459,7 +462,8 @@ mod tests {
             additional_info: None,
         };
         let new_component = ComponentType::new("NewComponent".to_string());
-        let new_variable = VariableType::new_with_instance("NewVariable".to_string(), "instance2".to_string());
+        let new_variable =
+            VariableType::new_with_instance("NewVariable".to_string(), "instance2".to_string());
         let new_status = GetVariableStatusEnumType::Rejected;
 
         let mut result = GetVariableResultType::new(component, variable, status);

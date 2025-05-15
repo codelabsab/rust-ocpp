@@ -13,7 +13,7 @@ pub struct VariableAttributeType {
     pub type_: AttributeEnumType,
 
     /// Value of the attribute. May only be omitted when mutability is set to 'WriteOnly'.
-    /// 
+    ///
     /// The Configuration Variable <<configkey-reporting-value-size,ReportingValueSize>> can be used to limit GetVariableResult.attributeValue, VariableAttribute.value and EventData.actualValue. The max size of these values will always remain equal.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(length(max = 2500))]
@@ -69,7 +69,11 @@ impl VariableAttributeType {
     /// # Returns
     ///
     /// A new instance of `VariableAttributeType` with optional fields set to `None`
-    pub fn new_with_value(type_: AttributeEnumType, value: String, mutability: MutabilityEnumType) -> Self {
+    pub fn new_with_value(
+        type_: AttributeEnumType,
+        value: String,
+        mutability: MutabilityEnumType,
+    ) -> Self {
         Self {
             type_,
             value: Some(value),
@@ -300,7 +304,11 @@ mod tests {
         let value = "42".to_string();
         let mutability = MutabilityEnumType::ReadOnly;
 
-        let attribute = VariableAttributeType::new_with_value(attr_type.clone(), value.clone(), mutability.clone());
+        let attribute = VariableAttributeType::new_with_value(
+            attr_type.clone(),
+            value.clone(),
+            mutability.clone(),
+        );
 
         assert_eq!(attribute.type_(), &attr_type);
         assert_eq!(attribute.value(), Some(&value));
@@ -345,7 +353,11 @@ mod tests {
         let constant = false;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut attribute = VariableAttributeType::new_with_value(attr_type1.clone(), value1.clone(), mutability1.clone());
+        let mut attribute = VariableAttributeType::new_with_value(
+            attr_type1.clone(),
+            value1.clone(),
+            mutability1.clone(),
+        );
 
         attribute
             .set_type(attr_type2.clone())

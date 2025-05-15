@@ -1,7 +1,7 @@
+use rust_decimal::prelude::FromPrimitive;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use rust_decimal::prelude::FromPrimitive;
 
 use super::custom_data::CustomDataType;
 
@@ -10,11 +10,19 @@ use super::custom_data::CustomDataType;
 #[serde(rename_all = "camelCase")]
 pub struct TransactionLimitType {
     /// Maximum allowed cost of transaction in currency of tariff.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub max_cost: Option<Decimal>,
 
     /// Maximum allowed energy in Wh to charge in transaction.
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "rust_decimal::serde::arbitrary_precision_option",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
     pub max_energy: Option<Decimal>,
 
     /// Maximum duration of transaction in seconds from start to end.
@@ -150,10 +158,16 @@ impl TransactionLimitType {
     }
 
     /// Create a new TransactionLimitType from floating point values for cost and energy.
-    pub fn new_from_f64(max_cost: Option<f64>, max_energy: Option<f64>, max_time: Option<i32>, max_so_c: Option<i32>) -> Self {
+    pub fn new_from_f64(
+        max_cost: Option<f64>,
+        max_energy: Option<f64>,
+        max_time: Option<i32>,
+        max_so_c: Option<i32>,
+    ) -> Self {
         Self {
             max_cost: max_cost.map(|v| Decimal::from_f64(v).unwrap_or_else(|| Decimal::new(0, 0))),
-            max_energy: max_energy.map(|v| Decimal::from_f64(v).unwrap_or_else(|| Decimal::new(0, 0))),
+            max_energy: max_energy
+                .map(|v| Decimal::from_f64(v).unwrap_or_else(|| Decimal::new(0, 0))),
             max_time,
             max_so_c,
             custom_data: None,
@@ -187,11 +201,17 @@ mod tests {
             Some(max_cost_f64),
             Some(max_energy_f64),
             Some(max_time),
-            Some(max_so_c)
+            Some(max_so_c),
         );
 
-        assert_eq!(transaction_limit.max_cost(), Some(Decimal::from_f64(max_cost_f64).unwrap()));
-        assert_eq!(transaction_limit.max_energy(), Some(Decimal::from_f64(max_energy_f64).unwrap()));
+        assert_eq!(
+            transaction_limit.max_cost(),
+            Some(Decimal::from_f64(max_cost_f64).unwrap())
+        );
+        assert_eq!(
+            transaction_limit.max_energy(),
+            Some(Decimal::from_f64(max_energy_f64).unwrap())
+        );
         assert_eq!(transaction_limit.max_time(), Some(max_time));
         assert_eq!(transaction_limit.max_so_c(), Some(max_so_c));
         assert_eq!(transaction_limit.custom_data(), None);
@@ -259,9 +279,8 @@ mod tests {
 
     #[test]
     fn test_validation() {
-        let valid_transaction_limit = TransactionLimitType::new()
-            .with_max_so_c(80);
-        
+        let valid_transaction_limit = TransactionLimitType::new().with_max_so_c(80);
+
         assert!(valid_transaction_limit.validate().is_ok());
 
         let invalid_transaction_limit = TransactionLimitType {
@@ -271,7 +290,7 @@ mod tests {
             max_so_c: Some(101), // Invalid: greater than 100
             custom_data: None,
         };
-        
+
         assert!(invalid_transaction_limit.validate().is_err());
 
         let invalid_transaction_limit2 = TransactionLimitType {
@@ -281,7 +300,7 @@ mod tests {
             max_so_c: Some(-1), // Invalid: less than 0
             custom_data: None,
         };
-        
+
         assert!(invalid_transaction_limit2.validate().is_err());
     }
 
@@ -292,10 +311,10 @@ mod tests {
             .with_max_energy(Decimal::from_f64(100.0).unwrap())
             .with_max_time(3600)
             .with_max_so_c(80);
-        
+
         let json = serde_json::to_string(&transaction_limit).unwrap();
         let deserialized: TransactionLimitType = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized, transaction_limit);
     }
 }

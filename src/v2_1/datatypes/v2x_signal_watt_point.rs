@@ -13,6 +13,7 @@ pub struct V2XSignalWattPointType {
     pub signal: i32,
 
     /// Power in W to charge (positive) or discharge (negative) at specified frequency.
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
     pub power: Decimal,
 
     /// Custom data from the Charging Station.

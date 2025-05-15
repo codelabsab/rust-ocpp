@@ -102,7 +102,8 @@ mod tests {
 
     #[test]
     fn test_new_with_instance() {
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
 
         assert_eq!(variable.name(), "CurrentLimit");
         assert_eq!(variable.instance(), Some("Main"));
@@ -138,25 +139,23 @@ mod tests {
         assert_eq!(variable.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        variable
-            .set_instance(None)
-            .set_custom_data(None);
-            
+        variable.set_instance(None).set_custom_data(None);
+
         assert_eq!(variable.instance(), None);
         assert_eq!(variable.custom_data(), None);
     }
-    
+
     #[test]
     fn test_serialization() {
         let custom_data = CustomDataType::new("VendorX".to_string());
-        
+
         let variable = VariableType::new("CurrentLimit".to_string())
             .with_instance("Main".to_string())
             .with_custom_data(custom_data);
-            
+
         let json = serde_json::to_string(&variable).unwrap();
         let deserialized: VariableType = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized, variable);
     }
 }

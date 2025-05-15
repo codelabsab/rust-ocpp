@@ -1,7 +1,7 @@
+use rust_decimal::prelude::FromPrimitive;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use rust_decimal::prelude::FromPrimitive;
 
 use super::custom_data::CustomDataType;
 
@@ -10,9 +10,11 @@ use super::custom_data::CustomDataType;
 #[serde(rename_all = "camelCase")]
 pub struct V2XFreqWattPointType {
     /// Net frequency in Hz.
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
     pub frequency: Decimal,
 
     /// Power in W to charge (positive) or discharge (negative) at specified frequency.
+    #[serde(with = "rust_decimal::serde::arbitrary_precision")]
     pub power: Decimal,
 
     /// Custom data from the Charging Station.
@@ -88,7 +90,7 @@ mod tests {
     fn test_new() {
         let frequency = Decimal::from_f64(50.0).unwrap();
         let power = Decimal::from_f64(-3000.0).unwrap();
-        
+
         let point = V2XFreqWattPointType::new(frequency, power);
 
         assert_eq!(point.frequency(), frequency);
@@ -100,7 +102,7 @@ mod tests {
     fn test_new_from_f64() {
         let frequency_f64 = 50.0;
         let power_f64 = -3000.0;
-        
+
         let point = V2XFreqWattPointType::new_from_f64(frequency_f64, power_f64);
 
         assert_eq!(point.frequency(), Decimal::from_f64(frequency_f64).unwrap());
@@ -113,9 +115,9 @@ mod tests {
         let frequency = Decimal::from_f64(50.0).unwrap();
         let power = Decimal::from_f64(-3000.0).unwrap();
         let custom_data = CustomDataType::new("VendorX".to_string());
-        
-        let point = V2XFreqWattPointType::new(frequency, power)
-            .with_custom_data(custom_data.clone());
+
+        let point =
+            V2XFreqWattPointType::new(frequency, power).with_custom_data(custom_data.clone());
 
         assert_eq!(point.frequency(), frequency);
         assert_eq!(point.power(), power);
@@ -126,12 +128,12 @@ mod tests {
     fn test_setter_methods() {
         let initial_frequency = Decimal::from_f64(50.0).unwrap();
         let initial_power = Decimal::from_f64(-3000.0).unwrap();
-        
+
         let new_frequency = Decimal::from_f64(49.8).unwrap();
         let new_power = Decimal::from_f64(-2500.0).unwrap();
-        
+
         let custom_data = CustomDataType::new("VendorX".to_string());
-        
+
         let mut point = V2XFreqWattPointType::new(initial_frequency, initial_power);
 
         point
@@ -142,23 +144,23 @@ mod tests {
         assert_eq!(point.frequency(), new_frequency);
         assert_eq!(point.power(), new_power);
         assert_eq!(point.custom_data(), Some(&custom_data));
-        
+
         // Test clearing optional fields
         point.set_custom_data(None);
-        
+
         assert_eq!(point.custom_data(), None);
     }
-    
+
     #[test]
     fn test_serialization() {
         let frequency = Decimal::from_f64(50.0).unwrap();
         let power = Decimal::from_f64(-3000.0).unwrap();
-        
+
         let point = V2XFreqWattPointType::new(frequency, power);
-        
+
         let json = serde_json::to_string(&point).unwrap();
         let deserialized: V2XFreqWattPointType = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized, point);
     }
 }

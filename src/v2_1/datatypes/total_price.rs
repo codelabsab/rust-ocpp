@@ -1,7 +1,7 @@
+use super::custom_data::CustomDataType;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use super::custom_data::CustomDataType;
 
 /// Total cost with and without tax.
 ///

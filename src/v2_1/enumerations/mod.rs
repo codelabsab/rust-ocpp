@@ -28,6 +28,7 @@ pub mod control_mode;
 pub mod cost_dimension;
 pub mod cost_kind;
 pub mod customer_information_status;
+pub mod data_enum;
 pub mod data_transfer_status;
 pub mod day_of_week;
 pub mod delete_certificate_status;
@@ -108,7 +109,6 @@ pub mod update;
 pub mod update_firmware_status;
 pub mod upload_log_status;
 pub mod vpn;
-pub mod data_enum;
 
 pub use apn_authentication::APNAuthenticationEnumType;
 pub use attribute::AttributeEnumType;

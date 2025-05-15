@@ -8,7 +8,7 @@ use super::custom_data::CustomDataType;
 #[serde(rename_all = "camelCase")]
 pub struct UnitOfMeasureType {
     /// Unit of the value. Default = "Wh" if the (default) measurand is an "Energy" type.
-    /// This field SHALL use a value from the list Standardized Units of Measurements in Part 2 Appendices. 
+    /// This field SHALL use a value from the list Standardized Units of Measurements in Part 2 Appendices.
     /// If an applicable unit is available in that list, otherwise a "custom" unit might be used.
     #[serde(default = "default_unit")]
     #[validate(length(max = 20))]
@@ -167,11 +167,11 @@ mod tests {
     fn test_default_serialization() {
         let unit_of_measure = UnitOfMeasureType::new();
         let json = serde_json::to_string(&unit_of_measure).unwrap();
-        
+
         // Default values should be included in serialization
         assert!(json.contains("\"unit\":\"Wh\""));
         assert!(json.contains("\"multiplier\":0"));
-        
+
         // Custom data is None, so it should not be included
         assert!(!json.contains("customData"));
     }

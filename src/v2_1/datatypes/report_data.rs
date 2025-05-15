@@ -222,7 +222,8 @@ mod tests {
     #[test]
     fn test_new_report_data() {
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let attribute = VariableAttributeType::new_with_value(
             AttributeEnumType::MaxSet,
             "100".to_string(),
@@ -249,7 +250,8 @@ mod tests {
     #[test]
     fn test_with_methods() {
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
         let attribute = VariableAttributeType::new_with_value(
             AttributeEnumType::MaxSet,
@@ -257,13 +259,11 @@ mod tests {
             MutabilityEnumType::ReadOnly,
         );
         let variable_attributes = vec![attribute];
-        let variable_characteristics = VariableCharacteristicsType::new(
-            DataEnumType::Integer,
-            true,
-        )
-        .with_unit("Ampere".to_string())
-        .with_min_limit(0.0)
-        .with_max_limit(100.0);
+        let variable_characteristics =
+            VariableCharacteristicsType::new(DataEnumType::Integer, true)
+                .with_unit("Ampere".to_string())
+                .with_min_limit(0.0)
+                .with_max_limit(100.0);
 
         let report_data = ReportDataType::new(
             component.clone(),
@@ -289,7 +289,8 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let component1 = ComponentType::new("Connector".to_string());
-        let variable1 = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable1 =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let attribute1 = VariableAttributeType::new_with_value(
             AttributeEnumType::MaxSet,
             "100".to_string(),
@@ -298,7 +299,8 @@ mod tests {
         let variable_attributes1 = vec![attribute1];
 
         let component2 = ComponentType::new("Meter".to_string());
-        let variable2 = VariableType::new_with_instance("VoltageLimit".to_string(), "Secondary".to_string());
+        let variable2 =
+            VariableType::new_with_instance("VoltageLimit".to_string(), "Secondary".to_string());
         let attribute2 = VariableAttributeType::new_with_value(
             AttributeEnumType::MinSet,
             "50".to_string(),
@@ -307,13 +309,11 @@ mod tests {
         let variable_attributes2 = vec![attribute2];
 
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let variable_characteristics = VariableCharacteristicsType::new(
-            DataEnumType::Integer,
-            true,
-        )
-        .with_unit("Volt".to_string())
-        .with_min_limit(0.0)
-        .with_max_limit(500.0);
+        let variable_characteristics =
+            VariableCharacteristicsType::new(DataEnumType::Integer, true)
+                .with_unit("Volt".to_string())
+                .with_min_limit(0.0)
+                .with_max_limit(500.0);
 
         let mut report_data = ReportDataType::new(component1, variable1, variable_attributes1);
 

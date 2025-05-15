@@ -1161,8 +1161,14 @@ mod tests {
 
         // Verify the curves
         assert_eq!(period.v2x_freq_watt_curve.as_ref().unwrap().len(), 2);
-        assert_eq!(period.v2x_freq_watt_curve.as_ref().unwrap()[0].frequency(), Decimal::from_f64(50.0).unwrap());
-        assert_eq!(period.v2x_freq_watt_curve.as_ref().unwrap()[1].frequency(), Decimal::from_f64(51.0).unwrap());
+        assert_eq!(
+            period.v2x_freq_watt_curve.as_ref().unwrap()[0].frequency(),
+            Decimal::from_f64(50.0).unwrap()
+        );
+        assert_eq!(
+            period.v2x_freq_watt_curve.as_ref().unwrap()[1].frequency(),
+            Decimal::from_f64(51.0).unwrap()
+        );
 
         assert_eq!(period.v2x_signal_watt_curve.as_ref().unwrap().len(), 2);
         assert_eq!(
@@ -1177,18 +1183,32 @@ mod tests {
         // Test serialization with curves
         let json = to_string(&period).unwrap();
         println!("Serialized JSON: {}", json);
-        
+
         // The actual serialization format might be different, so we check for the presence of key fields
         assert!(json.contains(r#""v2xFreqWattCurve""#));
-        assert!(json.contains(r#""frequency":"50""#) || json.contains(r#""frequency":50"#) || 
-                json.contains(r#""frequency":50.0"#) || json.contains(r#""freq":50.0"#));
-        assert!(json.contains(r#""frequency":"51""#) || json.contains(r#""frequency":51"#) || 
-                json.contains(r#""frequency":51.0"#) || json.contains(r#""freq":51.0"#));
-        assert!(json.contains(r#""power":"-30""#) || json.contains(r#""power":-30"#) || 
-                json.contains(r#""power":-30.0"#));
-        assert!(json.contains(r#""power":"-20""#) || json.contains(r#""power":-20"#) || 
-                json.contains(r#""power":-20.0"#));
-        
+        assert!(
+            json.contains(r#""frequency":"50""#)
+                || json.contains(r#""frequency":50"#)
+                || json.contains(r#""frequency":50.0"#)
+                || json.contains(r#""freq":50.0"#)
+        );
+        assert!(
+            json.contains(r#""frequency":"51""#)
+                || json.contains(r#""frequency":51"#)
+                || json.contains(r#""frequency":51.0"#)
+                || json.contains(r#""freq":51.0"#)
+        );
+        assert!(
+            json.contains(r#""power":"-30""#)
+                || json.contains(r#""power":-30"#)
+                || json.contains(r#""power":-30.0"#)
+        );
+        assert!(
+            json.contains(r#""power":"-20""#)
+                || json.contains(r#""power":-20"#)
+                || json.contains(r#""power":-20.0"#)
+        );
+
         // Check for signal-watt curve, but be more flexible with the exact format
         assert!(json.contains(r#""v2xSignalWattCurve""#));
         assert!(json.contains(r#""signal":75"#) || json.contains(r#""signal":75.0"#));

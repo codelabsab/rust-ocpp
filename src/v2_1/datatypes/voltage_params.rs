@@ -1,6 +1,6 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
 
 use super::custom_data::CustomDataType;
 use crate::v2_1::enumerations::power_during_cessation::PowerDuringCessationEnumType;
@@ -93,7 +93,10 @@ impl VoltageParamsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_power_during_cessation(mut self, power_during_cessation: PowerDuringCessationEnumType) -> Self {
+    pub fn with_power_during_cessation(
+        mut self,
+        power_during_cessation: PowerDuringCessationEnumType,
+    ) -> Self {
         self.power_during_cessation = Some(power_during_cessation);
         self
     }
@@ -153,7 +156,10 @@ impl VoltageParamsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_hv10_min_mean_trip_delay(&mut self, hv10_min_mean_trip_delay: Option<Decimal>) -> &mut Self {
+    pub fn set_hv10_min_mean_trip_delay(
+        &mut self,
+        hv10_min_mean_trip_delay: Option<Decimal>,
+    ) -> &mut Self {
         self.hv10_min_mean_trip_delay = hv10_min_mean_trip_delay;
         self
     }
@@ -176,7 +182,10 @@ impl VoltageParamsType {
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_power_during_cessation(&mut self, power_during_cessation: Option<PowerDuringCessationEnumType>) -> &mut Self {
+    pub fn set_power_during_cessation(
+        &mut self,
+        power_during_cessation: Option<PowerDuringCessationEnumType>,
+    ) -> &mut Self {
         self.power_during_cessation = power_during_cessation;
         self
     }
@@ -234,8 +243,14 @@ mod tests {
             .with_custom_data(custom_data.clone());
 
         assert_eq!(params.hv10_min_mean_value(), Some(&hv10_min_mean_value));
-        assert_eq!(params.hv10_min_mean_trip_delay(), Some(&hv10_min_mean_trip_delay));
-        assert_eq!(params.power_during_cessation(), Some(&power_during_cessation));
+        assert_eq!(
+            params.hv10_min_mean_trip_delay(),
+            Some(&hv10_min_mean_trip_delay)
+        );
+        assert_eq!(
+            params.power_during_cessation(),
+            Some(&power_during_cessation)
+        );
         assert_eq!(params.custom_data(), Some(&custom_data));
     }
 
@@ -262,8 +277,14 @@ mod tests {
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(params.hv10_min_mean_value(), Some(&hv10_min_mean_value2));
-        assert_eq!(params.hv10_min_mean_trip_delay(), Some(&hv10_min_mean_trip_delay2));
-        assert_eq!(params.power_during_cessation(), Some(&power_during_cessation2));
+        assert_eq!(
+            params.hv10_min_mean_trip_delay(),
+            Some(&hv10_min_mean_trip_delay2)
+        );
+        assert_eq!(
+            params.power_during_cessation(),
+            Some(&power_during_cessation2)
+        );
         assert_eq!(params.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

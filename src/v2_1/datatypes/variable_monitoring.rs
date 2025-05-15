@@ -1,10 +1,10 @@
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
 
 use super::custom_data::CustomDataType;
-use crate::v2_1::enumerations::monitor::MonitorEnumType;
 use crate::v2_1::enumerations::event_notification::EventNotificationEnumType;
+use crate::v2_1::enumerations::monitor::MonitorEnumType;
 
 /// A monitoring setting for a variable.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -221,7 +221,10 @@ impl VariableMonitoringType {
     /// # Returns
     ///
     /// The modified `VariableMonitoringType` instance
-    pub fn set_event_notification_type(&mut self, event_notification_type: EventNotificationEnumType) -> &mut Self {
+    pub fn set_event_notification_type(
+        &mut self,
+        event_notification_type: EventNotificationEnumType,
+    ) -> &mut Self {
         self.event_notification_type = event_notification_type;
         self
     }
@@ -270,7 +273,7 @@ mod tests {
             value.clone(),
             monitor_type.clone(),
             severity,
-            event_notification_type.clone()
+            event_notification_type.clone(),
         );
 
         assert_eq!(monitoring.id(), id);
@@ -278,7 +281,10 @@ mod tests {
         assert_eq!(monitoring.value(), &value);
         assert_eq!(monitoring.type_(), &monitor_type);
         assert_eq!(monitoring.severity(), severity);
-        assert_eq!(monitoring.event_notification_type(), &event_notification_type);
+        assert_eq!(
+            monitoring.event_notification_type(),
+            &event_notification_type
+        );
         assert_eq!(monitoring.custom_data(), None);
     }
 
@@ -298,7 +304,7 @@ mod tests {
             value.clone(),
             monitor_type.clone(),
             severity,
-            event_notification_type.clone()
+            event_notification_type.clone(),
         )
         .with_custom_data(custom_data.clone());
 
@@ -307,7 +313,10 @@ mod tests {
         assert_eq!(monitoring.value(), &value);
         assert_eq!(monitoring.type_(), &monitor_type);
         assert_eq!(monitoring.severity(), severity);
-        assert_eq!(monitoring.event_notification_type(), &event_notification_type);
+        assert_eq!(
+            monitoring.event_notification_type(),
+            &event_notification_type
+        );
         assert_eq!(monitoring.custom_data(), Some(&custom_data));
     }
 
@@ -326,7 +335,7 @@ mod tests {
             value1,
             monitor_type1.clone(),
             severity1,
-            event_notification_type1.clone()
+            event_notification_type1.clone(),
         );
 
         let id2 = 43;
@@ -351,7 +360,10 @@ mod tests {
         assert_eq!(monitoring.value(), &value2);
         assert_eq!(monitoring.type_(), &monitor_type2);
         assert_eq!(monitoring.severity(), severity2);
-        assert_eq!(monitoring.event_notification_type(), &event_notification_type2);
+        assert_eq!(
+            monitoring.event_notification_type(),
+            &event_notification_type2
+        );
         assert_eq!(monitoring.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields

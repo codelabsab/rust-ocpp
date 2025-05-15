@@ -414,8 +414,8 @@ impl TotalCostType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rust_decimal::Decimal;
     use rust_decimal::prelude::FromPrimitive;
+    use rust_decimal::Decimal;
     #[test]
     fn test_new_total_cost() {
         let currency = "EUR".to_string();

@@ -1,7 +1,7 @@
 use super::custom_data::CustomDataType;
+use crate::v2_1::enumerations::data_enum::DataEnumType;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use crate::v2_1::enumerations::data_enum::DataEnumType;
 
 /// Fixed read-only parameters of a variable.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -345,7 +345,8 @@ mod tests {
         let data_type = DataEnumType::Decimal;
         let supports_monitoring = true;
 
-        let characteristics = VariableCharacteristicsType::new(data_type.clone(), supports_monitoring);
+        let characteristics =
+            VariableCharacteristicsType::new(data_type.clone(), supports_monitoring);
 
         assert_eq!(characteristics.unit(), None);
         assert_eq!(characteristics.data_type(), &data_type);
@@ -368,13 +369,14 @@ mod tests {
         let values_list = "a,b,c,d,e".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let characteristics = VariableCharacteristicsType::new(data_type.clone(), supports_monitoring)
-            .with_unit(unit.clone())
-            .with_min_limit(min_limit)
-            .with_max_limit(max_limit)
-            .with_max_elements(max_elements)
-            .with_values_list(values_list.clone())
-            .with_custom_data(custom_data.clone());
+        let characteristics =
+            VariableCharacteristicsType::new(data_type.clone(), supports_monitoring)
+                .with_unit(unit.clone())
+                .with_min_limit(min_limit)
+                .with_max_limit(max_limit)
+                .with_max_elements(max_elements)
+                .with_values_list(values_list.clone())
+                .with_custom_data(custom_data.clone());
 
         assert_eq!(characteristics.unit(), Some(&unit));
         assert_eq!(characteristics.data_type(), &data_type);
@@ -399,7 +401,8 @@ mod tests {
         let values_list = "x,y,z".to_string();
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut characteristics = VariableCharacteristicsType::new(data_type1, supports_monitoring1);
+        let mut characteristics =
+            VariableCharacteristicsType::new(data_type1, supports_monitoring1);
 
         characteristics
             .set_data_type(data_type2.clone())

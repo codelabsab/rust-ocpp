@@ -159,7 +159,8 @@ mod tests {
     fn test_with_methods() {
         let component = ComponentType::new("Connector".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
 
         let component_variable = ComponentVariableType::new(component.clone())
             .with_custom_data(custom_data.clone())
@@ -175,7 +176,8 @@ mod tests {
         let component1 = ComponentType::new("Connector".to_string());
         let component2 = ComponentType::new("Meter".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Secondary".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Secondary".to_string());
 
         let mut component_variable = ComponentVariableType::new(component1);
 
@@ -225,7 +227,8 @@ mod tests {
     fn test_component_variable_serialization() {
         // Test serialization of ComponentVariableType
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let component_variable = ComponentVariableType::new(component)
@@ -264,7 +267,10 @@ mod tests {
             component_variable.variable().unwrap().name(),
             "CurrentLimit"
         );
-        assert_eq!(component_variable.variable().unwrap().instance(), Some("Main"));
+        assert_eq!(
+            component_variable.variable().unwrap().instance(),
+            Some("Main")
+        );
         assert_eq!(
             component_variable.custom_data().unwrap().vendor_id(),
             "VendorX"
@@ -275,7 +281,8 @@ mod tests {
     fn test_component_variable_validation() {
         // Test validation of ComponentVariableType
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
 
         let component_variable = ComponentVariableType::new(component).with_variable(variable);
 
@@ -317,7 +324,8 @@ mod tests {
     fn test_component_variable_schema_structure() {
         // Test that the structure matches the OCPP 2.1 schema definition
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
+        let variable =
+            VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let component_variable = ComponentVariableType::new(component)

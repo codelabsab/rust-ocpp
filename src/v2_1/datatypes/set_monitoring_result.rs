@@ -367,7 +367,8 @@ mod tests {
     fn test_new_monitoring_result() {
         let status = SetMonitoringStatusEnumType::Accepted;
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
+        let variable =
+            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let monitor_type = MonitorEnumType::UpperThreshold;
         let severity = 5;
 
@@ -393,7 +394,8 @@ mod tests {
     fn test_with_methods() {
         let status = SetMonitoringStatusEnumType::Accepted;
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
+        let variable =
+            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let id = 42;
         let monitor_type = MonitorEnumType::Delta;
         let severity = 3;
@@ -429,7 +431,8 @@ mod tests {
     fn test_setter_methods() {
         let status1 = SetMonitoringStatusEnumType::Accepted;
         let component1 = ComponentType::new("component1".to_string());
-        let variable1 = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
+        let variable1 =
+            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let type1 = MonitorEnumType::UpperThreshold;
         let severity1 = 2;
 
@@ -438,7 +441,8 @@ mod tests {
 
         let status2 = SetMonitoringStatusEnumType::UnknownVariable;
         let component2 = ComponentType::new("component2".to_string());
-        let variable2 = VariableType::new_with_instance("variable2".to_string(), "instance2".to_string());
+        let variable2 =
+            VariableType::new_with_instance("variable2".to_string(), "instance2".to_string());
         let id2 = 43;
         let type2 = MonitorEnumType::PeriodicClockAligned;
         let severity2 = 9;
