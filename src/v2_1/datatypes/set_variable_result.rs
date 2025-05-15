@@ -1,37 +1,37 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{
-    component::ComponentType, custom_data::CustomDataType, status_info::StatusInfoType,
-    variable::VariableType,
-};
-use crate::v2_1::enumerations::SetVariableStatusEnumType;
+use super::{component::ComponentType, custom_data::CustomDataType, status_info::StatusInfoType, variable::VariableType};
+use crate::v2_1::enumerations::{attribute::AttributeEnumType, set_variable_status::SetVariableStatusEnumType};
 
-/// Class to hold results of SetVariables request.
+/// Class to hold result of SetVariable request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SetVariableResultType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
-    /// Required. Component for which the result is returned.
+    /// Required. Component for which the variable is set.
+    #[validate(nested)]
     pub component: ComponentType,
 
-    /// Required. Variable for which the result is returned.
+    /// Required. Variable which holds the attribute value.
+    #[validate(nested)]
     pub variable: VariableType,
 
-    /// Optional. Type of attribute for which the result is returned.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 50))]
-    pub attribute_type: Option<String>,
-
-    /// Required. Result status of setting the variable.
+    /// Required. Status indicating whether the Charging Station has accepted the request.
     pub attribute_status: SetVariableStatusEnumType,
+
+    /// Optional. Type of attribute that was set.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub attribute_type: Option<AttributeEnumType>,
 
     /// Optional. Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub attribute_status_info: Option<StatusInfoType>,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl SetVariableResultType {
@@ -39,9 +39,9 @@ impl SetVariableResultType {
     ///
     /// # Arguments
     ///
-    /// * `component` - Component for which the result is returned
-    /// * `variable` - Variable for which the result is returned
-    /// * `attribute_status` - Result status of setting the variable
+    /// * `component` - Component for which the variable is set
+    /// * `variable` - Variable which holds the attribute value
+    /// * `attribute_status` - Status indicating whether the Charging Station has accepted the request
     ///
     /// # Returns
     ///
@@ -55,36 +55,22 @@ impl SetVariableResultType {
             component,
             variable,
             attribute_status,
-            custom_data: None,
             attribute_type: None,
             attribute_status_info: None,
+            custom_data: None,
         }
-    }
-
-    /// Sets the custom data.
-    ///
-    /// # Arguments
-    ///
-    /// * `custom_data` - Custom data for this variable result
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
-        self.custom_data = Some(custom_data);
-        self
     }
 
     /// Sets the attribute type.
     ///
     /// # Arguments
     ///
-    /// * `attribute_type` - Type of attribute for which the result is returned
+    /// * `attribute_type` - Type of attribute that was set
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_attribute_type(mut self, attribute_type: String) -> Self {
+    pub fn with_attribute_type(mut self, attribute_type: AttributeEnumType) -> Self {
         self.attribute_type = Some(attribute_type);
         self
     }
@@ -103,11 +89,25 @@ impl SetVariableResultType {
         self
     }
 
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data for this variable result
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
+        self
+    }
+
     /// Gets the component.
     ///
     /// # Returns
     ///
-    /// A reference to the component for which the result is returned
+    /// A reference to the component for which the variable is set
     pub fn component(&self) -> &ComponentType {
         &self.component
     }
@@ -116,7 +116,7 @@ impl SetVariableResultType {
     ///
     /// # Arguments
     ///
-    /// * `component` - Component for which the result is returned
+    /// * `component` - Component for which the variable is set
     ///
     /// # Returns
     ///
@@ -130,7 +130,7 @@ impl SetVariableResultType {
     ///
     /// # Returns
     ///
-    /// A reference to the variable for which the result is returned
+    /// A reference to the variable which holds the attribute value
     pub fn variable(&self) -> &VariableType {
         &self.variable
     }
@@ -139,7 +139,7 @@ impl SetVariableResultType {
     ///
     /// # Arguments
     ///
-    /// * `variable` - Variable for which the result is returned
+    /// * `variable` - Variable which holds the attribute value
     ///
     /// # Returns
     ///
@@ -149,52 +149,49 @@ impl SetVariableResultType {
         self
     }
 
-    /// Gets the attribute type.
-    ///
-    /// # Returns
-    ///
-    /// An optional type of attribute for which the result is returned
-    pub fn attribute_type(&self) -> Option<&str> {
-        self.attribute_type.as_deref()
-    }
-
-    /// Sets the attribute type.
-    ///
-    /// # Arguments
-    ///
-    /// * `attribute_type` - Type of attribute for which the result is returned, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_attribute_type(&mut self, attribute_type: Option<String>) -> &mut Self {
-        self.attribute_type = attribute_type;
-        self
-    }
-
     /// Gets the attribute status.
     ///
     /// # Returns
     ///
-    /// The result status of setting the variable
-    pub fn attribute_status(&self) -> SetVariableStatusEnumType {
-        self.attribute_status.clone()
+    /// The status indicating whether the Charging Station has accepted the request
+    pub fn attribute_status(&self) -> &SetVariableStatusEnumType {
+        &self.attribute_status
     }
 
     /// Sets the attribute status.
     ///
     /// # Arguments
     ///
-    /// * `attribute_status` - Result status of setting the variable
+    /// * `attribute_status` - Status indicating whether the Charging Station has accepted the request
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn set_attribute_status(
-        &mut self,
-        attribute_status: SetVariableStatusEnumType,
-    ) -> &mut Self {
+    pub fn set_attribute_status(&mut self, attribute_status: SetVariableStatusEnumType) -> &mut Self {
         self.attribute_status = attribute_status;
+        self
+    }
+
+    /// Gets the attribute type.
+    ///
+    /// # Returns
+    ///
+    /// An optional type of attribute that was set
+    pub fn attribute_type(&self) -> Option<&AttributeEnumType> {
+        self.attribute_type.as_ref()
+    }
+
+    /// Sets the attribute type.
+    ///
+    /// # Arguments
+    ///
+    /// * `attribute_type` - Type of attribute that was set, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn set_attribute_type(&mut self, attribute_type: Option<AttributeEnumType>) -> &mut Self {
+        self.attribute_type = attribute_type;
         self
     }
 
@@ -266,7 +263,7 @@ mod tests {
 
         assert_eq!(result.component(), &component);
         assert_eq!(result.variable(), &variable);
-        assert_eq!(result.attribute_status(), attribute_status);
+        assert_eq!(result.attribute_status(), &attribute_status);
         assert_eq!(result.attribute_type(), None);
         assert_eq!(result.attribute_status_info(), None);
         assert_eq!(result.custom_data(), None);
@@ -277,12 +274,8 @@ mod tests {
         let component = ComponentType::new("component1".to_string());
         let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
         let attribute_status = SetVariableStatusEnumType::Accepted;
-        let attribute_type = "ActualValue".to_string();
-        let attribute_status_info = StatusInfoType {
-            reason_code: "NotSupported".to_string(),
-            additional_info: None,
-            custom_data: None,
-        };
+        let attribute_type = AttributeEnumType::Actual;
+        let attribute_status_info = StatusInfoType::new("SomeReason".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         let result = SetVariableResultType::new(
@@ -296,8 +289,8 @@ mod tests {
 
         assert_eq!(result.component(), &component);
         assert_eq!(result.variable(), &variable);
-        assert_eq!(result.attribute_status(), attribute_status);
-        assert_eq!(result.attribute_type(), Some(attribute_type.as_str()));
+        assert_eq!(result.attribute_status(), &attribute_status);
+        assert_eq!(result.attribute_type(), Some(&attribute_type));
         assert_eq!(result.attribute_status_info(), Some(&attribute_status_info));
         assert_eq!(result.custom_data(), Some(&custom_data));
     }
@@ -313,12 +306,8 @@ mod tests {
         let component2 = ComponentType::new("component2".to_string());
         let variable2 = VariableType::new("variable2".to_string(), "instance2".to_string());
         let attribute_status2 = SetVariableStatusEnumType::Rejected;
-        let attribute_type = "MinValue".to_string();
-        let attribute_status_info = StatusInfoType {
-            reason_code: "NotSupported".to_string(),
-            additional_info: None,
-            custom_data: None,
-        };
+        let attribute_type = AttributeEnumType::MinSet;
+        let attribute_status_info = StatusInfoType::new("Reason".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
 
         result
@@ -331,8 +320,8 @@ mod tests {
 
         assert_eq!(result.component(), &component2);
         assert_eq!(result.variable(), &variable2);
-        assert_eq!(result.attribute_status(), attribute_status2);
-        assert_eq!(result.attribute_type(), Some(attribute_type.as_str()));
+        assert_eq!(result.attribute_status(), &attribute_status2);
+        assert_eq!(result.attribute_type(), Some(&attribute_type));
         assert_eq!(result.attribute_status_info(), Some(&attribute_status_info));
         assert_eq!(result.custom_data(), Some(&custom_data));
 
