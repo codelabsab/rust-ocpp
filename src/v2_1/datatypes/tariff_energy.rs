@@ -1,26 +1,26 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{custom_data::CustomDataType, tariff_energy_price::TariffEnergyPriceType};
+use super::{
+    custom_data::CustomDataType, tariff_energy_price::TariffEnergyPriceType, tax_rate::TaxRateType,
+};
 
-/// Energy tariff structure defining energy costs.
+/// Price elements and tax for energy
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct TariffEnergyType {
-    /// Custom data from the Charging Station.
+    /// Required. List of energy price elements.
+    #[validate(length(min = 1), nested)]
+    pub prices: Vec<TariffEnergyPriceType>,
+
+    /// Optional. List of tax rates applicable to energy.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(min = 1, max = 5), nested)]
+    pub tax_rates: Option<Vec<TaxRateType>>,
+
+    /// Optional. Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomDataType>,
-
-    /// Required. Energy price per kWh.
-    pub energy_price: TariffEnergyPriceType,
-
-    /// Optional. Maximum energy in kWh that can be charged under this tariff.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub max_energy: Option<f64>,
-
-    /// Optional. Minimum energy in kWh that must be charged under this tariff.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub min_energy: Option<f64>,
 }
 
 impl TariffEnergyType {
@@ -28,18 +28,31 @@ impl TariffEnergyType {
     ///
     /// # Arguments
     ///
-    /// * `energy_price` - Energy price per kWh
+    /// * `prices` - List of energy price elements
     ///
     /// # Returns
     ///
     /// A new instance of `TariffEnergyType` with optional fields set to `None`
-    pub fn new(energy_price: TariffEnergyPriceType) -> Self {
+    pub fn new(prices: Vec<TariffEnergyPriceType>) -> Self {
         Self {
-            energy_price,
+            prices,
+            tax_rates: None,
             custom_data: None,
-            max_energy: None,
-            min_energy: None,
         }
+    }
+
+    /// Sets the tax rates.
+    ///
+    /// # Arguments
+    ///
+    /// * `tax_rates` - List of tax rates applicable to energy
+    ///
+    /// # Returns
+    ///
+    /// Self reference for method chaining
+    pub fn with_tax_rates(mut self, tax_rates: Vec<TaxRateType>) -> Self {
+        self.tax_rates = Some(tax_rates);
+        self
     }
 
     /// Sets the custom data.
@@ -56,100 +69,49 @@ impl TariffEnergyType {
         self
     }
 
-    /// Sets the maximum energy.
+    /// Gets the energy prices.
+    ///
+    /// # Returns
+    ///
+    /// A reference to the list of energy price elements
+    pub fn prices(&self) -> &Vec<TariffEnergyPriceType> {
+        &self.prices
+    }
+
+    /// Sets the energy prices.
     ///
     /// # Arguments
     ///
-    /// * `max_energy` - Maximum energy in kWh that can be charged under this tariff
+    /// * `prices` - List of energy price elements
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_max_energy(mut self, max_energy: f64) -> Self {
-        self.max_energy = Some(max_energy);
+    pub fn set_prices(&mut self, prices: Vec<TariffEnergyPriceType>) -> &mut Self {
+        self.prices = prices;
         self
     }
 
-    /// Sets the minimum energy.
+    /// Gets the tax rates.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the list of tax rates
+    pub fn tax_rates(&self) -> Option<&Vec<TaxRateType>> {
+        self.tax_rates.as_ref()
+    }
+
+    /// Sets the tax rates.
     ///
     /// # Arguments
     ///
-    /// * `min_energy` - Minimum energy in kWh that must be charged under this tariff
+    /// * `tax_rates` - List of tax rates applicable to energy, or None to clear
     ///
     /// # Returns
     ///
     /// Self reference for method chaining
-    pub fn with_min_energy(mut self, min_energy: f64) -> Self {
-        self.min_energy = Some(min_energy);
-        self
-    }
-
-    /// Gets the energy price.
-    ///
-    /// # Returns
-    ///
-    /// A reference to the energy price per kWh
-    pub fn energy_price(&self) -> &TariffEnergyPriceType {
-        &self.energy_price
-    }
-
-    /// Sets the energy price.
-    ///
-    /// # Arguments
-    ///
-    /// * `energy_price` - Energy price per kWh
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_energy_price(&mut self, energy_price: TariffEnergyPriceType) -> &mut Self {
-        self.energy_price = energy_price;
-        self
-    }
-
-    /// Gets the maximum energy.
-    ///
-    /// # Returns
-    ///
-    /// An optional maximum energy in kWh that can be charged under this tariff
-    pub fn max_energy(&self) -> Option<f64> {
-        self.max_energy
-    }
-
-    /// Sets the maximum energy.
-    ///
-    /// # Arguments
-    ///
-    /// * `max_energy` - Maximum energy in kWh that can be charged under this tariff, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_max_energy(&mut self, max_energy: Option<f64>) -> &mut Self {
-        self.max_energy = max_energy;
-        self
-    }
-
-    /// Gets the minimum energy.
-    ///
-    /// # Returns
-    ///
-    /// An optional minimum energy in kWh that must be charged under this tariff
-    pub fn min_energy(&self) -> Option<f64> {
-        self.min_energy
-    }
-
-    /// Sets the minimum energy.
-    ///
-    /// # Arguments
-    ///
-    /// * `min_energy` - Minimum energy in kWh that must be charged under this tariff, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_min_energy(&mut self, min_energy: Option<f64>) -> &mut Self {
-        self.min_energy = min_energy;
+    pub fn set_tax_rates(&mut self, tax_rates: Option<Vec<TaxRateType>>) -> &mut Self {
+        self.tax_rates = tax_rates;
         self
     }
 
@@ -183,62 +145,112 @@ mod tests {
 
     #[test]
     fn test_new_tariff_energy() {
-        let energy_price = TariffEnergyPriceType::new(10.0);
-        let tariff_energy = TariffEnergyType::new(energy_price.clone());
+        let price = TariffEnergyPriceType::new(10.0);
+        let prices = vec![price.clone()];
+        let tariff_energy = TariffEnergyType::new(prices.clone());
 
-        assert_eq!(tariff_energy.energy_price(), &energy_price);
-        assert_eq!(tariff_energy.max_energy(), None);
-        assert_eq!(tariff_energy.min_energy(), None);
+        assert_eq!(tariff_energy.prices(), &prices);
+        assert_eq!(tariff_energy.tax_rates(), None);
         assert_eq!(tariff_energy.custom_data(), None);
     }
 
     #[test]
     fn test_with_methods() {
-        let energy_price = TariffEnergyPriceType::new(10.0);
-        let max_energy = 50.0;
-        let min_energy = 5.0;
+        let price1 = TariffEnergyPriceType::new(10.0);
+        let price2 = TariffEnergyPriceType::new(15.0);
+        let prices = vec![price1.clone(), price2.clone()];
+
+        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate2 = TaxRateType::new(5.0, "GST".to_string());
+        let tax_rates = vec![tax_rate1.clone(), tax_rate2.clone()];
+
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let tariff_energy = TariffEnergyType::new(energy_price.clone())
-            .with_max_energy(max_energy)
-            .with_min_energy(min_energy)
+        let tariff_energy = TariffEnergyType::new(prices.clone())
+            .with_tax_rates(tax_rates.clone())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(tariff_energy.energy_price(), &energy_price);
-        assert_eq!(tariff_energy.max_energy(), Some(max_energy));
-        assert_eq!(tariff_energy.min_energy(), Some(min_energy));
+        assert_eq!(tariff_energy.prices(), &prices);
+        assert_eq!(tariff_energy.tax_rates(), Some(&tax_rates));
         assert_eq!(tariff_energy.custom_data(), Some(&custom_data));
     }
 
     #[test]
     fn test_setter_methods() {
-        let energy_price1 = TariffEnergyPriceType::new(10.0);
-        let energy_price2 = TariffEnergyPriceType::new(15.0);
-        let max_energy = 50.0;
-        let min_energy = 5.0;
+        let price1 = TariffEnergyPriceType::new(10.0);
+        let prices1 = vec![price1.clone()];
+
+        let price2 = TariffEnergyPriceType::new(15.0);
+        let price3 = TariffEnergyPriceType::new(20.0);
+        let prices2 = vec![price2.clone(), price3.clone()];
+
+        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate2 = TaxRateType::new(5.0, "GST".to_string());
+        let tax_rates = vec![tax_rate1.clone(), tax_rate2.clone()];
+
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let mut tariff_energy = TariffEnergyType::new(energy_price1);
+        let mut tariff_energy = TariffEnergyType::new(prices1);
 
         tariff_energy
-            .set_energy_price(energy_price2.clone())
-            .set_max_energy(Some(max_energy))
-            .set_min_energy(Some(min_energy))
+            .set_prices(prices2.clone())
+            .set_tax_rates(Some(tax_rates.clone()))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(tariff_energy.energy_price(), &energy_price2);
-        assert_eq!(tariff_energy.max_energy(), Some(max_energy));
-        assert_eq!(tariff_energy.min_energy(), Some(min_energy));
+        assert_eq!(tariff_energy.prices(), &prices2);
+        assert_eq!(tariff_energy.tax_rates(), Some(&tax_rates));
         assert_eq!(tariff_energy.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        tariff_energy
-            .set_max_energy(None)
-            .set_min_energy(None)
-            .set_custom_data(None);
+        tariff_energy.set_tax_rates(None).set_custom_data(None);
 
-        assert_eq!(tariff_energy.max_energy(), None);
-        assert_eq!(tariff_energy.min_energy(), None);
+        assert_eq!(tariff_energy.tax_rates(), None);
         assert_eq!(tariff_energy.custom_data(), None);
+    }
+
+    #[test]
+    fn test_validation() {
+        // Test with valid prices
+        let price = TariffEnergyPriceType::new(10.0);
+        let prices = vec![price.clone()];
+        let tariff_energy = TariffEnergyType::new(prices);
+        assert!(tariff_energy.validate().is_ok());
+
+        // Test with empty prices (invalid)
+        let empty_prices: Vec<TariffEnergyPriceType> = vec![];
+        let invalid_tariff = TariffEnergyType {
+            prices: empty_prices,
+            tax_rates: None,
+            custom_data: None,
+        };
+        assert!(invalid_tariff.validate().is_err());
+
+        // Test with valid tax rates
+        let tax_rate = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rates = vec![tax_rate];
+        let valid_tariff = TariffEnergyType::new(vec![price.clone()]).with_tax_rates(tax_rates);
+        assert!(valid_tariff.validate().is_ok());
+
+        // Test with empty tax rates (invalid)
+        let empty_tax_rates: Vec<TaxRateType> = vec![];
+        let mut invalid_tariff = TariffEnergyType::new(vec![price.clone()]);
+        invalid_tariff.tax_rates = Some(empty_tax_rates);
+        assert!(invalid_tariff.validate().is_err());
+
+        // Test with too many tax rates (invalid)
+        let tax_rate1 = TaxRateType::new(20.0, "VAT".to_string());
+        let tax_rate2 = TaxRateType::new(5.0, "GST".to_string());
+        let tax_rate3 = TaxRateType::new(3.0, "PST".to_string());
+        let tax_rate4 = TaxRateType::new(2.0, "HST".to_string());
+        let tax_rate5 = TaxRateType::new(1.0, "QST".to_string());
+        let tax_rate6 = TaxRateType::new(0.5, "RST".to_string()); // One too many
+
+        let too_many_tax_rates = vec![
+            tax_rate1, tax_rate2, tax_rate3, tax_rate4, tax_rate5, tax_rate6,
+        ];
+
+        let mut invalid_tariff = TariffEnergyType::new(vec![price]);
+        invalid_tariff.tax_rates = Some(too_many_tax_rates);
+        assert!(invalid_tariff.validate().is_err());
     }
 }

@@ -612,7 +612,7 @@ mod tests {
             MessageFormatEnumType::ASCII,
             "en".to_string(),
         )];
-        let energy = TariffEnergyType::new(TariffEnergyPriceType::new(0.25)); // 0.25
+        let energy = TariffEnergyType::new(vec![TariffEnergyPriceType::new(0.25)]); // 0.25
         let valid_from = Utc::now();
         let charging_time = TariffTimeType::new(TariffTimePriceType::new(5.0)); // 5.0
         let idle_time = TariffTimeType::new(TariffTimePriceType::new(10.0)); // 10.0
@@ -643,7 +643,7 @@ mod tests {
             tariff.description().unwrap()[0].content(),
             "Standard Tariff"
         );
-        assert_eq!(tariff.energy().unwrap().energy_price.price, 0.25);
+        assert_eq!(tariff.energy().unwrap().prices()[0].price, 0.25);
         assert!(tariff.valid_from().is_some());
         assert_eq!(tariff.charging_time().unwrap().time_price.price, 5.0);
         assert_eq!(tariff.idle_time().unwrap().time_price.price, 10.0);
@@ -673,7 +673,7 @@ mod tests {
             MessageFormatEnumType::ASCII,
             "en".to_string(),
         )];
-        let energy = TariffEnergyType::new(TariffEnergyPriceType::new(0.25)); // 0.25
+        let energy = TariffEnergyType::new(vec![TariffEnergyPriceType::new(0.25)]); // 0.25
         let valid_from = Utc::now();
         let charging_time = TariffTimeType::new(TariffTimePriceType::new(5.0)); // 5.0
         let idle_time = TariffTimeType::new(TariffTimePriceType::new(10.0)); // 10.0
@@ -708,7 +708,7 @@ mod tests {
             tariff.description().unwrap()[0].content(),
             "Standard Tariff"
         );
-        assert_eq!(tariff.energy().unwrap().energy_price.price, 0.25);
+        assert_eq!(tariff.energy().unwrap().prices()[0].price, 0.25);
         assert!(tariff.valid_from().is_some());
         assert_eq!(tariff.charging_time().unwrap().time_price.price, 5.0);
         assert_eq!(tariff.idle_time().unwrap().time_price.price, 10.0);
