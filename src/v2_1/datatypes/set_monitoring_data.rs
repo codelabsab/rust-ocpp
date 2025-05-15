@@ -2,22 +2,16 @@ use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::{
-    component::ComponentType, custom_data::CustomDataType,
-    periodic_event_stream_params::PeriodicEventStreamParamsType, variable::VariableType,
-};
+use super::{component::ComponentType, custom_data::CustomDataType, periodic_event_stream_params::PeriodicEventStreamParamsType, variable::VariableType};
 use crate::v2_1::enumerations::monitor::MonitorEnumType;
 
 /// Class to hold parameters of SetVariableMonitoring request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SetMonitoringDataType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
     /// An id SHALL only be given to replace an existing monitor. The Charging Station handles the generation of id's for new monitors.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(range(min = 0))]
     pub id: Option<i32>,
 
     /// Parameters for periodic event stream configuration.
@@ -39,6 +33,29 @@ pub struct SetMonitoringDataType {
     pub kind: MonitorEnumType,
 
     /// The severity that will be assigned to an event that is triggered by this monitor. The severity range is 0-9, with 0 as the highest and 9 as the lowest severity level.
+    ///
+    /// The severity levels have the following meaning:
+    /// *0-Danger*
+    /// Indicates lives are potentially in danger. Urgent attention is needed and action should be taken immediately.
+    /// *1-Hardware Failure*
+    /// Indicates that the Charging Station is unable to continue regular operations due to Hardware issues. Action is required.
+    /// *2-System Failure*
+    /// Indicates that the Charging Station is unable to continue regular operations due to software or minor hardware issues. Action is required.
+    /// *3-Critical*
+    /// Indicates a critical error. Action is required.
+    /// *4-Error*
+    /// Indicates a non-urgent error. Action is required.
+    /// *5-Alert*
+    /// Indicates an alert event. Default severity for any type of monitoring event.
+    /// *6-Warning*
+    /// Indicates a warning event. Action may be required.
+    /// *7-Notice*
+    /// Indicates an unusual event. No immediate action is required.
+    /// *8-Informational*
+    /// Indicates a regular operational event. May be used for reporting, measuring throughput, etc. No action is required.
+    /// *9-Debug*
+    /// Indicates information useful to developers for debugging, not useful during operations.
+    #[validate(range(min = 0, max = 9))]
     pub severity: i32,
 
     /// Required. Component for which a variable is monitored.
@@ -48,6 +65,10 @@ pub struct SetMonitoringDataType {
     /// Required. Variable that is monitored.
     #[validate(nested)]
     pub variable: VariableType,
+
+    /// Custom data from the Charging Station.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_data: Option<CustomDataType>,
 }
 
 impl SetMonitoringDataType {
@@ -377,7 +398,7 @@ mod tests {
         );
 
         assert_eq!(monitoring_data.value(), value);
-        assert_eq!(monitoring_data.kind(), &kind.clone());
+        assert_eq!(monitoring_data.kind(), &kind);
         assert_eq!(monitoring_data.severity(), severity);
         assert_eq!(monitoring_data.component(), &component);
         assert_eq!(monitoring_data.variable(), &variable);
@@ -412,16 +433,13 @@ mod tests {
         .with_custom_data(custom_data.clone());
 
         assert_eq!(monitoring_data.value(), value);
-        assert_eq!(monitoring_data.kind(), &kind.clone());
+        assert_eq!(monitoring_data.kind(), &kind);
         assert_eq!(monitoring_data.severity(), severity);
         assert_eq!(monitoring_data.component(), &component);
         assert_eq!(monitoring_data.variable(), &variable);
         assert_eq!(monitoring_data.id(), Some(id));
         assert_eq!(monitoring_data.transaction(), Some(transaction));
-        assert_eq!(
-            monitoring_data.periodic_event_stream(),
-            Some(&periodic_params)
-        );
+        assert_eq!(monitoring_data.periodic_event_stream(), Some(&periodic_params));
         assert_eq!(monitoring_data.custom_data(), Some(&custom_data));
     }
 
@@ -464,10 +482,7 @@ mod tests {
         assert_eq!(monitoring_data.variable(), &variable2);
         assert_eq!(monitoring_data.id(), Some(id));
         assert_eq!(monitoring_data.transaction(), Some(transaction));
-        assert_eq!(
-            monitoring_data.periodic_event_stream(),
-            Some(&periodic_params)
-        );
+        assert_eq!(monitoring_data.periodic_event_stream(), Some(&periodic_params));
         assert_eq!(monitoring_data.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
@@ -497,7 +512,7 @@ mod tests {
             .with_property("version".to_string(), json!("1.0"));
 
         let monitoring_data =
-            SetMonitoringDataType::new(value, kind.clone(), severity, component, variable)
+            SetMonitoringDataType::new(value, kind, severity, component, variable)
                 .with_id(id)
                 .with_transaction(transaction)
                 .with_periodic_event_stream(periodic_params)
