@@ -222,7 +222,7 @@ mod tests {
     #[test]
     fn test_new_report_data() {
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
+        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let attribute = VariableAttributeType::new(
             "MaxValue".to_string(),
             "100".to_string(),
@@ -249,7 +249,7 @@ mod tests {
     #[test]
     fn test_with_methods() {
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
+        let variable = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let custom_data = CustomDataType::new("VendorX".to_string());
         let attribute = VariableAttributeType::new(
             "MaxValue".to_string(),
@@ -289,7 +289,7 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let component1 = ComponentType::new("Connector".to_string());
-        let variable1 = VariableType::new("CurrentLimit".to_string(), "Main".to_string());
+        let variable1 = VariableType::new_with_instance("CurrentLimit".to_string(), "Main".to_string());
         let attribute1 = VariableAttributeType::new(
             "MaxValue".to_string(),
             "100".to_string(),
@@ -298,7 +298,7 @@ mod tests {
         let variable_attributes1 = vec![attribute1];
 
         let component2 = ComponentType::new("Meter".to_string());
-        let variable2 = VariableType::new("VoltageLimit".to_string(), "Secondary".to_string());
+        let variable2 = VariableType::new_with_instance("VoltageLimit".to_string(), "Secondary".to_string());
         let attribute2 = VariableAttributeType::new(
             "MinValue".to_string(),
             "50".to_string(),

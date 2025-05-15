@@ -172,7 +172,7 @@ mod tests {
     #[test]
     fn test_new_monitoring_data() {
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new("Temperature".to_string(), "Outlet".to_string());
+        let variable = VariableType::new_with_instance("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring = vec![VariableMonitoringType::new(
             1,
             MonitorEnumType::UpperThreshold,
@@ -194,7 +194,7 @@ mod tests {
     #[test]
     fn test_with_custom_data() {
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new("Temperature".to_string(), "Outlet".to_string());
+        let variable = VariableType::new_with_instance("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring = vec![VariableMonitoringType::new(
             1,
             MonitorEnumType::UpperThreshold,
@@ -218,7 +218,7 @@ mod tests {
     #[test]
     fn test_setter_methods() {
         let component1 = ComponentType::new("Connector".to_string());
-        let variable1 = VariableType::new("Temperature".to_string(), "Outlet".to_string());
+        let variable1 = VariableType::new_with_instance("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring1 = vec![VariableMonitoringType::new(
             1,
             MonitorEnumType::UpperThreshold,
@@ -226,7 +226,7 @@ mod tests {
         )];
 
         let component2 = ComponentType::new("Meter".to_string());
-        let variable2 = VariableType::new("Current".to_string(), "Output".to_string());
+        let variable2 = VariableType::new_with_instance("Current".to_string(), "Output".to_string());
         let variable_monitoring2 = vec![
             VariableMonitoringType::new(2, MonitorEnumType::LowerThreshold, 5.0),
             VariableMonitoringType::new(3, MonitorEnumType::UpperThreshold, 32.0),
@@ -256,7 +256,7 @@ mod tests {
     fn test_validation() {
         // 有效的MonitoringDataType实例
         let component = ComponentType::new("Connector".to_string());
-        let variable = VariableType::new("Temperature".to_string(), "Outlet".to_string());
+        let variable = VariableType::new_with_instance("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring = vec![VariableMonitoringType::new(
             1,
             MonitorEnumType::UpperThreshold,
@@ -294,7 +294,7 @@ mod tests {
 
         // 测试嵌套验证 - 使用无效的VariableType
         let mut invalid_variable =
-            VariableType::new("Temperature".to_string(), "Outlet".to_string());
+            VariableType::new_with_instance("Temperature".to_string(), "Outlet".to_string());
         invalid_variable.name = "a".repeat(51); // 超过最大长度50
 
         let mut monitoring_data_with_invalid_variable = valid_monitoring_data.clone();

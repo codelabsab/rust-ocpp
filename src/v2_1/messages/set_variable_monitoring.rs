@@ -518,7 +518,7 @@ mod tests {
     #[test]
     fn test_set_monitoring_result_type() {
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
+        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let kind = MonitorEnumType::UpperThreshold;
         let severity = 2;
         let status = SetMonitoringStatusEnumType::Accepted;
@@ -544,7 +544,7 @@ mod tests {
     #[test]
     fn test_set_variable_monitoring_request() {
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
+        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let value = Decimal::from_str("100.0").unwrap();
         let kind = MonitorEnumType::UpperThreshold;
         let severity = 2;
@@ -567,7 +567,7 @@ mod tests {
     #[test]
     fn test_set_variable_monitoring_response() {
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
+        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let kind = MonitorEnumType::UpperThreshold;
         let severity = 2;
         let status = SetMonitoringStatusEnumType::Accepted;
@@ -590,7 +590,7 @@ mod tests {
     #[test]
     fn test_with_methods() {
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
+        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let kind = MonitorEnumType::UpperThreshold;
         let severity = 2;
         let status = SetMonitoringStatusEnumType::Accepted;
@@ -622,7 +622,7 @@ mod tests {
     #[test]
     fn test_serialization() {
         let component = ComponentType::new("component1".to_string());
-        let variable = VariableType::new("variable1".to_string(), "instance1".to_string());
+        let variable = VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
         let value = Decimal::from_str("100.0").unwrap();
         let kind = MonitorEnumType::UpperThreshold;
         let severity = 2;
