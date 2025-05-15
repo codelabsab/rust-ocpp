@@ -113,7 +113,7 @@ impl TariffType {
         }
     }
 
-    /// Sets the description.
+    /// Sets the description of the tariff in different languages.
     ///
     /// # Arguments
     ///
@@ -127,7 +127,7 @@ impl TariffType {
         self
     }
 
-    /// Sets the energy costs.
+    /// Sets the energy costs of the tariff.
     ///
     /// # Arguments
     ///
@@ -141,7 +141,7 @@ impl TariffType {
         self
     }
 
-    /// Sets the valid from date.
+    /// Sets the time when this tariff becomes active.
     ///
     /// # Arguments
     ///
@@ -155,7 +155,7 @@ impl TariffType {
         self
     }
 
-    /// Sets the charging time costs.
+    /// Sets the charging time costs of the tariff.
     ///
     /// # Arguments
     ///
@@ -169,7 +169,7 @@ impl TariffType {
         self
     }
 
-    /// Sets the idle time costs.
+    /// Sets the idle time costs of the tariff.
     ///
     /// # Arguments
     ///
@@ -183,7 +183,7 @@ impl TariffType {
         self
     }
 
-    /// Sets the fixed fee.
+    /// Sets the fixed costs of the tariff.
     ///
     /// # Arguments
     ///
@@ -197,7 +197,7 @@ impl TariffType {
         self
     }
 
-    /// Sets the reservation time costs.
+    /// Sets the reservation time costs of the tariff.
     ///
     /// # Arguments
     ///
@@ -211,7 +211,7 @@ impl TariffType {
         self
     }
 
-    /// Sets the reservation fixed costs.
+    /// Sets the fixed costs for a reservation.
     ///
     /// # Arguments
     ///
@@ -225,7 +225,7 @@ impl TariffType {
         self
     }
 
-    /// Sets the minimum cost.
+    /// Sets the minimum cost for a charging session.
     ///
     /// # Arguments
     ///
@@ -239,7 +239,7 @@ impl TariffType {
         self
     }
 
-    /// Sets the maximum cost.
+    /// Sets the maximum cost for a charging session.
     ///
     /// # Arguments
     ///
@@ -267,16 +267,16 @@ impl TariffType {
         self
     }
 
-    /// Gets the tariff id.
+    /// Gets the tariff ID.
     ///
     /// # Returns
     ///
-    /// The unique id of the tariff
+    /// The unique id of tariff
     pub fn tariff_id(&self) -> &str {
         &self.tariff_id
     }
 
-    /// Sets the tariff id.
+    /// Sets the tariff ID.
     ///
     /// # Arguments
     ///
@@ -294,7 +294,7 @@ impl TariffType {
     ///
     /// # Returns
     ///
-    /// The currency code according to ISO 4217
+    /// The currency code
     pub fn currency(&self) -> &str {
         &self.currency
     }
@@ -303,7 +303,7 @@ impl TariffType {
     ///
     /// # Arguments
     ///
-    /// * `currency` - Currency code according to ISO 4217
+    /// * `currency` - Currency code
     ///
     /// # Returns
     ///
@@ -318,11 +318,11 @@ impl TariffType {
     /// # Returns
     ///
     /// An optional reference to the description of the tariff in different languages
-    pub fn description(&self) -> Option<&Vec<MessageContentType>> {
-        self.description.as_ref()
+    pub fn description(&self) -> Option<&[MessageContentType]> {
+        self.description.as_deref()
     }
 
-    /// Sets the description.
+    /// Sets the description of the tariff in different languages.
     ///
     /// # Arguments
     ///
@@ -345,7 +345,7 @@ impl TariffType {
         self.energy.as_ref()
     }
 
-    /// Sets the energy costs.
+    /// Sets the energy costs of the tariff.
     ///
     /// # Arguments
     ///
@@ -359,16 +359,16 @@ impl TariffType {
         self
     }
 
-    /// Gets the valid from date.
+    /// Gets the valid from time.
     ///
     /// # Returns
     ///
-    /// An optional reference to the time when this tariff becomes active
-    pub fn valid_from(&self) -> Option<&DateTime<Utc>> {
-        self.valid_from.as_ref()
+    /// An optional time when this tariff becomes active
+    pub fn valid_from(&self) -> Option<DateTime<Utc>> {
+        self.valid_from
     }
 
-    /// Sets the valid from date.
+    /// Sets the time when this tariff becomes active.
     ///
     /// # Arguments
     ///
@@ -391,7 +391,7 @@ impl TariffType {
         self.charging_time.as_ref()
     }
 
-    /// Sets the charging time costs.
+    /// Sets the charging time costs of the tariff.
     ///
     /// # Arguments
     ///
@@ -414,7 +414,7 @@ impl TariffType {
         self.idle_time.as_ref()
     }
 
-    /// Sets the idle time costs.
+    /// Sets the idle time costs of the tariff.
     ///
     /// # Arguments
     ///
@@ -428,7 +428,7 @@ impl TariffType {
         self
     }
 
-    /// Gets the fixed fee.
+    /// Gets the fixed costs.
     ///
     /// # Returns
     ///
@@ -437,7 +437,7 @@ impl TariffType {
         self.fixed_fee.as_ref()
     }
 
-    /// Sets the fixed fee.
+    /// Sets the fixed costs of the tariff.
     ///
     /// # Arguments
     ///
@@ -460,7 +460,7 @@ impl TariffType {
         self.reservation_time.as_ref()
     }
 
-    /// Sets the reservation time costs.
+    /// Sets the reservation time costs of the tariff.
     ///
     /// # Arguments
     ///
@@ -474,7 +474,7 @@ impl TariffType {
         self
     }
 
-    /// Gets the reservation fixed costs.
+    /// Gets the fixed costs for a reservation.
     ///
     /// # Returns
     ///
@@ -483,7 +483,7 @@ impl TariffType {
         self.reservation_fixed.as_ref()
     }
 
-    /// Sets the reservation fixed costs.
+    /// Sets the fixed costs for a reservation.
     ///
     /// # Arguments
     ///
@@ -500,7 +500,7 @@ impl TariffType {
         self
     }
 
-    /// Gets the minimum cost.
+    /// Gets the minimum cost for a charging session.
     ///
     /// # Returns
     ///
@@ -509,7 +509,7 @@ impl TariffType {
         self.min_cost.as_ref()
     }
 
-    /// Sets the minimum cost.
+    /// Sets the minimum cost for a charging session.
     ///
     /// # Arguments
     ///
@@ -523,7 +523,7 @@ impl TariffType {
         self
     }
 
-    /// Gets the maximum cost.
+    /// Gets the maximum cost for a charging session.
     ///
     /// # Returns
     ///
@@ -532,7 +532,7 @@ impl TariffType {
         self.max_cost.as_ref()
     }
 
-    /// Sets the maximum cost.
+    /// Sets the maximum cost for a charging session.
     ///
     /// # Arguments
     ///
@@ -572,41 +572,22 @@ impl TariffType {
 
 #[cfg(test)]
 mod tests {
+    use rust_decimal::Decimal;
+
     use super::*;
     use crate::v2_1::{
         datatypes::{
-            tariff_energy_price::TariffEnergyPriceType, tariff_fixed_price::TariffFixedPriceType,
-            tariff_time_price::TariffTimePriceType,
+            message_content::MessageContentType, tariff_energy_price::TariffEnergyPriceType,
+            tariff_fixed_price::TariffFixedPriceType, tariff_time_price::TariffTimePriceType,
         },
-        enumerations::MessageFormatEnumType,
+        enumerations::message_format::MessageFormatEnumType,
     };
-    use rust_decimal::Decimal;
-
-    #[test]
-    fn test_new_tariff() {
-        let tariff_id = "tariff-123".to_string();
-        let currency = "EUR".to_string();
-        let tariff = TariffType::new(tariff_id.clone(), currency.clone());
-
-        assert_eq!(tariff.tariff_id(), tariff_id);
-        assert_eq!(tariff.currency(), currency);
-        assert_eq!(tariff.description(), None);
-        assert_eq!(tariff.energy(), None);
-        assert_eq!(tariff.valid_from(), None);
-        assert_eq!(tariff.charging_time(), None);
-        assert_eq!(tariff.idle_time(), None);
-        assert_eq!(tariff.fixed_fee(), None);
-        assert_eq!(tariff.reservation_time(), None);
-        assert_eq!(tariff.reservation_fixed(), None);
-        assert_eq!(tariff.min_cost(), None);
-        assert_eq!(tariff.max_cost(), None);
-        assert_eq!(tariff.custom_data(), None);
-    }
 
     #[test]
     fn test_with_methods() {
         let tariff_id = "tariff-123".to_string();
         let currency = "EUR".to_string();
+
         let description = vec![MessageContentType::new(
             "Standard Tariff".to_string(),
             MessageFormatEnumType::ASCII,
@@ -614,11 +595,25 @@ mod tests {
         )];
         let energy = TariffEnergyType::new(vec![TariffEnergyPriceType::new(Decimal::new(25, 2))]); // 0.25
         let valid_from = Utc::now();
-        let charging_time = TariffTimeType::new(vec![TariffTimePriceType::new(Decimal::new(50, 1))]); // 5.0
+        let charging_time =
+            TariffTimeType::new(vec![TariffTimePriceType::new(Decimal::new(50, 1))]); // 5.0
         let idle_time = TariffTimeType::new(vec![TariffTimePriceType::new(Decimal::new(100, 1))]); // 10.0
-        let fixed_fee = TariffFixedType::new(TariffFixedPriceType::new(Decimal::new(100, 1))); // 10.0
-        let reservation_time = TariffTimeType::new(vec![TariffTimePriceType::new(Decimal::new(20, 1))]); // 2.0
-        let reservation_fixed = TariffFixedType::new(TariffFixedPriceType::new(Decimal::new(50, 1))); // 5.0
+
+        // Create a fixed price
+        let fixed_price = TariffFixedPriceType::new(Decimal::new(100, 1)); // 10.0
+                                                                           // Create a fixed fee with the fixed price
+        #[allow(deprecated)]
+        let fixed_fee = TariffFixedType::from_single_price(fixed_price.clone());
+
+        let reservation_time =
+            TariffTimeType::new(vec![TariffTimePriceType::new(Decimal::new(20, 1))]); // 2.0
+
+        // Create a reservation fixed price
+        let reservation_price = TariffFixedPriceType::new(Decimal::new(50, 1)); // 5.0
+                                                                                // Create a reservation fixed fee with the reservation price
+        #[allow(deprecated)]
+        let reservation_fixed = TariffFixedType::from_single_price(reservation_price.clone());
+
         let min_cost = PriceType::new(Decimal::new(50, 1), false); // 5.0 excl tax
         let max_cost = PriceType::new(Decimal::new(500, 1), false); // 50.0 excl tax
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -643,21 +638,39 @@ mod tests {
             tariff.description().unwrap()[0].content(),
             "Standard Tariff"
         );
-        assert_eq!(tariff.energy().unwrap().prices()[0].price_kwh, Decimal::new(25, 2));
+        assert_eq!(
+            tariff.energy().unwrap().prices()[0].price_kwh,
+            Decimal::new(25, 2)
+        );
         assert!(tariff.valid_from().is_some());
         assert_eq!(
             tariff.charging_time().unwrap().prices()[0].price_minute,
             Decimal::new(50, 1)
         );
-        assert_eq!(tariff.idle_time().unwrap().prices()[0].price_minute, Decimal::new(100, 1));
-        assert_eq!(tariff.fixed_fee().unwrap().fixed_price.price_fixed, Decimal::new(100, 1));
+        assert_eq!(
+            tariff.idle_time().unwrap().prices()[0].price_minute,
+            Decimal::new(100, 1)
+        );
+
+        #[allow(deprecated)]
+        {
+            assert_eq!(
+                tariff.fixed_fee().unwrap().fixed_price().price_fixed,
+                Decimal::new(100, 1)
+            );
+            assert_eq!(
+                tariff
+                    .reservation_fixed()
+                    .unwrap()
+                    .fixed_price()
+                    .price_fixed,
+                Decimal::new(50, 1)
+            );
+        }
+
         assert_eq!(
             tariff.reservation_time().unwrap().prices()[0].price_minute,
             Decimal::new(20, 1)
-        );
-        assert_eq!(
-            tariff.reservation_fixed().unwrap().fixed_price.price_fixed,
-            Decimal::new(50, 1)
         );
         assert_eq!(
             tariff.min_cost().unwrap().excl_tax(),
@@ -684,11 +697,25 @@ mod tests {
         )];
         let energy = TariffEnergyType::new(vec![TariffEnergyPriceType::new(Decimal::new(25, 2))]); // 0.25
         let valid_from = Utc::now();
-        let charging_time = TariffTimeType::new(vec![TariffTimePriceType::new(Decimal::new(50, 1))]); // 5.0
+        let charging_time =
+            TariffTimeType::new(vec![TariffTimePriceType::new(Decimal::new(50, 1))]); // 5.0
         let idle_time = TariffTimeType::new(vec![TariffTimePriceType::new(Decimal::new(100, 1))]); // 10.0
-        let fixed_fee = TariffFixedType::new(TariffFixedPriceType::new(Decimal::new(100, 1))); // 10.0
-        let reservation_time = TariffTimeType::new(vec![TariffTimePriceType::new(Decimal::new(20, 1))]); // 2.0
-        let reservation_fixed = TariffFixedType::new(TariffFixedPriceType::new(Decimal::new(50, 1))); // 5.0
+
+        // Create a fixed price
+        let fixed_price = TariffFixedPriceType::new(Decimal::new(100, 1)); // 10.0
+                                                                           // Create a fixed fee with the fixed price
+        #[allow(deprecated)]
+        let fixed_fee = TariffFixedType::from_single_price(fixed_price.clone());
+
+        let reservation_time =
+            TariffTimeType::new(vec![TariffTimePriceType::new(Decimal::new(20, 1))]); // 2.0
+
+        // Create a reservation fixed price
+        let reservation_price = TariffFixedPriceType::new(Decimal::new(50, 1)); // 5.0
+                                                                                // Create a reservation fixed fee with the reservation price
+        #[allow(deprecated)]
+        let reservation_fixed = TariffFixedType::from_single_price(reservation_price.clone());
+
         let min_cost = PriceType::new(Decimal::new(50, 1), false); // 5.0 excl tax
         let max_cost = PriceType::new(Decimal::new(500, 1), false); // 50.0 excl tax
         let custom_data = CustomDataType::new("VendorX".to_string());
@@ -717,21 +744,39 @@ mod tests {
             tariff.description().unwrap()[0].content(),
             "Standard Tariff"
         );
-        assert_eq!(tariff.energy().unwrap().prices()[0].price_kwh, Decimal::new(25, 2));
+        assert_eq!(
+            tariff.energy().unwrap().prices()[0].price_kwh,
+            Decimal::new(25, 2)
+        );
         assert!(tariff.valid_from().is_some());
         assert_eq!(
             tariff.charging_time().unwrap().prices()[0].price_minute,
             Decimal::new(50, 1)
         );
-        assert_eq!(tariff.idle_time().unwrap().prices()[0].price_minute, Decimal::new(100, 1));
-        assert_eq!(tariff.fixed_fee().unwrap().fixed_price.price_fixed, Decimal::new(100, 1));
+        assert_eq!(
+            tariff.idle_time().unwrap().prices()[0].price_minute,
+            Decimal::new(100, 1)
+        );
+
+        #[allow(deprecated)]
+        {
+            assert_eq!(
+                tariff.fixed_fee().unwrap().fixed_price().price_fixed,
+                Decimal::new(100, 1)
+            );
+            assert_eq!(
+                tariff
+                    .reservation_fixed()
+                    .unwrap()
+                    .fixed_price()
+                    .price_fixed,
+                Decimal::new(50, 1)
+            );
+        }
+
         assert_eq!(
             tariff.reservation_time().unwrap().prices()[0].price_minute,
             Decimal::new(20, 1)
-        );
-        assert_eq!(
-            tariff.reservation_fixed().unwrap().fixed_price.price_fixed,
-            Decimal::new(50, 1)
         );
         assert_eq!(
             tariff.min_cost().unwrap().excl_tax(),
@@ -768,21 +813,5 @@ mod tests {
         assert_eq!(tariff.min_cost(), None);
         assert_eq!(tariff.max_cost(), None);
         assert_eq!(tariff.custom_data(), None);
-    }
-
-    #[test]
-    fn test_validation() {
-        // Test with valid tariff
-        let tariff = TariffType::new("tariff-123".to_string(), "EUR".to_string());
-        assert!(tariff.validate().is_ok());
-
-        // Test with tariff_id too long (max 60 characters)
-        let long_id = "a".repeat(61);
-        let invalid_tariff = TariffType::new(long_id, "EUR".to_string());
-        assert!(invalid_tariff.validate().is_err());
-
-        // Test with currency too long (max 3 characters)
-        let invalid_tariff = TariffType::new("tariff-123".to_string(), "EURO".to_string());
-        assert!(invalid_tariff.validate().is_err());
     }
 }

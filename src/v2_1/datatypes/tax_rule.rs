@@ -1,4 +1,3 @@
-use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -183,7 +182,7 @@ impl TaxRuleType {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    use rust_decimal::Decimal;
     #[test]
     fn test_new_tax_rule() {
         let tax_rate = TaxRateType::new(Decimal::new(200, 1), "VAT".to_string()); // 20.0

@@ -1,4 +1,3 @@
-use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -144,7 +143,7 @@ impl TariffTimeType {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    use rust_decimal::Decimal;
     #[test]
     fn test_new_tariff_time() {
         let price = TariffTimePriceType::new(Decimal::new(100, 1)); // 10.0

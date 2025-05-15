@@ -1,4 +1,3 @@
-use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -144,7 +143,7 @@ impl TariffEnergyType {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    use rust_decimal::Decimal;
     #[test]
     fn test_new_tariff_energy() {
         let price = TariffEnergyPriceType::new(Decimal::new(100, 1)); // 10.0
