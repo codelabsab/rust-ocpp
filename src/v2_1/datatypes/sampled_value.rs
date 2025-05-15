@@ -393,7 +393,7 @@ mod tests {
                 .with_signing_method("signing_method".to_string())
                 .with_public_key("public_key".to_string());
 
-        let unit_of_measure = UnitOfMeasureType::new("Wh".to_string());
+        let unit_of_measure = UnitOfMeasureType::new_with_unit("Wh".to_string());
 
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
@@ -438,7 +438,7 @@ mod tests {
                 .with_signing_method("signing_method".to_string())
                 .with_public_key("public_key".to_string());
 
-        let unit_of_measure = UnitOfMeasureType::new("Wh".to_string());
+        let unit_of_measure = UnitOfMeasureType::new_with_unit("Wh".to_string());
 
         let custom_data = CustomDataType {
             vendor_id: "VendorX".to_string(),
