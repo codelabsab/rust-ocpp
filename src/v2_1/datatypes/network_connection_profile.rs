@@ -3,7 +3,6 @@ use validator::Validate;
 
 use super::{apn::APNType, custom_data::CustomDataType, vpn::VPNType};
 
-
 /// The NetworkConnectionProfile defines the functional and technical parameters of a communication link.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
@@ -427,9 +426,9 @@ impl NetworkConnectionProfileType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::v2_1::enumerations::vpn::VPNEnumType;
     use crate::v2_1::enumerations::APNAuthenticationEnumType;
     use validator::Validate;
-    use crate::v2_1::enumerations::vpn::VPNEnumType;
     #[test]
     fn test_new_network_connection_profile() {
         let ocpp_interface = "Wired0".to_string();
