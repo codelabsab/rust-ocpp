@@ -197,7 +197,10 @@ mod tests {
 
         assert_eq!(tariff_assignment.tariff_id(), tariff_id);
         assert_eq!(tariff_assignment.start_date_time(), &start_date_time);
-        assert_eq!(tariff_assignment.expiry_date_time().unwrap(), &expiry_date_time);
+        assert_eq!(
+            tariff_assignment.expiry_date_time().unwrap(),
+            &expiry_date_time
+        );
         assert_eq!(tariff_assignment.custom_data(), Some(&custom_data));
     }
 
@@ -220,7 +223,10 @@ mod tests {
 
         assert_eq!(tariff_assignment.tariff_id(), tariff_id2);
         assert_eq!(tariff_assignment.start_date_time(), &start_date_time2);
-        assert_eq!(tariff_assignment.expiry_date_time().unwrap(), &expiry_date_time);
+        assert_eq!(
+            tariff_assignment.expiry_date_time().unwrap(),
+            &expiry_date_time
+        );
         assert_eq!(tariff_assignment.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
@@ -244,7 +250,7 @@ mod tests {
         // Test with tariff_id that exceeds max length (60 characters)
         let long_id = "a".repeat(61);
         let invalid_assignment = TariffAssignmentType::new(long_id, start_date_time);
-        
+
         assert!(invalid_assignment.validate().is_err());
     }
 }
