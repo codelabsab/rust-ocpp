@@ -937,11 +937,23 @@ mod tests {
             .with_max_idle_time(max_idle_time)
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(tariff_conditions.start_time_of_day(), Some(start_time_of_day.as_str()));
-        assert_eq!(tariff_conditions.end_time_of_day(), Some(end_time_of_day.as_str()));
+        assert_eq!(
+            tariff_conditions.start_time_of_day(),
+            Some(start_time_of_day.as_str())
+        );
+        assert_eq!(
+            tariff_conditions.end_time_of_day(),
+            Some(end_time_of_day.as_str())
+        );
         assert_eq!(tariff_conditions.day_of_week().unwrap().len(), 2);
-        assert_eq!(tariff_conditions.valid_from_date(), Some(valid_from_date.as_str()));
-        assert_eq!(tariff_conditions.valid_to_date(), Some(valid_to_date.as_str()));
+        assert_eq!(
+            tariff_conditions.valid_from_date(),
+            Some(valid_from_date.as_str())
+        );
+        assert_eq!(
+            tariff_conditions.valid_to_date(),
+            Some(valid_to_date.as_str())
+        );
         assert_eq!(tariff_conditions.evse_kind(), Some(&evse_kind));
         assert_eq!(tariff_conditions.min_energy(), Some(min_energy));
         assert_eq!(tariff_conditions.max_energy(), Some(max_energy));
@@ -951,8 +963,14 @@ mod tests {
         assert_eq!(tariff_conditions.max_power(), Some(max_power));
         assert_eq!(tariff_conditions.min_time(), Some(min_time));
         assert_eq!(tariff_conditions.max_time(), Some(max_time));
-        assert_eq!(tariff_conditions.min_charging_time(), Some(min_charging_time));
-        assert_eq!(tariff_conditions.max_charging_time(), Some(max_charging_time));
+        assert_eq!(
+            tariff_conditions.min_charging_time(),
+            Some(min_charging_time)
+        );
+        assert_eq!(
+            tariff_conditions.max_charging_time(),
+            Some(max_charging_time)
+        );
         assert_eq!(tariff_conditions.min_idle_time(), Some(min_idle_time));
         assert_eq!(tariff_conditions.max_idle_time(), Some(max_idle_time));
         assert_eq!(tariff_conditions.custom_data(), Some(&custom_data));
@@ -1003,11 +1021,23 @@ mod tests {
             .set_max_idle_time(Some(max_idle_time))
             .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(tariff_conditions.start_time_of_day(), Some(start_time_of_day.as_str()));
-        assert_eq!(tariff_conditions.end_time_of_day(), Some(end_time_of_day.as_str()));
+        assert_eq!(
+            tariff_conditions.start_time_of_day(),
+            Some(start_time_of_day.as_str())
+        );
+        assert_eq!(
+            tariff_conditions.end_time_of_day(),
+            Some(end_time_of_day.as_str())
+        );
         assert_eq!(tariff_conditions.day_of_week().unwrap().len(), 2);
-        assert_eq!(tariff_conditions.valid_from_date(), Some(valid_from_date.as_str()));
-        assert_eq!(tariff_conditions.valid_to_date(), Some(valid_to_date.as_str()));
+        assert_eq!(
+            tariff_conditions.valid_from_date(),
+            Some(valid_from_date.as_str())
+        );
+        assert_eq!(
+            tariff_conditions.valid_to_date(),
+            Some(valid_to_date.as_str())
+        );
         assert_eq!(tariff_conditions.evse_kind(), Some(&evse_kind));
         assert_eq!(tariff_conditions.min_energy(), Some(min_energy));
         assert_eq!(tariff_conditions.max_energy(), Some(max_energy));
@@ -1017,8 +1047,14 @@ mod tests {
         assert_eq!(tariff_conditions.max_power(), Some(max_power));
         assert_eq!(tariff_conditions.min_time(), Some(min_time));
         assert_eq!(tariff_conditions.max_time(), Some(max_time));
-        assert_eq!(tariff_conditions.min_charging_time(), Some(min_charging_time));
-        assert_eq!(tariff_conditions.max_charging_time(), Some(max_charging_time));
+        assert_eq!(
+            tariff_conditions.min_charging_time(),
+            Some(min_charging_time)
+        );
+        assert_eq!(
+            tariff_conditions.max_charging_time(),
+            Some(max_charging_time)
+        );
         assert_eq!(tariff_conditions.min_idle_time(), Some(min_idle_time));
         assert_eq!(tariff_conditions.max_idle_time(), Some(max_idle_time));
         assert_eq!(tariff_conditions.custom_data(), Some(&custom_data));
