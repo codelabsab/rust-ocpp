@@ -2,28 +2,39 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use super::custom_data::CustomDataType;
-use crate::v2_1::enumerations::MonitorEnumType;
+use crate::v2_1::enumerations::monitor::MonitorEnumType;
+use crate::v2_1::enumerations::event_notification::EventNotificationEnumType;
 
 /// A monitoring setting for a variable.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct VariableMonitoringType {
+    /// Required. Identifies the monitor.
+    pub id: i32,
+
+    /// Required. Monitor only active when a transaction is ongoing on a component 
+    /// relevant to this transaction.
+    pub transaction: bool,
+
+    /// Required. Value for threshold or delta monitoring.
+    /// For Periodic or PeriodicClockAligned this is the interval in seconds.
+    pub value: f64,
+
+    /// Required. Monitor type of the variable.
+    #[serde(rename = "type")]
+    pub type_: MonitorEnumType,
+
+    /// Required. The severity that will be assigned to an event that is triggered 
+    /// by this monitor.
+    /// The severity range is 0-9, with 0 as the highest and 9 as the lowest severity level.
+    pub severity: i32,
+
+    /// Required. Specifies the event notification type of the message.
+    pub event_notification_type: EventNotificationEnumType,
+
     /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomDataType>,
-
-    /// Required. ID of the monitor.
-    pub id: i32,
-
-    /// Required. Monitor type of the variable.
-    pub r#type: MonitorEnumType,
-
-    /// Required. Value for threshold or delta of the monitor.
-    pub value: f64,
-
-    /// Optional. The severity that will be assigned to an event that is triggered by this monitor.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub severity: Option<i32>,
 }
 
 impl VariableMonitoringType {
@@ -31,20 +42,32 @@ impl VariableMonitoringType {
     ///
     /// # Arguments
     ///
-    /// * `id` - ID of the monitor
-    /// * `type` - Monitor type of the variable
-    /// * `value` - Value for threshold or delta of the monitor
+    /// * `id` - Identifies the monitor
+    /// * `transaction` - Monitor only active when a transaction is ongoing on a component relevant to this transaction
+    /// * `value` - Value for threshold or delta monitoring
+    /// * `type_` - Monitor type of the variable
+    /// * `severity` - The severity that will be assigned to an event that is triggered by this monitor
+    /// * `event_notification_type` - Specifies the event notification type of the message
     ///
     /// # Returns
     ///
     /// A new `VariableMonitoringType` instance with optional fields set to `None`
-    pub fn new(id: i32, r#type: MonitorEnumType, value: f64) -> Self {
+    pub fn new(
+        id: i32,
+        transaction: bool,
+        value: f64,
+        type_: MonitorEnumType,
+        severity: i32,
+        event_notification_type: EventNotificationEnumType,
+    ) -> Self {
         Self {
-            custom_data: None,
             id,
-            r#type,
+            transaction,
             value,
-            severity: None,
+            type_,
+            severity,
+            event_notification_type,
+            custom_data: None,
         }
     }
 
@@ -62,44 +85,7 @@ impl VariableMonitoringType {
         self
     }
 
-    /// Sets the severity field.
-    ///
-    /// # Arguments
-    ///
-    /// * `severity` - The severity that will be assigned to an event that is triggered by this monitor
-    ///
-    /// # Returns
-    ///
-    /// The modified `VariableMonitoringType` instance
-    pub fn with_severity(mut self, severity: i32) -> Self {
-        self.severity = Some(severity);
-        self
-    }
-
-    /// Gets the custom data.
-    ///
-    /// # Returns
-    ///
-    /// An optional reference to the custom data
-    pub fn custom_data(&self) -> Option<&CustomDataType> {
-        self.custom_data.as_ref()
-    }
-
-    /// Sets the custom data.
-    ///
-    /// # Arguments
-    ///
-    /// * `custom_data` - Custom data from the Charging Station, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// The modified `VariableMonitoringType` instance
-    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
-        self.custom_data = custom_data;
-        self
-    }
-
-    /// Gets the ID of the monitor.
+    /// Gets the id.
     ///
     /// # Returns
     ///
@@ -122,26 +108,26 @@ impl VariableMonitoringType {
         self
     }
 
-    /// Gets the monitor type.
+    /// Gets the transaction flag.
     ///
     /// # Returns
     ///
-    /// The monitor type of the variable
-    pub fn type_field(&self) -> &MonitorEnumType {
-        &self.r#type
+    /// The transaction flag indicating if the monitor is only active during a transaction
+    pub fn transaction(&self) -> bool {
+        self.transaction
     }
 
-    /// Sets the monitor type.
+    /// Sets the transaction flag.
     ///
     /// # Arguments
     ///
-    /// * `type` - Monitor type of the variable
+    /// * `transaction` - Transaction flag indicating if the monitor is only active during a transaction
     ///
     /// # Returns
     ///
     /// The modified `VariableMonitoringType` instance
-    pub fn set_type(&mut self, r#type: MonitorEnumType) -> &mut Self {
-        self.r#type = r#type;
+    pub fn set_transaction(&mut self, transaction: bool) -> &mut Self {
+        self.transaction = transaction;
         self
     }
 
@@ -168,26 +154,95 @@ impl VariableMonitoringType {
         self
     }
 
-    /// Gets the severity.
+    /// Gets the monitor type.
     ///
     /// # Returns
     ///
-    /// The severity that will be assigned to an event that is triggered by this monitor
-    pub fn severity(&self) -> Option<i32> {
-        self.severity
+    /// The monitor type of the variable
+    pub fn type_(&self) -> &MonitorEnumType {
+        &self.type_
     }
 
-    /// Sets the severity.
+    /// Sets the monitor type.
     ///
     /// # Arguments
     ///
-    /// * `severity` - The severity that will be assigned to an event that is triggered by this monitor, or None to clear
+    /// * `type_` - Monitor type of the variable
     ///
     /// # Returns
     ///
     /// The modified `VariableMonitoringType` instance
-    pub fn set_severity(&mut self, severity: Option<i32>) -> &mut Self {
+    pub fn set_type(&mut self, type_: MonitorEnumType) -> &mut Self {
+        self.type_ = type_;
+        self
+    }
+
+    /// Gets the severity level.
+    ///
+    /// # Returns
+    ///
+    /// The severity that will be assigned to an event that is triggered by this monitor
+    pub fn severity(&self) -> i32 {
+        self.severity
+    }
+
+    /// Sets the severity level.
+    ///
+    /// # Arguments
+    ///
+    /// * `severity` - The severity that will be assigned to an event that is triggered by this monitor
+    ///
+    /// # Returns
+    ///
+    /// The modified `VariableMonitoringType` instance
+    pub fn set_severity(&mut self, severity: i32) -> &mut Self {
         self.severity = severity;
+        self
+    }
+
+    /// Gets the event notification type.
+    ///
+    /// # Returns
+    ///
+    /// The event notification type of the message
+    pub fn event_notification_type(&self) -> &EventNotificationEnumType {
+        &self.event_notification_type
+    }
+
+    /// Sets the event notification type.
+    ///
+    /// # Arguments
+    ///
+    /// * `event_notification_type` - The event notification type of the message
+    ///
+    /// # Returns
+    ///
+    /// The modified `VariableMonitoringType` instance
+    pub fn set_event_notification_type(&mut self, event_notification_type: EventNotificationEnumType) -> &mut Self {
+        self.event_notification_type = event_notification_type;
+        self
+    }
+
+    /// Gets the custom data.
+    ///
+    /// # Returns
+    ///
+    /// An optional reference to the custom data
+    pub fn custom_data(&self) -> Option<&CustomDataType> {
+        self.custom_data.as_ref()
+    }
+
+    /// Sets the custom data.
+    ///
+    /// # Arguments
+    ///
+    /// * `custom_data` - Custom data from the Charging Station, or None to clear
+    ///
+    /// # Returns
+    ///
+    /// The modified `VariableMonitoringType` instance
+    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
+        self.custom_data = custom_data;
         self
     }
 }
@@ -199,67 +254,104 @@ mod tests {
     #[test]
     fn test_variable_monitoring_new() {
         let id = 42;
-        let monitor_type = MonitorEnumType::UpperThreshold;
+        let transaction = true;
         let value = 100.0;
+        let monitor_type = MonitorEnumType::UpperThreshold;
+        let severity = 5;
+        let event_notification_type = EventNotificationEnumType::CustomMonitor;
 
-        let monitoring = VariableMonitoringType::new(id, monitor_type.clone(), value);
+        let monitoring = VariableMonitoringType::new(
+            id,
+            transaction,
+            value,
+            monitor_type.clone(),
+            severity,
+            event_notification_type.clone()
+        );
 
         assert_eq!(monitoring.id(), id);
-        assert_eq!(monitoring.type_field(), &monitor_type);
+        assert_eq!(monitoring.transaction(), transaction);
         assert_eq!(monitoring.value(), value);
-        assert_eq!(monitoring.severity(), None);
+        assert_eq!(monitoring.type_(), &monitor_type);
+        assert_eq!(monitoring.severity(), severity);
+        assert_eq!(monitoring.event_notification_type(), &event_notification_type);
         assert_eq!(monitoring.custom_data(), None);
     }
 
     #[test]
-    fn test_variable_monitoring_with_methods() {
+    fn test_variable_monitoring_with_custom_data() {
         let id = 42;
-        let monitor_type = MonitorEnumType::UpperThreshold;
+        let transaction = true;
         let value = 100.0;
-        let severity = 2;
+        let monitor_type = MonitorEnumType::UpperThreshold;
+        let severity = 5;
+        let event_notification_type = EventNotificationEnumType::CustomMonitor;
         let custom_data = CustomDataType::new("VendorX".to_string());
 
-        let monitoring = VariableMonitoringType::new(id, monitor_type.clone(), value)
-            .with_severity(severity)
-            .with_custom_data(custom_data.clone());
+        let monitoring = VariableMonitoringType::new(
+            id,
+            transaction,
+            value,
+            monitor_type.clone(),
+            severity,
+            event_notification_type.clone()
+        )
+        .with_custom_data(custom_data.clone());
 
         assert_eq!(monitoring.id(), id);
-        assert_eq!(monitoring.type_field(), &monitor_type);
+        assert_eq!(monitoring.transaction(), transaction);
         assert_eq!(monitoring.value(), value);
-        assert_eq!(monitoring.severity(), Some(severity));
+        assert_eq!(monitoring.type_(), &monitor_type);
+        assert_eq!(monitoring.severity(), severity);
+        assert_eq!(monitoring.event_notification_type(), &event_notification_type);
         assert_eq!(monitoring.custom_data(), Some(&custom_data));
     }
 
     #[test]
     fn test_variable_monitoring_setters() {
         let id1 = 42;
-        let id2 = 43;
-        let monitor_type1 = MonitorEnumType::UpperThreshold;
-        let monitor_type2 = MonitorEnumType::LowerThreshold;
+        let transaction1 = true;
         let value1 = 100.0;
-        let value2 = 50.0;
-        let severity = 2;
-        let custom_data = CustomDataType::new("VendorX".to_string());
+        let monitor_type1 = MonitorEnumType::UpperThreshold;
+        let severity1 = 5;
+        let event_notification_type1 = EventNotificationEnumType::CustomMonitor;
 
-        let mut monitoring = VariableMonitoringType::new(id1, monitor_type1.clone(), value1);
+        let mut monitoring = VariableMonitoringType::new(
+            id1,
+            transaction1,
+            value1,
+            monitor_type1.clone(),
+            severity1,
+            event_notification_type1.clone()
+        );
+
+        let id2 = 43;
+        let transaction2 = false;
+        let value2 = 50.0;
+        let monitor_type2 = MonitorEnumType::LowerThreshold;
+        let severity2 = 3;
+        let event_notification_type2 = EventNotificationEnumType::HardWiredMonitor;
+        let custom_data = CustomDataType::new("VendorX".to_string());
 
         monitoring
             .set_id(id2)
-            .set_type(monitor_type2.clone())
+            .set_transaction(transaction2)
             .set_value(value2)
-            .set_severity(Some(severity))
+            .set_type(monitor_type2.clone())
+            .set_severity(severity2)
+            .set_event_notification_type(event_notification_type2.clone())
             .set_custom_data(Some(custom_data.clone()));
 
         assert_eq!(monitoring.id(), id2);
-        assert_eq!(monitoring.type_field(), &monitor_type2);
+        assert_eq!(monitoring.transaction(), transaction2);
         assert_eq!(monitoring.value(), value2);
-        assert_eq!(monitoring.severity(), Some(severity));
+        assert_eq!(monitoring.type_(), &monitor_type2);
+        assert_eq!(monitoring.severity(), severity2);
+        assert_eq!(monitoring.event_notification_type(), &event_notification_type2);
         assert_eq!(monitoring.custom_data(), Some(&custom_data));
 
         // Test clearing optional fields
-        monitoring.set_severity(None).set_custom_data(None);
-
-        assert_eq!(monitoring.severity(), None);
+        monitoring.set_custom_data(None);
         assert_eq!(monitoring.custom_data(), None);
     }
 }

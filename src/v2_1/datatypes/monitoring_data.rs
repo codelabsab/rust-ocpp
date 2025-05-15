@@ -175,8 +175,11 @@ mod tests {
         let variable = VariableType::new_with_instance("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring = vec![VariableMonitoringType::new(
             1,
-            MonitorEnumType::UpperThreshold,
+            false,
             80.0,
+            MonitorEnumType::UpperThreshold,
+            0,
+            crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
         )];
 
         let monitoring_data = MonitoringDataType::new(
@@ -197,8 +200,11 @@ mod tests {
         let variable = VariableType::new_with_instance("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring = vec![VariableMonitoringType::new(
             1,
-            MonitorEnumType::UpperThreshold,
+            false,
             80.0,
+            MonitorEnumType::UpperThreshold,
+            0,
+            crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
         )];
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -221,15 +227,32 @@ mod tests {
         let variable1 = VariableType::new_with_instance("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring1 = vec![VariableMonitoringType::new(
             1,
-            MonitorEnumType::UpperThreshold,
+            false,
             80.0,
+            MonitorEnumType::UpperThreshold,
+            0,
+            crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
         )];
 
         let component2 = ComponentType::new("Meter".to_string());
         let variable2 = VariableType::new_with_instance("Current".to_string(), "Output".to_string());
         let variable_monitoring2 = vec![
-            VariableMonitoringType::new(2, MonitorEnumType::LowerThreshold, 5.0),
-            VariableMonitoringType::new(3, MonitorEnumType::UpperThreshold, 32.0),
+            VariableMonitoringType::new(
+                2,
+                false,
+                5.0,
+                MonitorEnumType::LowerThreshold,
+                0,
+                crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
+            ),
+            VariableMonitoringType::new(
+                3,
+                false,
+                32.0,
+                MonitorEnumType::UpperThreshold,
+                0,
+                crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
+            ),
         ];
         let custom_data = CustomDataType::new("VendorX".to_string());
 
@@ -259,8 +282,11 @@ mod tests {
         let variable = VariableType::new_with_instance("Temperature".to_string(), "Outlet".to_string());
         let variable_monitoring = vec![VariableMonitoringType::new(
             1,
-            MonitorEnumType::UpperThreshold,
+            false,
             80.0,
+            MonitorEnumType::UpperThreshold,
+            0,
+            crate::v2_1::enumerations::event_notification::EventNotificationEnumType::CustomMonitor,
         )];
 
         let valid_monitoring_data = MonitoringDataType::new(
