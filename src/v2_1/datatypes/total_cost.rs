@@ -415,12 +415,12 @@ impl TotalCostType {
 mod tests {
     use super::*;
     use rust_decimal::Decimal;
-
+    use rust_decimal::prelude::FromPrimitive;
     #[test]
     fn test_new_total_cost() {
         let currency = "EUR".to_string();
         let type_of_cost = TariffCostEnumType::NormalCost;
-        let total = TotalPriceType::new().with_excl_tax(100.0);
+        let total = TotalPriceType::new().with_excl_tax(Decimal::from_f64(100.0).unwrap());
 
         let total_cost = TotalCostType::new(currency.clone(), type_of_cost.clone(), total.clone());
 
@@ -440,7 +440,7 @@ mod tests {
     fn test_with_methods() {
         let currency = "EUR".to_string();
         let type_of_cost = TariffCostEnumType::NormalCost;
-        let total = TotalPriceType::new().with_excl_tax(100.0);
+        let total = TotalPriceType::new().with_excl_tax(Decimal::from_f64(100.0).unwrap());
         let fixed = PriceType::new(Decimal::new(100, 1), false); // 10.0
         let energy = PriceType::new(Decimal::new(25, 2), false); // 0.25
         let charging_time = PriceType::new(Decimal::new(50, 1), false); // 5.0
@@ -474,11 +474,11 @@ mod tests {
     fn test_setter_methods() {
         let currency1 = "EUR".to_string();
         let type_of_cost1 = TariffCostEnumType::NormalCost;
-        let total1 = TotalPriceType::new().with_excl_tax(100.0);
+        let total1 = TotalPriceType::new().with_excl_tax(Decimal::from_f64(100.0).unwrap());
 
         let currency2 = "USD".to_string();
         let type_of_cost2 = TariffCostEnumType::MinCost;
-        let total2 = TotalPriceType::new().with_excl_tax(120.0);
+        let total2 = TotalPriceType::new().with_excl_tax(Decimal::from_f64(120.0).unwrap());
         let fixed = PriceType::new(Decimal::new(100, 1), false); // 10.0
         let energy = PriceType::new(Decimal::new(25, 2), false); // 0.25
         let charging_time = PriceType::new(Decimal::new(50, 1), false); // 5.0

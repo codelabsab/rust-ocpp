@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
+use rust_decimal::Decimal;
 
 use super::custom_data::CustomDataType;
 
@@ -8,7 +9,7 @@ use super::custom_data::CustomDataType;
 #[serde(rename_all = "camelCase")]
 pub struct TotalUsageType {
     /// Energy usage in kWh.
-    pub energy: f64,
+    pub energy: Decimal,
 
     /// Total duration of the charging session (including the duration of charging and not charging), in seconds.
     pub charging_time: i32,
@@ -27,7 +28,7 @@ pub struct TotalUsageType {
 
 impl TotalUsageType {
     /// Creates a new `TotalUsageType` with the required fields.
-    pub fn new(energy: f64, charging_time: i32, idle_time: i32) -> Self {
+    pub fn new(energy: Decimal, charging_time: i32, idle_time: i32) -> Self {
         Self {
             energy,
             charging_time,
@@ -38,12 +39,14 @@ impl TotalUsageType {
     }
 
     /// Gets the energy value.
-    pub fn energy(&self) -> f64 {
+    pub fn energy(&self) -> Decimal {
         self.energy
     }
 
     /// Sets the energy value.
-    pub fn set_energy(&mut self, energy: f64) -> &mut Self {
+    ///
+    /// Returns a mutable reference to self for method chaining.
+    pub fn set_energy(&mut self, energy: Decimal) -> &mut Self {
         self.energy = energy;
         self
     }
@@ -54,6 +57,8 @@ impl TotalUsageType {
     }
 
     /// Sets the charging time value.
+    ///
+    /// Returns a mutable reference to self for method chaining.
     pub fn set_charging_time(&mut self, charging_time: i32) -> &mut Self {
         self.charging_time = charging_time;
         self
@@ -65,6 +70,8 @@ impl TotalUsageType {
     }
 
     /// Sets the idle time value.
+    ///
+    /// Returns a mutable reference to self for method chaining.
     pub fn set_idle_time(&mut self, idle_time: i32) -> &mut Self {
         self.idle_time = idle_time;
         self
@@ -76,29 +83,37 @@ impl TotalUsageType {
     }
 
     /// Sets the reservation time value.
+    ///
+    /// Returns a mutable reference to self for method chaining.
     pub fn set_reservation_time(&mut self, reservation_time: Option<i32>) -> &mut Self {
         self.reservation_time = reservation_time;
         self
     }
 
-    /// Gets the custom data.
+    /// Gets a reference to the custom data, if present.
     pub fn custom_data(&self) -> Option<&CustomDataType> {
         self.custom_data.as_ref()
     }
 
     /// Sets the custom data.
+    ///
+    /// Returns a mutable reference to self for method chaining.
     pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
         self.custom_data = custom_data;
         self
     }
 
     /// Sets the reservation time value using the builder pattern.
+    ///
+    /// Returns the modified instance.
     pub fn with_reservation_time(mut self, reservation_time: i32) -> Self {
         self.reservation_time = Some(reservation_time);
         self
     }
 
     /// Sets the custom data using the builder pattern.
+    ///
+    /// Returns the modified instance.
     pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
         self.custom_data = Some(custom_data);
         self
@@ -111,7 +126,8 @@ mod tests {
 
     #[test]
     fn test_new_total_usage() {
-        let energy = 10.5;
+        // 10.5 as Decimal
+        let energy = Decimal::new(105, 1);
         let charging_time = 3600;
         let idle_time = 600;
 
@@ -126,7 +142,8 @@ mod tests {
 
     #[test]
     fn test_with_methods() {
-        let energy = 10.5;
+        // 10.5 as Decimal
+        let energy = Decimal::new(105, 1);
         let charging_time = 3600;
         let idle_time = 600;
         let reservation_time = 1800;
@@ -145,10 +162,12 @@ mod tests {
 
     #[test]
     fn test_setter_methods() {
-        let energy = 10.5;
+        // 10.5 as Decimal
+        let energy = Decimal::new(105, 1);
         let charging_time = 3600;
         let idle_time = 600;
-        let new_energy = 15.0;
+        // 15.0 as Decimal
+        let new_energy = Decimal::new(150, 1);
         let new_charging_time = 4800;
         let new_idle_time = 900;
         let reservation_time = 1800;

@@ -257,6 +257,8 @@ mod tests {
     use super::super::total_price::TotalPriceType;
     use super::*;
     use crate::v2_1::enumerations::TariffCostEnumType;
+    use rust_decimal::Decimal;
+    use rust_decimal::prelude::FromPrimitive;
     use validator::Validate;
     #[test]
     fn test_new_cost_details() {
@@ -272,7 +274,7 @@ mod tests {
             reservation_time: None,
             reservation_fixed: None,
             total: TotalPriceType {
-                excl_tax: Some(10.5),
+                excl_tax: Some(Decimal::new(105, 1)),
                 incl_tax: None,
                 custom_data: None,
             },
@@ -280,7 +282,7 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            energy: 20.0,
+            energy: Decimal::from_f64(20.0).unwrap(),
             charging_time: 3600,
             idle_time: 600,
             reservation_time: None,
@@ -295,7 +297,7 @@ mod tests {
 
         assert_eq!(cost_details.charging_periods().len(), 1);
         assert_eq!(cost_details.total_cost().currency, "EUR");
-        assert_eq!(cost_details.total_usage().energy, 20.0);
+        assert_eq!(cost_details.total_usage().energy, Decimal::from_f64(20.0).unwrap());
         assert_eq!(cost_details.failure_to_calculate(), None);
         assert_eq!(cost_details.failure_reason(), None);
         assert_eq!(cost_details.custom_data(), None);
@@ -315,7 +317,7 @@ mod tests {
             reservation_time: None,
             reservation_fixed: None,
             total: TotalPriceType {
-                excl_tax: Some(10.5),
+                excl_tax: Some(Decimal::new(105, 1)),
                 incl_tax: None,
                 custom_data: None,
             },
@@ -323,7 +325,7 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            energy: 20.0,
+            energy: Decimal::from_f64(20.0).unwrap(),
             charging_time: 3600,
             idle_time: 600,
             reservation_time: None,
@@ -343,7 +345,7 @@ mod tests {
 
         assert_eq!(cost_details.charging_periods().len(), 1);
         assert_eq!(cost_details.total_cost().currency, "EUR");
-        assert_eq!(cost_details.total_usage().energy, 20.0);
+        assert_eq!(cost_details.total_usage().energy, Decimal::from_f64(20.0).unwrap());
         assert_eq!(cost_details.failure_to_calculate(), Some(true));
         assert_eq!(cost_details.failure_reason(), Some("Calculation error"));
         assert_eq!(cost_details.custom_data(), Some(&custom_data));
@@ -366,7 +368,7 @@ mod tests {
             reservation_time: None,
             reservation_fixed: None,
             total: TotalPriceType {
-                excl_tax: Some(10.5),
+                excl_tax: Some(Decimal::new(105, 1)),
                 incl_tax: None,
                 custom_data: None,
             },
@@ -383,7 +385,7 @@ mod tests {
             reservation_time: None,
             reservation_fixed: None,
             total: TotalPriceType {
-                excl_tax: Some(12.0),
+                excl_tax: Some(rust_decimal_macros::dec!(12.0)),
                 incl_tax: None,
                 custom_data: None,
             },
@@ -391,7 +393,7 @@ mod tests {
         };
 
         let total_usage1 = TotalUsageType {
-            energy: 20.0,
+            energy: Decimal::from_f64(20.0).unwrap(),
             charging_time: 3600,
             idle_time: 600,
             reservation_time: None,
@@ -399,7 +401,7 @@ mod tests {
         };
 
         let total_usage2 = TotalUsageType {
-            energy: 25.0,
+            energy: Decimal::from_f64(25.0).unwrap(),
             charging_time: 3600,
             idle_time: 600,
             reservation_time: None,
@@ -424,7 +426,7 @@ mod tests {
 
         assert_eq!(cost_details.charging_periods().len(), 2);
         assert_eq!(cost_details.total_cost().currency, "USD");
-        assert_eq!(cost_details.total_usage().energy, 25.0);
+        assert_eq!(cost_details.total_usage().energy, Decimal::from_f64(25.0).unwrap());
         assert_eq!(cost_details.failure_to_calculate(), Some(true));
         assert_eq!(cost_details.failure_reason(), Some("Calculation error"));
         assert_eq!(cost_details.custom_data(), Some(&custom_data));
@@ -448,7 +450,7 @@ mod tests {
             currency: "EUR".to_string(),
             type_of_cost: TariffCostEnumType::NormalCost,
             total: TotalPriceType {
-                excl_tax: Some(10.5),
+                excl_tax: Some(Decimal::new(105, 1)),
                 incl_tax: None,
                 custom_data: None,
             },
@@ -462,7 +464,7 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            energy: 20.0,
+            energy: Decimal::from_f64(20.0).unwrap(),
             charging_time: 3600,
             idle_time: 600,
             reservation_time: None,
@@ -488,7 +490,7 @@ mod tests {
             currency: "EUR".to_string(),
             type_of_cost: TariffCostEnumType::NormalCost,
             total: TotalPriceType {
-                excl_tax: Some(10.5),
+                excl_tax: Some(Decimal::new(120, 1)),
                 incl_tax: None,
                 custom_data: None,
             },
@@ -502,7 +504,7 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            energy: 20.0,
+            energy: Decimal::from_f64(20.0).unwrap(),
             charging_time: 3600,
             idle_time: 600,
             reservation_time: None,
@@ -538,7 +540,7 @@ mod tests {
             currency: "EUR".to_string(),
             type_of_cost: TariffCostEnumType::NormalCost,
             total: TotalPriceType {
-                excl_tax: Some(10.5),
+                excl_tax: Some(Decimal::new(105, 1)),
                 incl_tax: None,
                 custom_data: None,
             },
@@ -552,7 +554,7 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            energy: 20.0,
+            energy: Decimal::from_f64(20.0).unwrap(),
             charging_time: 3600,
             idle_time: 600,
             reservation_time: None,
@@ -604,7 +606,7 @@ mod tests {
             currency: "EUR".to_string(),
             type_of_cost: TariffCostEnumType::NormalCost,
             total: TotalPriceType {
-                excl_tax: Some(10.5),
+                excl_tax: Some(Decimal::new(105, 1)),
                 incl_tax: None,
                 custom_data: None,
             },
@@ -618,7 +620,7 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            energy: 20.0,
+            energy: Decimal::new(20, 1),
             charging_time: 3600,
             idle_time: 600,
             reservation_time: None,
@@ -653,7 +655,7 @@ mod tests {
             currency: "USDX".to_string(), // Should fail validation - max length is 3
             type_of_cost: TariffCostEnumType::NormalCost,
             total: TotalPriceType {
-                excl_tax: Some(10.5),
+                excl_tax: Some(Decimal::new(105, 1)),
                 incl_tax: None,
                 custom_data: None,
             },
@@ -667,7 +669,7 @@ mod tests {
         };
 
         let total_usage = TotalUsageType {
-            energy: 20.0,
+            energy: Decimal::new(100, 2),
             charging_time: 3600,
             idle_time: 600,
             reservation_time: None,
