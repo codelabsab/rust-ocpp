@@ -278,9 +278,6 @@ mod tests {
                 custom_data: None,
             },
             custom_data: None,
-            cost: 10.5,
-            cost_excl_tax: None,
-            cost_incl_tax: None,
         };
 
         let total_usage = TotalUsageType {
@@ -324,9 +321,6 @@ mod tests {
                 custom_data: None,
             },
             custom_data: None,
-            cost: 10.5,
-            cost_excl_tax: None,
-            cost_incl_tax: None,
         };
 
         let total_usage = TotalUsageType {
@@ -378,9 +372,6 @@ mod tests {
                 custom_data: None,
             },
             custom_data: None,
-            cost: 10.5,
-            cost_excl_tax: None,
-            cost_incl_tax: None,
         };
 
         let total_cost2 = TotalCostType {
@@ -399,9 +390,6 @@ mod tests {
                 custom_data: None,
             },
             custom_data: None,
-            cost: 12.0,
-            cost_excl_tax: None,
-            cost_incl_tax: None,
         };
 
         let total_usage1 = TotalUsageType {
@@ -466,9 +454,6 @@ mod tests {
                 custom_data: None,
             },
             custom_data: None,
-            cost: 10.5,
-            cost_excl_tax: None,
-            cost_incl_tax: None,
             fixed: None,
             energy: None,
             charging_time: None,
@@ -509,9 +494,6 @@ mod tests {
                 custom_data: None,
             },
             custom_data: None,
-            cost: 10.5,
-            cost_excl_tax: None,
-            cost_incl_tax: None,
             fixed: None,
             energy: None,
             charging_time: None,
@@ -562,9 +544,6 @@ mod tests {
                 custom_data: None,
             },
             custom_data: None,
-            cost: 10.5,
-            cost_excl_tax: None,
-            cost_incl_tax: None,
             fixed: None,
             energy: None,
             charging_time: None,
@@ -631,9 +610,6 @@ mod tests {
                 custom_data: None,
             },
             custom_data: None,
-            cost: 10.5,
-            cost_excl_tax: None,
-            cost_incl_tax: None,
             fixed: None,
             energy: None,
             charging_time: None,
@@ -683,9 +659,6 @@ mod tests {
                 custom_data: None,
             },
             custom_data: None,
-            cost: 10.5,
-            cost_excl_tax: None,
-            cost_incl_tax: None,
             fixed: None,
             energy: None,
             charging_time: None,
