@@ -1,7 +1,7 @@
+use rust_decimal::prelude::FromPrimitive;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use rust_decimal::Decimal;
-use rust_decimal::prelude::FromPrimitive;
 
 use super::custom_data::CustomDataType;
 
@@ -89,7 +89,7 @@ mod tests {
     fn test_new() {
         let signal = 75;
         let power = Decimal::from_f64(-3000.0).unwrap();
-        
+
         let point = V2XSignalWattPointType::new(signal, power);
 
         assert_eq!(point.signal(), signal);
@@ -101,7 +101,7 @@ mod tests {
     fn test_new_with_f64_power() {
         let signal = 50;
         let power_f64 = -3000.0;
-        
+
         let point = V2XSignalWattPointType::new_with_f64_power(signal, power_f64);
 
         assert_eq!(point.signal(), signal);
@@ -114,9 +114,9 @@ mod tests {
         let signal = 75;
         let power = Decimal::from_f64(-3000.0).unwrap();
         let custom_data = CustomDataType::new("VendorX".to_string());
-        
-        let point = V2XSignalWattPointType::new(signal, power)
-            .with_custom_data(custom_data.clone());
+
+        let point =
+            V2XSignalWattPointType::new(signal, power).with_custom_data(custom_data.clone());
 
         assert_eq!(point.signal(), signal);
         assert_eq!(point.power(), power);
@@ -127,12 +127,12 @@ mod tests {
     fn test_setter_methods() {
         let initial_signal = 75;
         let initial_power = Decimal::from_f64(-3000.0).unwrap();
-        
+
         let new_signal = 80;
         let new_power = Decimal::from_f64(-2500.0).unwrap();
-        
+
         let custom_data = CustomDataType::new("VendorX".to_string());
-        
+
         let mut point = V2XSignalWattPointType::new(initial_signal, initial_power);
 
         point
@@ -143,23 +143,23 @@ mod tests {
         assert_eq!(point.signal(), new_signal);
         assert_eq!(point.power(), new_power);
         assert_eq!(point.custom_data(), Some(&custom_data));
-        
+
         // Test clearing optional fields
         point.set_custom_data(None);
-        
+
         assert_eq!(point.custom_data(), None);
     }
-    
+
     #[test]
     fn test_serialization() {
         let signal = 75;
         let power = Decimal::from_f64(-3000.0).unwrap();
-        
+
         let point = V2XSignalWattPointType::new(signal, power);
-        
+
         let json = serde_json::to_string(&point).unwrap();
         let deserialized: V2XSignalWattPointType = serde_json::from_str(&json).unwrap();
-        
+
         assert_eq!(deserialized, point);
     }
 }
