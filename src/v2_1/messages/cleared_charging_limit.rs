@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::CustomDataType;
-use crate::v2_1::enumerations::ChargingLimitSourceEnumType;
+use crate::v2_1::datatypes::custom_data::CustomDataType;
+use crate::v2_1::enumerations::charging_limit_source::ChargingLimitSourceEnumType;
 
 /// Request to notify that a charging limit has been cleared.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

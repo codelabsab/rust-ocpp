@@ -2,18 +2,8 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::CustomDataType;
-
-/// This contains the current status of the Connector.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub enum ConnectorStatusEnumType {
-    Available,
-    Occupied,
-    Reserved,
-    Unavailable,
-    Faulted,
-}
+use crate::v2_1::datatypes::custom_data::CustomDataType;
+use crate::v2_1::enumerations::connector_status::ConnectorStatusEnumType;
 
 /// Request to notify the CSMS about a status change of a connector.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
@@ -45,4 +35,46 @@ pub struct StatusNotificationResponse {
     /// Optional. Custom data specific to this class.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub custom_data: Option<CustomDataType>,
+}
+
+impl StatusNotificationRequest {
+    /// Creates a new `StatusNotificationRequest` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `timestamp` - The time for which the status is reported
+    /// * `connector_status` - The current status of the Connector
+    /// * `evse_id` - The id of the EVSE to which the connector belongs
+    /// * `connector_id` - The id of the connector within the EVSE
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `StatusNotificationRequest` with optional fields set to `None`
+    pub fn new(
+        timestamp: DateTime<Utc>,
+        connector_status: ConnectorStatusEnumType,
+        evse_id: i32,
+        connector_id: i32,
+    ) -> Self {
+        Self {
+            custom_data: None,
+            timestamp,
+            connector_status,
+            evse_id,
+            connector_id,
+        }
+    }
+}
+
+impl StatusNotificationResponse {
+    /// Creates a new `StatusNotificationResponse`.
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `StatusNotificationResponse` with optional fields set to `None`
+    pub fn new() -> Self {
+        Self {
+            custom_data: None,
+        }
+    }
 }

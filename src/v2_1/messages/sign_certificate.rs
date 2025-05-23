@@ -1,24 +1,13 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CertificateHashDataType, CustomDataType, StatusInfoType};
-
-/// Indicates the type of certificate that is to be signed.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub enum CertificateSigningUseEnumType {
-    ChargingStationCertificate,
-    V2GCertificate,
-    V2G20Certificate,
-}
-
-/// Specifies whether the CSMS can process the request.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub enum GenericStatusEnumType {
-    Accepted,
-    Rejected,
-}
+use crate::v2_1::datatypes::{
+    certificate_hash_data::CertificateHashDataType, custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::{
+    certificate_signing_use::CertificateSigningUseEnumType, generic_status::GenericStatusEnumType,
+};
 
 /// Request to sign a certificate.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
@@ -60,4 +49,44 @@ pub struct SignCertificateResponse {
     /// Optional. Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,
+}
+
+impl SignCertificateRequest {
+    /// Creates a new `SignCertificateRequest` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `csr` - The Certificate Signing Request (CSR) as described in RFC 2986 and then PEM encoded
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `SignCertificateRequest` with optional fields set to `None`
+    pub fn new(csr: String) -> Self {
+        Self {
+            custom_data: None,
+            csr,
+            certificate_type: None,
+            hash_root_certificate: None,
+            request_id: None,
+        }
+    }
+}
+
+impl SignCertificateResponse {
+    /// Creates a new `SignCertificateResponse` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `status` - Returns whether the CSMS can process the request
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `SignCertificateResponse` with optional fields set to `None`
+    pub fn new(status: GenericStatusEnumType) -> Self {
+        Self {
+            custom_data: None,
+            status,
+            status_info: None,
+        }
+    }
 }

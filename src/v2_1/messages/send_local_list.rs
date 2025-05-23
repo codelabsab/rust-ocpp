@@ -2,17 +2,9 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::{
-    datatypes::{AuthorizationData, CustomDataType, StatusInfoType},
-    enumerations::SendLocalListStatusEnumType,
+    datatypes::{authorization_data::AuthorizationData, custom_data::CustomDataType, status_info::StatusInfoType},
+    enumerations::{send_local_list_status::SendLocalListStatusEnumType, update::UpdateEnumType},
 };
-
-/// Enumeration for the type of update in a SendLocalListRequest.
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub enum UpdateEnumType {
-    Differential,
-    Full,
-}
 
 /// Request to send a local authorization list to the Charging Station.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -51,4 +43,44 @@ pub struct SendLocalListResponse {
     /// Optional. Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,
+}
+
+impl SendLocalListRequest {
+    /// Creates a new `SendLocalListRequest` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `version_number` - Version number of the list
+    /// * `update_type` - Type of update (full or differential)
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `SendLocalListRequest` with optional fields set to `None`
+    pub fn new(version_number: i32, update_type: UpdateEnumType) -> Self {
+        Self {
+            custom_data: None,
+            local_authorization_list: None,
+            version_number,
+            update_type,
+        }
+    }
+}
+
+impl SendLocalListResponse {
+    /// Creates a new `SendLocalListResponse` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `status` - Indicates whether the Charging Station has successfully received and applied the update
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `SendLocalListResponse` with optional fields set to `None`
+    pub fn new(status: SendLocalListStatusEnumType) -> Self {
+        Self {
+            custom_data: None,
+            status,
+            status_info: None,
+        }
+    }
 }

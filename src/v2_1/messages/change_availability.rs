@@ -1,26 +1,15 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
-use crate::v2_1::enumerations::{ChangeAvailabilityStatusEnumType, OperationalStatusEnumType};
-
-/// Electric Vehicle Supply Equipment
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct EVSEType {
-    /// EVSE Identifier. This contains a number (> 0) designating an EVSE of the Charging Station.
-    #[validate(range(min = 0))]
-    pub id: i32,
-
-    /// Optional. An id to designate a specific connector (on an EVSE) by connector index number.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(range(min = 0))]
-    pub connector_id: Option<i32>,
-
-    /// Optional. Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-}
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+    evse::EVSEType,
+};
+use crate::v2_1::enumerations::{
+    change_availability_status::ChangeAvailabilityStatusEnumType,
+    operational_status::OperationalStatusEnumType,
+};
 
 /// Request to change the availability of a Charging Station.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

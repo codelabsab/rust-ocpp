@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::{CustomDataType, StatusInfoType},
-    enumerations::DataTransferStatusEnumType,
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
 };
+use crate::v2_1::enumerations::data_transfer_status::DataTransferStatusEnumType;
 
 /// Request to transfer vendor-specific data between Charging Station and CSMS.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

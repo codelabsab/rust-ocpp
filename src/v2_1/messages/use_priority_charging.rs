@@ -1,22 +1,29 @@
-use super::{CustomData, PriorityChargingStatusEnum, StatusInfo};
+use serde::{Deserialize, Serialize};
+use validator::Validate;
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::priority_charging_status::PriorityChargingStatusEnumType;
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct UsePriorityChargingRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomData>,
+    pub custom_data: Option<CustomDataType>,
     pub transaction_id: String,
     pub activate: bool,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct UsePriorityChargingResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomData>,
-    pub status: PriorityChargingStatusEnum,
+    pub custom_data: Option<CustomDataType>,
+    pub status: PriorityChargingStatusEnumType,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfo>,
+    pub status_info: Option<StatusInfoType>,
 }
 
 impl UsePriorityChargingRequest {
@@ -30,7 +37,7 @@ impl UsePriorityChargingRequest {
 }
 
 impl UsePriorityChargingResponse {
-    pub fn new(status: PriorityChargingStatusEnum) -> Self {
+    pub fn new(status: PriorityChargingStatusEnumType) -> Self {
         Self {
             custom_data: None,
             status,

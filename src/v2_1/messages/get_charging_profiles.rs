@@ -1,10 +1,12 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::{ChargingProfileCriterionType, CustomDataType, StatusInfoType},
-    enumerations::GetChargingProfileStatusEnumType,
+use crate::v2_1::datatypes::{
+    charging_profile_criterion::ChargingProfileCriterionType,
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
 };
+use crate::v2_1::enumerations::get_charging_profile_status::GetChargingProfileStatusEnumType;
 
 /// Request to get the charging profiles installed on a Charging Station.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

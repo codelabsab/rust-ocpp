@@ -1,7 +1,11 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{ChargingLimitType, ChargingScheduleType, CustomDataType};
+use crate::v2_1::datatypes::{
+    charging_limit::ChargingLimitType,
+    charging_schedule::ChargingScheduleType,
+    custom_data::CustomDataType,
+};
 
 /// Request to notify the CSMS about charging limits that are set by an external system on the Charging Station.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

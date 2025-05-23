@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
-use crate::v2_1::enumerations::ClearCacheStatusEnumType;
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::clear_cache_status::ClearCacheStatusEnumType;
 
 /// Request to clear the charging station's cache.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

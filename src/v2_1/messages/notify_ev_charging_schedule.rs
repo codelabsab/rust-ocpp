@@ -2,8 +2,12 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{ChargingScheduleType, CustomDataType, StatusInfoType};
-use crate::v2_1::enumerations::GenericStatusEnumType;
+use crate::v2_1::datatypes::{
+    charging_schedule::ChargingScheduleType,
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::generic_status::GenericStatusEnumType;
 
 /// Request to notify the CSMS about an EV charging schedule.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

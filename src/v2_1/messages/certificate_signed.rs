@@ -1,8 +1,14 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
-use crate::v2_1::enumerations::{CertificateSignedStatusEnumType, CertificateSigningUseEnumType};
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::{
+    certificate_signed_status::CertificateSignedStatusEnumType,
+    certificate_signing_use::CertificateSigningUseEnumType,
+};
 
 /// Request to inform the Charging Station about the result of a certificate signing operation.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

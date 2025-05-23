@@ -1,9 +1,13 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::{CustomDataType, StatusInfoType},
-    enumerations::{GenericDeviceModelStatusEnumType, ReportBaseEnumType},
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::{
+    generic_device_model_status::GenericDeviceModelStatusEnumType,
+    report_base::ReportBaseEnumType,
 };
 
 /// Request to get a base report from the Charging Station.

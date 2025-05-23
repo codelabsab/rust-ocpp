@@ -1,8 +1,12 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, OCSPRequestDataType, StatusInfoType};
-use crate::v2_1::enumerations::GetCertificateStatusEnumType;
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    ocsp_request_data::OCSPRequestDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::get_certificate_status::GetCertificateStatusEnumType;
 
 /// Request to get the status of a certificate.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

@@ -1,8 +1,11 @@
 //! LogStatusNotification
-use crate::v2_1::datatypes::CustomDataType;
-use crate::v2_1::datatypes::StatusInfoType;
-use crate::v2_1::enumerations::upload_log_status::UploadLogStatusEnumType;
 use validator::Validate;
+
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::upload_log_status::UploadLogStatusEnumType;
 
 /// LogStatusNotificationRequest, sent by the Charging Station to the CSMS.
 #[derive(serde::Serialize, serde::Deserialize, Validate, Debug, Clone, PartialEq, Default)]

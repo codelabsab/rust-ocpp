@@ -2,8 +2,15 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{ComponentType, CustomDataType, VariableType};
-use crate::v2_1::enumerations::{EventNotificationEnumType, EventTriggerEnumType};
+use crate::v2_1::datatypes::{
+    component::ComponentType,
+    custom_data::CustomDataType,
+    variable::VariableType,
+};
+use crate::v2_1::enumerations::{
+    event_notification::EventNotificationEnumType,
+    event_trigger::EventTriggerEnumType,
+};
 
 /// Class to report an event notification for a component-variable.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

@@ -1,10 +1,13 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::{CertificateHashDataType, CustomDataType, IdTokenType, StatusInfoType},
-    enumerations::CustomerInformationStatusEnumType,
+use crate::v2_1::datatypes::{
+    certificate_hash_data::CertificateHashDataType,
+    custom_data::CustomDataType,
+    id_token::IdTokenType,
+    status_info::StatusInfoType,
 };
+use crate::v2_1::enumerations::customer_information_status::CustomerInformationStatusEnumType;
 
 /// Request to get or clear customer information.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

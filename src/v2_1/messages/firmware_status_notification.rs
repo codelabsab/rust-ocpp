@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::CustomDataType;
-use crate::v2_1::enumerations::FirmwareStatusEnumType;
+use crate::v2_1::datatypes::custom_data::CustomDataType;
+use crate::v2_1::enumerations::firmware_status::FirmwareStatusEnumType;
 
 /// Request to notify the CSMS of the status of a firmware update.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

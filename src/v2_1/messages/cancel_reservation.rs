@@ -1,8 +1,8 @@
-use super::super::datatypes::CustomDataType;
-use super::super::datatypes::StatusInfoType;
-use super::super::enumerations::CancelReservationStatusEnumType;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
+
+use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
+use crate::v2_1::enumerations::CancelReservationStatusEnumType;
 
 /// Request to cancel a reservation.
 ///

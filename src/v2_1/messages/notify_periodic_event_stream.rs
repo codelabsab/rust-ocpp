@@ -2,23 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::CustomDataType;
-
-/// Contains stream data element information.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct StreamDataElementType {
-    /// Required. Offset relative to basetime of this message. basetime + t is timestamp of recorded value.
-    pub t: f64,
-
-    /// Required. Value of the monitored variable.
-    #[validate(length(max = 2500))]
-    pub v: String,
-
-    /// Optional. Custom data specific to this class.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-}
+use crate::v2_1::datatypes::{CustomDataType, StreamDataElementType};
 
 /// Request to notify the CSMS about periodic event stream data.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

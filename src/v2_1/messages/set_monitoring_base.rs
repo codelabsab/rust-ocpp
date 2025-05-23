@@ -2,8 +2,11 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::{
-    datatypes::{CustomDataType, StatusInfoType},
-    enumerations::{GenericDeviceModelStatusEnumType, MonitoringBaseEnumType},
+    datatypes::{custom_data::CustomDataType, status_info::StatusInfoType},
+    enumerations::{
+        generic_device_model_status::GenericDeviceModelStatusEnumType,
+        monitoring_base::MonitoringBaseEnumType,
+    },
 };
 
 /// Request to set the monitoring base at the Charging Station.
@@ -32,4 +35,41 @@ pub struct SetMonitoringBaseResponse {
     /// Optional. Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,
+}
+
+impl SetMonitoringBaseRequest {
+    /// Creates a new `SetMonitoringBaseRequest` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `monitoring_base` - Specify which monitoring base will be set
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `SetMonitoringBaseRequest` with optional fields set to `None`
+    pub fn new(monitoring_base: MonitoringBaseEnumType) -> Self {
+        Self {
+            custom_data: None,
+            monitoring_base,
+        }
+    }
+}
+
+impl SetMonitoringBaseResponse {
+    /// Creates a new `SetMonitoringBaseResponse` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `status` - Indicates whether the Charging Station was able to accept the request
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `SetMonitoringBaseResponse` with optional fields set to `None`
+    pub fn new(status: GenericDeviceModelStatusEnumType) -> Self {
+        Self {
+            custom_data: None,
+            status,
+            status_info: None,
+        }
+    }
 }

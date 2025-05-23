@@ -2,26 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{ComponentType, CustomDataType, VariableMonitoringType, VariableType};
-
-/// Class to hold parameters of SetVariableMonitoring request.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct MonitoringDataType {
-    /// Required. Component for which monitoring is configured.
-    pub component: ComponentType,
-
-    /// Required. Variable for which monitoring is configured.
-    pub variable: VariableType,
-
-    /// Required. List of configured monitoring settings.
-    #[validate(length(min = 1))]
-    pub variable_monitoring: Vec<VariableMonitoringType>,
-
-    /// Optional. Custom data specific to this class.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-}
+use crate::v2_1::datatypes::{CustomDataType, MonitoringDataType};
 
 /// Request to notify the CSMS about monitoring events.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

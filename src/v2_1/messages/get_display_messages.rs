@@ -1,11 +1,14 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::{CustomDataType, StatusInfoType},
-    enumerations::{
-        GetDisplayMessagesStatusEnumType, MessagePriorityEnumType, MessageStateEnumType,
-    },
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::{
+    get_display_messages_status::GetDisplayMessagesStatusEnumType,
+    message_priority::MessagePriorityEnumType,
+    message_state::MessageStateEnumType,
 };
 
 /// Request to get the display messages from a Charging Station.

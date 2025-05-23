@@ -1,11 +1,12 @@
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::{CustomDataType, IdTokenType, BatteryDataType},
-    enumerations::BatterySwapEventEnumType,
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    id_token::IdTokenType,
+    battery_data::BatteryDataType,
 };
+use crate::v2_1::enumerations::battery_swap_event::BatterySwapEventEnumType;
 
 /// Request body for the BatterySwap request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]

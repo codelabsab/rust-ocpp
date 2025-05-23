@@ -1,25 +1,8 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
-
-/// The type of reset that the Charging Station or EVSE should perform.
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub enum ResetEnumType {
-    Immediate,
-    OnIdle,
-    ImmediateAndResume,
-}
-
-/// The status indicating whether the Charging Station is able to perform the reset.
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub enum ResetStatusEnumType {
-    Accepted,
-    Rejected,
-    Scheduled,
-}
+use crate::v2_1::datatypes::{custom_data::CustomDataType, status_info::StatusInfoType};
+use crate::v2_1::enumerations::{reset::ResetEnumType, reset_status::ResetStatusEnumType};
 
 /// Request body for the Reset request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
@@ -53,4 +36,42 @@ pub struct ResetResponse {
     /// Optional. Element providing more information about the status.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,
+}
+
+impl ResetRequest {
+    /// Creates a new `ResetRequest` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `reset_type` - The type of reset that the Charging Station or EVSE should perform
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `ResetRequest` with optional fields set to `None`
+    pub fn new(reset_type: ResetEnumType) -> Self {
+        Self {
+            custom_data: None,
+            reset_type,
+            evse_id: None,
+        }
+    }
+}
+
+impl ResetResponse {
+    /// Creates a new `ResetResponse` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `status` - Indicates whether the Charging Station is able to perform the reset
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `ResetResponse` with optional fields set to `None`
+    pub fn new(status: ResetStatusEnumType) -> Self {
+        Self {
+            custom_data: None,
+            status,
+            status_info: None,
+        }
+    }
 }

@@ -1,30 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
-use crate::v2_1::enumerations::TariffClearStatusEnumType;
-
-/// Result of clearing a specific tariff.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct ClearTariffsResultType {
-    /// Optional. Detailed status information.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status_info: Option<StatusInfoType>,
-
-    /// Optional. Id of tariff for which status is reported.
-    /// If no tariffs were found, then this field is absent, and status will be NoTariff.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(length(max = 60))]
-    pub tariff_id: Option<String>,
-
-    /// Required. Status indicating whether the Charging Station was able to clear the tariff.
-    pub status: TariffClearStatusEnumType,
-
-    /// Optional. Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-}
+use crate::v2_1::datatypes::{CustomDataType, ClearTariffsResultType};
 
 /// Request to clear tariffs from a charging station.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

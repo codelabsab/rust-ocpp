@@ -2,7 +2,9 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    CertificateStatusRequestInfoType, CertificateStatusType, CustomDataType,
+    certificate_status_request_info::CertificateStatusRequestInfoType,
+    certificate_status::CertificateStatusType,
+    custom_data::CustomDataType,
 };
 
 /// Request to get the status of a certificate chain.

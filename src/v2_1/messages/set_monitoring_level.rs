@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::{
-    datatypes::{CustomDataType, StatusInfoType},
-    enumerations::GenericStatusEnumType,
+    datatypes::{custom_data::CustomDataType, status_info::StatusInfoType},
+    enumerations::generic_status::GenericStatusEnumType,
 };
 
 /// Request to set the monitoring level at the Charging Station.
@@ -34,4 +34,41 @@ pub struct SetMonitoringLevelResponse {
     /// Optional. Detailed status information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status_info: Option<StatusInfoType>,
+}
+
+impl SetMonitoringLevelRequest {
+    /// Creates a new `SetMonitoringLevelRequest` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `severity` - The severity level to set
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `SetMonitoringLevelRequest` with optional fields set to `None`
+    pub fn new(severity: i32) -> Self {
+        Self {
+            custom_data: None,
+            severity,
+        }
+    }
+}
+
+impl SetMonitoringLevelResponse {
+    /// Creates a new `SetMonitoringLevelResponse` with required fields.
+    ///
+    /// # Arguments
+    ///
+    /// * `status` - Indicates whether the Charging Station was able to accept the request
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `SetMonitoringLevelResponse` with optional fields set to `None`
+    pub fn new(status: GenericStatusEnumType) -> Self {
+        Self {
+            custom_data: None,
+            status,
+            status_info: None,
+        }
+    }
 }

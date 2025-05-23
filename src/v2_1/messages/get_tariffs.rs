@@ -1,8 +1,12 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, StatusInfoType, TariffAssignmentType};
-use crate::v2_1::enumerations::TariffGetStatusEnumType;
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+    tariff_assignment::TariffAssignmentType,
+};
+use crate::v2_1::enumerations::tariff_get_status::TariffGetStatusEnumType;
 
 /// Request to get tariff information from a Charging Station.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

@@ -1,9 +1,13 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::{CustomDataType, StatusInfoType},
-    enumerations::{EnergyTransferModeEnumType, NotifyAllowedEnergyTransferStatusEnumType},
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::{
+    energy_transfer_mode::EnergyTransferModeEnumType,
+    notify_allowed_energy_transfer_status::NotifyAllowedEnergyTransferStatusEnumType,
 };
 
 /// Request to notify the Charging Station about the allowed energy transfer modes.

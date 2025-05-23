@@ -1,9 +1,14 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::{CertificateHashDataChainType, CustomDataType, StatusInfoType},
-    enumerations::{GetCertificateIdUseEnumType, GetInstalledCertificateStatusEnumType},
+use crate::v2_1::datatypes::{
+    certificate_hash_data_chain::CertificateHashDataChainType,
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::{
+    get_certificate_id_use::GetCertificateIdUseEnumType,
+    get_installed_certificate_status::GetInstalledCertificateStatusEnumType,
 };
 
 /// Request to get the installed certificate IDs from a Charging Station.

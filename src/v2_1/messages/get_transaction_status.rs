@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::CustomDataType;
+use crate::v2_1::datatypes::custom_data::CustomDataType;
 
 /// Request to get the status of a transaction.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]

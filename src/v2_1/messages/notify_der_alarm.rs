@@ -2,9 +2,10 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::CustomDataType,
-    enumerations::{DERControlEnumType, GridEventFaultEnumType},
+use crate::v2_1::datatypes::custom_data::CustomDataType;
+use crate::v2_1::enumerations::{
+    der_control::DERControlEnumType,
+    grid_event_fault::GridEventFaultEnumType,
 };
 
 /// Request to notify the CSMS about a DER alarm.

@@ -3,7 +3,7 @@ use validator::Validate;
 
 use crate::v2_1::{
     datatypes::{CustomDataType, IdTokenInfoType, IdTokenType, TariffType, OCSPRequestDataType},
-    enumerations::{AuthorizeCertificateStatusEnumType, EnergyTransferModeEnumType, HashAlgorithmEnumType},
+    enumerations::{AuthorizeCertificateStatusEnumType, EnergyTransferModeEnumType},
 };
 
 /// Request to start a transaction with the given idToken.

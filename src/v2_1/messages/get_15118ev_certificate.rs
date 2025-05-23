@@ -1,9 +1,13 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::{CustomDataType, StatusInfoType},
-    enumerations::{CertificateActionEnumType, Iso15118EVCertificateStatusEnumType},
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+};
+use crate::v2_1::enumerations::{
+    certificate_action::CertificateActionEnumType,
+    iso15118ev_certificate_status::Iso15118EVCertificateStatusEnumType,
 };
 
 /// Request to get the ISO 15118 certificate for an EV.

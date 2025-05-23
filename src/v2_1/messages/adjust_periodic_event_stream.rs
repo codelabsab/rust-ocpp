@@ -1,10 +1,12 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::{
-    datatypes::{CustomDataType, StatusInfoType, PeriodicEventStreamParamsType},
-    enumerations::GenericStatusEnumType,
+use crate::v2_1::datatypes::{
+    custom_data::CustomDataType,
+    status_info::StatusInfoType,
+    periodic_event_stream_params::PeriodicEventStreamParamsType,
 };
+use crate::v2_1::enumerations::generic_status::GenericStatusEnumType;
 
 /// Request body for the AdjustPeriodicEventStream request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]

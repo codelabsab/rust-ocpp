@@ -1,16 +1,15 @@
-use chrono::DateTime;
-use chrono::Utc;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use super::CustomData;
+use crate::v2_1::datatypes::custom_data::CustomDataType;
 
 /// Request message for NotifyDERStartStop.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyDERStartStopRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomData>,
+    pub custom_data: Option<CustomDataType>,
 
     /// Id of the started or stopped DER control.
     /// Corresponds to the _controlId_ of the SetDERControlRequest.
@@ -34,5 +33,5 @@ pub struct NotifyDERStartStopRequest {
 #[serde(rename_all = "camelCase")]
 pub struct NotifyDERStartStopResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomData>,
+    pub custom_data: Option<CustomDataType>,
 }
