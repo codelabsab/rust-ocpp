@@ -3,8 +3,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    charging_schedule::ChargingScheduleType,
-    custom_data::CustomDataType,
+    charging_schedule::ChargingScheduleType, custom_data::CustomDataType,
     status_info::StatusInfoType,
 };
 use crate::v2_1::enumerations::generic_status::GenericStatusEnumType;

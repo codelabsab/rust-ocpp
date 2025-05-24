@@ -9,8 +9,7 @@ use crate::v2_1::{
         transaction_limit::TransactionLimitType,
     },
     enumerations::{
-        transaction_event::TransactionEventEnumType,
-        trigger_reason::TriggerReasonEnumType,
+        transaction_event::TransactionEventEnumType, trigger_reason::TriggerReasonEnumType,
     },
 };
 

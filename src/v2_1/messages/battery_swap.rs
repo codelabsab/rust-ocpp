@@ -2,9 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    id_token::IdTokenType,
-    battery_data::BatteryDataType,
+    battery_data::BatteryDataType, custom_data::CustomDataType, id_token::IdTokenType,
 };
 use crate::v2_1::enumerations::battery_swap_event::BatterySwapEventEnumType;
 

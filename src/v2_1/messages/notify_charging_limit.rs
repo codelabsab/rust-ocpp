@@ -2,8 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    charging_limit::ChargingLimitType,
-    charging_schedule::ChargingScheduleType,
+    charging_limit::ChargingLimitType, charging_schedule::ChargingScheduleType,
     custom_data::CustomDataType,
 };
 

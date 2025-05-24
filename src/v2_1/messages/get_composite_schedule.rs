@@ -2,13 +2,11 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    composite_schedule::CompositeScheduleType,
-    custom_data::CustomDataType,
+    composite_schedule::CompositeScheduleType, custom_data::CustomDataType,
     status_info::StatusInfoType,
 };
 use crate::v2_1::enumerations::{
-    charging_rate_unit::ChargingRateUnitEnumType,
-    generic_status::GenericStatusEnumType,
+    charging_rate_unit::ChargingRateUnitEnumType, generic_status::GenericStatusEnumType,
 };
 
 /// Request to get a composite charging schedule from a Charging Station.

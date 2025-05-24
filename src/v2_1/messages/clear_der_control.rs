@@ -1,14 +1,8 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    status_info::StatusInfoType,
-};
-use crate::v2_1::enumerations::der_control::{
-    DERControlEnumType,
-    DERControlStatusEnumType,
-};
+use crate::v2_1::datatypes::{custom_data::CustomDataType, status_info::StatusInfoType};
+use crate::v2_1::enumerations::der_control::{DERControlEnumType, DERControlStatusEnumType};
 
 /// Request to clear DER control settings.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

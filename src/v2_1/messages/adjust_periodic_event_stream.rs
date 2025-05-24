@@ -2,9 +2,8 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
+    custom_data::CustomDataType, periodic_event_stream_params::PeriodicEventStreamParamsType,
     status_info::StatusInfoType,
-    periodic_event_stream_params::PeriodicEventStreamParamsType,
 };
 use crate::v2_1::enumerations::generic_status::GenericStatusEnumType;
 

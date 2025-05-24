@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::{
-    datatypes::{CustomDataType, IdTokenInfoType, IdTokenType, TariffType, OCSPRequestDataType},
+    datatypes::{CustomDataType, IdTokenInfoType, IdTokenType, OCSPRequestDataType, TariffType},
     enumerations::{AuthorizeCertificateStatusEnumType, EnergyTransferModeEnumType},
 };
 

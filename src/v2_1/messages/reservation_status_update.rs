@@ -41,7 +41,10 @@ impl ReservationStatusUpdateRequest {
     /// # Returns
     ///
     /// A new instance of `ReservationStatusUpdateRequest` with optional fields set to `None`
-    pub fn new(reservation_id: i32, reservation_update_status: ReservationUpdateStatusEnumType) -> Self {
+    pub fn new(
+        reservation_id: i32,
+        reservation_update_status: ReservationUpdateStatusEnumType,
+    ) -> Self {
         Self {
             custom_data: None,
             reservation_id,
@@ -57,8 +60,6 @@ impl ReservationStatusUpdateResponse {
     ///
     /// A new instance of `ReservationStatusUpdateResponse` with optional fields set to `None`
     pub fn new() -> Self {
-        Self {
-            custom_data: None,
-        }
+        Self { custom_data: None }
     }
 }

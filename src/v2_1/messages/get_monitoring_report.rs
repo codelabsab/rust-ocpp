@@ -2,8 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    component_variable::ComponentVariableType,
-    custom_data::CustomDataType,
+    component_variable::ComponentVariableType, custom_data::CustomDataType,
     status_info::StatusInfoType,
 };
 use crate::v2_1::enumerations::{

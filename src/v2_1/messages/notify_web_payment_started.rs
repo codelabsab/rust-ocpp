@@ -55,8 +55,6 @@ impl NotifyWebPaymentStartedResponse {
     ///
     /// A new instance of `NotifyWebPaymentStartedResponse` with optional fields set to `None`
     pub fn new() -> Self {
-        Self {
-            custom_data: None,
-        }
+        Self { custom_data: None }
     }
 }

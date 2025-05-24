@@ -2,8 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    constant_stream_data::ConstantStreamDataType,
-    custom_data::CustomDataType,
+    constant_stream_data::ConstantStreamDataType, custom_data::CustomDataType,
 };
 
 /// Request to get information about periodic event streams.

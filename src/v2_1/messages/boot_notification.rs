@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::{
-    datatypes::{CustomDataType, StatusInfoType, ChargingStationType},
+    datatypes::{ChargingStationType, CustomDataType, StatusInfoType},
     enumerations::{BootReasonEnumType, RegistrationStatusEnumType},
 };
 

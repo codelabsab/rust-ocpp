@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, ClearMonitoringResultType};
+use crate::v2_1::datatypes::{ClearMonitoringResultType, CustomDataType};
 
 /// Request to clear variable monitoring settings.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

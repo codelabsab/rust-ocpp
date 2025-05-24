@@ -2,10 +2,8 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    certificate_hash_data::CertificateHashDataType,
-    custom_data::CustomDataType,
-    id_token::IdTokenType,
-    status_info::StatusInfoType,
+    certificate_hash_data::CertificateHashDataType, custom_data::CustomDataType,
+    id_token::IdTokenType, status_info::StatusInfoType,
 };
 use crate::v2_1::enumerations::customer_information_status::CustomerInformationStatusEnumType;
 

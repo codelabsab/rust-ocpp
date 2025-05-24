@@ -2,9 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    firmware::FirmwareType,
-    status_info::StatusInfoType,
+    custom_data::CustomDataType, firmware::FirmwareType, status_info::StatusInfoType,
 };
 use crate::v2_1::enumerations::update_firmware_status::UpdateFirmwareStatusEnumType;
 

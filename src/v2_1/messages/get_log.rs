@@ -2,14 +2,9 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    log_parameters::LogParametersType,
-    status_info::StatusInfoType,
+    custom_data::CustomDataType, log_parameters::LogParametersType, status_info::StatusInfoType,
 };
-use crate::v2_1::enumerations::{
-    log::LogEnumType,
-    log_status::LogStatusEnumType,
-};
+use crate::v2_1::enumerations::{log::LogEnumType, log_status::LogStatusEnumType};
 
 /// Request to get logging information from a Charging Station.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

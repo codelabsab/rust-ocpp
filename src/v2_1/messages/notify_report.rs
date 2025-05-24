@@ -72,8 +72,6 @@ impl NotifyReportResponse {
     ///
     /// A new instance of `NotifyReportResponse` with optional fields set to `None`
     pub fn new() -> Self {
-        Self {
-            custom_data: None,
-        }
+        Self { custom_data: None }
     }
 }

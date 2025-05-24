@@ -2,9 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    status_info::StatusInfoType,
-    evse::EVSEType,
+    custom_data::CustomDataType, evse::EVSEType, status_info::StatusInfoType,
 };
 use crate::v2_1::enumerations::{
     change_availability_status::ChangeAvailabilityStatusEnumType,

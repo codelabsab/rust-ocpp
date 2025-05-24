@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{CustomDataType, ClearTariffsResultType};
+use crate::v2_1::datatypes::{ClearTariffsResultType, CustomDataType};
 
 /// Request to clear tariffs from a charging station.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]

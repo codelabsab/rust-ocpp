@@ -2,10 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    status_info::StatusInfoType,
-};
+use crate::v2_1::datatypes::{custom_data::CustomDataType, status_info::StatusInfoType};
 use crate::v2_1::enumerations::generic_status::GenericStatusEnumType;
 
 /// Request body for the AFRRSignal request.

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::{
-    datatypes::{CustomDataType, StatusInfoType, ClearChargingProfileType},
+    datatypes::{ClearChargingProfileType, CustomDataType, StatusInfoType},
     enumerations::ClearChargingProfileStatusEnumType,
 };
 

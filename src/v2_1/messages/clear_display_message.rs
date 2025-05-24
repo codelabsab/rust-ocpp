@@ -1,10 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    status_info::StatusInfoType,
-};
+use crate::v2_1::datatypes::{custom_data::CustomDataType, status_info::StatusInfoType};
 use crate::v2_1::enumerations::clear_message_status::ClearMessageStatusEnumType;
 
 /// Request to clear a message from the charging station's display.

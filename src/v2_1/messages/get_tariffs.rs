@@ -2,8 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    status_info::StatusInfoType,
+    custom_data::CustomDataType, status_info::StatusInfoType,
     tariff_assignment::TariffAssignmentType,
 };
 use crate::v2_1::enumerations::tariff_get_status::TariffGetStatusEnumType;

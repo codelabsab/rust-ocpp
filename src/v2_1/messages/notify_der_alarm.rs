@@ -4,8 +4,7 @@ use validator::Validate;
 
 use crate::v2_1::datatypes::custom_data::CustomDataType;
 use crate::v2_1::enumerations::{
-    der_control::DERControlEnumType,
-    grid_event_fault::GridEventFaultEnumType,
+    der_control::DERControlEnumType, grid_event_fault::GridEventFaultEnumType,
 };
 
 /// Request to notify the CSMS about a DER alarm.

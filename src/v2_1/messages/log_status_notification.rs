@@ -1,10 +1,7 @@
 //! LogStatusNotification
 use validator::Validate;
 
-use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    status_info::StatusInfoType,
-};
+use crate::v2_1::datatypes::{custom_data::CustomDataType, status_info::StatusInfoType};
 use crate::v2_1::enumerations::upload_log_status::UploadLogStatusEnumType;
 
 /// LogStatusNotificationRequest, sent by the Charging Station to the CSMS.

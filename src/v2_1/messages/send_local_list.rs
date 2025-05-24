@@ -2,7 +2,10 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::{
-    datatypes::{authorization_data::AuthorizationData, custom_data::CustomDataType, status_info::StatusInfoType},
+    datatypes::{
+        authorization_data::AuthorizationData, custom_data::CustomDataType,
+        status_info::StatusInfoType,
+    },
     enumerations::{send_local_list_status::SendLocalListStatusEnumType, update::UpdateEnumType},
 };
 

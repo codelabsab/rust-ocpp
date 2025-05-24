@@ -1,10 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    status_info::StatusInfoType,
-};
+use crate::v2_1::datatypes::{custom_data::CustomDataType, status_info::StatusInfoType};
 use crate::v2_1::enumerations::{
     energy_transfer_mode::EnergyTransferModeEnumType,
     notify_allowed_energy_transfer_status::NotifyAllowedEnergyTransferStatusEnumType,

@@ -2,8 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    certificate_hash_data::CertificateHashDataType,
-    custom_data::CustomDataType,
+    certificate_hash_data::CertificateHashDataType, custom_data::CustomDataType,
     status_info::StatusInfoType,
 };
 use crate::v2_1::enumerations::delete_certificate_status::DeleteCertificateStatusEnumType;

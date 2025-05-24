@@ -2,9 +2,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::v2_1::datatypes::{
-    address::AddressType,
-    custom_data::CustomDataType,
-    status_info::StatusInfoType,
+    address::AddressType, custom_data::CustomDataType, status_info::StatusInfoType,
 };
 use crate::v2_1::enumerations::generic_status::GenericStatusEnumType;
 

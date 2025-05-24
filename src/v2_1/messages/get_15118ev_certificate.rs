@@ -1,10 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{
-    custom_data::CustomDataType,
-    status_info::StatusInfoType,
-};
+use crate::v2_1::datatypes::{custom_data::CustomDataType, status_info::StatusInfoType};
 use crate::v2_1::enumerations::{
     certificate_action::CertificateActionEnumType,
     iso15118ev_certificate_status::Iso15118EVCertificateStatusEnumType,
