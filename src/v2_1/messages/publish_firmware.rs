@@ -338,3 +338,412 @@ impl PublishFirmwareResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("Test status info".to_string())
+    }
+
+    fn create_test_publish_firmware_request() -> PublishFirmwareRequest {
+        PublishFirmwareRequest::new(
+            "https://example.com/firmware.bin".to_string(),
+            "d41d8cd98f00b204e9800998ecf8427e".to_string(), // Valid MD5 hash
+            123,
+        )
+    }
+
+    fn create_test_publish_firmware_response() -> PublishFirmwareResponse {
+        PublishFirmwareResponse::new(GenericStatusEnumType::Accepted)
+    }
+
+    #[test]
+    fn test_publish_firmware_request_new() {
+        let location = "https://firmware.example.com/v1.0.bin".to_string();
+        let checksum = "a1b2c3d4e5f6789012345678901234ab".to_string();
+        let request_id = 456;
+
+        let request = PublishFirmwareRequest::new(location.clone(), checksum.clone(), request_id);
+
+        assert_eq!(request.location, location);
+        assert_eq!(request.checksum, checksum);
+        assert_eq!(request.request_id, request_id);
+        assert!(request.retries.is_none());
+        assert!(request.retry_interval.is_none());
+        assert!(request.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_publish_firmware_request_serialization() {
+        let request = create_test_publish_firmware_request();
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: PublishFirmwareRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_publish_firmware_request_validation_valid() {
+        let request = create_test_publish_firmware_request();
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_publish_firmware_request_validation_location_too_long() {
+        let long_location = "a".repeat(2001); // Max is 2000
+        let request = PublishFirmwareRequest::new(
+            long_location,
+            "d41d8cd98f00b204e9800998ecf8427e".to_string(),
+            123,
+        );
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("location"));
+    }
+
+    #[test]
+    fn test_publish_firmware_request_validation_checksum_too_long() {
+        let long_checksum = "a".repeat(33); // Max is 32
+        let request = PublishFirmwareRequest::new(
+            "https://example.com/firmware.bin".to_string(),
+            long_checksum,
+            123,
+        );
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("checksum"));
+    }
+
+    #[test]
+    fn test_publish_firmware_request_validation_negative_request_id() {
+        let request = PublishFirmwareRequest::new(
+            "https://example.com/firmware.bin".to_string(),
+            "d41d8cd98f00b204e9800998ecf8427e".to_string(),
+            -1,
+        );
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("request_id"));
+    }
+
+    #[test]
+    fn test_publish_firmware_request_validation_negative_retries() {
+        let mut request = create_test_publish_firmware_request();
+        request.retries = Some(-1);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("retries"));
+    }
+
+    #[test]
+    fn test_publish_firmware_request_validation_negative_retry_interval() {
+        let mut request = create_test_publish_firmware_request();
+        request.retry_interval = Some(-1);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("retry_interval"));
+    }
+
+    #[test]
+    fn test_publish_firmware_request_set_methods() {
+        let mut request = create_test_publish_firmware_request();
+        let new_location = "https://new.example.com/firmware.bin".to_string();
+        let new_checksum = "1234567890abcdef1234567890abcdef".to_string();
+        let new_request_id = 999;
+
+        request.set_location(new_location.clone())
+               .set_checksum(new_checksum.clone())
+               .set_request_id(new_request_id)
+               .set_retries(Some(5))
+               .set_retry_interval(Some(300));
+
+        assert_eq!(request.location, new_location);
+        assert_eq!(request.checksum, new_checksum);
+        assert_eq!(request.request_id, new_request_id);
+        assert_eq!(request.retries, Some(5));
+        assert_eq!(request.retry_interval, Some(300));
+    }
+
+    #[test]
+    fn test_publish_firmware_request_get_methods() {
+        let request = create_test_publish_firmware_request();
+
+        assert_eq!(request.get_location(), &request.location);
+        assert_eq!(request.get_checksum(), &request.checksum);
+        assert_eq!(request.get_request_id(), &request.request_id);
+        assert_eq!(request.get_retries(), None);
+        assert_eq!(request.get_retry_interval(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_publish_firmware_request_with_methods() {
+        let custom_data = create_test_custom_data();
+
+        let request = create_test_publish_firmware_request()
+            .with_retries(3)
+            .with_retry_interval(600)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.retries, Some(3));
+        assert_eq!(request.retry_interval, Some(600));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_publish_firmware_request_boundary_values() {
+        // Test maximum length values
+        let max_location = "a".repeat(2000);
+        let max_checksum = "a".repeat(32);
+
+        let request = PublishFirmwareRequest::new(max_location.clone(), max_checksum.clone(), 0)
+            .with_retries(0)
+            .with_retry_interval(0);
+
+        assert!(request.validate().is_ok());
+        assert_eq!(request.location, max_location);
+        assert_eq!(request.checksum, max_checksum);
+        assert_eq!(request.request_id, 0);
+        assert_eq!(request.retries, Some(0));
+        assert_eq!(request.retry_interval, Some(0));
+
+        // Test large valid values
+        let request_max = PublishFirmwareRequest::new(
+            "https://example.com/firmware.bin".to_string(),
+            "d41d8cd98f00b204e9800998ecf8427e".to_string(),
+            i32::MAX,
+        )
+        .with_retries(i32::MAX)
+        .with_retry_interval(i32::MAX);
+
+        assert!(request_max.validate().is_ok());
+    }
+
+    #[test]
+    fn test_publish_firmware_request_json_format() {
+        let request = create_test_publish_firmware_request();
+        let json = serde_json::to_value(&request).expect("Failed to serialize to JSON");
+
+        assert!(json.get("location").is_some());
+        assert!(json.get("checksum").is_some());
+        assert!(json.get("requestId").is_some());
+
+        // Optional fields should not be present if None
+        if request.retries.is_none() {
+            assert!(json.get("retries").is_none());
+        }
+        if request.retry_interval.is_none() {
+            assert!(json.get("retryInterval").is_none());
+        }
+        if request.custom_data.is_none() {
+            assert!(json.get("customData").is_none());
+        }
+    }
+
+    #[test]
+    fn test_publish_firmware_request_md5_checksums() {
+        // Test various valid MD5 checksums
+        let valid_checksums = vec![
+            "d41d8cd98f00b204e9800998ecf8427e", // Empty string MD5
+            "5d41402abc4b2a76b9719d911017c592", // "hello" MD5
+            "098f6bcd4621d373cade4e832627b4f6", // "test" MD5
+            "ABCDEF1234567890ABCDEF1234567890", // Uppercase
+            "abcdef1234567890abcdef1234567890", // Lowercase
+        ];
+
+        for checksum in valid_checksums {
+            let request = PublishFirmwareRequest::new(
+                "https://example.com/firmware.bin".to_string(),
+                checksum.to_string(),
+                123,
+            );
+            assert!(request.validate().is_ok());
+            assert_eq!(request.checksum, checksum);
+        }
+    }
+
+    #[test]
+    fn test_publish_firmware_response_new() {
+        let status = GenericStatusEnumType::Rejected;
+        let response = PublishFirmwareResponse::new(status.clone());
+
+        assert_eq!(response.status, status);
+        assert!(response.status_info.is_none());
+        assert!(response.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_publish_firmware_response_serialization() {
+        let response = create_test_publish_firmware_response();
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: PublishFirmwareResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_publish_firmware_response_validation_valid() {
+        let response = create_test_publish_firmware_response();
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_publish_firmware_response_set_methods() {
+        let mut response = create_test_publish_firmware_response();
+        let new_status = GenericStatusEnumType::Rejected;
+        let status_info = create_test_status_info();
+
+        response.set_status(new_status.clone())
+                .set_status_info(Some(status_info.clone()));
+
+        assert_eq!(response.status, new_status);
+        assert_eq!(response.status_info, Some(status_info));
+    }
+
+    #[test]
+    fn test_publish_firmware_response_get_methods() {
+        let response = create_test_publish_firmware_response();
+
+        assert_eq!(response.get_status(), &response.status);
+        assert_eq!(response.get_status_info(), None);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_publish_firmware_response_with_methods() {
+        let custom_data = create_test_custom_data();
+        let status_info = create_test_status_info();
+
+        let response = create_test_publish_firmware_response()
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_publish_firmware_response_status_variants() {
+        // Test all GenericStatusEnumType variants
+        let statuses = vec![
+            GenericStatusEnumType::Accepted,
+            GenericStatusEnumType::Rejected,
+        ];
+
+        for status in statuses {
+            let response = PublishFirmwareResponse::new(status.clone());
+            assert_eq!(response.status, status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_publish_firmware_response_json_format() {
+        let response = create_test_publish_firmware_response();
+        let json = serde_json::to_value(&response).expect("Failed to serialize to JSON");
+
+        assert!(json.get("status").is_some());
+
+        // Optional fields should not be present if None
+        if response.status_info.is_none() {
+            assert!(json.get("statusInfo").is_none());
+        }
+        if response.custom_data.is_none() {
+            assert!(json.get("customData").is_none());
+        }
+    }
+
+    #[test]
+    fn test_publish_firmware_round_trip_with_all_fields() {
+        let custom_data = create_test_custom_data();
+        let status_info = create_test_status_info();
+
+        let request = create_test_publish_firmware_request()
+            .with_retries(5)
+            .with_retry_interval(300)
+            .with_custom_data(custom_data.clone());
+
+        let response = create_test_publish_firmware_response()
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        // Test request round trip
+        let request_json = serde_json::to_string(&request).expect("Failed to serialize request");
+        let request_deserialized: PublishFirmwareRequest = serde_json::from_str(&request_json).expect("Failed to deserialize request");
+        assert_eq!(request, request_deserialized);
+
+        // Test response round trip
+        let response_json = serde_json::to_string(&response).expect("Failed to serialize response");
+        let response_deserialized: PublishFirmwareResponse = serde_json::from_str(&response_json).expect("Failed to deserialize response");
+        assert_eq!(response, response_deserialized);
+    }
+
+    #[test]
+    fn test_publish_firmware_retry_scenarios() {
+        // Test no retries (0)
+        let request_no_retry = create_test_publish_firmware_request().with_retries(0);
+        assert_eq!(request_no_retry.retries, Some(0));
+        assert!(request_no_retry.validate().is_ok());
+
+        // Test multiple retries
+        let retry_counts = vec![1, 3, 5, 10, 100];
+        for retry_count in retry_counts {
+            let request = create_test_publish_firmware_request().with_retries(retry_count);
+            assert_eq!(request.retries, Some(retry_count));
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_publish_firmware_retry_interval_scenarios() {
+        // Test various retry intervals
+        let intervals = vec![0, 30, 60, 300, 600, 1800, 3600];
+
+        for interval in intervals {
+            let request = create_test_publish_firmware_request().with_retry_interval(interval);
+            assert_eq!(request.retry_interval, Some(interval));
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_publish_firmware_url_scenarios() {
+        // Test various URL formats
+        let urls = vec![
+            "https://example.com/firmware.bin",
+            "http://firmware.local/update.bin",
+            "ftp://files.example.com/fw/v1.0.bin",
+            "file:///local/path/firmware.bin",
+        ];
+
+        for url in urls {
+            let request = PublishFirmwareRequest::new(
+                url.to_string(),
+                "d41d8cd98f00b204e9800998ecf8427e".to_string(),
+                123,
+            );
+            assert_eq!(request.location, url);
+            assert!(request.validate().is_ok());
+        }
+    }
+}
