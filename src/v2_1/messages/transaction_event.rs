@@ -583,6 +583,379 @@ impl TransactionEventRequest {
 
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::{CustomDataType, TransactionType};
+    use crate::v2_1::enumerations::{TransactionEventEnumType, TriggerReasonEnumType};
+    use chrono::Utc;
+    use rust_decimal::Decimal;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_transaction_info() -> TransactionType {
+        TransactionType::new("txn123".to_string())
+    }
+
+    // Tests for TransactionEventRequest
+
+    #[test]
+    fn test_transaction_event_request_new() {
+        let timestamp = Utc::now();
+        let event_type = TransactionEventEnumType::Started;
+        let trigger_reason = TriggerReasonEnumType::Authorized;
+        let seq_no = 1;
+        let transaction_info = create_test_transaction_info();
+
+        let request = TransactionEventRequest::new(
+            event_type.clone(),
+            timestamp,
+            trigger_reason.clone(),
+            seq_no,
+            transaction_info.clone(),
+        );
+
+        assert_eq!(request.get_event_type(), &event_type);
+        assert_eq!(request.get_timestamp(), &timestamp);
+        assert_eq!(request.get_trigger_reason(), &trigger_reason);
+        assert_eq!(request.get_seq_no(), &seq_no);
+        assert_eq!(request.get_transaction_info(), &transaction_info);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_transaction_event_request_serialization() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let request = TransactionEventRequest::new(
+            TransactionEventEnumType::Started,
+            timestamp,
+            TriggerReasonEnumType::Authorized,
+            1,
+            transaction_info,
+        );
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: TransactionEventRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_transaction_event_request_validation() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let request = TransactionEventRequest::new(
+            TransactionEventEnumType::Started,
+            timestamp,
+            TriggerReasonEnumType::Authorized,
+            1,
+            transaction_info,
+        );
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_transaction_event_request_with_custom_data() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = TransactionEventRequest::new(
+            TransactionEventEnumType::Updated,
+            timestamp,
+            TriggerReasonEnumType::CablePluggedIn,
+            2,
+            transaction_info,
+        )
+        .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_transaction_event_request_with_offline() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let request = TransactionEventRequest::new(
+            TransactionEventEnumType::Ended,
+            timestamp,
+            TriggerReasonEnumType::ChargingRateChanged,
+            3,
+            transaction_info,
+        )
+        .with_offline(true);
+
+        assert_eq!(request.get_offline(), Some(&true));
+    }
+
+    #[test]
+    fn test_transaction_event_request_validation_negative_seq_no() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let mut request = TransactionEventRequest::new(
+            TransactionEventEnumType::Started,
+            timestamp,
+            TriggerReasonEnumType::Authorized,
+            1,
+            transaction_info,
+        );
+        request.set_seq_no(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_transaction_event_request_validation_phases_used_range() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let mut request = TransactionEventRequest::new(
+            TransactionEventEnumType::Started,
+            timestamp,
+            TriggerReasonEnumType::Authorized,
+            1,
+            transaction_info,
+        );
+
+        // Valid range: 0-3
+        request.set_number_of_phases_used(Some(3));
+        assert!(request.validate().is_ok());
+
+        // Invalid: out of range
+        request.set_number_of_phases_used(Some(4));
+        assert!(request.validate().is_err());
+
+        request.set_number_of_phases_used(Some(-1));
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_transaction_event_request_validation_negative_reservation_id() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let mut request = TransactionEventRequest::new(
+            TransactionEventEnumType::Started,
+            timestamp,
+            TriggerReasonEnumType::Authorized,
+            1,
+            transaction_info,
+        );
+        request.set_reservation_id(Some(-1));
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_transaction_event_request_all_event_types() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let event_types = vec![
+            TransactionEventEnumType::Started,
+            TransactionEventEnumType::Updated,
+            TransactionEventEnumType::Ended,
+        ];
+
+        for event_type in event_types {
+            let request = TransactionEventRequest::new(
+                event_type.clone(),
+                timestamp,
+                TriggerReasonEnumType::Authorized,
+                1,
+                transaction_info.clone(),
+            );
+
+            assert_eq!(request.get_event_type(), &event_type);
+            assert!(request.validate().is_ok());
+
+            let json = serde_json::to_string(&request).expect("Failed to serialize");
+            let deserialized: TransactionEventRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+            assert_eq!(request, deserialized);
+        }
+    }
+
+    // Tests for TransactionEventResponse
+
+    #[test]
+    fn test_transaction_event_response_new() {
+        let response = TransactionEventResponse::new();
+
+        assert_eq!(response.get_total_cost(), None);
+        assert_eq!(response.get_charging_priority(), None);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_transaction_event_response_serialization() {
+        let response = TransactionEventResponse::new();
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: TransactionEventResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_transaction_event_response_validation() {
+        let response = TransactionEventResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_transaction_event_response_with_total_cost() {
+        let total_cost = Decimal::new(2550, 2); // 25.50
+        let response = TransactionEventResponse::new()
+            .with_total_cost(total_cost);
+
+        assert_eq!(response.get_total_cost(), Some(&total_cost));
+    }
+
+    #[test]
+    fn test_transaction_event_response_with_charging_priority() {
+        let priority = 5;
+        let response = TransactionEventResponse::new()
+            .with_charging_priority(priority);
+
+        assert_eq!(response.get_charging_priority(), Some(&priority));
+    }
+
+    #[test]
+    fn test_transaction_event_response_with_custom_data() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = TransactionEventResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_transaction_event_response_set_methods() {
+        let total_cost = Decimal::new(1000, 2); // 10.00
+        let priority = -2;
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut response = TransactionEventResponse::new();
+
+        response
+            .set_total_cost(Some(total_cost))
+            .set_charging_priority(Some(priority))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_total_cost(), Some(&total_cost));
+        assert_eq!(response.get_charging_priority(), Some(&priority));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_transaction_event_request_json_round_trip() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = TransactionEventRequest::new(
+            TransactionEventEnumType::Updated,
+            timestamp,
+            TriggerReasonEnumType::ChargingRateChanged,
+            5,
+            transaction_info,
+        )
+        .with_custom_data(custom_data)
+        .with_offline(false)
+        .with_number_of_phases_used(3);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: TransactionEventRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_transaction_event_response_json_round_trip() {
+        let total_cost = Decimal::new(4275, 2); // 42.75
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = TransactionEventResponse::new()
+            .with_total_cost(total_cost)
+            .with_charging_priority(8)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: TransactionEventResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_transaction_event_response_empty_json() {
+        let json = "{}";
+        let response: TransactionEventResponse = serde_json::from_str(json).expect("Failed to deserialize");
+
+        assert_eq!(response.get_total_cost(), None);
+        assert_eq!(response.get_charging_priority(), None);
+        assert_eq!(response.get_custom_data(), None);
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_transaction_event_request_with_cable_max_current() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let request = TransactionEventRequest::new(
+            TransactionEventEnumType::Started,
+            timestamp,
+            TriggerReasonEnumType::CablePluggedIn,
+            1,
+            transaction_info,
+        )
+        .with_cable_max_current(32);
+
+        assert_eq!(request.get_cable_max_current(), Some(&32));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_transaction_event_request_with_reservation_id() {
+        let timestamp = Utc::now();
+        let transaction_info = create_test_transaction_info();
+        let request = TransactionEventRequest::new(
+            TransactionEventEnumType::Started,
+            timestamp,
+            TriggerReasonEnumType::RemoteStart,
+            1,
+            transaction_info,
+        )
+        .with_reservation_id(12345);
+
+        assert_eq!(request.get_reservation_id(), Some(&12345));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_transaction_event_response_charging_priority_range() {
+        let response = TransactionEventResponse::new()
+            .with_charging_priority(9); // Max priority
+
+        assert_eq!(response.get_charging_priority(), Some(&9));
+        assert!(response.validate().is_ok());
+
+        let response = TransactionEventResponse::new()
+            .with_charging_priority(-9); // Min priority
+
+        assert_eq!(response.get_charging_priority(), Some(&-9));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_transaction_event_response_zero_cost() {
+        let zero_cost = Decimal::new(0, 0); // 0.00 for free transaction
+        let response = TransactionEventResponse::new()
+            .with_total_cost(zero_cost);
+
+        assert_eq!(response.get_total_cost(), Some(&zero_cost));
+        assert!(response.validate().is_ok());
+    }
+}
+
 /// Response body for the TransactionEvent response.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
