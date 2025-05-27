@@ -234,3 +234,210 @@ impl NotifyEventResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Utc;
+    use serde_json::{self, json};
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_event_data() -> Vec<Value> {
+        vec![
+            json!({"eventType": "Alert", "component": "EVSE", "variable": "AvailabilityState"}),
+            json!({"eventType": "Warning", "component": "Connector", "variable": "ConnectorType"}),
+        ]
+    }
+
+    #[test]
+    fn test_notify_event_request_new() {
+        let generated_at = Utc::now();
+        let seq_no = 0;
+        let event_data = create_test_event_data();
+
+        let request = NotifyEventRequest::new(
+            generated_at,
+            seq_no,
+            event_data.clone(),
+        );
+
+        assert_eq!(request.get_generated_at(), &generated_at);
+        assert_eq!(request.get_seq_no(), &seq_no);
+        assert_eq!(request.get_event_data(), &event_data);
+        assert_eq!(request.get_tbc(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_event_request_validation() {
+        let generated_at = Utc::now();
+        let seq_no = 0;
+        let event_data = create_test_event_data();
+
+        let request = NotifyEventRequest::new(generated_at, seq_no, event_data);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_event_request_validation_negative_seq_no() {
+        let generated_at = Utc::now();
+        let seq_no = -1; // Invalid negative value
+        let event_data = create_test_event_data();
+
+        let request = NotifyEventRequest::new(generated_at, seq_no, event_data);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_event_request_validation_empty_event_data() {
+        let generated_at = Utc::now();
+        let seq_no = 0;
+        let event_data = vec![]; // Empty vector violates min length of 1
+
+        let request = NotifyEventRequest::new(generated_at, seq_no, event_data);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_event_request_with_optional_fields() {
+        let generated_at = Utc::now();
+        let seq_no = 1;
+        let event_data = create_test_event_data();
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyEventRequest::new(generated_at, seq_no, event_data.clone())
+            .with_tbc(true)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_generated_at(), &generated_at);
+        assert_eq!(request.get_seq_no(), &seq_no);
+        assert_eq!(request.get_event_data(), &event_data);
+        assert_eq!(request.get_tbc(), Some(&true));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_event_request_set_methods() {
+        let generated_at = Utc::now();
+        let seq_no = 0;
+        let event_data = create_test_event_data();
+
+        let mut request = NotifyEventRequest::new(generated_at, seq_no, event_data);
+
+        let new_generated_at = Utc::now();
+        let new_seq_no = 2;
+        let new_event_data = vec![json!({"eventType": "Error", "component": "ChargingStation"})];
+        let custom_data = create_test_custom_data();
+
+        request
+            .set_generated_at(new_generated_at)
+            .set_seq_no(new_seq_no)
+            .set_event_data(new_event_data.clone())
+            .set_tbc(Some(false))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_generated_at(), &new_generated_at);
+        assert_eq!(request.get_seq_no(), &new_seq_no);
+        assert_eq!(request.get_event_data(), &new_event_data);
+        assert_eq!(request.get_tbc(), Some(&false));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_event_request_json_round_trip() {
+        let generated_at = Utc::now();
+        let seq_no = 1;
+        let event_data = create_test_event_data();
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyEventRequest::new(generated_at, seq_no, event_data)
+            .with_tbc(true)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: NotifyEventRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_event_request_boundary_values() {
+        let generated_at = Utc::now();
+
+        // Test with minimum valid seq_no
+        let seq_no = 0; // Minimum valid value
+        let event_data = vec![json!({"eventType": "Info"})]; // Minimum length of 1
+
+        let request = NotifyEventRequest::new(generated_at, seq_no, event_data.clone());
+
+        assert_eq!(request.get_seq_no(), &seq_no);
+        assert_eq!(request.get_event_data(), &event_data);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_event_response_new() {
+        let response = NotifyEventResponse::new();
+
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_event_response_validation() {
+        let response = NotifyEventResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_event_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyEventResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_event_response_set_custom_data() {
+        let mut response = NotifyEventResponse::new();
+        let custom_data = create_test_custom_data();
+
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_event_response_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyEventResponse::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: NotifyEventResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_event_response_empty_json() {
+        let json = "{}";
+        let response: NotifyEventResponse =
+            serde_json::from_str(json).expect("Failed to deserialize");
+
+        assert_eq!(response.get_custom_data(), None);
+        assert!(response.validate().is_ok());
+    }
+}
