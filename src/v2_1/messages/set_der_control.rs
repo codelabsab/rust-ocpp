@@ -1,12 +1,12 @@
 use crate::v2_1::datatypes::{
-    CustomDataType, 
-    DERCurveType, 
-    EnterServiceType, 
-    FixedPFType, 
-    FixedVarType, 
-    FreqDroopType, 
-    GradientType, 
-    LimitMaxDischargeType, 
+    CustomDataType,
+    DERCurveType,
+    EnterServiceType,
+    FixedPFType,
+    FixedVarType,
+    FreqDroopType,
+    GradientType,
+    LimitMaxDischargeType,
     StatusInfoType,
 };
 use crate::v2_1::enumerations::DERControlEnumType;
@@ -610,4 +610,193 @@ impl SetDERControlResponse {
         self
     }
 
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
+    use crate::v2_1::enumerations::{DERControlEnumType, der_control::DERControlStatusEnumType};
+
+    #[test]
+    fn test_set_der_control_request_new() {
+        let request = SetDERControlRequest::new(true, "test-control-id".to_string(), DERControlEnumType::EnterService);
+
+        assert_eq!(request.is_default, true);
+        assert_eq!(request.control_id, "test-control-id");
+        assert_eq!(request.control_type, DERControlEnumType::EnterService);
+        assert_eq!(request.curve, None);
+        assert_eq!(request.enter_service, None);
+        assert_eq!(request.fixed_pf_absorb, None);
+        assert_eq!(request.fixed_pf_inject, None);
+        assert_eq!(request.fixed_var, None);
+        assert_eq!(request.freq_droop, None);
+        assert_eq!(request.gradient, None);
+        assert_eq!(request.limit_max_discharge, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_set_der_control_request_serialization() {
+        let request = SetDERControlRequest::new(false, "uuid-123".to_string(), DERControlEnumType::FreqDroop);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: SetDERControlRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(json.contains("\"isDefault\":false"));
+        assert!(json.contains("\"controlId\":\"uuid-123\""));
+        assert!(json.contains("\"controlType\":\"FreqDroop\""));
+    }
+
+    #[test]
+    fn test_set_der_control_request_validation() {
+        // Test valid request
+        let valid_request = SetDERControlRequest::new(true, "valid-id".to_string(), DERControlEnumType::EnterService);
+        assert!(valid_request.validate().is_ok());
+
+        // Test invalid request with control_id too long
+        let invalid_request = SetDERControlRequest::new(true, "a".repeat(37), DERControlEnumType::EnterService);
+        assert!(invalid_request.validate().is_err());
+    }
+
+    #[test]
+    fn test_set_der_control_request_builder_pattern() {
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let request = SetDERControlRequest::new(true, "builder-test".to_string(), DERControlEnumType::EnterService)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.is_default, true);
+        assert_eq!(request.control_id, "builder-test");
+        assert_eq!(request.control_type, DERControlEnumType::EnterService);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_der_control_request_setters() {
+        let mut request = SetDERControlRequest::new(false, "initial".to_string(), DERControlEnumType::EnterService);
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+
+        request.set_is_default(true)
+               .set_control_id("updated".to_string())
+               .set_control_type(DERControlEnumType::FreqDroop)
+               .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.is_default, true);
+        assert_eq!(request.control_id, "updated");
+        assert_eq!(request.control_type, DERControlEnumType::FreqDroop);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_der_control_request_getters() {
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let request = SetDERControlRequest::new(true, "getter-test".to_string(), DERControlEnumType::EnterService)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(*request.get_is_default(), true);
+        assert_eq!(request.get_control_id(), &"getter-test".to_string());
+        assert_eq!(*request.get_control_type(), DERControlEnumType::EnterService);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_der_control_response_new() {
+        let response = SetDERControlResponse::new(DERControlStatusEnumType::Accepted);
+        assert_eq!(response.status, DERControlStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.superseded_ids, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_set_der_control_response_serialization() {
+        let response = SetDERControlResponse::new(DERControlStatusEnumType::Rejected);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: SetDERControlResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(json.contains("\"status\":\"rejected\""));
+    }
+
+    #[test]
+    fn test_set_der_control_response_builder_pattern() {
+        let status_info = StatusInfoType::new("Control conflict".to_string());
+        let superseded_ids = vec!["old-id-1".to_string(), "old-id-2".to_string()];
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let response = SetDERControlResponse::new(DERControlStatusEnumType::NotSupported)
+            .with_status_info(status_info.clone())
+            .with_superseded_ids(superseded_ids.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, DERControlStatusEnumType::NotSupported);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.superseded_ids, Some(superseded_ids));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_der_control_response_setters() {
+        let mut response = SetDERControlResponse::new(DERControlStatusEnumType::Accepted);
+        let status_info = StatusInfoType::new("Updated status".to_string());
+        let superseded_ids = vec!["superseded-1".to_string()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        response.set_status(DERControlStatusEnumType::Rejected)
+                .set_status_info(Some(status_info.clone()))
+                .set_superseded_ids(Some(superseded_ids.clone()))
+                .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, DERControlStatusEnumType::Rejected);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.superseded_ids, Some(superseded_ids));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_der_control_response_getters() {
+        let status_info = StatusInfoType::new("Test status".to_string());
+        let superseded_ids = vec!["test-id".to_string()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = SetDERControlResponse::new(DERControlStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_superseded_ids(superseded_ids.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(*response.get_status(), DERControlStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_superseded_ids(), Some(&superseded_ids));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_der_control_edge_cases() {
+        // Test with maximum allowed control_id length
+        let max_control_id = "a".repeat(36);
+        let request = SetDERControlRequest::new(true, max_control_id.clone(), DERControlEnumType::EnterService);
+        assert!(request.validate().is_ok());
+        assert_eq!(request.control_id, max_control_id);
+
+        // Test response with maximum superseded_ids
+        let max_superseded_ids: Vec<String> = (0..24).map(|i| format!("id-{}", i)).collect();
+        let mut response = SetDERControlResponse::new(DERControlStatusEnumType::Accepted);
+        response.superseded_ids = Some(max_superseded_ids.clone());
+        assert!(response.validate().is_ok());
+
+        // Test response with too many superseded_ids (should fail)
+        let too_many_ids: Vec<String> = (0..25).map(|i| format!("id-{}", i)).collect();
+        response.superseded_ids = Some(too_many_ids);
+        assert!(response.validate().is_err());
+
+        // Test response with empty superseded_ids (should fail)
+        response.superseded_ids = Some(vec![]);
+        assert!(response.validate().is_err());
+    }
+
+    #[test]
+    fn test_set_der_control_response_validation() {
+        let response = SetDERControlResponse::new(DERControlStatusEnumType::Accepted);
+        assert!(response.validate().is_ok());
+    }
 }
