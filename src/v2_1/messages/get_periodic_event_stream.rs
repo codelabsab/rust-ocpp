@@ -154,3 +154,201 @@ impl GetPeriodicEventStreamResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_constant_stream_data() -> ConstantStreamDataType {
+        use crate::v2_1::datatypes::PeriodicEventStreamParamsType;
+        let params = PeriodicEventStreamParamsType::new(60, 10);
+        ConstantStreamDataType::new(
+            1,
+            params,
+            100,
+        )
+    }
+
+    // Tests for GetPeriodicEventStreamRequest
+
+    #[test]
+    fn test_get_periodic_event_stream_request_new() {
+        let request = GetPeriodicEventStreamRequest::new();
+
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_request_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let request = GetPeriodicEventStreamRequest::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_request_setters() {
+        let custom_data = create_test_custom_data();
+
+        let mut request = GetPeriodicEventStreamRequest::new();
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_request_getters() {
+        let custom_data = create_test_custom_data();
+        let request = GetPeriodicEventStreamRequest::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_request_serialization() {
+        let request = GetPeriodicEventStreamRequest::new();
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetPeriodicEventStreamRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_request_validation() {
+        let request = GetPeriodicEventStreamRequest::new();
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_request_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let request = GetPeriodicEventStreamRequest::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetPeriodicEventStreamRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for GetPeriodicEventStreamResponse
+
+    #[test]
+    fn test_get_periodic_event_stream_response_new() {
+        let response = GetPeriodicEventStreamResponse::new();
+
+        assert_eq!(response.constant_stream_data, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_response_with_constant_stream_data() {
+        let stream_data = vec![create_test_constant_stream_data()];
+        let response = GetPeriodicEventStreamResponse::new()
+            .with_constant_stream_data(stream_data.clone());
+
+        assert_eq!(response.constant_stream_data, Some(stream_data));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = GetPeriodicEventStreamResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.constant_stream_data, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_response_setters() {
+        let stream_data = vec![create_test_constant_stream_data()];
+        let custom_data = create_test_custom_data();
+
+        let mut response = GetPeriodicEventStreamResponse::new();
+        response.set_constant_stream_data(Some(stream_data.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.constant_stream_data, Some(stream_data));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_response_getters() {
+        let stream_data = vec![create_test_constant_stream_data()];
+        let custom_data = create_test_custom_data();
+        let response = GetPeriodicEventStreamResponse::new()
+            .with_constant_stream_data(stream_data.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_constant_stream_data(), Some(&stream_data));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_response_serialization() {
+        let response = GetPeriodicEventStreamResponse::new();
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetPeriodicEventStreamResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_response_validation() {
+        let response = GetPeriodicEventStreamResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_response_validation_empty_constant_stream_data() {
+        let mut response = GetPeriodicEventStreamResponse::new();
+        response.set_constant_stream_data(Some(vec![])); // Empty list should fail validation
+
+        assert!(response.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_response_multiple_stream_data() {
+        use crate::v2_1::datatypes::PeriodicEventStreamParamsType;
+        let params1 = PeriodicEventStreamParamsType::new(60, 10);
+        let params2 = PeriodicEventStreamParamsType::new(120, 20);
+        let stream_data1 = ConstantStreamDataType::new(1, params1, 101);
+        let stream_data2 = ConstantStreamDataType::new(2, params2, 102);
+        let stream_data = vec![stream_data1, stream_data2];
+
+        let response = GetPeriodicEventStreamResponse::new()
+            .with_constant_stream_data(stream_data.clone());
+
+        assert_eq!(response.constant_stream_data, Some(stream_data));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_periodic_event_stream_response_json_round_trip() {
+        let stream_data = vec![create_test_constant_stream_data()];
+        let custom_data = create_test_custom_data();
+        let response = GetPeriodicEventStreamResponse::new()
+            .with_constant_stream_data(stream_data)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetPeriodicEventStreamResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
