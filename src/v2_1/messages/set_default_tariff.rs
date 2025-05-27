@@ -232,3 +232,165 @@ impl SetDefaultTariffResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::{CustomDataType, StatusInfoType, TariffType};
+    use crate::v2_1::enumerations::TariffSetStatusEnumType;
+
+    fn create_test_tariff() -> TariffType {
+        TariffType::new("test_tariff".to_string(), "USD".to_string())
+    }
+
+    #[test]
+    fn test_set_default_tariff_request_new() {
+        let tariff = create_test_tariff();
+        let request = SetDefaultTariffRequest::new(1, tariff.clone());
+
+        assert_eq!(request.evse_id, 1);
+        assert_eq!(request.tariff, tariff);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_set_default_tariff_request_serialization() {
+        let tariff = create_test_tariff();
+        let request = SetDefaultTariffRequest::new(2, tariff);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: SetDefaultTariffRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(json.contains("\"evseId\":2"));
+    }
+
+    #[test]
+    fn test_set_default_tariff_request_validation() {
+        let tariff = create_test_tariff();
+
+        // Test valid request
+        let valid_request = SetDefaultTariffRequest::new(0, tariff.clone());
+        assert!(valid_request.validate().is_ok());
+
+        // Test invalid request with negative evse_id
+        let invalid_request = SetDefaultTariffRequest::new(-1, tariff);
+        assert!(invalid_request.validate().is_err());
+    }
+
+    #[test]
+    fn test_set_default_tariff_request_builder_pattern() {
+        let tariff = create_test_tariff();
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let request = SetDefaultTariffRequest::new(3, tariff.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.evse_id, 3);
+        assert_eq!(request.tariff, tariff);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_default_tariff_request_setters() {
+        let tariff1 = create_test_tariff();
+        let tariff2 = TariffType::new("updated_tariff".to_string(), "EUR".to_string());
+        let mut request = SetDefaultTariffRequest::new(1, tariff1);
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+
+        request.set_evse_id(4)
+               .set_tariff(tariff2.clone())
+               .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.evse_id, 4);
+        assert_eq!(request.tariff, tariff2);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_default_tariff_request_getters() {
+        let tariff = create_test_tariff();
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let request = SetDefaultTariffRequest::new(5, tariff.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(*request.get_evse_id(), 5);
+        assert_eq!(*request.get_tariff(), tariff);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_default_tariff_response_new() {
+        let response = SetDefaultTariffResponse::new(TariffSetStatusEnumType::Accepted);
+        assert_eq!(response.status, TariffSetStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_set_default_tariff_response_serialization() {
+        let response = SetDefaultTariffResponse::new(TariffSetStatusEnumType::Rejected);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: SetDefaultTariffResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(json.contains("\"status\":\"Rejected\""));
+    }
+
+    #[test]
+    fn test_set_default_tariff_response_builder_pattern() {
+        let status_info = StatusInfoType::new("Tariff conflict".to_string());
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let response = SetDefaultTariffResponse::new(TariffSetStatusEnumType::Rejected)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, TariffSetStatusEnumType::Rejected);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_default_tariff_response_setters() {
+        let mut response = SetDefaultTariffResponse::new(TariffSetStatusEnumType::Accepted);
+        let status_info = StatusInfoType::new("Updated status".to_string());
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+
+        response.set_status(TariffSetStatusEnumType::Rejected)
+                .set_status_info(Some(status_info.clone()))
+                .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, TariffSetStatusEnumType::Rejected);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_default_tariff_response_getters() {
+        let status_info = StatusInfoType::new("Test status".to_string());
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let response = SetDefaultTariffResponse::new(TariffSetStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(*response.get_status(), TariffSetStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_default_tariff_edge_cases() {
+        let tariff = create_test_tariff();
+
+        // Test with evse_id = 0 (applies to all EVSEs)
+        let request = SetDefaultTariffRequest::new(0, tariff);
+        assert!(request.validate().is_ok());
+        assert_eq!(request.evse_id, 0);
+    }
+
+    #[test]
+    fn test_set_default_tariff_response_validation() {
+        let response = SetDefaultTariffResponse::new(TariffSetStatusEnumType::Accepted);
+        assert!(response.validate().is_ok());
+    }
+}
