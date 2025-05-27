@@ -310,3 +310,223 @@ impl NotifyEVChargingNeedsResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::enumerations::EnergyTransferModeEnumType;
+    use chrono::Utc;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_charging_needs() -> ChargingNeedsType {
+        ChargingNeedsType::new(EnergyTransferModeEnumType::DC)
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("Test status".to_string())
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_request_new() {
+        let evse_id = 1;
+        let charging_needs = create_test_charging_needs();
+
+        let request = NotifyEVChargingNeedsRequest::new(evse_id, charging_needs.clone());
+
+        assert_eq!(request.get_evse_id(), &evse_id);
+        assert_eq!(request.get_charging_needs(), &charging_needs);
+        assert_eq!(request.get_max_schedule_tuples(), None);
+        assert_eq!(request.get_timestamp(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_request_validation() {
+        let evse_id = 1;
+        let charging_needs = create_test_charging_needs();
+
+        let request = NotifyEVChargingNeedsRequest::new(evse_id, charging_needs);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_request_validation_invalid_evse_id() {
+        let evse_id = 0; // Invalid - must be >= 1
+        let charging_needs = create_test_charging_needs();
+
+        let request = NotifyEVChargingNeedsRequest::new(evse_id, charging_needs);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_request_validation_negative_max_schedule_tuples() {
+        let evse_id = 1;
+        let charging_needs = create_test_charging_needs();
+
+        let request = NotifyEVChargingNeedsRequest::new(evse_id, charging_needs)
+            .with_max_schedule_tuples(-1); // Invalid negative value
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_request_with_all_optional_fields() {
+        let evse_id = 1;
+        let charging_needs = create_test_charging_needs();
+        let max_schedule_tuples = 10;
+        let timestamp = Utc::now();
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyEVChargingNeedsRequest::new(evse_id, charging_needs.clone())
+            .with_max_schedule_tuples(max_schedule_tuples)
+            .with_timestamp(timestamp)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_evse_id(), &evse_id);
+        assert_eq!(request.get_charging_needs(), &charging_needs);
+        assert_eq!(request.get_max_schedule_tuples(), Some(&max_schedule_tuples));
+        assert_eq!(request.get_timestamp(), Some(&timestamp));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_request_set_methods() {
+        let evse_id = 1;
+        let charging_needs = create_test_charging_needs();
+
+        let mut request = NotifyEVChargingNeedsRequest::new(evse_id, charging_needs);
+
+        let new_evse_id = 2;
+        let new_charging_needs = ChargingNeedsType::new(EnergyTransferModeEnumType::ACThreePhase);
+        let max_schedule_tuples = 5;
+        let timestamp = Utc::now();
+        let custom_data = create_test_custom_data();
+
+        request
+            .set_evse_id(new_evse_id)
+            .set_charging_needs(new_charging_needs.clone())
+            .set_max_schedule_tuples(Some(max_schedule_tuples))
+            .set_timestamp(Some(timestamp))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_evse_id(), &new_evse_id);
+        assert_eq!(request.get_charging_needs(), &new_charging_needs);
+        assert_eq!(request.get_max_schedule_tuples(), Some(&max_schedule_tuples));
+        assert_eq!(request.get_timestamp(), Some(&timestamp));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_request_json_round_trip() {
+        let evse_id = 1;
+        let charging_needs = create_test_charging_needs();
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyEVChargingNeedsRequest::new(evse_id, charging_needs)
+            .with_max_schedule_tuples(10)
+            .with_timestamp(Utc::now())
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: NotifyEVChargingNeedsRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_request_boundary_values() {
+        // Test with minimum valid evse_id
+        let evse_id = 1; // Minimum valid value
+        let charging_needs = create_test_charging_needs();
+
+        let request = NotifyEVChargingNeedsRequest::new(evse_id, charging_needs);
+
+        assert_eq!(request.get_evse_id(), &evse_id);
+        assert!(request.validate().is_ok());
+
+        // Test with minimum valid max_schedule_tuples
+        let request = NotifyEVChargingNeedsRequest::new(evse_id, create_test_charging_needs())
+            .with_max_schedule_tuples(0); // Minimum valid value
+
+        assert_eq!(request.get_max_schedule_tuples(), Some(&0));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_response_new() {
+        let status = NotifyEVChargingNeedsStatusEnumType::Accepted;
+
+        let response = NotifyEVChargingNeedsResponse::new(status.clone());
+
+        assert_eq!(response.get_status(), &status);
+        assert_eq!(response.get_status_info(), None);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_response_validation() {
+        let status = NotifyEVChargingNeedsStatusEnumType::Accepted;
+
+        let response = NotifyEVChargingNeedsResponse::new(status);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_response_with_optional_fields() {
+        let status = NotifyEVChargingNeedsStatusEnumType::Processing;
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let response = NotifyEVChargingNeedsResponse::new(status.clone())
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &status);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_response_all_status_types() {
+        let statuses = vec![
+            NotifyEVChargingNeedsStatusEnumType::Accepted,
+            NotifyEVChargingNeedsStatusEnumType::Rejected,
+            NotifyEVChargingNeedsStatusEnumType::Processing,
+            NotifyEVChargingNeedsStatusEnumType::NoChargingProfile,
+        ];
+
+        for status in statuses {
+            let response = NotifyEVChargingNeedsResponse::new(status.clone());
+            assert_eq!(response.get_status(), &status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_notify_ev_charging_needs_response_json_round_trip() {
+        let status = NotifyEVChargingNeedsStatusEnumType::Rejected;
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let response = NotifyEVChargingNeedsResponse::new(status)
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: NotifyEVChargingNeedsResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+}
