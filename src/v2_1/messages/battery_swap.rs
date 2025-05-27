@@ -221,3 +221,430 @@ impl BatterySwapResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Utc;
+    use rust_decimal::Decimal;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_battery_data() -> BatteryDataType {
+        BatteryDataType::new(
+            1,                       // evse_id
+            "BAT123456".to_string(), // serial_number
+            Decimal::new(750, 1),    // so_c (75.0%)
+            Decimal::new(850, 1),    // so_h (85.0%)
+            Utc::now(),              // production_date
+        )
+    }
+
+    fn create_test_id_token() -> IdTokenType {
+        IdTokenType::new("4F62C4E0123456789".to_string(), "ISO14443".to_string())
+    }
+
+    #[test]
+    fn test_battery_swap_request_new() {
+        let battery_data = vec![create_test_battery_data()];
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let id_token = create_test_id_token();
+        let request_id = 123;
+
+        let request = BatterySwapRequest::new(
+            battery_data.clone(),
+            event_type.clone(),
+            id_token.clone(),
+            request_id,
+        );
+
+        assert_eq!(request.get_battery_data(), &battery_data);
+        assert_eq!(request.get_event_type(), &event_type);
+        assert_eq!(request.get_id_token(), &id_token);
+        assert_eq!(request.get_request_id(), &request_id);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_battery_swap_request_validation() {
+        let battery_data = vec![create_test_battery_data()];
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let id_token = create_test_id_token();
+        let request_id = 123;
+
+        let request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_battery_swap_request_validation_empty_battery_data() {
+        let battery_data = vec![]; // Invalid: must have at least 1 item
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let id_token = create_test_id_token();
+        let request_id = 123;
+
+        let request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_battery_swap_request_validation_invalid_request_id() {
+        let battery_data = vec![create_test_battery_data()];
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let id_token = create_test_id_token();
+        let request_id = -1; // Invalid: must be >= 0
+
+        let request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_battery_swap_request_serialization() {
+        let battery_data = vec![create_test_battery_data()];
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let id_token = create_test_id_token();
+        let request_id = 123;
+
+        let request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: BatterySwapRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_battery_swap_request_with_custom_data() {
+        let battery_data = vec![create_test_battery_data()];
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let id_token = create_test_id_token();
+        let request_id = 123;
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_battery_swap_request_set_methods() {
+        let battery_data = vec![create_test_battery_data()];
+        let new_battery_data = vec![
+            create_test_battery_data(),
+            BatteryDataType::new(
+                2,
+                "BAT789012".to_string(),
+                Decimal::new(600, 1), // 60.0%
+                Decimal::new(900, 1), // 90.0%
+                Utc::now(),
+            ),
+        ];
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let new_event_type = BatterySwapEventEnumType::BatteryOut;
+        let id_token = create_test_id_token();
+        let new_id_token = IdTokenType::new("ABCD1234567890".to_string(), "RFID".to_string());
+        let request_id = 123;
+        let new_request_id = 456;
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id);
+
+        request
+            .set_battery_data(new_battery_data.clone())
+            .set_event_type(new_event_type.clone())
+            .set_id_token(new_id_token.clone())
+            .set_request_id(new_request_id)
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_battery_data(), &new_battery_data);
+        assert_eq!(request.get_event_type(), &new_event_type);
+        assert_eq!(request.get_id_token(), &new_id_token);
+        assert_eq!(request.get_request_id(), &new_request_id);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_battery_swap_request_all_event_types() {
+        let battery_data = vec![create_test_battery_data()];
+        let id_token = create_test_id_token();
+        let request_id = 123;
+
+        let event_types = vec![
+            BatterySwapEventEnumType::BatteryIn,
+            BatterySwapEventEnumType::BatteryOut,
+            BatterySwapEventEnumType::BatteryOutTimeout,
+        ];
+
+        for event_type in event_types {
+            let request = BatterySwapRequest::new(
+                battery_data.clone(),
+                event_type.clone(),
+                id_token.clone(),
+                request_id,
+            );
+            assert_eq!(request.get_event_type(), &event_type);
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_battery_swap_request_multiple_batteries() {
+        let battery_data = vec![
+            create_test_battery_data(),
+            BatteryDataType::new(
+                2,
+                "BAT789012".to_string(),
+                Decimal::new(600, 1), // 60.0%
+                Decimal::new(900, 1), // 90.0%
+                Utc::now(),
+            ),
+            BatteryDataType::new(
+                3,
+                "BAT345678".to_string(),
+                Decimal::new(800, 1), // 80.0%
+                Decimal::new(950, 1), // 95.0%
+                Utc::now(),
+            ),
+        ];
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let id_token = create_test_id_token();
+        let request_id = 123;
+
+        let request = BatterySwapRequest::new(battery_data.clone(), event_type, id_token, request_id);
+
+        assert_eq!(request.get_battery_data().len(), 3);
+        assert_eq!(request.get_battery_data(), &battery_data);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_battery_swap_request_edge_cases() {
+        let battery_data = vec![create_test_battery_data()];
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let id_token = create_test_id_token();
+
+        // Test with minimum valid request_id
+        let request = BatterySwapRequest::new(
+            battery_data.clone(),
+            event_type.clone(),
+            id_token.clone(),
+            0,
+        );
+        assert_eq!(request.get_request_id(), &0);
+        assert!(request.validate().is_ok());
+
+        // Test with large request_id
+        let request = BatterySwapRequest::new(
+            battery_data,
+            event_type,
+            id_token,
+            i32::MAX,
+        );
+        assert_eq!(request.get_request_id(), &i32::MAX);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_battery_swap_response_new() {
+        let response = BatterySwapResponse::new();
+
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_battery_swap_response_validation() {
+        let response = BatterySwapResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_battery_swap_response_serialization() {
+        let response = BatterySwapResponse::new();
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: BatterySwapResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_battery_swap_response_with_custom_data() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let response = BatterySwapResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_battery_swap_response_set_methods() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut response = BatterySwapResponse::new();
+
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_battery_swap_request_json_round_trip() {
+        let battery_data = vec![create_test_battery_data()];
+        let event_type = BatterySwapEventEnumType::BatteryOut;
+        let id_token = create_test_id_token();
+        let request_id = 123;
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: BatterySwapRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_battery_swap_response_json_round_trip() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let response = BatterySwapResponse::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: BatterySwapResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_battery_swap_request_clear_optional_fields() {
+        let battery_data = vec![create_test_battery_data()];
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let id_token = create_test_id_token();
+        let request_id = 123;
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id)
+            .with_custom_data(custom_data);
+
+        // Verify custom data is set
+        assert!(request.get_custom_data().is_some());
+
+        // Clear custom data
+        request.set_custom_data(None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_battery_swap_response_clear_optional_fields() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut response = BatterySwapResponse::new()
+            .with_custom_data(custom_data);
+
+        // Verify custom data is set
+        assert!(response.get_custom_data().is_some());
+
+        // Clear custom data
+        response.set_custom_data(None);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_battery_swap_request_with_complex_battery_data() {
+        use serde_json::json;
+
+        let custom_data = CustomDataType::new("BatteryVendor".to_string())
+            .with_property("region".to_string(), json!("EU"))
+            .with_property("warranty".to_string(), json!("5 years"));
+
+        let battery_data = vec![
+            BatteryDataType::new(
+                1,
+                "BAT123456".to_string(),
+                Decimal::new(750, 1), // 75.0%
+                Decimal::new(850, 1), // 85.0%
+                Utc::now(),
+            )
+            .with_vendor_info("Vendor specific battery info".to_string())
+            .with_custom_data(custom_data),
+        ];
+
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let id_token = create_test_id_token();
+        let request_id = 123;
+
+        let request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id);
+
+        assert!(request.validate().is_ok());
+
+        // Test serialization with complex data
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: BatterySwapRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_battery_swap_request_with_complex_id_token() {
+        use crate::v2_1::datatypes::AdditionalInfoType;
+
+        let additional_info = vec![
+            AdditionalInfoType::new("key1".to_string(), "value1".to_string()),
+            AdditionalInfoType::new("key2".to_string(), "value2".to_string()),
+        ];
+
+        let id_token = IdTokenType::new("4F62C4E0123456789".to_string(), "ISO14443".to_string())
+            .with_additional_info(additional_info);
+
+        let battery_data = vec![create_test_battery_data()];
+        let event_type = BatterySwapEventEnumType::BatteryIn;
+        let request_id = 123;
+
+        let request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id);
+
+        assert!(request.validate().is_ok());
+
+        // Test serialization
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: BatterySwapRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_battery_swap_request_with_complex_custom_data() {
+        use serde_json::json;
+
+        let battery_data = vec![create_test_battery_data()];
+        let event_type = BatterySwapEventEnumType::BatteryOutTimeout;
+        let id_token = create_test_id_token();
+        let request_id = 123;
+
+        let custom_data = CustomDataType::new("SwapVendor".to_string())
+            .with_property("station_id".to_string(), json!("STATION_001"))
+            .with_property("operator".to_string(), json!("John Doe"))
+            .with_property("metadata".to_string(), json!({
+                "swap_duration": 120,
+                "temperature": 25.5,
+                "humidity": 60
+            }));
+
+        let request = BatterySwapRequest::new(battery_data, event_type, id_token, request_id)
+            .with_custom_data(custom_data);
+
+        assert!(request.validate().is_ok());
+
+        // Test serialization with complex custom data
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: BatterySwapRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+    }
+}
