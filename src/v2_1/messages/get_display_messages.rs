@@ -319,3 +319,308 @@ impl GetDisplayMessagesResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    // Tests for GetDisplayMessagesRequest
+
+    #[test]
+    fn test_get_display_messages_request_new() {
+        let request = GetDisplayMessagesRequest::new(123);
+
+        assert_eq!(request.id, None);
+        assert_eq!(request.request_id, 123);
+        assert_eq!(request.priority, None);
+        assert_eq!(request.state, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_display_messages_request_with_id() {
+        let ids = vec![1, 2, 3];
+        let request = GetDisplayMessagesRequest::new(456)
+            .with_id(ids.clone());
+
+        assert_eq!(request.id, Some(ids));
+        assert_eq!(request.request_id, 456);
+        assert_eq!(request.priority, None);
+        assert_eq!(request.state, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_display_messages_request_with_priority() {
+        let request = GetDisplayMessagesRequest::new(789)
+            .with_priority(MessagePriorityEnumType::AlwaysFront);
+
+        assert_eq!(request.id, None);
+        assert_eq!(request.request_id, 789);
+        assert_eq!(request.priority, Some(MessagePriorityEnumType::AlwaysFront));
+        assert_eq!(request.state, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_display_messages_request_with_state() {
+        let request = GetDisplayMessagesRequest::new(999)
+            .with_state(MessageStateEnumType::Charging);
+
+        assert_eq!(request.id, None);
+        assert_eq!(request.request_id, 999);
+        assert_eq!(request.priority, None);
+        assert_eq!(request.state, Some(MessageStateEnumType::Charging));
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_display_messages_request_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let request = GetDisplayMessagesRequest::new(111)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.id, None);
+        assert_eq!(request.request_id, 111);
+        assert_eq!(request.priority, None);
+        assert_eq!(request.state, None);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_display_messages_request_setters() {
+        let ids = vec![4, 5, 6];
+        let custom_data = create_test_custom_data();
+
+        let mut request = GetDisplayMessagesRequest::new(100);
+        request.set_id(Some(ids.clone()));
+        request.set_request_id(200);
+        request.set_priority(Some(MessagePriorityEnumType::InFront));
+        request.set_state(Some(MessageStateEnumType::Faulted));
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.id, Some(ids));
+        assert_eq!(request.request_id, 200);
+        assert_eq!(request.priority, Some(MessagePriorityEnumType::InFront));
+        assert_eq!(request.state, Some(MessageStateEnumType::Faulted));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_display_messages_request_getters() {
+        let ids = vec![7, 8, 9];
+        let custom_data = create_test_custom_data();
+        let request = GetDisplayMessagesRequest::new(555)
+            .with_id(ids.clone())
+            .with_priority(MessagePriorityEnumType::NormalCycle)
+            .with_state(MessageStateEnumType::Idle)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_id(), Some(&ids));
+        assert_eq!(request.get_request_id(), &555);
+        assert_eq!(request.get_priority(), Some(&MessagePriorityEnumType::NormalCycle));
+        assert_eq!(request.get_state(), Some(&MessageStateEnumType::Idle));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_display_messages_request_serialization() {
+        let request = GetDisplayMessagesRequest::new(123);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetDisplayMessagesRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_get_display_messages_request_validation() {
+        let request = GetDisplayMessagesRequest::new(100);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_display_messages_request_validation_negative_request_id() {
+        let mut request = GetDisplayMessagesRequest::new(100);
+        request.set_request_id(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_display_messages_request_validation_empty_id_list() {
+        let mut request = GetDisplayMessagesRequest::new(100);
+        request.set_id(Some(vec![])); // Empty list should fail validation
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_display_messages_request_all_priority_types() {
+        let priorities = vec![
+            MessagePriorityEnumType::AlwaysFront,
+            MessagePriorityEnumType::InFront,
+            MessagePriorityEnumType::NormalCycle,
+        ];
+
+        for priority in priorities {
+            let request = GetDisplayMessagesRequest::new(123)
+                .with_priority(priority.clone());
+            assert_eq!(request.priority, Some(priority));
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_display_messages_request_all_state_types() {
+        let states = vec![
+            MessageStateEnumType::Charging,
+            MessageStateEnumType::Faulted,
+            MessageStateEnumType::Idle,
+            MessageStateEnumType::Unavailable,
+            MessageStateEnumType::Suspended,
+            MessageStateEnumType::Discharging,
+        ];
+
+        for state in states {
+            let request = GetDisplayMessagesRequest::new(123)
+                .with_state(state.clone());
+            assert_eq!(request.state, Some(state));
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_display_messages_request_json_round_trip() {
+        let ids = vec![10, 20, 30];
+        let custom_data = create_test_custom_data();
+        let request = GetDisplayMessagesRequest::new(777)
+            .with_id(ids)
+            .with_priority(MessagePriorityEnumType::AlwaysFront)
+            .with_state(MessageStateEnumType::Charging)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetDisplayMessagesRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for GetDisplayMessagesResponse
+
+    #[test]
+    fn test_get_display_messages_response_new() {
+        let response = GetDisplayMessagesResponse::new(GetDisplayMessagesStatusEnumType::Accepted);
+
+        assert_eq!(response.status, GetDisplayMessagesStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_display_messages_response_with_status_info() {
+        let status_info = create_test_status_info();
+        let response = GetDisplayMessagesResponse::new(GetDisplayMessagesStatusEnumType::Unknown)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, GetDisplayMessagesStatusEnumType::Unknown);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_display_messages_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = GetDisplayMessagesResponse::new(GetDisplayMessagesStatusEnumType::Accepted)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, GetDisplayMessagesStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_display_messages_response_setters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let mut response = GetDisplayMessagesResponse::new(GetDisplayMessagesStatusEnumType::Accepted);
+        response.set_status(GetDisplayMessagesStatusEnumType::Unknown);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, GetDisplayMessagesStatusEnumType::Unknown);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_display_messages_response_getters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = GetDisplayMessagesResponse::new(GetDisplayMessagesStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &GetDisplayMessagesStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_display_messages_response_serialization() {
+        let response = GetDisplayMessagesResponse::new(GetDisplayMessagesStatusEnumType::Accepted);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetDisplayMessagesResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_get_display_messages_response_validation() {
+        let response = GetDisplayMessagesResponse::new(GetDisplayMessagesStatusEnumType::Accepted);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_display_messages_response_all_status_types() {
+        let statuses = vec![
+            GetDisplayMessagesStatusEnumType::Accepted,
+            GetDisplayMessagesStatusEnumType::Unknown,
+        ];
+
+        for status in statuses {
+            let response = GetDisplayMessagesResponse::new(status.clone());
+            assert_eq!(response.status, status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_display_messages_response_json_round_trip() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = GetDisplayMessagesResponse::new(GetDisplayMessagesStatusEnumType::Unknown)
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetDisplayMessagesResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
