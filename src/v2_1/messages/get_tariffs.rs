@@ -245,3 +245,264 @@ impl GetTariffsResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Utc;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    fn create_test_tariff_assignment() -> TariffAssignmentType {
+        TariffAssignmentType::new(
+            "TestTariff".to_string(),
+            Utc::now(),
+        )
+    }
+
+    // Tests for GetTariffsRequest
+
+    #[test]
+    fn test_get_tariffs_request_new() {
+        let request = GetTariffsRequest::new(0);
+
+        assert_eq!(request.evse_id, 0);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_tariffs_request_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let request = GetTariffsRequest::new(1)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.evse_id, 1);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_tariffs_request_setters() {
+        let custom_data = create_test_custom_data();
+
+        let mut request = GetTariffsRequest::new(0);
+        request.set_evse_id(2);
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.evse_id, 2);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_tariffs_request_getters() {
+        let custom_data = create_test_custom_data();
+        let request = GetTariffsRequest::new(3)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_evse_id(), &3);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_tariffs_request_serialization() {
+        let request = GetTariffsRequest::new(0);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetTariffsRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_get_tariffs_request_validation() {
+        let request = GetTariffsRequest::new(1);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_tariffs_request_validation_negative_evse_id() {
+        let mut request = GetTariffsRequest::new(1);
+        request.set_evse_id(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_tariffs_request_validation_zero_evse_id() {
+        let request = GetTariffsRequest::new(0);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_tariffs_request_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let request = GetTariffsRequest::new(5)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetTariffsRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for GetTariffsResponse
+
+    #[test]
+    fn test_get_tariffs_response_new() {
+        let response = GetTariffsResponse::new(TariffGetStatusEnumType::Accepted);
+
+        assert_eq!(response.status, TariffGetStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.tariff_assignments, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_tariffs_response_with_status_info() {
+        let status_info = create_test_status_info();
+        let response = GetTariffsResponse::new(TariffGetStatusEnumType::Rejected)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, TariffGetStatusEnumType::Rejected);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.tariff_assignments, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_tariffs_response_with_tariff_assignments() {
+        let tariff_assignments = vec![create_test_tariff_assignment()];
+        let response = GetTariffsResponse::new(TariffGetStatusEnumType::Accepted)
+            .with_tariff_assignments(tariff_assignments.clone());
+
+        assert_eq!(response.status, TariffGetStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.tariff_assignments, Some(tariff_assignments));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_tariffs_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = GetTariffsResponse::new(TariffGetStatusEnumType::Accepted)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, TariffGetStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.tariff_assignments, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_tariffs_response_setters() {
+        let status_info = create_test_status_info();
+        let tariff_assignments = vec![create_test_tariff_assignment()];
+        let custom_data = create_test_custom_data();
+
+        let mut response = GetTariffsResponse::new(TariffGetStatusEnumType::Accepted);
+        response.set_status(TariffGetStatusEnumType::InvalidId);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_tariff_assignments(Some(tariff_assignments.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, TariffGetStatusEnumType::InvalidId);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.tariff_assignments, Some(tariff_assignments));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_tariffs_response_getters() {
+        let status_info = create_test_status_info();
+        let tariff_assignments = vec![create_test_tariff_assignment()];
+        let custom_data = create_test_custom_data();
+        let response = GetTariffsResponse::new(TariffGetStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_tariff_assignments(tariff_assignments.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &TariffGetStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_tariff_assignments(), Some(&tariff_assignments));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_tariffs_response_serialization() {
+        let response = GetTariffsResponse::new(TariffGetStatusEnumType::Accepted);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetTariffsResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_get_tariffs_response_validation() {
+        let response = GetTariffsResponse::new(TariffGetStatusEnumType::Accepted);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_tariffs_response_validation_empty_tariff_assignments() {
+        let mut response = GetTariffsResponse::new(TariffGetStatusEnumType::Accepted);
+        response.set_tariff_assignments(Some(vec![])); // Empty list should fail validation
+
+        assert!(response.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_tariffs_response_all_status_types() {
+        let statuses = vec![
+            TariffGetStatusEnumType::Accepted,
+            TariffGetStatusEnumType::Rejected,
+            TariffGetStatusEnumType::InvalidId,
+        ];
+
+        for status in statuses {
+            let response = GetTariffsResponse::new(status.clone());
+            assert_eq!(response.status, status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_tariffs_response_multiple_tariff_assignments() {
+        let tariff_assignment1 = TariffAssignmentType::new("Tariff1".to_string(), Utc::now());
+        let tariff_assignment2 = TariffAssignmentType::new("Tariff2".to_string(), Utc::now());
+        let tariff_assignments = vec![tariff_assignment1, tariff_assignment2];
+
+        let response = GetTariffsResponse::new(TariffGetStatusEnumType::Accepted)
+            .with_tariff_assignments(tariff_assignments.clone());
+
+        assert_eq!(response.tariff_assignments, Some(tariff_assignments));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_tariffs_response_json_round_trip() {
+        let status_info = create_test_status_info();
+        let tariff_assignments = vec![create_test_tariff_assignment()];
+        let custom_data = create_test_custom_data();
+        let response = GetTariffsResponse::new(TariffGetStatusEnumType::Accepted)
+            .with_status_info(status_info)
+            .with_tariff_assignments(tariff_assignments)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetTariffsResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
