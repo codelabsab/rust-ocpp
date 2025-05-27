@@ -309,3 +309,322 @@ impl UpdateFirmwareResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::{CustomDataType, FirmwareType, StatusInfoType};
+    use crate::v2_1::enumerations::UpdateFirmwareStatusEnumType;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_firmware() -> FirmwareType {
+        FirmwareType::new(
+            "https://example.com/firmware.bin".to_string(),
+            "abcd1234efgh5678".to_string(),
+        )
+    }
+
+    // Tests for UpdateFirmwareRequest
+
+    #[test]
+    fn test_update_firmware_request_new() {
+        let request_id = 123;
+        let firmware = create_test_firmware();
+        let request = UpdateFirmwareRequest::new(request_id, firmware.clone());
+
+        assert_eq!(request.get_request_id(), &request_id);
+        assert_eq!(request.get_firmware(), &firmware);
+        assert_eq!(request.get_retries(), None);
+        assert_eq!(request.get_retry_interval(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_update_firmware_request_serialization() {
+        let firmware = create_test_firmware();
+        let request = UpdateFirmwareRequest::new(456, firmware);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: UpdateFirmwareRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_update_firmware_request_validation() {
+        let firmware = create_test_firmware();
+        let request = UpdateFirmwareRequest::new(789, firmware);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_update_firmware_request_with_retries() {
+        let firmware = create_test_firmware();
+        let request = UpdateFirmwareRequest::new(101, firmware)
+            .with_retries(3);
+
+        assert_eq!(request.get_retries(), Some(&3));
+    }
+
+    #[test]
+    fn test_update_firmware_request_with_retry_interval() {
+        let firmware = create_test_firmware();
+        let request = UpdateFirmwareRequest::new(202, firmware)
+            .with_retry_interval(60);
+
+        assert_eq!(request.get_retry_interval(), Some(&60));
+    }
+
+    #[test]
+    fn test_update_firmware_request_with_custom_data() {
+        let firmware = create_test_firmware();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = UpdateFirmwareRequest::new(303, firmware)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_update_firmware_request_set_methods() {
+        let firmware = create_test_firmware();
+        let new_firmware = create_test_firmware();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut request = UpdateFirmwareRequest::new(100, firmware);
+
+        request
+            .set_request_id(200)
+            .set_firmware(new_firmware.clone())
+            .set_retries(Some(5))
+            .set_retry_interval(Some(120))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_request_id(), &200);
+        assert_eq!(request.get_firmware(), &new_firmware);
+        assert_eq!(request.get_retries(), Some(&5));
+        assert_eq!(request.get_retry_interval(), Some(&120));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_update_firmware_request_builder_pattern() {
+        let firmware = create_test_firmware();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let request = UpdateFirmwareRequest::new(404, firmware)
+            .with_retries(2)
+            .with_retry_interval(30)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_retries(), Some(&2));
+        assert_eq!(request.get_retry_interval(), Some(&30));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_update_firmware_request_negative_request_id_validation() {
+        let firmware = create_test_firmware();
+        let mut request = UpdateFirmwareRequest::new(1, firmware);
+        request.set_request_id(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_update_firmware_request_negative_retries_validation() {
+        let firmware = create_test_firmware();
+        let mut request = UpdateFirmwareRequest::new(1, firmware);
+        request.set_retries(Some(-1));
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_update_firmware_request_zero_retries() {
+        let firmware = create_test_firmware();
+        let request = UpdateFirmwareRequest::new(1, firmware)
+            .with_retries(0);
+
+        assert_eq!(request.get_retries(), Some(&0));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_update_firmware_request_zero_request_id_validation() {
+        let firmware = create_test_firmware();
+        let request = UpdateFirmwareRequest::new(0, firmware);
+
+        assert!(request.validate().is_ok());
+    }
+
+    // Tests for UpdateFirmwareResponse
+
+    #[test]
+    fn test_update_firmware_response_new() {
+        let status = UpdateFirmwareStatusEnumType::Accepted;
+        let response = UpdateFirmwareResponse::new(status.clone());
+
+        assert_eq!(response.get_status(), &status);
+        assert_eq!(response.get_status_info(), None);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_update_firmware_response_serialization() {
+        let response = UpdateFirmwareResponse::new(UpdateFirmwareStatusEnumType::Rejected);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: UpdateFirmwareResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_update_firmware_response_validation() {
+        let response = UpdateFirmwareResponse::new(UpdateFirmwareStatusEnumType::Accepted);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_update_firmware_response_with_status_info() {
+        let status_info = StatusInfoType::new("Success".to_string());
+        let response = UpdateFirmwareResponse::new(UpdateFirmwareStatusEnumType::Accepted)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.get_status_info(), Some(&status_info));
+    }
+
+    #[test]
+    fn test_update_firmware_response_with_custom_data() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = UpdateFirmwareResponse::new(UpdateFirmwareStatusEnumType::InvalidCertificate)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_update_firmware_response_set_methods() {
+        let status_info = StatusInfoType::new("Error".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut response = UpdateFirmwareResponse::new(UpdateFirmwareStatusEnumType::Accepted);
+
+        response
+            .set_status(UpdateFirmwareStatusEnumType::RevokedCertificate)
+            .set_status_info(Some(status_info.clone()))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_status(), &UpdateFirmwareStatusEnumType::RevokedCertificate);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_update_firmware_response_builder_pattern() {
+        let status_info = StatusInfoType::new("Info".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let response = UpdateFirmwareResponse::new(UpdateFirmwareStatusEnumType::AcceptedCanceled)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_update_firmware_response_all_status_types() {
+        let status_types = vec![
+            UpdateFirmwareStatusEnumType::Accepted,
+            UpdateFirmwareStatusEnumType::Rejected,
+            UpdateFirmwareStatusEnumType::AcceptedCanceled,
+            UpdateFirmwareStatusEnumType::InvalidCertificate,
+            UpdateFirmwareStatusEnumType::RevokedCertificate,
+        ];
+
+        for status in status_types {
+            let response = UpdateFirmwareResponse::new(status.clone());
+            
+            assert_eq!(response.get_status(), &status);
+            assert!(response.validate().is_ok());
+
+            let json = serde_json::to_string(&response).expect("Failed to serialize");
+            let deserialized: UpdateFirmwareResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+            assert_eq!(response, deserialized);
+        }
+    }
+
+    #[test]
+    fn test_update_firmware_request_json_round_trip() {
+        let firmware = create_test_firmware();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = UpdateFirmwareRequest::new(555, firmware)
+            .with_retries(3)
+            .with_retry_interval(180)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: UpdateFirmwareRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_update_firmware_response_json_round_trip() {
+        let status_info = StatusInfoType::new("Details".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = UpdateFirmwareResponse::new(UpdateFirmwareStatusEnumType::InvalidCertificate)
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: UpdateFirmwareResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_update_firmware_request_with_large_values() {
+        let firmware = create_test_firmware();
+        let request = UpdateFirmwareRequest::new(999999, firmware)
+            .with_retries(100)
+            .with_retry_interval(3600);
+
+        assert_eq!(request.get_request_id(), &999999);
+        assert_eq!(request.get_retries(), Some(&100));
+        assert_eq!(request.get_retry_interval(), Some(&3600));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_update_firmware_response_with_all_optional_fields() {
+        let status_info = StatusInfoType::new("Complete".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let response = UpdateFirmwareResponse::new(UpdateFirmwareStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &UpdateFirmwareStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_update_firmware_request_with_custom_data_validation() {
+        let firmware = create_test_firmware();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = UpdateFirmwareRequest::new(777, firmware)
+            .with_custom_data(custom_data);
+
+        assert!(request.validate().is_ok());
+    }
+}
