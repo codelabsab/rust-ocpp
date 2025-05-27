@@ -261,3 +261,351 @@ impl NotifyCustomerInformationResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Utc;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_new() {
+        let data = "Test customer data".to_string();
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let request_id = 123;
+
+        let request = NotifyCustomerInformationRequest::new(
+            data.clone(),
+            seq_no,
+            generated_at,
+            request_id,
+        );
+
+        assert_eq!(request.get_data(), &data);
+        assert_eq!(request.get_seq_no(), &seq_no);
+        assert_eq!(request.get_generated_at(), &generated_at);
+        assert_eq!(request.get_request_id(), &request_id);
+        assert_eq!(request.get_tbc(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_serialization() {
+        let data = "Test customer data".to_string();
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let request_id = 123;
+
+        let request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        );
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: NotifyCustomerInformationRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_validation() {
+        let data = "Test customer data".to_string();
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let request_id = 123;
+
+        let request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        );
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_validation_data_too_long() {
+        let data = "x".repeat(513); // Exceeds max length of 512
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let request_id = 123;
+
+        let request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        );
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_validation_negative_seq_no() {
+        let data = "Test customer data".to_string();
+        let seq_no = -1; // Invalid negative value
+        let generated_at = Utc::now();
+        let request_id = 123;
+
+        let request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        );
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_validation_negative_request_id() {
+        let data = "Test customer data".to_string();
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let request_id = -1; // Invalid negative value
+
+        let request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        );
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_with_tbc() {
+        let data = "Test customer data".to_string();
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let request_id = 123;
+
+        let request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        ).with_tbc(true);
+
+        assert_eq!(request.get_tbc(), Some(&true));
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_with_custom_data() {
+        let data = "Test customer data".to_string();
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let request_id = 123;
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        ).with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_set_methods() {
+        let data = "Test customer data".to_string();
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let request_id = 123;
+
+        let mut request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        );
+
+        let new_data = "Updated customer data".to_string();
+        let new_seq_no = 2;
+        let new_generated_at = Utc::now();
+        let new_request_id = 456;
+        let custom_data = create_test_custom_data();
+
+        request
+            .set_data(new_data.clone())
+            .set_seq_no(new_seq_no)
+            .set_generated_at(new_generated_at)
+            .set_request_id(new_request_id)
+            .set_tbc(Some(true))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_data(), &new_data);
+        assert_eq!(request.get_seq_no(), &new_seq_no);
+        assert_eq!(request.get_generated_at(), &new_generated_at);
+        assert_eq!(request.get_request_id(), &new_request_id);
+        assert_eq!(request.get_tbc(), Some(&true));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_builder_pattern() {
+        let data = "Test customer data".to_string();
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let request_id = 123;
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyCustomerInformationRequest::new(
+            data.clone(),
+            seq_no,
+            generated_at,
+            request_id,
+        )
+        .with_tbc(true)
+        .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_data(), &data);
+        assert_eq!(request.get_tbc(), Some(&true));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_json_round_trip() {
+        let data = "Test customer data".to_string();
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let request_id = 123;
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        )
+        .with_tbc(true)
+        .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: NotifyCustomerInformationRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_customer_information_response_new() {
+        let response = NotifyCustomerInformationResponse::new();
+
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_customer_information_response_serialization() {
+        let response = NotifyCustomerInformationResponse::new();
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: NotifyCustomerInformationResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_notify_customer_information_response_validation() {
+        let response = NotifyCustomerInformationResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_customer_information_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyCustomerInformationResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_customer_information_response_set_custom_data() {
+        let mut response = NotifyCustomerInformationResponse::new();
+        let custom_data = create_test_custom_data();
+
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_customer_information_response_builder_pattern() {
+        let custom_data = create_test_custom_data();
+
+        let response = NotifyCustomerInformationResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_customer_information_response_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyCustomerInformationResponse::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: NotifyCustomerInformationResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_customer_information_response_empty_json() {
+        let json = "{}";
+        let response: NotifyCustomerInformationResponse =
+            serde_json::from_str(json).expect("Failed to deserialize");
+
+        assert_eq!(response.get_custom_data(), None);
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_customer_information_request_boundary_values() {
+        // Test with minimum valid values
+        let data = "x".to_string(); // Minimum length
+        let seq_no = 0; // Minimum valid value
+        let generated_at = Utc::now();
+        let request_id = 0; // Minimum valid value
+
+        let request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        );
+
+        assert!(request.validate().is_ok());
+
+        // Test with maximum valid data length
+        let data = "x".repeat(512); // Maximum allowed length
+        let request = NotifyCustomerInformationRequest::new(
+            data,
+            seq_no,
+            generated_at,
+            request_id,
+        );
+
+        assert!(request.validate().is_ok());
+    }
+}
