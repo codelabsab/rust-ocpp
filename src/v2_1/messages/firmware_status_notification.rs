@@ -218,3 +218,270 @@ impl FirmwareStatusNotificationResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    // Tests for FirmwareStatusNotificationRequest
+
+    #[test]
+    fn test_firmware_status_notification_request_new() {
+        let request = FirmwareStatusNotificationRequest::new(FirmwareStatusEnumType::Downloading);
+
+        assert_eq!(request.status, FirmwareStatusEnumType::Downloading);
+        assert_eq!(request.request_id, None);
+        assert_eq!(request.status_info, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_with_request_id() {
+        let request = FirmwareStatusNotificationRequest::new(FirmwareStatusEnumType::Downloaded)
+            .with_request_id(12345);
+
+        assert_eq!(request.status, FirmwareStatusEnumType::Downloaded);
+        assert_eq!(request.request_id, Some(12345));
+        assert_eq!(request.status_info, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_with_status_info() {
+        let status_info = create_test_status_info();
+        let request = FirmwareStatusNotificationRequest::new(FirmwareStatusEnumType::InstallationFailed)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(request.status, FirmwareStatusEnumType::InstallationFailed);
+        assert_eq!(request.request_id, None);
+        assert_eq!(request.status_info, Some(status_info));
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let request = FirmwareStatusNotificationRequest::new(FirmwareStatusEnumType::Installed)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.status, FirmwareStatusEnumType::Installed);
+        assert_eq!(request.request_id, None);
+        assert_eq!(request.status_info, None);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_setters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let mut request = FirmwareStatusNotificationRequest::new(FirmwareStatusEnumType::Idle);
+        request.set_status(FirmwareStatusEnumType::Installing);
+        request.set_request_id(Some(54321));
+        request.set_status_info(Some(status_info.clone()));
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.status, FirmwareStatusEnumType::Installing);
+        assert_eq!(request.request_id, Some(54321));
+        assert_eq!(request.status_info, Some(status_info));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_getters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let request = FirmwareStatusNotificationRequest::new(FirmwareStatusEnumType::SignatureVerified)
+            .with_request_id(99999)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_status(), &FirmwareStatusEnumType::SignatureVerified);
+        assert_eq!(request.get_request_id(), Some(&99999));
+        assert_eq!(request.get_status_info(), Some(&status_info));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_serialization() {
+        let request = FirmwareStatusNotificationRequest::new(FirmwareStatusEnumType::DownloadFailed)
+            .with_request_id(123);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: FirmwareStatusNotificationRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_deserialization() {
+        let json = r#"{
+            "status": "Downloading",
+            "requestId": 456,
+            "statusInfo": {
+                "reasonCode": "ProgressUpdate"
+            }
+        }"#;
+
+        let request: FirmwareStatusNotificationRequest = serde_json::from_str(json).unwrap();
+        assert_eq!(request.status, FirmwareStatusEnumType::Downloading);
+        assert_eq!(request.request_id, Some(456));
+        assert!(request.status_info.is_some());
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_validation() {
+        let request = FirmwareStatusNotificationRequest::new(FirmwareStatusEnumType::Downloaded)
+            .with_request_id(100);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_validation_negative_request_id() {
+        let mut request = FirmwareStatusNotificationRequest::new(FirmwareStatusEnumType::Downloaded);
+        request.set_request_id(Some(-1));
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_all_status_types() {
+        let statuses = vec![
+            FirmwareStatusEnumType::Downloaded,
+            FirmwareStatusEnumType::DownloadFailed,
+            FirmwareStatusEnumType::Downloading,
+            FirmwareStatusEnumType::DownloadScheduled,
+            FirmwareStatusEnumType::DownloadPaused,
+            FirmwareStatusEnumType::Idle,
+            FirmwareStatusEnumType::InstallationFailed,
+            FirmwareStatusEnumType::Installing,
+            FirmwareStatusEnumType::Installed,
+            FirmwareStatusEnumType::InstallRebooting,
+            FirmwareStatusEnumType::InstallScheduled,
+            FirmwareStatusEnumType::InstallVerificationFailed,
+            FirmwareStatusEnumType::InvalidSignature,
+            FirmwareStatusEnumType::SignatureVerified,
+        ];
+
+        for status in statuses {
+            let request = FirmwareStatusNotificationRequest::new(status.clone());
+            assert_eq!(request.status, status);
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_firmware_status_notification_request_json_round_trip() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let request = FirmwareStatusNotificationRequest::new(FirmwareStatusEnumType::Installing)
+            .with_request_id(789)
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: FirmwareStatusNotificationRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for FirmwareStatusNotificationResponse
+
+    #[test]
+    fn test_firmware_status_notification_response_new() {
+        let response = FirmwareStatusNotificationResponse::new();
+
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_firmware_status_notification_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = FirmwareStatusNotificationResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_firmware_status_notification_response_setters() {
+        let custom_data = create_test_custom_data();
+
+        let mut response = FirmwareStatusNotificationResponse::new();
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_firmware_status_notification_response_getters() {
+        let custom_data = create_test_custom_data();
+        let response = FirmwareStatusNotificationResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_firmware_status_notification_response_serialization() {
+        let response = FirmwareStatusNotificationResponse::new();
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: FirmwareStatusNotificationResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_firmware_status_notification_response_deserialization() {
+        let json = r#"{
+            "customData": {
+                "vendorId": "TestVendor"
+            }
+        }"#;
+
+        let response: FirmwareStatusNotificationResponse = serde_json::from_str(json).unwrap();
+        assert!(response.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_firmware_status_notification_response_validation() {
+        let response = FirmwareStatusNotificationResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_firmware_status_notification_response_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let response = FirmwareStatusNotificationResponse::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: FirmwareStatusNotificationResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    #[test]
+    fn test_firmware_status_notification_response_empty_json() {
+        let json = "{}";
+
+        let response: FirmwareStatusNotificationResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.custom_data, None);
+        assert!(response.validate().is_ok());
+    }
+}
