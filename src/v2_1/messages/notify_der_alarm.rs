@@ -282,3 +282,312 @@ impl NotifyDERAlarmResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Utc;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_new() {
+        let control_type = DERControlEnumType::FreqDroop;
+        let timestamp = Utc::now();
+
+        let request = NotifyDERAlarmRequest::new(control_type.clone(), timestamp);
+
+        assert_eq!(request.get_control_type(), &control_type);
+        assert_eq!(request.get_timestamp(), &timestamp);
+        assert_eq!(request.get_grid_event_fault(), None);
+        assert_eq!(request.get_alarm_ended(), None);
+        assert_eq!(request.get_extra_info(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_serialization() {
+        let control_type = DERControlEnumType::FreqDroop;
+        let timestamp = Utc::now();
+
+        let request = NotifyDERAlarmRequest::new(control_type, timestamp);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: NotifyDERAlarmRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_validation() {
+        let control_type = DERControlEnumType::FreqDroop;
+        let timestamp = Utc::now();
+
+        let request = NotifyDERAlarmRequest::new(control_type, timestamp);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_validation_extra_info_too_long() {
+        let control_type = DERControlEnumType::FreqDroop;
+        let timestamp = Utc::now();
+        let extra_info = "x".repeat(201); // Exceeds max length of 200
+
+        let request = NotifyDERAlarmRequest::new(control_type, timestamp)
+            .with_extra_info(extra_info);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_with_all_optional_fields() {
+        let control_type = DERControlEnumType::FreqDroop;
+        let timestamp = Utc::now();
+        let grid_event_fault = GridEventFaultEnumType::OverVoltage;
+        let alarm_ended = true;
+        let extra_info = "Test alarm information".to_string();
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyDERAlarmRequest::new(control_type.clone(), timestamp)
+            .with_grid_event_fault(grid_event_fault.clone())
+            .with_alarm_ended(alarm_ended)
+            .with_extra_info(extra_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_control_type(), &control_type);
+        assert_eq!(request.get_timestamp(), &timestamp);
+        assert_eq!(request.get_grid_event_fault(), Some(&grid_event_fault));
+        assert_eq!(request.get_alarm_ended(), Some(&alarm_ended));
+        assert_eq!(request.get_extra_info(), Some(&extra_info));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_set_methods() {
+        let control_type = DERControlEnumType::FreqDroop;
+        let timestamp = Utc::now();
+
+        let mut request = NotifyDERAlarmRequest::new(control_type, timestamp);
+
+        let new_control_type = DERControlEnumType::VoltVar;
+        let new_timestamp = Utc::now();
+        let grid_event_fault = GridEventFaultEnumType::UnderVoltage;
+        let alarm_ended = false;
+        let extra_info = "Updated alarm info".to_string();
+        let custom_data = create_test_custom_data();
+
+        request
+            .set_control_type(new_control_type.clone())
+            .set_timestamp(new_timestamp)
+            .set_grid_event_fault(Some(grid_event_fault.clone()))
+            .set_alarm_ended(Some(alarm_ended))
+            .set_extra_info(Some(extra_info.clone()))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_control_type(), &new_control_type);
+        assert_eq!(request.get_timestamp(), &new_timestamp);
+        assert_eq!(request.get_grid_event_fault(), Some(&grid_event_fault));
+        assert_eq!(request.get_alarm_ended(), Some(&alarm_ended));
+        assert_eq!(request.get_extra_info(), Some(&extra_info));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_builder_pattern() {
+        let control_type = DERControlEnumType::HVMustTrip;
+        let timestamp = Utc::now();
+        let grid_event_fault = GridEventFaultEnumType::OverFrequency;
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyDERAlarmRequest::new(control_type.clone(), timestamp)
+            .with_grid_event_fault(grid_event_fault.clone())
+            .with_alarm_ended(true)
+            .with_extra_info("Builder pattern test".to_string())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_control_type(), &control_type);
+        assert_eq!(request.get_grid_event_fault(), Some(&grid_event_fault));
+        assert_eq!(request.get_alarm_ended(), Some(&true));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_json_round_trip() {
+        let control_type = DERControlEnumType::LVMayTrip;
+        let timestamp = Utc::now();
+        let grid_event_fault = GridEventFaultEnumType::CurrentImbalance;
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyDERAlarmRequest::new(control_type, timestamp)
+            .with_grid_event_fault(grid_event_fault)
+            .with_alarm_ended(false)
+            .with_extra_info("JSON round trip test".to_string())
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: NotifyDERAlarmRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_all_control_types() {
+        let timestamp = Utc::now();
+        let control_types = vec![
+            DERControlEnumType::EnterService,
+            DERControlEnumType::FreqDroop,
+            DERControlEnumType::FreqWatt,
+            DERControlEnumType::FixedPFAbsorb,
+            DERControlEnumType::FixedPFInject,
+            DERControlEnumType::FixedVar,
+            DERControlEnumType::Gradients,
+            DERControlEnumType::HFMustTrip,
+            DERControlEnumType::HFMayTrip,
+            DERControlEnumType::HVMustTrip,
+            DERControlEnumType::HVMomCess,
+            DERControlEnumType::HVMayTrip,
+            DERControlEnumType::LimitMaxDischarge,
+            DERControlEnumType::LFMustTrip,
+            DERControlEnumType::LVMustTrip,
+            DERControlEnumType::LVMomCess,
+            DERControlEnumType::LVMayTrip,
+            DERControlEnumType::PowerMonitoringMustTrip,
+            DERControlEnumType::VoltVar,
+            DERControlEnumType::VoltWatt,
+            DERControlEnumType::WattPF,
+            DERControlEnumType::WattVar,
+        ];
+
+        for control_type in control_types {
+            let request = NotifyDERAlarmRequest::new(control_type.clone(), timestamp);
+            assert_eq!(request.get_control_type(), &control_type);
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_all_grid_event_faults() {
+        let control_type = DERControlEnumType::FreqDroop;
+        let timestamp = Utc::now();
+        let grid_event_faults = vec![
+            GridEventFaultEnumType::CurrentImbalance,
+            GridEventFaultEnumType::LocalEmergency,
+            GridEventFaultEnumType::LowInputPower,
+            GridEventFaultEnumType::OverCurrent,
+            GridEventFaultEnumType::OverFrequency,
+            GridEventFaultEnumType::OverVoltage,
+            GridEventFaultEnumType::PhaseRotation,
+            GridEventFaultEnumType::RemoteEmergency,
+            GridEventFaultEnumType::UnderFrequency,
+            GridEventFaultEnumType::UnderVoltage,
+            GridEventFaultEnumType::VoltageImbalance,
+        ];
+
+        for grid_event_fault in grid_event_faults {
+            let request = NotifyDERAlarmRequest::new(control_type.clone(), timestamp)
+                .with_grid_event_fault(grid_event_fault.clone());
+            assert_eq!(request.get_grid_event_fault(), Some(&grid_event_fault));
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_notify_der_alarm_request_boundary_values() {
+        let control_type = DERControlEnumType::FreqDroop;
+        let timestamp = Utc::now();
+
+        // Test with maximum valid extra_info length
+        let extra_info = "x".repeat(200); // Maximum allowed length
+        let request = NotifyDERAlarmRequest::new(control_type, timestamp)
+            .with_extra_info(extra_info.clone());
+
+        assert_eq!(request.get_extra_info(), Some(&extra_info));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_der_alarm_response_new() {
+        let response = NotifyDERAlarmResponse::new();
+
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_der_alarm_response_serialization() {
+        let response = NotifyDERAlarmResponse::new();
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: NotifyDERAlarmResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_notify_der_alarm_response_validation() {
+        let response = NotifyDERAlarmResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_der_alarm_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyDERAlarmResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_der_alarm_response_set_custom_data() {
+        let mut response = NotifyDERAlarmResponse::new();
+        let custom_data = create_test_custom_data();
+
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_der_alarm_response_builder_pattern() {
+        let custom_data = create_test_custom_data();
+
+        let response = NotifyDERAlarmResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_der_alarm_response_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyDERAlarmResponse::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: NotifyDERAlarmResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_der_alarm_response_empty_json() {
+        let json = "{}";
+        let response: NotifyDERAlarmResponse =
+            serde_json::from_str(json).expect("Failed to deserialize");
+
+        assert_eq!(response.get_custom_data(), None);
+        assert!(response.validate().is_ok());
+    }
+}
