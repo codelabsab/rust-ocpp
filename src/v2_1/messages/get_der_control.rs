@@ -321,3 +321,322 @@ impl GetDERControlResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    // Tests for GetDERControlRequest
+
+    #[test]
+    fn test_get_der_control_request_new() {
+        let request = GetDERControlRequest::new(123);
+
+        assert_eq!(request.request_id, 123);
+        assert_eq!(request.is_default, None);
+        assert_eq!(request.control_type, None);
+        assert_eq!(request.control_id, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_der_control_request_with_is_default() {
+        let request = GetDERControlRequest::new(456)
+            .with_is_default(true);
+
+        assert_eq!(request.request_id, 456);
+        assert_eq!(request.is_default, Some(true));
+        assert_eq!(request.control_type, None);
+        assert_eq!(request.control_id, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_der_control_request_with_control_type() {
+        let request = GetDERControlRequest::new(789)
+            .with_control_type(DERControlEnumType::FreqWatt);
+
+        assert_eq!(request.request_id, 789);
+        assert_eq!(request.is_default, None);
+        assert_eq!(request.control_type, Some(DERControlEnumType::FreqWatt));
+        assert_eq!(request.control_id, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_der_control_request_with_control_id() {
+        let request = GetDERControlRequest::new(999)
+            .with_control_id("control_123".to_string());
+
+        assert_eq!(request.request_id, 999);
+        assert_eq!(request.is_default, None);
+        assert_eq!(request.control_type, None);
+        assert_eq!(request.control_id, Some("control_123".to_string()));
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_der_control_request_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let request = GetDERControlRequest::new(111)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.request_id, 111);
+        assert_eq!(request.is_default, None);
+        assert_eq!(request.control_type, None);
+        assert_eq!(request.control_id, None);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_der_control_request_setters() {
+        let custom_data = create_test_custom_data();
+
+        let mut request = GetDERControlRequest::new(100);
+        request.set_request_id(200);
+        request.set_is_default(Some(false));
+        request.set_control_type(Some(DERControlEnumType::VoltVar));
+        request.set_control_id(Some("control_456".to_string()));
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.request_id, 200);
+        assert_eq!(request.is_default, Some(false));
+        assert_eq!(request.control_type, Some(DERControlEnumType::VoltVar));
+        assert_eq!(request.control_id, Some("control_456".to_string()));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_der_control_request_getters() {
+        let custom_data = create_test_custom_data();
+        let request = GetDERControlRequest::new(555)
+            .with_is_default(true)
+            .with_control_type(DERControlEnumType::PowerLimitation)
+            .with_control_id("control_789".to_string())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_request_id(), &555);
+        assert_eq!(request.get_is_default(), Some(&true));
+        assert_eq!(request.get_control_type(), Some(&DERControlEnumType::PowerLimitation));
+        assert_eq!(request.get_control_id(), Some(&"control_789".to_string()));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_der_control_request_serialization() {
+        let request = GetDERControlRequest::new(123);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetDERControlRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_get_der_control_request_validation() {
+        let request = GetDERControlRequest::new(100);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_der_control_request_validation_negative_request_id() {
+        let mut request = GetDERControlRequest::new(100);
+        request.set_request_id(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_der_control_request_validation_long_control_id() {
+        let long_control_id = "a".repeat(37); // Exceeds max length of 36
+        let mut request = GetDERControlRequest::new(100);
+        request.set_control_id(Some(long_control_id));
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_der_control_request_validation_max_control_id() {
+        let max_control_id = "a".repeat(36); // Exactly at max length
+        let mut request = GetDERControlRequest::new(100);
+        request.set_control_id(Some(max_control_id));
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_der_control_request_all_control_types() {
+        let control_types = vec![
+            DERControlEnumType::EnterService,
+            DERControlEnumType::FreqDroop,
+            DERControlEnumType::FreqWatt,
+            DERControlEnumType::FixedPFAbsorb,
+            DERControlEnumType::FixedPFInject,
+            DERControlEnumType::FixedVar,
+            DERControlEnumType::Gradients,
+            DERControlEnumType::HFMustTrip,
+            DERControlEnumType::HFMayTrip,
+            DERControlEnumType::HVMustTrip,
+            DERControlEnumType::HVMomCess,
+            DERControlEnumType::HVMayTrip,
+            DERControlEnumType::LimitMaxDischarge,
+            DERControlEnumType::LFMustTrip,
+            DERControlEnumType::LVMustTrip,
+            DERControlEnumType::LVMomCess,
+            DERControlEnumType::LVMayTrip,
+            DERControlEnumType::PowerMonitoringMustTrip,
+            DERControlEnumType::VoltVar,
+            DERControlEnumType::VoltWatt,
+            DERControlEnumType::WattPF,
+            DERControlEnumType::WattVar,
+            DERControlEnumType::PowerLimitation,
+            DERControlEnumType::PowerTarget,
+            DERControlEnumType::PowerFactor,
+            DERControlEnumType::VoltageTarget,
+            DERControlEnumType::CurrentTarget,
+            DERControlEnumType::LoadPriority,
+        ];
+
+        for control_type in control_types {
+            let request = GetDERControlRequest::new(123)
+                .with_control_type(control_type.clone());
+            assert_eq!(request.control_type, Some(control_type));
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_der_control_request_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let request = GetDERControlRequest::new(777)
+            .with_is_default(false)
+            .with_control_type(DERControlEnumType::VoltWatt)
+            .with_control_id("control_test".to_string())
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetDERControlRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for GetDERControlResponse
+
+    #[test]
+    fn test_get_der_control_response_new() {
+        let response = GetDERControlResponse::new(DERControlStatusEnumType::Accepted);
+
+        assert_eq!(response.status, DERControlStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_der_control_response_with_status_info() {
+        let status_info = create_test_status_info();
+        let response = GetDERControlResponse::new(DERControlStatusEnumType::Rejected)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, DERControlStatusEnumType::Rejected);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_der_control_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = GetDERControlResponse::new(DERControlStatusEnumType::NotSupported)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, DERControlStatusEnumType::NotSupported);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_der_control_response_setters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let mut response = GetDERControlResponse::new(DERControlStatusEnumType::Accepted);
+        response.set_status(DERControlStatusEnumType::NotFound);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, DERControlStatusEnumType::NotFound);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_der_control_response_getters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = GetDERControlResponse::new(DERControlStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &DERControlStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_der_control_response_serialization() {
+        let response = GetDERControlResponse::new(DERControlStatusEnumType::Accepted);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetDERControlResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_get_der_control_response_validation() {
+        let response = GetDERControlResponse::new(DERControlStatusEnumType::Accepted);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_der_control_response_all_status_types() {
+        let statuses = vec![
+            DERControlStatusEnumType::Accepted,
+            DERControlStatusEnumType::Rejected,
+            DERControlStatusEnumType::NotSupported,
+            DERControlStatusEnumType::NotFound,
+        ];
+
+        for status in statuses {
+            let response = GetDERControlResponse::new(status.clone());
+            assert_eq!(response.status, status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_der_control_response_json_round_trip() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = GetDERControlResponse::new(DERControlStatusEnumType::NotSupported)
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetDERControlResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
