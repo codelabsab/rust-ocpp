@@ -273,3 +273,247 @@ impl NotifyMonitoringReportResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::{ComponentType, VariableType, VariableMonitoringType};
+    use crate::v2_1::enumerations::{MonitorEnumType, EventNotificationEnumType};
+    use chrono::Utc;
+    use rust_decimal_macros::dec;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_monitoring_data() -> MonitoringDataType {
+        let component = ComponentType::new("Connector".to_string());
+        let variable = VariableType::new_with_instance("Temperature".to_string(), "Outlet".to_string());
+        let variable_monitoring = vec![VariableMonitoringType::new(
+            1,
+            false,
+            dec!(80.0),
+            MonitorEnumType::UpperThreshold,
+            0,
+            EventNotificationEnumType::CustomMonitor,
+        )];
+
+        MonitoringDataType::new(component, variable, variable_monitoring)
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_request_new() {
+        let request_id = 123;
+        let seq_no = 0;
+        let generated_at = Utc::now();
+
+        let request = NotifyMonitoringReportRequest::new(request_id, seq_no, generated_at);
+
+        assert_eq!(request.get_request_id(), &request_id);
+        assert_eq!(request.get_seq_no(), &seq_no);
+        assert_eq!(request.get_generated_at(), &generated_at);
+        assert_eq!(request.get_monitor(), None);
+        assert_eq!(request.get_tbc(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_request_validation() {
+        let request_id = 123;
+        let seq_no = 0;
+        let generated_at = Utc::now();
+
+        let request = NotifyMonitoringReportRequest::new(request_id, seq_no, generated_at);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_request_validation_negative_request_id() {
+        let request_id = -1; // Invalid negative value
+        let seq_no = 0;
+        let generated_at = Utc::now();
+
+        let request = NotifyMonitoringReportRequest::new(request_id, seq_no, generated_at);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_request_validation_negative_seq_no() {
+        let request_id = 123;
+        let seq_no = -1; // Invalid negative value
+        let generated_at = Utc::now();
+
+        let request = NotifyMonitoringReportRequest::new(request_id, seq_no, generated_at);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_request_validation_empty_monitor() {
+        let request_id = 123;
+        let seq_no = 0;
+        let generated_at = Utc::now();
+        let monitor = vec![]; // Empty vector violates min length of 1
+
+        let request = NotifyMonitoringReportRequest::new(request_id, seq_no, generated_at)
+            .with_monitor(monitor);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_request_with_optional_fields() {
+        let request_id = 123;
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let monitor = vec![create_test_monitoring_data()];
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyMonitoringReportRequest::new(request_id, seq_no, generated_at)
+            .with_monitor(monitor.clone())
+            .with_tbc(true)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_request_id(), &request_id);
+        assert_eq!(request.get_seq_no(), &seq_no);
+        assert_eq!(request.get_generated_at(), &generated_at);
+        assert_eq!(request.get_monitor(), Some(&monitor));
+        assert_eq!(request.get_tbc(), Some(&true));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_request_set_methods() {
+        let request_id = 123;
+        let seq_no = 0;
+        let generated_at = Utc::now();
+
+        let mut request = NotifyMonitoringReportRequest::new(request_id, seq_no, generated_at);
+
+        let new_request_id = 456;
+        let new_seq_no = 2;
+        let new_generated_at = Utc::now();
+        let monitor = vec![create_test_monitoring_data()];
+        let custom_data = create_test_custom_data();
+
+        request
+            .set_request_id(new_request_id)
+            .set_seq_no(new_seq_no)
+            .set_generated_at(new_generated_at)
+            .set_monitor(Some(monitor.clone()))
+            .set_tbc(Some(false))
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_request_id(), &new_request_id);
+        assert_eq!(request.get_seq_no(), &new_seq_no);
+        assert_eq!(request.get_generated_at(), &new_generated_at);
+        assert_eq!(request.get_monitor(), Some(&monitor));
+        assert_eq!(request.get_tbc(), Some(&false));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_request_json_round_trip() {
+        let request_id = 123;
+        let seq_no = 1;
+        let generated_at = Utc::now();
+        let monitor = vec![create_test_monitoring_data()];
+        let custom_data = create_test_custom_data();
+
+        let request = NotifyMonitoringReportRequest::new(request_id, seq_no, generated_at)
+            .with_monitor(monitor)
+            .with_tbc(true)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: NotifyMonitoringReportRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_request_boundary_values() {
+        let generated_at = Utc::now();
+
+        // Test with minimum valid request_id and seq_no
+        let request_id = 0; // Minimum valid value
+        let seq_no = 0; // Minimum valid value
+
+        let request = NotifyMonitoringReportRequest::new(request_id, seq_no, generated_at);
+
+        assert_eq!(request.get_request_id(), &request_id);
+        assert_eq!(request.get_seq_no(), &seq_no);
+        assert!(request.validate().is_ok());
+
+        // Test with minimum valid monitor length
+        let monitor = vec![create_test_monitoring_data()]; // Minimum length of 1
+        let request = NotifyMonitoringReportRequest::new(request_id, seq_no, generated_at)
+            .with_monitor(monitor.clone());
+
+        assert_eq!(request.get_monitor(), Some(&monitor));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_response_new() {
+        let response = NotifyMonitoringReportResponse::new();
+
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_response_validation() {
+        let response = NotifyMonitoringReportResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyMonitoringReportResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_response_set_custom_data() {
+        let mut response = NotifyMonitoringReportResponse::new();
+        let custom_data = create_test_custom_data();
+
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_response_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyMonitoringReportResponse::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: NotifyMonitoringReportResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_monitoring_report_response_empty_json() {
+        let json = "{}";
+        let response: NotifyMonitoringReportResponse =
+            serde_json::from_str(json).expect("Failed to deserialize");
+
+        assert_eq!(response.get_custom_data(), None);
+        assert!(response.validate().is_ok());
+    }
+}
