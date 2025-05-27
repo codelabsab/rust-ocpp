@@ -244,3 +244,262 @@ impl GetCertificateStatusResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::enumerations::HashAlgorithmEnumType;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    fn create_test_ocsp_request_data() -> OCSPRequestDataType {
+        OCSPRequestDataType::new(
+            HashAlgorithmEnumType::SHA256,
+            "issuer_name_hash".to_string(),
+            "issuer_key_hash".to_string(),
+            "serial_number".to_string(),
+            "https://ocsp.example.com".to_string(),
+        )
+    }
+
+    // Tests for GetCertificateStatusRequest
+
+    #[test]
+    fn test_get_certificate_status_request_new() {
+        let ocsp_request_data = create_test_ocsp_request_data();
+        let request = GetCertificateStatusRequest::new(ocsp_request_data.clone());
+
+        assert_eq!(request.ocsp_request_data, ocsp_request_data);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_certificate_status_request_with_custom_data() {
+        let ocsp_request_data = create_test_ocsp_request_data();
+        let custom_data = create_test_custom_data();
+        let request = GetCertificateStatusRequest::new(ocsp_request_data.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.ocsp_request_data, ocsp_request_data);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_certificate_status_request_setters() {
+        let ocsp_request_data1 = create_test_ocsp_request_data();
+        let ocsp_request_data2 = OCSPRequestDataType::new(
+            HashAlgorithmEnumType::SHA512,
+            "new_issuer_name_hash".to_string(),
+            "new_issuer_key_hash".to_string(),
+            "new_serial_number".to_string(),
+            "https://ocsp.example.org".to_string(),
+        );
+        let custom_data = create_test_custom_data();
+
+        let mut request = GetCertificateStatusRequest::new(ocsp_request_data1);
+        request.set_ocsp_request_data(ocsp_request_data2.clone());
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.ocsp_request_data, ocsp_request_data2);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_certificate_status_request_getters() {
+        let ocsp_request_data = create_test_ocsp_request_data();
+        let custom_data = create_test_custom_data();
+        let request = GetCertificateStatusRequest::new(ocsp_request_data.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_ocsp_request_data(), &ocsp_request_data);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_certificate_status_request_serialization() {
+        let ocsp_request_data = create_test_ocsp_request_data();
+        let request = GetCertificateStatusRequest::new(ocsp_request_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetCertificateStatusRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_get_certificate_status_request_validation() {
+        let ocsp_request_data = create_test_ocsp_request_data();
+        let request = GetCertificateStatusRequest::new(ocsp_request_data);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_certificate_status_request_json_round_trip() {
+        let ocsp_request_data = create_test_ocsp_request_data();
+        let custom_data = create_test_custom_data();
+        let request = GetCertificateStatusRequest::new(ocsp_request_data)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetCertificateStatusRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for GetCertificateStatusResponse
+
+    #[test]
+    fn test_get_certificate_status_response_new() {
+        let response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Accepted);
+
+        assert_eq!(response.status, GetCertificateStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.ocsp_result, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_with_status_info() {
+        let status_info = create_test_status_info();
+        let response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Failed)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, GetCertificateStatusEnumType::Failed);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.ocsp_result, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_with_ocsp_result() {
+        let ocsp_result = "base64_encoded_ocsp_response".to_string();
+        let response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Accepted)
+            .with_ocsp_result(ocsp_result.clone());
+
+        assert_eq!(response.status, GetCertificateStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.ocsp_result, Some(ocsp_result));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Accepted)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, GetCertificateStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.ocsp_result, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_setters() {
+        let status_info = create_test_status_info();
+        let ocsp_result = "base64_encoded_ocsp_response".to_string();
+        let custom_data = create_test_custom_data();
+
+        let mut response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Accepted);
+        response.set_status(GetCertificateStatusEnumType::Failed);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_ocsp_result(Some(ocsp_result.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, GetCertificateStatusEnumType::Failed);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.ocsp_result, Some(ocsp_result));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_getters() {
+        let status_info = create_test_status_info();
+        let ocsp_result = "base64_encoded_ocsp_response".to_string();
+        let custom_data = create_test_custom_data();
+        let response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_ocsp_result(ocsp_result.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &GetCertificateStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_ocsp_result(), Some(&ocsp_result));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_serialization() {
+        let response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Accepted);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetCertificateStatusResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_validation() {
+        let response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Accepted);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_validation_long_ocsp_result() {
+        let long_ocsp_result = "a".repeat(18001); // Exceeds max length of 18000
+        let mut response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Accepted);
+        response.set_ocsp_result(Some(long_ocsp_result));
+
+        assert!(response.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_validation_max_ocsp_result() {
+        let max_ocsp_result = "a".repeat(18000); // Exactly at max length
+        let mut response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Accepted);
+        response.set_ocsp_result(Some(max_ocsp_result));
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_all_status_types() {
+        let statuses = vec![
+            GetCertificateStatusEnumType::Accepted,
+            GetCertificateStatusEnumType::Failed,
+        ];
+
+        for status in statuses {
+            let response = GetCertificateStatusResponse::new(status.clone());
+            assert_eq!(response.status, status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_certificate_status_response_json_round_trip() {
+        let status_info = create_test_status_info();
+        let ocsp_result = "base64_encoded_ocsp_response".to_string();
+        let custom_data = create_test_custom_data();
+        let response = GetCertificateStatusResponse::new(GetCertificateStatusEnumType::Accepted)
+            .with_status_info(status_info)
+            .with_ocsp_result(ocsp_result)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetCertificateStatusResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
