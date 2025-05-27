@@ -206,3 +206,94 @@ impl ClearDisplayMessageResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+    use validator::Validate;
+
+    #[test]
+    fn test_clear_display_message_request_new() {
+        let request = ClearDisplayMessageRequest::new(123);
+        assert_eq!(request.get_id(), &123);
+        assert_eq!(request.get_custom_data(), None);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_display_message_request_validation_invalid_id() {
+        let request = ClearDisplayMessageRequest::new(-1); // Invalid: must be >= 0
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_clear_display_message_request_serialization() {
+        let request = ClearDisplayMessageRequest::new(456);
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: ClearDisplayMessageRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_clear_display_message_response_new() {
+        let status = ClearMessageStatusEnumType::Accepted;
+        let response = ClearDisplayMessageResponse::new(status.clone());
+        assert_eq!(response.get_status(), &status);
+        assert_eq!(response.get_status_info(), None);
+        assert_eq!(response.get_custom_data(), None);
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_display_message_response_all_status_values() {
+        let status_values = vec![
+            ClearMessageStatusEnumType::Accepted,
+            ClearMessageStatusEnumType::Unknown,
+        ];
+
+        for status in status_values {
+            let response = ClearDisplayMessageResponse::new(status.clone());
+            assert_eq!(response.get_status(), &status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_clear_display_message_request_with_custom_data() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = ClearDisplayMessageRequest::new(789)
+            .with_custom_data(custom_data.clone());
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_display_message_response_with_status_info() {
+        let status = ClearMessageStatusEnumType::Unknown;
+        let status_info = StatusInfoType::new("NotFound".to_string());
+        let response = ClearDisplayMessageResponse::new(status)
+            .with_status_info(status_info.clone());
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_display_message_json_round_trip() {
+        let request = ClearDisplayMessageRequest::new(999)
+            .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: ClearDisplayMessageRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+
+        let response = ClearDisplayMessageResponse::new(ClearMessageStatusEnumType::Accepted)
+            .with_status_info(StatusInfoType::new("Success".to_string()));
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: ClearDisplayMessageResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+}

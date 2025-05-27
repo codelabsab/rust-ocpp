@@ -256,3 +256,118 @@ impl ClearChargingProfileResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+    use validator::Validate;
+
+    #[test]
+    fn test_clear_charging_profile_request_new() {
+        let request = ClearChargingProfileRequest::new();
+        assert_eq!(request.get_charging_profile_id(), None);
+        assert_eq!(request.get_charging_profile_criteria(), None);
+        assert_eq!(request.get_custom_data(), None);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_charging_profile_request_with_id() {
+        let request = ClearChargingProfileRequest::new()
+            .with_charging_profile_id(123);
+        assert_eq!(request.get_charging_profile_id(), Some(&123));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_charging_profile_request_validation_invalid_id() {
+        let mut request = ClearChargingProfileRequest::new();
+        request.set_charging_profile_id(Some(-1)); // Invalid: must be >= 0
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_clear_charging_profile_request_serialization() {
+        let request = ClearChargingProfileRequest::new();
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: ClearChargingProfileRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_clear_charging_profile_response_new() {
+        let status = ClearChargingProfileStatusEnumType::Accepted;
+        let response = ClearChargingProfileResponse::new(status.clone());
+        assert_eq!(response.get_status(), &status);
+        assert_eq!(response.get_status_info(), None);
+        assert_eq!(response.get_custom_data(), None);
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_charging_profile_response_all_status_values() {
+        let status_values = vec![
+            ClearChargingProfileStatusEnumType::Accepted,
+            ClearChargingProfileStatusEnumType::Unknown,
+        ];
+
+        for status in status_values {
+            let response = ClearChargingProfileResponse::new(status.clone());
+            assert_eq!(response.get_status(), &status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_clear_charging_profile_response_serialization() {
+        let status = ClearChargingProfileStatusEnumType::Accepted;
+        let response = ClearChargingProfileResponse::new(status);
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: ClearChargingProfileResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_clear_charging_profile_request_with_custom_data() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = ClearChargingProfileRequest::new()
+            .with_custom_data(custom_data.clone());
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_charging_profile_response_with_status_info() {
+        let status = ClearChargingProfileStatusEnumType::Unknown;
+        let status_info = StatusInfoType::new("NotFound".to_string());
+        let response = ClearChargingProfileResponse::new(status)
+            .with_status_info(status_info.clone());
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_charging_profile_request_json_round_trip() {
+        let request = ClearChargingProfileRequest::new()
+            .with_charging_profile_id(456)
+            .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: ClearChargingProfileRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_charging_profile_response_json_round_trip() {
+        let response = ClearChargingProfileResponse::new(ClearChargingProfileStatusEnumType::Unknown)
+            .with_status_info(StatusInfoType::new("ProfileNotFound".to_string()))
+            .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: ClearChargingProfileResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+}

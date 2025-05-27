@@ -169,3 +169,99 @@ impl ClearVariableMonitoringResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_clear_monitoring_result() -> ClearMonitoringResultType {
+        ClearMonitoringResultType::new(crate::v2_1::enumerations::ClearMonitoringStatusEnumType::Accepted, 1)
+    }
+
+    #[test]
+    fn test_clear_variable_monitoring_request_new() {
+        let ids = vec![1, 2, 3];
+        let request = ClearVariableMonitoringRequest::new(ids.clone());
+        assert_eq!(request.get_id(), &ids);
+        assert_eq!(request.get_custom_data(), None);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_variable_monitoring_request_validation_empty_ids() {
+        let ids = vec![]; // Invalid: must have at least 1 item
+        let request = ClearVariableMonitoringRequest::new(ids);
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_clear_variable_monitoring_request_serialization() {
+        let ids = vec![10, 20, 30];
+        let request = ClearVariableMonitoringRequest::new(ids);
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: ClearVariableMonitoringRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_clear_variable_monitoring_response_new() {
+        let results = vec![create_test_clear_monitoring_result()];
+        let response = ClearVariableMonitoringResponse::new(results.clone());
+        assert_eq!(response.get_clear_monitoring_result(), &results);
+        assert_eq!(response.get_custom_data(), None);
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_variable_monitoring_response_validation_empty_results() {
+        let results = vec![]; // Invalid: must have at least 1 item
+        let response = ClearVariableMonitoringResponse::new(results);
+        assert!(response.validate().is_err());
+    }
+
+    #[test]
+    fn test_clear_variable_monitoring_request_with_custom_data() {
+        let ids = vec![100];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = ClearVariableMonitoringRequest::new(ids)
+            .with_custom_data(custom_data.clone());
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_variable_monitoring_response_with_custom_data() {
+        let results = vec![create_test_clear_monitoring_result()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = ClearVariableMonitoringResponse::new(results)
+            .with_custom_data(custom_data.clone());
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_variable_monitoring_json_round_trip() {
+        let ids = vec![1, 2, 3, 4, 5];
+        let request = ClearVariableMonitoringRequest::new(ids)
+            .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: ClearVariableMonitoringRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+
+        let results = vec![
+            create_test_clear_monitoring_result(),
+            ClearMonitoringResultType::new(crate::v2_1::enumerations::ClearMonitoringStatusEnumType::Rejected, 2),
+        ];
+        let response = ClearVariableMonitoringResponse::new(results)
+            .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: ClearVariableMonitoringResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+}
