@@ -1,666 +1,536 @@
+use crate::v2_1::datatypes::{CustomDataType, SetMonitoringDataType, SetMonitoringResultType};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::{
-    component::ComponentType, custom_data::CustomDataType,
-    set_monitoring_data::SetMonitoringDataType, status_info::StatusInfoType,
-    variable::VariableType,
-};
-use crate::v2_1::enumerations::monitor::MonitorEnumType;
-
-/// Status returned in response to SetVariableMonitoring request.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub enum SetMonitoringStatusEnumType {
-    Accepted,
-    UnknownComponent,
-    UnknownVariable,
-    UnsupportedMonitorType,
-    Rejected,
-    Duplicate,
-}
-
-/// Class to hold result of SetVariableMonitoring request.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct SetMonitoringResultType {
-    /// Custom data from the Charging Station.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
-    /// Id given to the VariableMonitor by the Charging Station.
-    /// The Id is only returned when status is accepted.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(range(min = 0))]
-    pub id: Option<i32>,
-
-    /// Detailed status information.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(nested)]
-    pub status_info: Option<StatusInfoType>,
-
-    /// Required. The status of the monitoring setting.
-    pub status: SetMonitoringStatusEnumType,
-
-    /// Required. The type of this monitor.
-    #[serde(rename = "type")]
-    pub kind: MonitorEnumType,
-
-    /// Required. Component for which a variable is monitored.
-    #[validate(nested)]
-    pub component: ComponentType,
-
-    /// Required. Variable that is monitored.
-    #[validate(nested)]
-    pub variable: VariableType,
-
-    /// Required. The severity that will be assigned to an event that is triggered by this monitor.
-    /// The severity range is 0-9, with 0 as the highest and 9 as the lowest severity level.
-    #[validate(range(min = 0, max = 9))]
-    pub severity: i32,
-}
-
-/// Request to set monitoring parameters for a variable.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+/// Request body for the SetVariableMonitoring request.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct SetVariableMonitoringRequest {
-    /// Custom data from the CSMS.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_data: Option<CustomDataType>,
-
-    /// Required. List of monitoring settings to configure.
-    #[validate(length(min = 1), nested)]
+    #[validate(length(min = 1))]
+    #[validate(nested)]
     pub set_monitoring_data: Vec<SetMonitoringDataType>,
-}
 
-/// Response to SetVariableMonitoring request.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
-#[serde(rename_all = "camelCase")]
-pub struct SetVariableMonitoringResponse {
-    /// Custom data from the Charging Station.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
-
-    /// Required. List of result statuses per monitoring setting.
-    #[validate(length(min = 1), nested)]
-    pub set_monitoring_result: Vec<SetMonitoringResultType>,
-}
-
-impl SetMonitoringResultType {
-    /// Creates a new `SetMonitoringResultType` with required fields.
-    ///
-    /// # Arguments
-    ///
-    /// * `status` - Status of the monitoring setting
-    /// * `kind` - Type of the monitor
-    /// * `component` - Component for which a variable is monitored
-    /// * `variable` - Variable that is monitored
-    /// * `severity` - Severity level assigned to events triggered by this monitor
-    ///
-    /// # Returns
-    ///
-    /// A new instance of `SetMonitoringResultType` with optional fields set to `None`
-    pub fn new(
-        status: SetMonitoringStatusEnumType,
-        kind: MonitorEnumType,
-        component: ComponentType,
-        variable: VariableType,
-        severity: i32,
-    ) -> Self {
-        Self {
-            custom_data: None,
-            id: None,
-            status_info: None,
-            status: status.clone(),
-            kind,
-            component,
-            variable,
-            severity,
-        }
-    }
-
-    /// Sets the custom data.
-    ///
-    /// # Arguments
-    ///
-    /// * `custom_data` - Custom data for this result
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
-        self.custom_data = Some(custom_data);
-        self
-    }
-
-    /// Sets the monitor ID.
-    ///
-    /// # Arguments
-    ///
-    /// * `id` - ID given to the variable monitor
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_id(mut self, id: i32) -> Self {
-        self.id = Some(id);
-        self
-    }
-
-    /// Sets the status info.
-    ///
-    /// # Arguments
-    ///
-    /// * `status_info` - Detailed status information
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_status_info(mut self, status_info: StatusInfoType) -> Self {
-        self.status_info = Some(status_info);
-        self
-    }
-
-    /// Gets the custom data.
-    ///
-    /// # Returns
-    ///
-    /// An optional reference to the custom data
-    pub fn custom_data(&self) -> Option<&CustomDataType> {
-        self.custom_data.as_ref()
-    }
-
-    /// Sets the custom data.
-    ///
-    /// # Arguments
-    ///
-    /// * `custom_data` - Custom data for this result, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
-        self.custom_data = custom_data;
-        self
-    }
-
-    /// Gets the ID of the monitor.
-    ///
-    /// # Returns
-    ///
-    /// The optional ID of the monitor
-    pub fn id(&self) -> Option<i32> {
-        self.id
-    }
-
-    /// Sets the ID of the monitor.
-    ///
-    /// # Arguments
-    ///
-    /// * `id` - The ID of the monitor, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_id(&mut self, id: Option<i32>) -> &mut Self {
-        self.id = id;
-        self
-    }
-
-    /// Gets the status info.
-    ///
-    /// # Returns
-    ///
-    /// Optional reference to the status info
-    pub fn status_info(&self) -> Option<&StatusInfoType> {
-        self.status_info.as_ref()
-    }
-
-    /// Sets the status info.
-    ///
-    /// # Arguments
-    ///
-    /// * `status_info` - Status info to set, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_status_info(&mut self, status_info: Option<StatusInfoType>) -> &mut Self {
-        self.status_info = status_info;
-        self
-    }
-
-    /// Gets the status.
-    ///
-    /// # Returns
-    ///
-    /// Status of the monitoring setting
-    pub fn status(&self) -> &SetMonitoringStatusEnumType {
-        &self.status
-    }
-
-    /// Sets the status.
-    ///
-    /// # Arguments
-    ///
-    /// * `status` - Status of the monitoring setting
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_status(&mut self, status: SetMonitoringStatusEnumType) -> &mut Self {
-        self.status = status;
-        self
-    }
-
-    /// Gets the monitor type.
-    ///
-    /// # Returns
-    ///
-    /// Type of this monitor
-    pub fn kind(&self) -> &MonitorEnumType {
-        &self.kind
-    }
-
-    /// Sets the monitor type.
-    ///
-    /// # Arguments
-    ///
-    /// * `kind` - Type of this monitor
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_kind(&mut self, kind: MonitorEnumType) -> &mut Self {
-        self.kind = kind;
-        self
-    }
-
-    /// Gets the component.
-    ///
-    /// # Returns
-    ///
-    /// Reference to the component for which a variable is monitored
-    pub fn component(&self) -> &ComponentType {
-        &self.component
-    }
-
-    /// Sets the component.
-    ///
-    /// # Arguments
-    ///
-    /// * `component` - Component for which a variable is monitored
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_component(&mut self, component: ComponentType) -> &mut Self {
-        self.component = component;
-        self
-    }
-
-    /// Gets the variable.
-    ///
-    /// # Returns
-    ///
-    /// Reference to the variable that is monitored
-    pub fn variable(&self) -> &VariableType {
-        &self.variable
-    }
-
-    /// Sets the variable.
-    ///
-    /// # Arguments
-    ///
-    /// * `variable` - Variable that is monitored
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_variable(&mut self, variable: VariableType) -> &mut Self {
-        self.variable = variable;
-        self
-    }
-
-    /// Gets the severity.
-    ///
-    /// # Returns
-    ///
-    /// Severity level assigned to events triggered by this monitor
-    pub fn severity(&self) -> i32 {
-        self.severity
-    }
-
-    /// Sets the severity.
-    ///
-    /// # Arguments
-    ///
-    /// * `severity` - Severity level to assign to events triggered by this monitor
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_severity(&mut self, severity: i32) -> &mut Self {
-        self.severity = severity;
-        self
-    }
 }
 
 impl SetVariableMonitoringRequest {
-    /// Creates a new `SetVariableMonitoringRequest` with required fields.
+    /// Creates a new instance of the struct.
     ///
-    /// # Arguments
-    ///
-    /// * `set_monitoring_data` - List of monitoring settings to configure
+    /// * `set_monitoring_data` - The set_monitoring_data field
     ///
     /// # Returns
     ///
-    /// A new instance of `SetVariableMonitoringRequest` with optional fields set to `None`
+    /// A new instance of the struct with required fields set and optional fields as None.
     pub fn new(set_monitoring_data: Vec<SetMonitoringDataType>) -> Self {
         Self {
-            custom_data: None,
             set_monitoring_data,
+            custom_data: None,
         }
     }
 
-    /// Sets the custom data.
+    /// Sets the set_monitoring_data field.
     ///
-    /// # Arguments
-    ///
-    /// * `custom_data` - Custom data for this request
+    /// * `set_monitoring_data` - The set_monitoring_data field
     ///
     /// # Returns
     ///
-    /// Self reference for method chaining
-    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
-        self.custom_data = Some(custom_data);
-        self
-    }
-
-    /// Gets the custom data.
-    ///
-    /// # Returns
-    ///
-    /// An optional reference to the custom data
-    pub fn custom_data(&self) -> Option<&CustomDataType> {
-        self.custom_data.as_ref()
-    }
-
-    /// Sets the custom data.
-    ///
-    /// # Arguments
-    ///
-    /// * `custom_data` - Custom data for this request, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
-        self.custom_data = custom_data;
-        self
-    }
-
-    /// Gets the monitoring data settings.
-    ///
-    /// # Returns
-    ///
-    /// Reference to the list of monitoring settings
-    pub fn set_monitoring_data(&self) -> &Vec<SetMonitoringDataType> {
-        &self.set_monitoring_data
-    }
-
-    /// Sets the monitoring data settings.
-    ///
-    /// # Arguments
-    ///
-    /// * `set_monitoring_data` - List of monitoring settings to configure
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn set_set_monitoring_data(
-        &mut self,
-        set_monitoring_data: Vec<SetMonitoringDataType>,
-    ) -> &mut Self {
+    /// A mutable reference to self for method chaining.
+    pub fn set_set_monitoring_data(&mut self, set_monitoring_data: Vec<SetMonitoringDataType>) -> &mut Self {
         self.set_monitoring_data = set_monitoring_data;
         self
     }
-}
 
-impl SetVariableMonitoringResponse {
-    /// Creates a new `SetVariableMonitoringResponse` with required fields.
+    /// Sets the custom_data field.
     ///
-    /// # Arguments
-    ///
-    /// * `set_monitoring_result` - List of result statuses per monitoring setting
+    /// * `custom_data` - The custom_data field
     ///
     /// # Returns
     ///
-    /// A new instance of `SetVariableMonitoringResponse` with optional fields set to `None`
-    pub fn new(set_monitoring_result: Vec<SetMonitoringResultType>) -> Self {
-        Self {
-            custom_data: None,
-            set_monitoring_result,
-        }
-    }
-
-    /// Sets the custom data.
-    ///
-    /// # Arguments
-    ///
-    /// * `custom_data` - Custom data for this response
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
-    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
-        self.custom_data = Some(custom_data);
-        self
-    }
-
-    /// Gets the custom data.
-    ///
-    /// # Returns
-    ///
-    /// An optional reference to the custom data
-    pub fn custom_data(&self) -> Option<&CustomDataType> {
-        self.custom_data.as_ref()
-    }
-
-    /// Sets the custom data.
-    ///
-    /// # Arguments
-    ///
-    /// * `custom_data` - Custom data for this response, or None to clear
-    ///
-    /// # Returns
-    ///
-    /// Self reference for method chaining
+    /// A mutable reference to self for method chaining.
     pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
         self.custom_data = custom_data;
         self
     }
 
-    /// Gets the monitoring result settings.
+    /// Gets a reference to the set_monitoring_data field.
     ///
     /// # Returns
     ///
-    /// Reference to the list of result statuses
-    pub fn set_monitoring_result(&self) -> &Vec<SetMonitoringResultType> {
-        &self.set_monitoring_result
+    /// The set_monitoring_data field
+    pub fn get_set_monitoring_data(&self) -> &Vec<SetMonitoringDataType> {
+        &self.set_monitoring_data
     }
 
-    /// Sets the monitoring result settings.
-    ///
-    /// # Arguments
-    ///
-    /// * `set_monitoring_result` - List of result statuses per monitoring setting
+    /// Gets a reference to the custom_data field.
     ///
     /// # Returns
     ///
-    /// Self reference for method chaining
-    pub fn set_set_monitoring_result(
-        &mut self,
-        set_monitoring_result: Vec<SetMonitoringResultType>,
-    ) -> &mut Self {
+    /// The custom_data field
+    pub fn get_custom_data(&self) -> Option<&CustomDataType> {
+        self.custom_data.as_ref()
+    }
+
+    /// Sets the custom_data field and returns self for builder pattern.
+    ///
+    /// * `custom_data` - The custom_data field
+    ///
+    /// # Returns
+    ///
+    /// Self with the field set.
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
+        self
+    }
+
+}
+
+/// Response body for the SetVariableMonitoring response.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
+#[serde(rename_all = "camelCase")]
+pub struct SetVariableMonitoringResponse {
+    #[validate(length(min = 1))]
+    #[validate(nested)]
+    pub set_monitoring_result: Vec<SetMonitoringResultType>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
+    pub custom_data: Option<CustomDataType>,
+}
+
+impl SetVariableMonitoringResponse {
+    /// Creates a new instance of the struct.
+    ///
+    /// * `set_monitoring_result` - The set_monitoring_result field
+    ///
+    /// # Returns
+    ///
+    /// A new instance of the struct with required fields set and optional fields as None.
+    pub fn new(set_monitoring_result: Vec<SetMonitoringResultType>) -> Self {
+        Self {
+            set_monitoring_result,
+            custom_data: None,
+        }
+    }
+
+    /// Sets the set_monitoring_result field.
+    ///
+    /// * `set_monitoring_result` - The set_monitoring_result field
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_set_monitoring_result(&mut self, set_monitoring_result: Vec<SetMonitoringResultType>) -> &mut Self {
         self.set_monitoring_result = set_monitoring_result;
         self
     }
+
+    /// Sets the custom_data field.
+    ///
+    /// * `custom_data` - The custom_data field
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
+        self.custom_data = custom_data;
+        self
+    }
+
+    /// Gets a reference to the set_monitoring_result field.
+    ///
+    /// # Returns
+    ///
+    /// The set_monitoring_result field
+    pub fn get_set_monitoring_result(&self) -> &Vec<SetMonitoringResultType> {
+        &self.set_monitoring_result
+    }
+
+    /// Gets a reference to the custom_data field.
+    ///
+    /// # Returns
+    ///
+    /// The custom_data field
+    pub fn get_custom_data(&self) -> Option<&CustomDataType> {
+        self.custom_data.as_ref()
+    }
+
+    /// Sets the custom_data field and returns self for builder pattern.
+    ///
+    /// * `custom_data` - The custom_data field
+    ///
+    /// # Returns
+    ///
+    /// Self with the field set.
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
+        self
+    }
+
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::v2_1::enumerations::monitor::MonitorEnumType;
-    use rust_decimal::prelude::*;
-    use serde_json::json;
+    use crate::v2_1::datatypes::{ComponentType, CustomDataType, StatusInfoType, VariableType};
+    use crate::v2_1::enumerations::{MonitorEnumType, SetMonitoringStatusEnumType};
+    use rust_decimal::Decimal;
+    use serde_json;
+    use validator::Validate;
 
-    #[test]
-    fn test_set_monitoring_result_type() {
-        let component = ComponentType::new("component1".to_string());
-        let variable =
-            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
-        let kind = MonitorEnumType::UpperThreshold;
-        let severity = 2;
-        let status = SetMonitoringStatusEnumType::Accepted;
-
-        let result = SetMonitoringResultType::new(
-            status.clone(),
-            kind.clone(),
-            component.clone(),
-            variable.clone(),
-            severity,
-        );
-
-        assert_eq!(result.status(), &status);
-        assert_eq!(result.kind(), &kind);
-        assert_eq!(result.component(), &component);
-        assert_eq!(result.variable(), &variable);
-        assert_eq!(result.severity(), severity);
-        assert_eq!(result.id(), None);
-        assert_eq!(result.status_info(), None);
-        assert_eq!(result.custom_data(), None);
-    }
-
-    #[test]
-    fn test_set_variable_monitoring_request() {
-        let component = ComponentType::new("component1".to_string());
-        let variable =
-            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
-        let value = Decimal::from_str("100.0").unwrap();
-        let kind = MonitorEnumType::UpperThreshold;
-        let severity = 2;
-
-        let monitoring_data = SetMonitoringDataType::new(
-            value,
-            kind.clone(),
-            severity,
-            component.clone(),
-            variable.clone(),
-        );
-
-        let request = SetVariableMonitoringRequest::new(vec![monitoring_data.clone()]);
-
-        assert_eq!(request.set_monitoring_data().len(), 1);
-        assert_eq!(request.set_monitoring_data()[0], monitoring_data);
-        assert_eq!(request.custom_data(), None);
-    }
-
-    #[test]
-    fn test_set_variable_monitoring_response() {
-        let component = ComponentType::new("component1".to_string());
-        let variable =
-            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
-        let kind = MonitorEnumType::UpperThreshold;
-        let severity = 2;
-        let status = SetMonitoringStatusEnumType::Accepted;
-
-        let result = SetMonitoringResultType::new(
-            status,
-            kind.clone(),
-            component.clone(),
-            variable.clone(),
-            severity,
-        );
-
-        let response = SetVariableMonitoringResponse::new(vec![result.clone()]);
-
-        assert_eq!(response.set_monitoring_result().len(), 1);
-        assert_eq!(response.set_monitoring_result()[0], result);
-        assert_eq!(response.custom_data(), None);
-    }
-
-    #[test]
-    fn test_with_methods() {
-        let component = ComponentType::new("component1".to_string());
-        let variable =
-            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
-        let kind = MonitorEnumType::UpperThreshold;
-        let severity = 2;
-        let status = SetMonitoringStatusEnumType::Accepted;
-        let id = 42;
-        let custom_data = CustomDataType::new("VendorX".to_string());
-        let status_info = StatusInfoType::new("Info".to_string());
-
-        let result = SetMonitoringResultType::new(
-            status.clone(),
-            kind.clone(),
-            component.clone(),
-            variable.clone(),
-            severity,
+    // Helper function to create test SetMonitoringDataType
+    fn create_test_monitoring_data() -> SetMonitoringDataType {
+        let component = ComponentType::new("Connector".to_string());
+        let variable = VariableType::new("Current".to_string());
+        SetMonitoringDataType::new(
+            Decimal::new(100, 0), // value: 100
+            MonitorEnumType::UpperThreshold,
+            5, // severity
+            component,
+            variable,
         )
-        .with_id(id)
-        .with_custom_data(custom_data.clone())
-        .with_status_info(status_info.clone());
+    }
 
-        assert_eq!(result.status(), &status);
-        assert_eq!(result.kind(), &kind);
-        assert_eq!(result.component(), &component);
-        assert_eq!(result.variable(), &variable);
-        assert_eq!(result.severity(), severity);
-        assert_eq!(result.id(), Some(id));
-        assert_eq!(result.status_info(), Some(&status_info));
-        assert_eq!(result.custom_data(), Some(&custom_data));
+    // Helper function to create test SetMonitoringResultType
+    fn create_test_monitoring_result() -> SetMonitoringResultType {
+        let component = ComponentType::new("Connector".to_string());
+        let variable = VariableType::new("Current".to_string());
+        SetMonitoringResultType::new(
+            SetMonitoringStatusEnumType::Accepted,
+            component,
+            variable,
+            MonitorEnumType::UpperThreshold,
+            5, // severity
+        )
+    }
+
+    // Tests for SetVariableMonitoringRequest
+
+    #[test]
+    fn test_set_variable_monitoring_request_new() {
+        let monitoring_data = vec![create_test_monitoring_data()];
+        let request = SetVariableMonitoringRequest::new(monitoring_data.clone());
+
+        assert_eq!(request.get_set_monitoring_data().len(), 1);
+        assert_eq!(request.get_set_monitoring_data()[0].component.name, "Connector");
+        assert_eq!(request.get_set_monitoring_data()[0].variable.name, "Current");
+        assert_eq!(request.get_custom_data(), None);
     }
 
     #[test]
-    fn test_serialization() {
-        let component = ComponentType::new("component1".to_string());
-        let variable =
-            VariableType::new_with_instance("variable1".to_string(), "instance1".to_string());
-        let value = Decimal::from_str("100.0").unwrap();
-        let kind = MonitorEnumType::UpperThreshold;
-        let severity = 2;
-        let status = SetMonitoringStatusEnumType::Accepted;
-        let id = 42;
-        let custom_data = CustomDataType::new("VendorX".to_string())
-            .with_property("version".to_string(), json!("1.0"));
+    fn test_set_variable_monitoring_request_serialization() {
+        let monitoring_data = vec![create_test_monitoring_data()];
+        let request = SetVariableMonitoringRequest::new(monitoring_data);
 
-        let monitoring_data = SetMonitoringDataType::new(
-            value,
-            kind.clone(),
-            severity,
-            component.clone(),
-            variable.clone(),
-        );
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: SetVariableMonitoringRequest = serde_json::from_str(&json).expect("Failed to deserialize");
 
-        let request = SetVariableMonitoringRequest::new(vec![monitoring_data])
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_request_validation() {
+        let monitoring_data = vec![create_test_monitoring_data()];
+        let request = SetVariableMonitoringRequest::new(monitoring_data);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_request_with_custom_data() {
+        let monitoring_data = vec![create_test_monitoring_data()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = SetVariableMonitoringRequest::new(monitoring_data)
             .with_custom_data(custom_data.clone());
 
-        let result = SetMonitoringResultType::new(status, kind, component, variable, severity)
-            .with_id(id)
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_request_set_methods() {
+        let monitoring_data = vec![create_test_monitoring_data()];
+        let new_monitoring_data = vec![create_test_monitoring_data()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut request = SetVariableMonitoringRequest::new(monitoring_data);
+
+        request
+            .set_set_monitoring_data(new_monitoring_data.clone())
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_set_monitoring_data(), &new_monitoring_data);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_request_builder_pattern() {
+        let monitoring_data = vec![create_test_monitoring_data()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let request = SetVariableMonitoringRequest::new(monitoring_data)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_request_validation_empty_vector() {
+        let request = SetVariableMonitoringRequest::new(vec![]);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_request_with_multiple_data() {
+        let data = vec![
+            create_test_monitoring_data(),
+            {
+                let component = ComponentType::new("EVSE".to_string());
+                let variable = VariableType::new("Power".to_string());
+                SetMonitoringDataType::new(
+                    Decimal::new(500, 0),
+                    MonitorEnumType::LowerThreshold,
+                    3,
+                    component,
+                    variable,
+                )
+            },
+        ];
+
+        let request = SetVariableMonitoringRequest::new(data.clone());
+
+        assert_eq!(request.get_set_monitoring_data().len(), 2);
+        assert_eq!(request.get_set_monitoring_data()[1].component.name, "EVSE");
+        assert_eq!(request.get_set_monitoring_data()[1].variable.name, "Power");
+        assert!(request.validate().is_ok());
+    }
+
+    // Tests for SetVariableMonitoringResponse
+
+    #[test]
+    fn test_set_variable_monitoring_response_new() {
+        let monitoring_result = vec![create_test_monitoring_result()];
+        let response = SetVariableMonitoringResponse::new(monitoring_result.clone());
+
+        assert_eq!(response.get_set_monitoring_result().len(), 1);
+        assert_eq!(response.get_set_monitoring_result()[0].component.name, "Connector");
+        assert_eq!(response.get_set_monitoring_result()[0].variable.name, "Current");
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_response_serialization() {
+        let monitoring_result = vec![create_test_monitoring_result()];
+        let response = SetVariableMonitoringResponse::new(monitoring_result);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: SetVariableMonitoringResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_response_validation() {
+        let monitoring_result = vec![create_test_monitoring_result()];
+        let response = SetVariableMonitoringResponse::new(monitoring_result);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_response_with_custom_data() {
+        let monitoring_result = vec![create_test_monitoring_result()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = SetVariableMonitoringResponse::new(monitoring_result)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_response_set_methods() {
+        let monitoring_result = vec![create_test_monitoring_result()];
+        let new_monitoring_result = vec![create_test_monitoring_result()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut response = SetVariableMonitoringResponse::new(monitoring_result);
+
+        response
+            .set_set_monitoring_result(new_monitoring_result.clone())
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_set_monitoring_result(), &new_monitoring_result);
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_response_builder_pattern() {
+        let monitoring_result = vec![create_test_monitoring_result()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let response = SetVariableMonitoringResponse::new(monitoring_result)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_response_validation_empty_vector() {
+        let response = SetVariableMonitoringResponse::new(vec![]);
+
+        assert!(response.validate().is_err());
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_response_with_multiple_results() {
+        let results = vec![
+            create_test_monitoring_result(),
+            {
+                let component = ComponentType::new("EVSE".to_string());
+                let variable = VariableType::new("Power".to_string());
+                SetMonitoringResultType::new(
+                    SetMonitoringStatusEnumType::Rejected,
+                    component,
+                    variable,
+                    MonitorEnumType::Delta,
+                    4,
+                ).with_status_info(StatusInfoType::new("Rejected".to_string()))
+            },
+        ];
+
+        let response = SetVariableMonitoringResponse::new(results.clone());
+
+        assert_eq!(response.get_set_monitoring_result().len(), 2);
+        assert_eq!(response.get_set_monitoring_result()[1].component.name, "EVSE");
+        assert_eq!(response.get_set_monitoring_result()[1].variable.name, "Power");
+        assert_eq!(response.get_set_monitoring_result()[1].status, SetMonitoringStatusEnumType::Rejected);
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_request_json_round_trip() {
+        let monitoring_data = vec![create_test_monitoring_data()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = SetVariableMonitoringRequest::new(monitoring_data)
             .with_custom_data(custom_data);
 
-        let response = SetVariableMonitoringResponse::new(vec![result]);
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: SetVariableMonitoringRequest = serde_json::from_str(&json).expect("Failed to deserialize");
 
-        let serialized_request = serde_json::to_string(&request).unwrap();
-        let deserialized_request: SetVariableMonitoringRequest =
-            serde_json::from_str(&serialized_request).unwrap();
-        assert_eq!(request, deserialized_request);
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
 
-        let serialized_response = serde_json::to_string(&response).unwrap();
-        let deserialized_response: SetVariableMonitoringResponse =
-            serde_json::from_str(&serialized_response).unwrap();
-        assert_eq!(response, deserialized_response);
+    #[test]
+    fn test_set_variable_monitoring_response_json_round_trip() {
+        let monitoring_result = vec![create_test_monitoring_result()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = SetVariableMonitoringResponse::new(monitoring_result)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: SetVariableMonitoringResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_all_monitor_types() {
+        let monitor_types = vec![
+            MonitorEnumType::UpperThreshold,
+            MonitorEnumType::LowerThreshold,
+            MonitorEnumType::Delta,
+            MonitorEnumType::Periodic,
+            MonitorEnumType::PeriodicClockAligned,
+        ];
+
+        for monitor_type in monitor_types {
+            let component = ComponentType::new("TestComponent".to_string());
+            let variable = VariableType::new("TestVariable".to_string());
+            let monitoring_data = SetMonitoringDataType::new(
+                Decimal::new(100, 0),
+                monitor_type.clone(),
+                5,
+                component,
+                variable,
+            );
+
+            let request = SetVariableMonitoringRequest::new(vec![monitoring_data]);
+            assert!(request.validate().is_ok());
+
+            let json = serde_json::to_string(&request).expect("Failed to serialize");
+            let deserialized: SetVariableMonitoringRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+            assert_eq!(request, deserialized);
+        }
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_all_status_types() {
+        let status_types = vec![
+            SetMonitoringStatusEnumType::Accepted,
+            SetMonitoringStatusEnumType::UnknownComponent,
+            SetMonitoringStatusEnumType::UnknownVariable,
+            SetMonitoringStatusEnumType::UnsupportedMonitorType,
+            SetMonitoringStatusEnumType::Rejected,
+            SetMonitoringStatusEnumType::OutOfRange,
+        ];
+
+        for status in status_types {
+            let component = ComponentType::new("TestComponent".to_string());
+            let variable = VariableType::new("TestVariable".to_string());
+            let monitoring_result = SetMonitoringResultType::new(
+                status.clone(),
+                component,
+                variable,
+                MonitorEnumType::UpperThreshold,
+                5,
+            );
+
+            let response = SetVariableMonitoringResponse::new(vec![monitoring_result]);
+            assert!(response.validate().is_ok());
+
+            let json = serde_json::to_string(&response).expect("Failed to serialize");
+            let deserialized: SetVariableMonitoringResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+            assert_eq!(response, deserialized);
+        }
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_with_custom_data_validation() {
+        let monitoring_data = vec![create_test_monitoring_data()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = SetVariableMonitoringRequest::new(monitoring_data)
+            .with_custom_data(custom_data);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_set_variable_monitoring_response_with_all_optional_fields() {
+        let component = ComponentType::new("TestComponent".to_string());
+        let variable = VariableType::new("TestVariable".to_string());
+        let status_info = StatusInfoType::new("Success".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let monitoring_result = SetMonitoringResultType::new(
+            SetMonitoringStatusEnumType::Accepted,
+            component,
+            variable,
+            MonitorEnumType::UpperThreshold,
+            5,
+        )
+        .with_id(123)
+        .with_status_info(status_info.clone())
+        .with_custom_data(custom_data.clone());
+
+        let response = SetVariableMonitoringResponse::new(vec![monitoring_result])
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_set_monitoring_result()[0].id, Some(123));
+        assert_eq!(response.get_set_monitoring_result()[0].status_info, Some(status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+        assert!(response.validate().is_ok());
     }
 }

@@ -1,43 +1,44 @@
-use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
-use crate::v2_1::enumerations::{GenericDeviceModelStatusEnumType, MonitoringBaseEnumType};
+use crate::v2_1::datatypes::{CustomDataType, MessageInfoType, StatusInfoType};
+use crate::v2_1::enumerations::DisplayMessageStatusEnumType;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-/// Request body for the SetMonitoringBase request.
+/// Request body for the SetDisplayMessage request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct SetMonitoringBaseRequest {
-    pub monitoring_base: MonitoringBaseEnumType,
+pub struct SetDisplayMessageRequest {
+    #[validate(nested)]
+    pub message: MessageInfoType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
-impl SetMonitoringBaseRequest {
+impl SetDisplayMessageRequest {
     /// Creates a new instance of the struct.
     ///
-    /// * `monitoring_base` - The monitoring_base field
+    /// * `message` - The message field
     ///
     /// # Returns
     ///
     /// A new instance of the struct with required fields set and optional fields as None.
-    pub fn new(monitoring_base: MonitoringBaseEnumType) -> Self {
+    pub fn new(message: MessageInfoType) -> Self {
         Self {
-            monitoring_base,
+            message,
             custom_data: None,
         }
     }
 
-    /// Sets the monitoring_base field.
+    /// Sets the message field.
     ///
-    /// * `monitoring_base` - The monitoring_base field
+    /// * `message` - The message field
     ///
     /// # Returns
     ///
     /// A mutable reference to self for method chaining.
-    pub fn set_monitoring_base(&mut self, monitoring_base: MonitoringBaseEnumType) -> &mut Self {
-        self.monitoring_base = monitoring_base;
+    pub fn set_message(&mut self, message: MessageInfoType) -> &mut Self {
+        self.message = message;
         self
     }
 
@@ -53,13 +54,13 @@ impl SetMonitoringBaseRequest {
         self
     }
 
-    /// Gets a reference to the monitoring_base field.
+    /// Gets a reference to the message field.
     ///
     /// # Returns
     ///
-    /// The monitoring_base field
-    pub fn get_monitoring_base(&self) -> &MonitoringBaseEnumType {
-        &self.monitoring_base
+    /// The message field
+    pub fn get_message(&self) -> &MessageInfoType {
+        &self.message
     }
 
     /// Gets a reference to the custom_data field.
@@ -85,11 +86,11 @@ impl SetMonitoringBaseRequest {
 
 }
 
-/// Response body for the SetMonitoringBase response.
+/// Response body for the SetDisplayMessage response.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct SetMonitoringBaseResponse {
-    pub status: GenericDeviceModelStatusEnumType,
+pub struct SetDisplayMessageResponse {
+    pub status: DisplayMessageStatusEnumType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
@@ -100,7 +101,7 @@ pub struct SetMonitoringBaseResponse {
     pub custom_data: Option<CustomDataType>,
 }
 
-impl SetMonitoringBaseResponse {
+impl SetDisplayMessageResponse {
     /// Creates a new instance of the struct.
     ///
     /// * `status` - The status field
@@ -108,7 +109,7 @@ impl SetMonitoringBaseResponse {
     /// # Returns
     ///
     /// A new instance of the struct with required fields set and optional fields as None.
-    pub fn new(status: GenericDeviceModelStatusEnumType) -> Self {
+    pub fn new(status: DisplayMessageStatusEnumType) -> Self {
         Self {
             status,
             status_info: None,
@@ -123,7 +124,7 @@ impl SetMonitoringBaseResponse {
     /// # Returns
     ///
     /// A mutable reference to self for method chaining.
-    pub fn set_status(&mut self, status: GenericDeviceModelStatusEnumType) -> &mut Self {
+    pub fn set_status(&mut self, status: DisplayMessageStatusEnumType) -> &mut Self {
         self.status = status;
         self
     }
@@ -157,7 +158,7 @@ impl SetMonitoringBaseResponse {
     /// # Returns
     ///
     /// The status field
-    pub fn get_status(&self) -> &GenericDeviceModelStatusEnumType {
+    pub fn get_status(&self) -> &DisplayMessageStatusEnumType {
         &self.status
     }
 
@@ -208,144 +209,155 @@ impl SetMonitoringBaseResponse {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
-    use crate::v2_1::enumerations::{GenericDeviceModelStatusEnumType, MonitoringBaseEnumType};
+    use crate::v2_1::datatypes::{CustomDataType, MessageInfoType, StatusInfoType};
+    use crate::v2_1::enumerations::{DisplayMessageStatusEnumType, MessagePriorityEnumType, MessageStateEnumType};
+    use chrono::Utc;
+
+    fn create_test_message() -> MessageInfoType {
+        MessageInfoType::new(1, MessagePriorityEnumType::NormalCycle, MessageStateEnumType::Charging, Utc::now())
+    }
 
     #[test]
-    fn test_set_monitoring_base_request_new() {
-        let request = SetMonitoringBaseRequest::new(MonitoringBaseEnumType::All);
-        assert_eq!(request.monitoring_base, MonitoringBaseEnumType::All);
+    fn test_set_display_message_request_new() {
+        let message = create_test_message();
+        let request = SetDisplayMessageRequest::new(message.clone());
+
+        assert_eq!(request.message, message);
         assert_eq!(request.custom_data, None);
     }
 
     #[test]
-    fn test_set_monitoring_base_request_serialization() {
-        let request = SetMonitoringBaseRequest::new(MonitoringBaseEnumType::FactoryDefault);
+    fn test_set_display_message_request_serialization() {
+        let message = create_test_message();
+        let request = SetDisplayMessageRequest::new(message);
 
         let json = serde_json::to_string(&request).expect("Failed to serialize");
-        let deserialized: SetMonitoringBaseRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        let deserialized: SetDisplayMessageRequest = serde_json::from_str(&json).expect("Failed to deserialize");
 
         assert_eq!(request, deserialized);
-        assert!(json.contains("\"monitoringBase\":\"FactoryDefault\""));
+        assert!(json.contains("\"message\""));
     }
 
     #[test]
-    fn test_set_monitoring_base_request_validation() {
-        let request = SetMonitoringBaseRequest::new(MonitoringBaseEnumType::HardWiredOnly);
+    fn test_set_display_message_request_validation() {
+        let message = create_test_message();
+        let request = SetDisplayMessageRequest::new(message);
         assert!(request.validate().is_ok());
     }
 
     #[test]
-    fn test_set_monitoring_base_request_builder_pattern() {
+    fn test_set_display_message_request_builder_pattern() {
+        let message = create_test_message();
         let custom_data = CustomDataType::new("TestVendor".to_string());
-        let request = SetMonitoringBaseRequest::new(MonitoringBaseEnumType::All)
+        let request = SetDisplayMessageRequest::new(message.clone())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(request.monitoring_base, MonitoringBaseEnumType::All);
+        assert_eq!(request.message, message);
         assert_eq!(request.custom_data, Some(custom_data));
     }
 
     #[test]
-    fn test_set_monitoring_base_request_setters() {
-        let mut request = SetMonitoringBaseRequest::new(MonitoringBaseEnumType::All);
+    fn test_set_display_message_request_setters() {
+        let message1 = create_test_message();
+        let message2 = MessageInfoType::new(2, MessagePriorityEnumType::AlwaysFront, MessageStateEnumType::Idle, Utc::now());
+        let mut request = SetDisplayMessageRequest::new(message1);
         let custom_data = CustomDataType::new("TestVendor".to_string());
 
-        request.set_monitoring_base(MonitoringBaseEnumType::FactoryDefault)
+        request.set_message(message2.clone())
                .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(request.monitoring_base, MonitoringBaseEnumType::FactoryDefault);
+        assert_eq!(request.message, message2);
         assert_eq!(request.custom_data, Some(custom_data));
     }
 
     #[test]
-    fn test_set_monitoring_base_request_getters() {
+    fn test_set_display_message_request_getters() {
+        let message = create_test_message();
         let custom_data = CustomDataType::new("TestVendor".to_string());
-        let request = SetMonitoringBaseRequest::new(MonitoringBaseEnumType::HardWiredOnly)
+        let request = SetDisplayMessageRequest::new(message.clone())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(*request.get_monitoring_base(), MonitoringBaseEnumType::HardWiredOnly);
+        assert_eq!(*request.get_message(), message);
         assert_eq!(request.get_custom_data(), Some(&custom_data));
     }
 
     #[test]
-    fn test_set_monitoring_base_response_new() {
-        let response = SetMonitoringBaseResponse::new(GenericDeviceModelStatusEnumType::Accepted);
-        assert_eq!(response.status, GenericDeviceModelStatusEnumType::Accepted);
+    fn test_set_display_message_response_new() {
+        let response = SetDisplayMessageResponse::new(DisplayMessageStatusEnumType::Accepted);
+        assert_eq!(response.status, DisplayMessageStatusEnumType::Accepted);
         assert_eq!(response.status_info, None);
         assert_eq!(response.custom_data, None);
     }
 
     #[test]
-    fn test_set_monitoring_base_response_serialization() {
-        let response = SetMonitoringBaseResponse::new(GenericDeviceModelStatusEnumType::Rejected);
+    fn test_set_display_message_response_serialization() {
+        let response = SetDisplayMessageResponse::new(DisplayMessageStatusEnumType::Rejected);
 
         let json = serde_json::to_string(&response).expect("Failed to serialize");
-        let deserialized: SetMonitoringBaseResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+        let deserialized: SetDisplayMessageResponse = serde_json::from_str(&json).expect("Failed to deserialize");
 
         assert_eq!(response, deserialized);
         assert!(json.contains("\"status\":\"Rejected\""));
     }
 
     #[test]
-    fn test_set_monitoring_base_response_builder_pattern() {
-        let status_info = StatusInfoType::new("Monitoring base conflict".to_string());
+    fn test_set_display_message_response_builder_pattern() {
+        let status_info = StatusInfoType::new("Message conflict".to_string());
         let custom_data = CustomDataType::new("TestVendor".to_string());
-        let response = SetMonitoringBaseResponse::new(GenericDeviceModelStatusEnumType::NotSupported)
+        let response = SetDisplayMessageResponse::new(DisplayMessageStatusEnumType::NotSupportedMessageFormat)
             .with_status_info(status_info.clone())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(response.status, GenericDeviceModelStatusEnumType::NotSupported);
+        assert_eq!(response.status, DisplayMessageStatusEnumType::NotSupportedMessageFormat);
         assert_eq!(response.status_info, Some(status_info));
         assert_eq!(response.custom_data, Some(custom_data));
     }
 
     #[test]
-    fn test_set_monitoring_base_response_setters() {
-        let mut response = SetMonitoringBaseResponse::new(GenericDeviceModelStatusEnumType::Accepted);
+    fn test_set_display_message_response_setters() {
+        let mut response = SetDisplayMessageResponse::new(DisplayMessageStatusEnumType::Accepted);
         let status_info = StatusInfoType::new("Updated status".to_string());
         let custom_data = CustomDataType::new("TestVendor".to_string());
 
-        response.set_status(GenericDeviceModelStatusEnumType::Rejected)
+        response.set_status(DisplayMessageStatusEnumType::Rejected)
                 .set_status_info(Some(status_info.clone()))
                 .set_custom_data(Some(custom_data.clone()));
 
-        assert_eq!(response.status, GenericDeviceModelStatusEnumType::Rejected);
+        assert_eq!(response.status, DisplayMessageStatusEnumType::Rejected);
         assert_eq!(response.status_info, Some(status_info));
         assert_eq!(response.custom_data, Some(custom_data));
     }
 
     #[test]
-    fn test_set_monitoring_base_response_getters() {
+    fn test_set_display_message_response_getters() {
         let status_info = StatusInfoType::new("Test status".to_string());
         let custom_data = CustomDataType::new("TestVendor".to_string());
-        let response = SetMonitoringBaseResponse::new(GenericDeviceModelStatusEnumType::Accepted)
+        let response = SetDisplayMessageResponse::new(DisplayMessageStatusEnumType::Accepted)
             .with_status_info(status_info.clone())
             .with_custom_data(custom_data.clone());
 
-        assert_eq!(*response.get_status(), GenericDeviceModelStatusEnumType::Accepted);
+        assert_eq!(*response.get_status(), DisplayMessageStatusEnumType::Accepted);
         assert_eq!(response.get_status_info(), Some(&status_info));
         assert_eq!(response.get_custom_data(), Some(&custom_data));
     }
 
     #[test]
-    fn test_set_monitoring_base_edge_cases() {
-        // Test all monitoring base enum variants
-        let variants = vec![
-            MonitoringBaseEnumType::All,
-            MonitoringBaseEnumType::FactoryDefault,
-            MonitoringBaseEnumType::HardWiredOnly,
-        ];
+    fn test_set_display_message_edge_cases() {
+        // Test with different message priorities and states
+        let high_priority_message = MessageInfoType::new(
+            999,
+            MessagePriorityEnumType::AlwaysFront,
+            MessageStateEnumType::Faulted,
+            Utc::now()
+        );
 
-        for variant in variants {
-            let request = SetMonitoringBaseRequest::new(variant.clone());
-            assert!(request.validate().is_ok());
-            assert_eq!(request.monitoring_base, variant);
-        }
+        let request = SetDisplayMessageRequest::new(high_priority_message);
+        assert!(request.validate().is_ok());
     }
 
     #[test]
-    fn test_set_monitoring_base_response_validation() {
-        let response = SetMonitoringBaseResponse::new(GenericDeviceModelStatusEnumType::Accepted);
+    fn test_set_display_message_response_validation() {
+        let response = SetDisplayMessageResponse::new(DisplayMessageStatusEnumType::Accepted);
         assert!(response.validate().is_ok());
     }
 }
