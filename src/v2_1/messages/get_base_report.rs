@@ -231,3 +231,254 @@ impl GetBaseReportResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    // Tests for GetBaseReportRequest
+
+    #[test]
+    fn test_get_base_report_request_new() {
+        let request = GetBaseReportRequest::new(123, ReportBaseEnumType::FullInventory);
+
+        assert_eq!(request.request_id, 123);
+        assert_eq!(request.report_base, ReportBaseEnumType::FullInventory);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_base_report_request_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let request = GetBaseReportRequest::new(456, ReportBaseEnumType::ConfigurationInventory)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.request_id, 456);
+        assert_eq!(request.report_base, ReportBaseEnumType::ConfigurationInventory);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_base_report_request_setters() {
+        let custom_data = create_test_custom_data();
+
+        let mut request = GetBaseReportRequest::new(100, ReportBaseEnumType::FullInventory);
+        request.set_request_id(200);
+        request.set_report_base(ReportBaseEnumType::SummaryInventory);
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.request_id, 200);
+        assert_eq!(request.report_base, ReportBaseEnumType::SummaryInventory);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_base_report_request_getters() {
+        let custom_data = create_test_custom_data();
+        let request = GetBaseReportRequest::new(789, ReportBaseEnumType::ConfigurationInventory)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_request_id(), &789);
+        assert_eq!(request.get_report_base(), &ReportBaseEnumType::ConfigurationInventory);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_base_report_request_serialization() {
+        let request = GetBaseReportRequest::new(999, ReportBaseEnumType::FullInventory);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetBaseReportRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_get_base_report_request_deserialization() {
+        let json = r#"{
+            "requestId": 555,
+            "reportBase": "SummaryInventory"
+        }"#;
+
+        let request: GetBaseReportRequest = serde_json::from_str(json).unwrap();
+        assert_eq!(request.request_id, 555);
+        assert_eq!(request.report_base, ReportBaseEnumType::SummaryInventory);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_base_report_request_validation() {
+        let request = GetBaseReportRequest::new(100, ReportBaseEnumType::FullInventory);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_base_report_request_validation_negative_request_id() {
+        let mut request = GetBaseReportRequest::new(100, ReportBaseEnumType::FullInventory);
+        request.set_request_id(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_base_report_request_all_report_base_types() {
+        let report_bases = vec![
+            ReportBaseEnumType::ConfigurationInventory,
+            ReportBaseEnumType::FullInventory,
+            ReportBaseEnumType::SummaryInventory,
+        ];
+
+        for report_base in report_bases {
+            let request = GetBaseReportRequest::new(123, report_base.clone());
+            assert_eq!(request.report_base, report_base);
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_base_report_request_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let request = GetBaseReportRequest::new(777, ReportBaseEnumType::ConfigurationInventory)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetBaseReportRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for GetBaseReportResponse
+
+    #[test]
+    fn test_get_base_report_response_new() {
+        let response = GetBaseReportResponse::new(GenericDeviceModelStatusEnumType::Accepted);
+
+        assert_eq!(response.status, GenericDeviceModelStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_base_report_response_with_status_info() {
+        let status_info = create_test_status_info();
+        let response = GetBaseReportResponse::new(GenericDeviceModelStatusEnumType::Rejected)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, GenericDeviceModelStatusEnumType::Rejected);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_base_report_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = GetBaseReportResponse::new(GenericDeviceModelStatusEnumType::NotSupported)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, GenericDeviceModelStatusEnumType::NotSupported);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_base_report_response_setters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let mut response = GetBaseReportResponse::new(GenericDeviceModelStatusEnumType::Accepted);
+        response.set_status(GenericDeviceModelStatusEnumType::EmptyResultSet);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, GenericDeviceModelStatusEnumType::EmptyResultSet);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_base_report_response_getters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = GetBaseReportResponse::new(GenericDeviceModelStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &GenericDeviceModelStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_base_report_response_serialization() {
+        let response = GetBaseReportResponse::new(GenericDeviceModelStatusEnumType::Accepted);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetBaseReportResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_get_base_report_response_deserialization() {
+        let json = r#"{
+            "status": "Rejected",
+            "statusInfo": {
+                "reasonCode": "InvalidRequest"
+            }
+        }"#;
+
+        let response: GetBaseReportResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.status, GenericDeviceModelStatusEnumType::Rejected);
+        assert!(response.status_info.is_some());
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_base_report_response_validation() {
+        let response = GetBaseReportResponse::new(GenericDeviceModelStatusEnumType::Accepted);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_base_report_response_all_status_types() {
+        let statuses = vec![
+            GenericDeviceModelStatusEnumType::Accepted,
+            GenericDeviceModelStatusEnumType::Rejected,
+            GenericDeviceModelStatusEnumType::NotSupported,
+            GenericDeviceModelStatusEnumType::EmptyResultSet,
+        ];
+
+        for status in statuses {
+            let response = GetBaseReportResponse::new(status.clone());
+            assert_eq!(response.status, status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_base_report_response_json_round_trip() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = GetBaseReportResponse::new(GenericDeviceModelStatusEnumType::NotSupported)
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetBaseReportResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
