@@ -273,3 +273,308 @@ impl NotifyReportResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::{ComponentType, VariableType, VariableAttributeType};
+    use crate::v2_1::enumerations::{AttributeEnumType, MutabilityEnumType};
+    use chrono::Utc;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_report_data() -> ReportDataType {
+        // Create a minimal ReportDataType for testing
+        let component = ComponentType::new("test_component".to_string());
+        let variable = VariableType::new("test_variable".to_string());
+        let attribute = VariableAttributeType::new_with_value(
+            AttributeEnumType::Actual,
+            "test_value".to_string(),
+            MutabilityEnumType::ReadOnly,
+        );
+        ReportDataType::new(component, variable, vec![attribute])
+    }
+
+    fn create_test_notify_report_request() -> NotifyReportRequest {
+        let generated_at = Utc::now();
+        NotifyReportRequest::new(123, generated_at, 0)
+    }
+
+    fn create_test_notify_report_response() -> NotifyReportResponse {
+        NotifyReportResponse::new()
+    }
+
+    #[test]
+    fn test_notify_report_request_new() {
+        let request_id = 456;
+        let generated_at = Utc::now();
+        let seq_no = 5;
+
+        let request = NotifyReportRequest::new(request_id, generated_at, seq_no);
+
+        assert_eq!(request.request_id, request_id);
+        assert_eq!(request.generated_at, generated_at);
+        assert_eq!(request.seq_no, seq_no);
+        assert!(request.report_data.is_none());
+        assert!(request.tbc.is_none());
+        assert!(request.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_notify_report_request_serialization() {
+        let request = create_test_notify_report_request();
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: NotifyReportRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_notify_report_request_validation_valid() {
+        let request = create_test_notify_report_request();
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_report_request_validation_negative_request_id() {
+        let generated_at = Utc::now();
+        let request = NotifyReportRequest::new(-1, generated_at, 0);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("request_id"));
+    }
+
+    #[test]
+    fn test_notify_report_request_validation_negative_seq_no() {
+        let generated_at = Utc::now();
+        let request = NotifyReportRequest::new(123, generated_at, -1);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("seq_no"));
+    }
+
+    #[test]
+    fn test_notify_report_request_validation_empty_report_data() {
+        let mut request = create_test_notify_report_request();
+        request.report_data = Some(vec![]); // Empty vector should fail validation
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("report_data"));
+    }
+
+    #[test]
+    fn test_notify_report_request_set_methods() {
+        let mut request = create_test_notify_report_request();
+        let new_request_id = 999;
+        let new_generated_at = Utc::now();
+        let new_seq_no = 10;
+        let report_data = vec![create_test_report_data()];
+
+        request.set_request_id(new_request_id)
+               .set_generated_at(new_generated_at)
+               .set_seq_no(new_seq_no)
+               .set_report_data(Some(report_data.clone()))
+               .set_tbc(Some(true));
+
+        assert_eq!(request.request_id, new_request_id);
+        assert_eq!(request.generated_at, new_generated_at);
+        assert_eq!(request.seq_no, new_seq_no);
+        assert_eq!(request.report_data, Some(report_data));
+        assert_eq!(request.tbc, Some(true));
+    }
+
+    #[test]
+    fn test_notify_report_request_get_methods() {
+        let request = create_test_notify_report_request();
+
+        assert_eq!(request.get_request_id(), &request.request_id);
+        assert_eq!(request.get_generated_at(), &request.generated_at);
+        assert_eq!(request.get_seq_no(), &request.seq_no);
+        assert_eq!(request.get_report_data(), None);
+        assert_eq!(request.get_tbc(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_report_request_with_methods() {
+        let custom_data = create_test_custom_data();
+        let report_data = vec![create_test_report_data()];
+
+        let request = create_test_notify_report_request()
+            .with_report_data(report_data.clone())
+            .with_tbc(true)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.report_data, Some(report_data));
+        assert_eq!(request.tbc, Some(true));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_notify_report_request_boundary_values() {
+        let generated_at = Utc::now();
+
+        // Test minimum valid values
+        let request_min = NotifyReportRequest::new(0, generated_at, 0);
+        assert!(request_min.validate().is_ok());
+
+        // Test large valid values
+        let request_max = NotifyReportRequest::new(i32::MAX, generated_at, i32::MAX);
+        assert!(request_max.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_report_request_json_format() {
+        let request = create_test_notify_report_request();
+        let json = serde_json::to_value(&request).expect("Failed to serialize to JSON");
+
+        assert!(json.get("requestId").is_some());
+        assert!(json.get("generatedAt").is_some());
+        assert!(json.get("seqNo").is_some());
+
+        // Optional fields should not be present if None
+        if request.report_data.is_none() {
+            assert!(json.get("reportData").is_none());
+        }
+        if request.tbc.is_none() {
+            assert!(json.get("tbc").is_none());
+        }
+        if request.custom_data.is_none() {
+            assert!(json.get("customData").is_none());
+        }
+    }
+
+    #[test]
+    fn test_notify_report_response_new() {
+        let response = NotifyReportResponse::new();
+        assert!(response.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_notify_report_response_serialization() {
+        let response = create_test_notify_report_response();
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: NotifyReportResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_notify_report_response_validation_valid() {
+        let response = create_test_notify_report_response();
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_report_response_set_methods() {
+        let mut response = create_test_notify_report_response();
+        let custom_data = create_test_custom_data();
+
+        response.set_custom_data(Some(custom_data.clone()));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_notify_report_response_get_methods() {
+        let response = create_test_notify_report_response();
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_report_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = create_test_notify_report_response()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.custom_data, Some(custom_data));
+        assert_eq!(response.get_custom_data(), response.custom_data.as_ref());
+    }
+
+    #[test]
+    fn test_notify_report_tbc_scenarios() {
+        let mut request = create_test_notify_report_request();
+
+        // Test tbc = true (more data to follow)
+        request.set_tbc(Some(true));
+        assert_eq!(request.tbc, Some(true));
+        assert!(request.validate().is_ok());
+
+        // Test tbc = false (last message)
+        request.set_tbc(Some(false));
+        assert_eq!(request.tbc, Some(false));
+        assert!(request.validate().is_ok());
+
+        // Test tbc = None (default false)
+        request.set_tbc(None);
+        assert!(request.tbc.is_none());
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_report_with_multiple_report_data() {
+        let report_data = vec![
+            create_test_report_data(),
+            {
+                let component = ComponentType::new("component2".to_string());
+                let variable = VariableType::new("variable2".to_string());
+                let attribute = VariableAttributeType::new_with_value(
+                    AttributeEnumType::Actual,
+                    "value2".to_string(),
+                    MutabilityEnumType::ReadOnly,
+                );
+                ReportDataType::new(component, variable, vec![attribute])
+            },
+            {
+                let component = ComponentType::new("component3".to_string());
+                let variable = VariableType::new("variable3".to_string());
+                let attribute = VariableAttributeType::new_with_value(
+                    AttributeEnumType::Actual,
+                    "value3".to_string(),
+                    MutabilityEnumType::ReadOnly,
+                );
+                ReportDataType::new(component, variable, vec![attribute])
+            },
+        ];
+
+        let request = create_test_notify_report_request()
+            .with_report_data(report_data.clone());
+
+        assert_eq!(request.report_data, Some(report_data));
+        assert!(request.validate().is_ok());
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: NotifyReportRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_notify_report_sequence_numbers() {
+        let generated_at = Utc::now();
+
+        // Test sequence starting from 0
+        let request_0 = NotifyReportRequest::new(123, generated_at, 0);
+        assert_eq!(request_0.seq_no, 0);
+        assert!(request_0.validate().is_ok());
+
+        // Test subsequent sequence numbers
+        let request_1 = NotifyReportRequest::new(123, generated_at, 1);
+        assert_eq!(request_1.seq_no, 1);
+        assert!(request_1.validate().is_ok());
+
+        let request_100 = NotifyReportRequest::new(123, generated_at, 100);
+        assert_eq!(request_100.seq_no, 100);
+        assert!(request_100.validate().is_ok());
+    }
+}
