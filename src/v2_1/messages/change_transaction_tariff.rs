@@ -232,3 +232,257 @@ impl ChangeTransactionTariffResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_tariff() -> TariffType {
+        TariffType::new("test-tariff-123".to_string(), "USD".to_string())
+    }
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_request_new() {
+        let tariff = create_test_tariff();
+        let transaction_id = "tx-12345".to_string();
+
+        let request = ChangeTransactionTariffRequest::new(tariff.clone(), transaction_id.clone());
+
+        assert_eq!(request.tariff, tariff);
+        assert_eq!(request.transaction_id, transaction_id);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_request_with_custom_data() {
+        let tariff = create_test_tariff();
+        let transaction_id = "tx-12345".to_string();
+        let custom_data = create_test_custom_data();
+
+        let request = ChangeTransactionTariffRequest::new(tariff.clone(), transaction_id.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.tariff, tariff);
+        assert_eq!(request.transaction_id, transaction_id);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_request_setters() {
+        let mut request = ChangeTransactionTariffRequest::new(
+            create_test_tariff(),
+            "tx-12345".to_string()
+        );
+
+        let new_tariff = TariffType::new("new-tariff-456".to_string(), "EUR".to_string());
+        let new_transaction_id = "tx-67890".to_string();
+        let custom_data = create_test_custom_data();
+
+        request.set_tariff(new_tariff.clone())
+               .set_transaction_id(new_transaction_id.clone())
+               .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.tariff, new_tariff);
+        assert_eq!(request.transaction_id, new_transaction_id);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_request_getters() {
+        let tariff = create_test_tariff();
+        let transaction_id = "tx-12345".to_string();
+        let custom_data = create_test_custom_data();
+
+        let request = ChangeTransactionTariffRequest::new(tariff.clone(), transaction_id.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_tariff(), &tariff);
+        assert_eq!(request.get_transaction_id(), &transaction_id);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_request_serialization() {
+        let tariff = create_test_tariff();
+        let transaction_id = "tx-12345".to_string();
+
+        let request = ChangeTransactionTariffRequest::new(tariff, transaction_id);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: ChangeTransactionTariffRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_request_validation_transaction_id_too_long() {
+        let tariff = create_test_tariff();
+        let long_transaction_id = "a".repeat(37); // Max is 36
+
+        let request = ChangeTransactionTariffRequest::new(tariff, long_transaction_id);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_request_validation_valid() {
+        let tariff = create_test_tariff();
+        let transaction_id = "tx-12345".to_string();
+
+        let request = ChangeTransactionTariffRequest::new(tariff, transaction_id);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_ok());
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_response_new() {
+        let status = TariffChangeStatusEnumType::Accepted;
+
+        let response = ChangeTransactionTariffResponse::new(status.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_response_with_status_info() {
+        let status = TariffChangeStatusEnumType::Rejected;
+        let status_info = create_test_status_info();
+
+        let response = ChangeTransactionTariffResponse::new(status.clone())
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_response_with_custom_data() {
+        let status = TariffChangeStatusEnumType::Accepted;
+        let custom_data = create_test_custom_data();
+
+        let response = ChangeTransactionTariffResponse::new(status.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_response_setters() {
+        let mut response = ChangeTransactionTariffResponse::new(TariffChangeStatusEnumType::Accepted);
+
+        let new_status = TariffChangeStatusEnumType::Rejected;
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        response.set_status(new_status.clone())
+                .set_status_info(Some(status_info.clone()))
+                .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, new_status);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_response_getters() {
+        let status = TariffChangeStatusEnumType::Accepted;
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let response = ChangeTransactionTariffResponse::new(status.clone())
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &status);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_response_serialization() {
+        let status = TariffChangeStatusEnumType::Accepted;
+
+        let response = ChangeTransactionTariffResponse::new(status);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: ChangeTransactionTariffResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_response_all_status_variants() {
+        let statuses = vec![
+            TariffChangeStatusEnumType::Accepted,
+            TariffChangeStatusEnumType::Rejected,
+            TariffChangeStatusEnumType::InvalidId,
+        ];
+
+        for status in statuses {
+            let response = ChangeTransactionTariffResponse::new(status.clone());
+            assert_eq!(response.status, status);
+
+            // Test serialization for each variant
+            let json = serde_json::to_string(&response).expect("Failed to serialize");
+            let deserialized: ChangeTransactionTariffResponse =
+                serde_json::from_str(&json).expect("Failed to deserialize");
+            assert_eq!(response, deserialized);
+        }
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_response_validation() {
+        let status = TariffChangeStatusEnumType::Accepted;
+        let response = ChangeTransactionTariffResponse::new(status);
+
+        let validation_result = response.validate();
+        assert!(validation_result.is_ok());
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_request_builder_pattern() {
+        let tariff = create_test_tariff();
+        let transaction_id = "tx-12345".to_string();
+        let custom_data = create_test_custom_data();
+
+        let request = ChangeTransactionTariffRequest::new(tariff.clone(), transaction_id.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.tariff, tariff);
+        assert_eq!(request.transaction_id, transaction_id);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_change_transaction_tariff_response_builder_pattern() {
+        let status = TariffChangeStatusEnumType::Accepted;
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let response = ChangeTransactionTariffResponse::new(status.clone())
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+}
