@@ -205,3 +205,252 @@ impl DeleteCertificateResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::enumerations::HashAlgorithmEnumType;
+    use serde_json;
+
+    fn create_test_certificate_hash_data() -> CertificateHashDataType {
+        CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA256,
+            "issuer_name_hash".to_string(),
+            "issuer_key_hash".to_string(),
+            "serial_number".to_string(),
+        )
+    }
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    // Tests for DeleteCertificateRequest
+
+    #[test]
+    fn test_delete_certificate_request_new() {
+        let cert_hash_data = create_test_certificate_hash_data();
+        let request = DeleteCertificateRequest::new(cert_hash_data.clone());
+
+        assert_eq!(request.certificate_hash_data, cert_hash_data);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_delete_certificate_request_with_custom_data() {
+        let cert_hash_data = create_test_certificate_hash_data();
+        let custom_data = create_test_custom_data();
+        let request = DeleteCertificateRequest::new(cert_hash_data.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.certificate_hash_data, cert_hash_data);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_delete_certificate_request_setters() {
+        let cert_hash_data1 = create_test_certificate_hash_data();
+        let cert_hash_data2 = CertificateHashDataType::new(
+            HashAlgorithmEnumType::SHA512,
+            "new_issuer_name_hash".to_string(),
+            "new_issuer_key_hash".to_string(),
+            "new_serial_number".to_string(),
+        );
+        let custom_data = create_test_custom_data();
+
+        let mut request = DeleteCertificateRequest::new(cert_hash_data1);
+        request.set_certificate_hash_data(cert_hash_data2.clone());
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.certificate_hash_data, cert_hash_data2);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_delete_certificate_request_getters() {
+        let cert_hash_data = create_test_certificate_hash_data();
+        let custom_data = create_test_custom_data();
+        let request = DeleteCertificateRequest::new(cert_hash_data.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_certificate_hash_data(), &cert_hash_data);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_delete_certificate_request_serialization() {
+        let cert_hash_data = create_test_certificate_hash_data();
+        let request = DeleteCertificateRequest::new(cert_hash_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: DeleteCertificateRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_delete_certificate_request_deserialization() {
+        let json = r#"{
+            "certificateHashData": {
+                "hashAlgorithm": "SHA256",
+                "issuerNameHash": "issuer_name_hash",
+                "issuerKeyHash": "issuer_key_hash",
+                "serialNumber": "serial_number"
+            }
+        }"#;
+
+        let request: DeleteCertificateRequest = serde_json::from_str(json).unwrap();
+        assert_eq!(request.certificate_hash_data.hash_algorithm(), &HashAlgorithmEnumType::SHA256);
+        assert_eq!(request.certificate_hash_data.issuer_name_hash(), "issuer_name_hash");
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_delete_certificate_request_validation() {
+        let cert_hash_data = create_test_certificate_hash_data();
+        let request = DeleteCertificateRequest::new(cert_hash_data);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_delete_certificate_request_json_round_trip() {
+        let cert_hash_data = create_test_certificate_hash_data();
+        let custom_data = create_test_custom_data();
+        let request = DeleteCertificateRequest::new(cert_hash_data)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: DeleteCertificateRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for DeleteCertificateResponse
+
+    #[test]
+    fn test_delete_certificate_response_new() {
+        let response = DeleteCertificateResponse::new(DeleteCertificateStatusEnumType::Accepted);
+
+        assert_eq!(response.status, DeleteCertificateStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_delete_certificate_response_with_status_info() {
+        let status_info = create_test_status_info();
+        let response = DeleteCertificateResponse::new(DeleteCertificateStatusEnumType::Failed)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, DeleteCertificateStatusEnumType::Failed);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_delete_certificate_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = DeleteCertificateResponse::new(DeleteCertificateStatusEnumType::NotFound)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, DeleteCertificateStatusEnumType::NotFound);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_delete_certificate_response_setters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let mut response = DeleteCertificateResponse::new(DeleteCertificateStatusEnumType::Accepted);
+        response.set_status(DeleteCertificateStatusEnumType::Failed);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, DeleteCertificateStatusEnumType::Failed);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_delete_certificate_response_getters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = DeleteCertificateResponse::new(DeleteCertificateStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &DeleteCertificateStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_delete_certificate_response_serialization() {
+        let response = DeleteCertificateResponse::new(DeleteCertificateStatusEnumType::Accepted);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: DeleteCertificateResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_delete_certificate_response_deserialization() {
+        let json = r#"{
+            "status": "Failed",
+            "statusInfo": {
+                "reasonCode": "CertificateNotFound"
+            }
+        }"#;
+
+        let response: DeleteCertificateResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.status, DeleteCertificateStatusEnumType::Failed);
+        assert!(response.status_info.is_some());
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_delete_certificate_response_validation() {
+        let response = DeleteCertificateResponse::new(DeleteCertificateStatusEnumType::Accepted);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_delete_certificate_response_all_status_types() {
+        let statuses = vec![
+            DeleteCertificateStatusEnumType::Accepted,
+            DeleteCertificateStatusEnumType::Failed,
+            DeleteCertificateStatusEnumType::NotFound,
+        ];
+
+        for status in statuses {
+            let response = DeleteCertificateResponse::new(status.clone());
+            assert_eq!(response.status, status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_delete_certificate_response_json_round_trip() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = DeleteCertificateResponse::new(DeleteCertificateStatusEnumType::Failed)
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: DeleteCertificateResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
