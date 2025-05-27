@@ -1,11 +1,11 @@
 use crate::v2_1::datatypes::{
-    CustomDataType, 
-    DERCurveGetType, 
-    EnterServiceGetType, 
-    FixedPFGetType, 
-    FixedVarGetType, 
-    FreqDroopGetType, 
-    GradientGetType, 
+    CustomDataType,
+    DERCurveGetType,
+    EnterServiceGetType,
+    FixedPFGetType,
+    FixedVarGetType,
+    FreqDroopGetType,
+    GradientGetType,
     LimitMaxDischargeGetType,
 };
 use serde::{Deserialize, Serialize};
@@ -500,4 +500,397 @@ impl ReportDERControlResponse {
         self
     }
 
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_der_curve() -> DERCurveGetType {
+        use crate::v2_1::datatypes::{DERCurveType, DERCurvePointsType};
+        use crate::v2_1::enumerations::{DERControlEnumType, DERUnitEnumType};
+        use rust_decimal::prelude::*;
+
+        let curve_points = vec![DERCurvePointsType::new(
+            Decimal::from_str("1.0").unwrap(),
+            Decimal::from_str("2.0").unwrap(),
+        )];
+        let curve = DERCurveType::new(curve_points, 1, DERUnitEnumType::PctMaxW);
+        DERCurveGetType::new(
+            curve,
+            "test_curve".to_string(),
+            DERControlEnumType::FreqDroop,
+            true,
+            false,
+        )
+    }
+
+    fn create_test_enter_service() -> EnterServiceGetType {
+        use crate::v2_1::datatypes::EnterServiceType;
+        use rust_decimal::prelude::*;
+
+        let enter_service = EnterServiceType::new(
+            1,
+            Decimal::from_str("240.0").unwrap(),
+            Decimal::from_str("220.0").unwrap(),
+            Decimal::from_str("60.5").unwrap(),
+            Decimal::from_str("59.5").unwrap(),
+            Decimal::from_str("5.0").unwrap(),
+            Decimal::from_str("2.0").unwrap(),
+            Decimal::from_str("10.0").unwrap(),
+        );
+        EnterServiceGetType::new(enter_service, "test_enter_service".to_string())
+    }
+
+    fn create_test_fixed_pf() -> FixedPFGetType {
+        use crate::v2_1::datatypes::FixedPFType;
+
+        let fixed_pf = FixedPFType::new(1, 0.95, true);
+        FixedPFGetType::new(fixed_pf, "test_fixed_pf".to_string(), false, true)
+    }
+
+    fn create_test_fixed_var() -> FixedVarGetType {
+        use crate::v2_1::datatypes::FixedVarType;
+
+        let fixed_var = FixedVarType::new(1, 100.0);
+        FixedVarGetType::new(fixed_var, "test_fixed_var".to_string(), false, true)
+    }
+
+    fn create_test_freq_droop() -> FreqDroopGetType {
+        use crate::v2_1::datatypes::FreqDroopType;
+        use rust_decimal::prelude::*;
+
+        let freq_droop = FreqDroopType::new(
+            1,
+            Decimal::from_str("60.0").unwrap(),
+            Decimal::from_str("2.0").unwrap(),
+            Decimal::from_str("2.0").unwrap(),
+            Decimal::from_str("10.0").unwrap(),
+            Decimal::from_str("5.0").unwrap(),
+        );
+        FreqDroopGetType::new(freq_droop, "test_freq_droop".to_string(), false, true)
+    }
+
+    fn create_test_gradient() -> GradientGetType {
+        use crate::v2_1::datatypes::GradientType;
+        use rust_decimal::prelude::*;
+
+        let gradient = GradientType::new(
+            1,
+            Decimal::from_str("5.0").unwrap(),
+            Decimal::from_str("2.0").unwrap()
+        );
+        GradientGetType::new(gradient, "test_gradient".to_string())
+    }
+
+    fn create_test_limit_max_discharge() -> LimitMaxDischargeGetType {
+        use crate::v2_1::datatypes::LimitMaxDischargeType;
+        use rust_decimal::prelude::*;
+
+        let limit_max_discharge = LimitMaxDischargeType::new(1, Decimal::from_str("80.0").unwrap());
+        LimitMaxDischargeGetType::new(limit_max_discharge, "test_limit".to_string(), false, true)
+    }
+
+    #[test]
+    fn test_report_der_control_request_new() {
+        let request = ReportDERControlRequest::new(123);
+
+        assert_eq!(request.request_id, 123);
+        assert!(request.curve.is_none());
+        assert!(request.enter_service.is_none());
+        assert!(request.fixed_pf_absorb.is_none());
+        assert!(request.fixed_pf_inject.is_none());
+        assert!(request.fixed_var.is_none());
+        assert!(request.freq_droop.is_none());
+        assert!(request.gradient.is_none());
+        assert!(request.limit_max_discharge.is_none());
+        assert!(request.tbc.is_none());
+        assert!(request.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_report_der_control_request_serialization() {
+        let request = ReportDERControlRequest::new(456)
+            .with_curve(vec![create_test_der_curve()])
+            .with_enter_service(vec![create_test_enter_service()])
+            .with_tbc(true)
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: ReportDERControlRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert_eq!(deserialized.request_id, 456);
+        assert!(deserialized.curve.is_some());
+        assert!(deserialized.enter_service.is_some());
+        assert_eq!(deserialized.tbc, Some(true));
+        assert!(deserialized.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_report_der_control_request_validation() {
+        // Valid request
+        let valid_request = ReportDERControlRequest::new(0);
+        assert!(valid_request.validate().is_ok());
+
+        // Invalid request_id (negative)
+        let invalid_request = ReportDERControlRequest {
+            curve: None,
+            enter_service: None,
+            fixed_pf_absorb: None,
+            fixed_pf_inject: None,
+            fixed_var: None,
+            freq_droop: None,
+            gradient: None,
+            limit_max_discharge: None,
+            request_id: -1,
+            tbc: None,
+            custom_data: None,
+        };
+        assert!(invalid_request.validate().is_err());
+
+        // Test with maximum allowed vector lengths (24 items)
+        let max_items = (0..24).map(|_| create_test_der_curve()).collect();
+        let max_request = ReportDERControlRequest::new(1)
+            .with_curve(max_items);
+        assert!(max_request.validate().is_ok());
+
+        // Test with too many items (25 items - should fail)
+        let too_many_items = (0..25).map(|_| create_test_der_curve()).collect();
+        let invalid_length_request = ReportDERControlRequest {
+            curve: Some(too_many_items),
+            enter_service: None,
+            fixed_pf_absorb: None,
+            fixed_pf_inject: None,
+            fixed_var: None,
+            freq_droop: None,
+            gradient: None,
+            limit_max_discharge: None,
+            request_id: 1,
+            tbc: None,
+            custom_data: None,
+        };
+        assert!(invalid_length_request.validate().is_err());
+    }
+
+    #[test]
+    fn test_report_der_control_request_builder_pattern() {
+        let curve_data = vec![create_test_der_curve()];
+        let enter_service_data = vec![create_test_enter_service()];
+        let fixed_pf_data = vec![create_test_fixed_pf()];
+        let custom_data = create_test_custom_data();
+
+        let request = ReportDERControlRequest::new(789)
+            .with_curve(curve_data.clone())
+            .with_enter_service(enter_service_data.clone())
+            .with_fixed_pf_absorb(fixed_pf_data.clone())
+            .with_tbc(false)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.request_id, 789);
+        assert_eq!(request.curve, Some(curve_data));
+        assert_eq!(request.enter_service, Some(enter_service_data));
+        assert_eq!(request.fixed_pf_absorb, Some(fixed_pf_data));
+        assert_eq!(request.tbc, Some(false));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_report_der_control_request_setters_getters() {
+        let mut request = ReportDERControlRequest::new(100);
+        let curve_data = vec![create_test_der_curve()];
+        let custom_data = create_test_custom_data();
+
+        // Test setters
+        request.set_request_id(200);
+        request.set_curve(Some(curve_data.clone()));
+        request.set_tbc(Some(true));
+        request.set_custom_data(Some(custom_data.clone()));
+
+        // Test getters
+        assert_eq!(*request.get_request_id(), 200);
+        assert_eq!(request.get_curve(), Some(&curve_data));
+        assert_eq!(request.get_tbc(), Some(&true));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_report_der_control_request_all_optional_fields() {
+        let request = ReportDERControlRequest::new(1)
+            .with_curve(vec![create_test_der_curve()])
+            .with_enter_service(vec![create_test_enter_service()])
+            .with_fixed_pf_absorb(vec![create_test_fixed_pf()])
+            .with_fixed_pf_inject(vec![create_test_fixed_pf()])
+            .with_fixed_var(vec![create_test_fixed_var()])
+            .with_freq_droop(vec![create_test_freq_droop()])
+            .with_gradient(vec![create_test_gradient()])
+            .with_limit_max_discharge(vec![create_test_limit_max_discharge()])
+            .with_tbc(true)
+            .with_custom_data(create_test_custom_data());
+
+        assert!(request.curve.is_some());
+        assert!(request.enter_service.is_some());
+        assert!(request.fixed_pf_absorb.is_some());
+        assert!(request.fixed_pf_inject.is_some());
+        assert!(request.fixed_var.is_some());
+        assert!(request.freq_droop.is_some());
+        assert!(request.gradient.is_some());
+        assert!(request.limit_max_discharge.is_some());
+        assert_eq!(request.tbc, Some(true));
+        assert!(request.custom_data.is_some());
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_report_der_control_response_new() {
+        let response = ReportDERControlResponse::new();
+
+        assert!(response.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_report_der_control_response_serialization() {
+        let response = ReportDERControlResponse::new()
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: ReportDERControlResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_report_der_control_response_validation() {
+        let valid_response = ReportDERControlResponse::new();
+        assert!(valid_response.validate().is_ok());
+
+        let response_with_custom_data = ReportDERControlResponse::new()
+            .with_custom_data(create_test_custom_data());
+        assert!(response_with_custom_data.validate().is_ok());
+    }
+
+    #[test]
+    fn test_report_der_control_response_builder_pattern() {
+        let custom_data = create_test_custom_data();
+        let response = ReportDERControlResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_report_der_control_response_setters_getters() {
+        let mut response = ReportDERControlResponse::new();
+        let custom_data = create_test_custom_data();
+
+        // Test setter
+        response.set_custom_data(Some(custom_data.clone()));
+
+        // Test getter
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_report_der_control_request_edge_cases() {
+        // Test minimum valid request_id
+        let min_request = ReportDERControlRequest::new(0);
+        assert!(min_request.validate().is_ok());
+
+        // Test large request_id
+        let large_request = ReportDERControlRequest::new(i32::MAX);
+        assert!(large_request.validate().is_ok());
+
+        // Test with minimum vector length (1 item)
+        let min_items = vec![create_test_der_curve()];
+        let min_vector_request = ReportDERControlRequest::new(1)
+            .with_curve(min_items);
+        assert!(min_vector_request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_report_der_control_request_tbc_values() {
+        // Test with tbc = true
+        let request_true = ReportDERControlRequest::new(1).with_tbc(true);
+        assert_eq!(request_true.tbc, Some(true));
+
+        // Test with tbc = false
+        let request_false = ReportDERControlRequest::new(1).with_tbc(false);
+        assert_eq!(request_false.tbc, Some(false));
+
+        // Test without tbc (None)
+        let request_none = ReportDERControlRequest::new(1);
+        assert_eq!(request_none.tbc, None);
+    }
+
+    #[test]
+    fn test_report_der_control_json_round_trip() {
+        let original_request = ReportDERControlRequest::new(12345)
+            .with_curve(vec![create_test_der_curve()])
+            .with_enter_service(vec![create_test_enter_service()])
+            .with_fixed_pf_absorb(vec![create_test_fixed_pf()])
+            .with_tbc(true)
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&original_request).expect("Failed to serialize request");
+        let parsed_request: ReportDERControlRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize request");
+
+        assert_eq!(original_request, parsed_request);
+
+        let original_response = ReportDERControlResponse::new()
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&original_response).expect("Failed to serialize response");
+        let parsed_response: ReportDERControlResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize response");
+
+        assert_eq!(original_response, parsed_response);
+    }
+
+    #[test]
+    fn test_report_der_control_request_all_getters() {
+        let curve_data = vec![create_test_der_curve()];
+        let enter_service_data = vec![create_test_enter_service()];
+        let fixed_pf_absorb_data = vec![create_test_fixed_pf()];
+        let fixed_pf_inject_data = vec![create_test_fixed_pf()];
+        let fixed_var_data = vec![create_test_fixed_var()];
+        let freq_droop_data = vec![create_test_freq_droop()];
+        let gradient_data = vec![create_test_gradient()];
+        let limit_max_discharge_data = vec![create_test_limit_max_discharge()];
+        let custom_data = create_test_custom_data();
+
+        let request = ReportDERControlRequest::new(999)
+            .with_curve(curve_data.clone())
+            .with_enter_service(enter_service_data.clone())
+            .with_fixed_pf_absorb(fixed_pf_absorb_data.clone())
+            .with_fixed_pf_inject(fixed_pf_inject_data.clone())
+            .with_fixed_var(fixed_var_data.clone())
+            .with_freq_droop(freq_droop_data.clone())
+            .with_gradient(gradient_data.clone())
+            .with_limit_max_discharge(limit_max_discharge_data.clone())
+            .with_tbc(true)
+            .with_custom_data(custom_data.clone());
+
+        // Test all getters
+        assert_eq!(*request.get_request_id(), 999);
+        assert_eq!(request.get_curve(), Some(&curve_data));
+        assert_eq!(request.get_enter_service(), Some(&enter_service_data));
+        assert_eq!(request.get_fixed_pf_absorb(), Some(&fixed_pf_absorb_data));
+        assert_eq!(request.get_fixed_pf_inject(), Some(&fixed_pf_inject_data));
+        assert_eq!(request.get_fixed_var(), Some(&fixed_var_data));
+        assert_eq!(request.get_freq_droop(), Some(&freq_droop_data));
+        assert_eq!(request.get_gradient(), Some(&gradient_data));
+        assert_eq!(request.get_limit_max_discharge(), Some(&limit_max_discharge_data));
+        assert_eq!(request.get_tbc(), Some(&true));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
 }
