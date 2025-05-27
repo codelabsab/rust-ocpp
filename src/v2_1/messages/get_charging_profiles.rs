@@ -271,3 +271,250 @@ impl GetChargingProfilesResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    fn create_test_charging_profile_criterion() -> ChargingProfileCriterionType {
+        ChargingProfileCriterionType::new()
+    }
+
+    // Tests for GetChargingProfilesRequest
+
+    #[test]
+    fn test_get_charging_profiles_request_new() {
+        let charging_profile = create_test_charging_profile_criterion();
+        let request = GetChargingProfilesRequest::new(123, charging_profile.clone());
+
+        assert_eq!(request.request_id, 123);
+        assert_eq!(request.evse_id, None);
+        assert_eq!(request.charging_profile, charging_profile);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_charging_profiles_request_with_evse_id() {
+        let charging_profile = create_test_charging_profile_criterion();
+        let request = GetChargingProfilesRequest::new(456, charging_profile.clone())
+            .with_evse_id(1);
+
+        assert_eq!(request.request_id, 456);
+        assert_eq!(request.evse_id, Some(1));
+        assert_eq!(request.charging_profile, charging_profile);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_charging_profiles_request_with_custom_data() {
+        let charging_profile = create_test_charging_profile_criterion();
+        let custom_data = create_test_custom_data();
+        let request = GetChargingProfilesRequest::new(789, charging_profile.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.request_id, 789);
+        assert_eq!(request.evse_id, None);
+        assert_eq!(request.charging_profile, charging_profile);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_charging_profiles_request_setters() {
+        let charging_profile1 = create_test_charging_profile_criterion();
+        let charging_profile2 = ChargingProfileCriterionType::new();
+        let custom_data = create_test_custom_data();
+
+        let mut request = GetChargingProfilesRequest::new(100, charging_profile1);
+        request.set_request_id(200);
+        request.set_evse_id(Some(2));
+        request.set_charging_profile(charging_profile2.clone());
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.request_id, 200);
+        assert_eq!(request.evse_id, Some(2));
+        assert_eq!(request.charging_profile, charging_profile2);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_charging_profiles_request_getters() {
+        let charging_profile = create_test_charging_profile_criterion();
+        let custom_data = create_test_custom_data();
+        let request = GetChargingProfilesRequest::new(999, charging_profile.clone())
+            .with_evse_id(3)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_request_id(), &999);
+        assert_eq!(request.get_evse_id(), Some(&3));
+        assert_eq!(request.get_charging_profile(), &charging_profile);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_charging_profiles_request_serialization() {
+        let charging_profile = create_test_charging_profile_criterion();
+        let request = GetChargingProfilesRequest::new(555, charging_profile);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetChargingProfilesRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_get_charging_profiles_request_validation() {
+        let charging_profile = create_test_charging_profile_criterion();
+        let request = GetChargingProfilesRequest::new(100, charging_profile);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_charging_profiles_request_validation_negative_request_id() {
+        let charging_profile = create_test_charging_profile_criterion();
+        let mut request = GetChargingProfilesRequest::new(100, charging_profile);
+        request.set_request_id(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_charging_profiles_request_validation_negative_evse_id() {
+        let charging_profile = create_test_charging_profile_criterion();
+        let mut request = GetChargingProfilesRequest::new(100, charging_profile);
+        request.set_evse_id(Some(-1));
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_charging_profiles_request_json_round_trip() {
+        let charging_profile = create_test_charging_profile_criterion();
+        let custom_data = create_test_custom_data();
+        let request = GetChargingProfilesRequest::new(777, charging_profile)
+            .with_evse_id(5)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetChargingProfilesRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for GetChargingProfilesResponse
+
+    #[test]
+    fn test_get_charging_profiles_response_new() {
+        let response = GetChargingProfilesResponse::new(GetChargingProfileStatusEnumType::Accepted);
+
+        assert_eq!(response.status, GetChargingProfileStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_charging_profiles_response_with_status_info() {
+        let status_info = create_test_status_info();
+        let response = GetChargingProfilesResponse::new(GetChargingProfileStatusEnumType::NoProfiles)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, GetChargingProfileStatusEnumType::NoProfiles);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_charging_profiles_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = GetChargingProfilesResponse::new(GetChargingProfileStatusEnumType::Accepted)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, GetChargingProfileStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_charging_profiles_response_setters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let mut response = GetChargingProfilesResponse::new(GetChargingProfileStatusEnumType::Accepted);
+        response.set_status(GetChargingProfileStatusEnumType::NoProfiles);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, GetChargingProfileStatusEnumType::NoProfiles);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_charging_profiles_response_getters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = GetChargingProfilesResponse::new(GetChargingProfileStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &GetChargingProfileStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_charging_profiles_response_serialization() {
+        let response = GetChargingProfilesResponse::new(GetChargingProfileStatusEnumType::Accepted);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetChargingProfilesResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_get_charging_profiles_response_validation() {
+        let response = GetChargingProfilesResponse::new(GetChargingProfileStatusEnumType::Accepted);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_charging_profiles_response_all_status_types() {
+        let statuses = vec![
+            GetChargingProfileStatusEnumType::Accepted,
+            GetChargingProfileStatusEnumType::NoProfiles,
+        ];
+
+        for status in statuses {
+            let response = GetChargingProfilesResponse::new(status.clone());
+            assert_eq!(response.status, status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_charging_profiles_response_json_round_trip() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = GetChargingProfilesResponse::new(GetChargingProfileStatusEnumType::NoProfiles)
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetChargingProfilesResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
