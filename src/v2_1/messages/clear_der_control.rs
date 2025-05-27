@@ -282,3 +282,339 @@ impl ClearDERControlResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    #[test]
+    fn test_clear_der_control_request_new() {
+        let is_default = true;
+
+        let request = ClearDERControlRequest::new(is_default);
+
+        assert_eq!(request.is_default, is_default);
+        assert_eq!(request.control_type, None);
+        assert_eq!(request.control_id, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_clear_der_control_request_with_control_type() {
+        let is_default = false;
+        let control_type = DERControlEnumType::FreqWatt;
+
+        let request = ClearDERControlRequest::new(is_default)
+            .with_control_type(control_type.clone());
+
+        assert_eq!(request.is_default, is_default);
+        assert_eq!(request.control_type, Some(control_type));
+        assert_eq!(request.control_id, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_clear_der_control_request_with_control_id() {
+        let is_default = true;
+        let control_id = "control-123".to_string();
+
+        let request = ClearDERControlRequest::new(is_default)
+            .with_control_id(control_id.clone());
+
+        assert_eq!(request.is_default, is_default);
+        assert_eq!(request.control_type, None);
+        assert_eq!(request.control_id, Some(control_id));
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_clear_der_control_request_with_custom_data() {
+        let is_default = false;
+        let custom_data = create_test_custom_data();
+
+        let request = ClearDERControlRequest::new(is_default)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.is_default, is_default);
+        assert_eq!(request.control_type, None);
+        assert_eq!(request.control_id, None);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_clear_der_control_request_setters() {
+        let mut request = ClearDERControlRequest::new(true);
+
+        let new_is_default = false;
+        let control_type = DERControlEnumType::VoltVar;
+        let control_id = "control-456".to_string();
+        let custom_data = create_test_custom_data();
+
+        request.set_is_default(new_is_default)
+               .set_control_type(Some(control_type.clone()))
+               .set_control_id(Some(control_id.clone()))
+               .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.is_default, new_is_default);
+        assert_eq!(request.control_type, Some(control_type));
+        assert_eq!(request.control_id, Some(control_id));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_clear_der_control_request_getters() {
+        let is_default = true;
+        let control_type = DERControlEnumType::PowerFactor;
+        let control_id = "control-789".to_string();
+        let custom_data = create_test_custom_data();
+
+        let request = ClearDERControlRequest::new(is_default)
+            .with_control_type(control_type.clone())
+            .with_control_id(control_id.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_is_default(), &is_default);
+        assert_eq!(request.get_control_type(), Some(&control_type));
+        assert_eq!(request.get_control_id(), Some(&control_id));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_clear_der_control_request_serialization() {
+        let is_default = false;
+        let control_type = DERControlEnumType::WattVar;
+
+        let request = ClearDERControlRequest::new(is_default)
+            .with_control_type(control_type);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: ClearDERControlRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_clear_der_control_request_validation_control_id_too_long() {
+        let is_default = true;
+        let long_control_id = "a".repeat(37); // Max is 36
+
+        let request = ClearDERControlRequest::new(is_default)
+            .with_control_id(long_control_id);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+    }
+
+    #[test]
+    fn test_clear_der_control_request_validation_valid() {
+        let is_default = true;
+        let control_id = "control-123".to_string();
+
+        let request = ClearDERControlRequest::new(is_default)
+            .with_control_id(control_id);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_ok());
+    }
+
+    #[test]
+    fn test_clear_der_control_request_all_control_types() {
+        let control_types = vec![
+            DERControlEnumType::EnterService,
+            DERControlEnumType::FreqDroop,
+            DERControlEnumType::FreqWatt,
+            DERControlEnumType::FixedPFAbsorb,
+            DERControlEnumType::FixedPFInject,
+            DERControlEnumType::FixedVar,
+            DERControlEnumType::Gradients,
+            DERControlEnumType::HFMustTrip,
+            DERControlEnumType::HFMayTrip,
+            DERControlEnumType::HVMustTrip,
+            DERControlEnumType::HVMomCess,
+            DERControlEnumType::HVMayTrip,
+            DERControlEnumType::LimitMaxDischarge,
+            DERControlEnumType::LFMustTrip,
+            DERControlEnumType::LVMustTrip,
+            DERControlEnumType::LVMomCess,
+            DERControlEnumType::LVMayTrip,
+            DERControlEnumType::PowerMonitoringMustTrip,
+            DERControlEnumType::VoltVar,
+            DERControlEnumType::VoltWatt,
+            DERControlEnumType::WattPF,
+            DERControlEnumType::WattVar,
+            DERControlEnumType::PowerLimitation,
+            DERControlEnumType::PowerTarget,
+            DERControlEnumType::PowerFactor,
+            DERControlEnumType::VoltageTarget,
+            DERControlEnumType::CurrentTarget,
+            DERControlEnumType::LoadPriority,
+        ];
+
+        for control_type in control_types {
+            let request = ClearDERControlRequest::new(true)
+                .with_control_type(control_type.clone());
+
+            assert_eq!(request.control_type, Some(control_type));
+
+            // Test serialization for each variant
+            let json = serde_json::to_string(&request).expect("Failed to serialize");
+            let deserialized: ClearDERControlRequest =
+                serde_json::from_str(&json).expect("Failed to deserialize");
+            assert_eq!(request, deserialized);
+        }
+    }
+
+    #[test]
+    fn test_clear_der_control_response_new() {
+        let status = DERControlStatusEnumType::Accepted;
+
+        let response = ClearDERControlResponse::new(status.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_clear_der_control_response_with_status_info() {
+        let status = DERControlStatusEnumType::Rejected;
+        let status_info = create_test_status_info();
+
+        let response = ClearDERControlResponse::new(status.clone())
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_clear_der_control_response_with_custom_data() {
+        let status = DERControlStatusEnumType::NotSupported;
+        let custom_data = create_test_custom_data();
+
+        let response = ClearDERControlResponse::new(status.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_clear_der_control_response_setters() {
+        let mut response = ClearDERControlResponse::new(DERControlStatusEnumType::Accepted);
+
+        let new_status = DERControlStatusEnumType::Rejected;
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        response.set_status(new_status.clone())
+                .set_status_info(Some(status_info.clone()))
+                .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, new_status);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_clear_der_control_response_getters() {
+        let status = DERControlStatusEnumType::Accepted;
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let response = ClearDERControlResponse::new(status.clone())
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &status);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_clear_der_control_response_serialization() {
+        let status = DERControlStatusEnumType::Accepted;
+
+        let response = ClearDERControlResponse::new(status);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: ClearDERControlResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_clear_der_control_response_all_status_variants() {
+        let statuses = vec![
+            DERControlStatusEnumType::Accepted,
+            DERControlStatusEnumType::Rejected,
+            DERControlStatusEnumType::NotSupported,
+        ];
+
+        for status in statuses {
+            let response = ClearDERControlResponse::new(status.clone());
+            assert_eq!(response.status, status);
+
+            // Test serialization for each variant
+            let json = serde_json::to_string(&response).expect("Failed to serialize");
+            let deserialized: ClearDERControlResponse =
+                serde_json::from_str(&json).expect("Failed to deserialize");
+            assert_eq!(response, deserialized);
+        }
+    }
+
+    #[test]
+    fn test_clear_der_control_response_validation() {
+        let status = DERControlStatusEnumType::Accepted;
+        let response = ClearDERControlResponse::new(status);
+
+        let validation_result = response.validate();
+        assert!(validation_result.is_ok());
+    }
+
+    #[test]
+    fn test_clear_der_control_request_builder_pattern() {
+        let is_default = true;
+        let control_type = DERControlEnumType::FreqWatt;
+        let control_id = "control-123".to_string();
+        let custom_data = create_test_custom_data();
+
+        let request = ClearDERControlRequest::new(is_default)
+            .with_control_type(control_type.clone())
+            .with_control_id(control_id.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.is_default, is_default);
+        assert_eq!(request.control_type, Some(control_type));
+        assert_eq!(request.control_id, Some(control_id));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_clear_der_control_response_builder_pattern() {
+        let status = DERControlStatusEnumType::Accepted;
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let response = ClearDERControlResponse::new(status.clone())
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+}
