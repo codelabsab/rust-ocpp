@@ -218,3 +218,207 @@ impl LogStatusNotificationResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    // Tests for LogStatusNotificationRequest
+
+    #[test]
+    fn test_log_status_notification_request_new() {
+        let status = UploadLogStatusEnumType::Uploaded;
+        let request = LogStatusNotificationRequest::new(status.clone());
+
+        assert_eq!(request.status, status);
+        assert_eq!(request.request_id, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_log_status_notification_request_with_request_id() {
+        let status = UploadLogStatusEnumType::UploadFailure;
+        let request = LogStatusNotificationRequest::new(status.clone())
+            .with_request_id(123);
+
+        assert_eq!(request.status, status);
+        assert_eq!(request.request_id, Some(123));
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_log_status_notification_request_with_custom_data() {
+        let status = UploadLogStatusEnumType::Idle;
+        let custom_data = create_test_custom_data();
+        let request = LogStatusNotificationRequest::new(status.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.status, status);
+        assert_eq!(request.request_id, None);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_log_status_notification_request_setters() {
+        let status1 = UploadLogStatusEnumType::Uploaded;
+        let status2 = UploadLogStatusEnumType::Uploading;
+        let custom_data = create_test_custom_data();
+
+        let mut request = LogStatusNotificationRequest::new(status1);
+        request.set_status(status2.clone());
+        request.set_request_id(Some(456));
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.status, status2);
+        assert_eq!(request.request_id, Some(456));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_log_status_notification_request_getters() {
+        let status = UploadLogStatusEnumType::NotSupportedOperation;
+        let custom_data = create_test_custom_data();
+        let request = LogStatusNotificationRequest::new(status.clone())
+            .with_request_id(789)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_status(), &status);
+        assert_eq!(request.get_request_id(), Some(&789));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_log_status_notification_request_serialization() {
+        let status = UploadLogStatusEnumType::Uploaded;
+        let request = LogStatusNotificationRequest::new(status);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: LogStatusNotificationRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_log_status_notification_request_validation() {
+        let status = UploadLogStatusEnumType::Uploaded;
+        let request = LogStatusNotificationRequest::new(status);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_log_status_notification_request_validation_negative_request_id() {
+        let status = UploadLogStatusEnumType::Uploaded;
+        let mut request = LogStatusNotificationRequest::new(status);
+        request.set_request_id(Some(-1));
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_log_status_notification_request_all_status_types() {
+        let statuses = vec![
+            UploadLogStatusEnumType::BadMessage,
+            UploadLogStatusEnumType::Idle,
+            UploadLogStatusEnumType::NotSupportedOperation,
+            UploadLogStatusEnumType::PermissionDenied,
+            UploadLogStatusEnumType::Uploaded,
+            UploadLogStatusEnumType::UploadFailure,
+            UploadLogStatusEnumType::Uploading,
+            UploadLogStatusEnumType::AcceptedCanceled,
+        ];
+
+        for status in statuses {
+            let request = LogStatusNotificationRequest::new(status.clone());
+            assert_eq!(request.status, status);
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_log_status_notification_request_json_round_trip() {
+        let status = UploadLogStatusEnumType::Uploading;
+        let custom_data = create_test_custom_data();
+        let request = LogStatusNotificationRequest::new(status)
+            .with_request_id(999)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: LogStatusNotificationRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for LogStatusNotificationResponse
+
+    #[test]
+    fn test_log_status_notification_response_new() {
+        let response = LogStatusNotificationResponse::new();
+
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_log_status_notification_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = LogStatusNotificationResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_log_status_notification_response_setters() {
+        let custom_data = create_test_custom_data();
+
+        let mut response = LogStatusNotificationResponse::new();
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_log_status_notification_response_getters() {
+        let custom_data = create_test_custom_data();
+        let response = LogStatusNotificationResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_log_status_notification_response_serialization() {
+        let response = LogStatusNotificationResponse::new();
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: LogStatusNotificationResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_log_status_notification_response_validation() {
+        let response = LogStatusNotificationResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_log_status_notification_response_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let response = LogStatusNotificationResponse::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: LogStatusNotificationResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
