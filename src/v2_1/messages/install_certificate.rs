@@ -231,3 +231,254 @@ impl InstallCertificateResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    // Tests for InstallCertificateRequest
+
+    #[test]
+    fn test_install_certificate_request_new() {
+        let certificate_type = InstallCertificateUseEnumType::CSMSRootCertificate;
+        let certificate = "test_certificate_data".to_string();
+        let request = InstallCertificateRequest::new(certificate_type.clone(), certificate.clone());
+
+        assert_eq!(request.certificate_type, certificate_type);
+        assert_eq!(request.certificate, certificate);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_install_certificate_request_with_custom_data() {
+        let certificate_type = InstallCertificateUseEnumType::V2GRootCertificate;
+        let certificate = "another_certificate_data".to_string();
+        let custom_data = create_test_custom_data();
+        let request = InstallCertificateRequest::new(certificate_type.clone(), certificate.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.certificate_type, certificate_type);
+        assert_eq!(request.certificate, certificate);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_install_certificate_request_setters() {
+        let certificate_type1 = InstallCertificateUseEnumType::CSMSRootCertificate;
+        let certificate_type2 = InstallCertificateUseEnumType::MORootCertificate;
+        let certificate1 = "cert1".to_string();
+        let certificate2 = "cert2".to_string();
+        let custom_data = create_test_custom_data();
+
+        let mut request = InstallCertificateRequest::new(certificate_type1, certificate1);
+        request.set_certificate_type(certificate_type2.clone());
+        request.set_certificate(certificate2.clone());
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.certificate_type, certificate_type2);
+        assert_eq!(request.certificate, certificate2);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_install_certificate_request_getters() {
+        let certificate_type = InstallCertificateUseEnumType::ManufacturerRootCertificate;
+        let certificate = "test_cert_data".to_string();
+        let custom_data = create_test_custom_data();
+        let request = InstallCertificateRequest::new(certificate_type.clone(), certificate.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_certificate_type(), &certificate_type);
+        assert_eq!(request.get_certificate(), &certificate);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_install_certificate_request_serialization() {
+        let certificate_type = InstallCertificateUseEnumType::CSMSRootCertificate;
+        let certificate = "test_certificate".to_string();
+        let request = InstallCertificateRequest::new(certificate_type, certificate);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: InstallCertificateRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_install_certificate_request_validation() {
+        let certificate_type = InstallCertificateUseEnumType::CSMSRootCertificate;
+        let certificate = "valid_certificate".to_string();
+        let request = InstallCertificateRequest::new(certificate_type, certificate);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_install_certificate_request_validation_long_certificate() {
+        let certificate_type = InstallCertificateUseEnumType::CSMSRootCertificate;
+        let long_certificate = "a".repeat(10001); // Exceeds max length of 10000
+        let mut request = InstallCertificateRequest::new(certificate_type, "valid".to_string());
+        request.set_certificate(long_certificate);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_install_certificate_request_validation_max_certificate() {
+        let certificate_type = InstallCertificateUseEnumType::CSMSRootCertificate;
+        let max_certificate = "a".repeat(10000); // Exactly at max length
+        let request = InstallCertificateRequest::new(certificate_type, max_certificate);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_install_certificate_request_all_certificate_types() {
+        let certificate_types = vec![
+            InstallCertificateUseEnumType::V2GRootCertificate,
+            InstallCertificateUseEnumType::MORootCertificate,
+            InstallCertificateUseEnumType::CSMSRootCertificate,
+            InstallCertificateUseEnumType::ManufacturerRootCertificate,
+            InstallCertificateUseEnumType::OEMRootCertificate,
+        ];
+
+        for cert_type in certificate_types {
+            let request = InstallCertificateRequest::new(cert_type.clone(), "test_cert".to_string());
+            assert_eq!(request.certificate_type, cert_type);
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_install_certificate_request_json_round_trip() {
+        let certificate_type = InstallCertificateUseEnumType::V2GRootCertificate;
+        let certificate = "test_certificate_data".to_string();
+        let custom_data = create_test_custom_data();
+        let request = InstallCertificateRequest::new(certificate_type, certificate)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: InstallCertificateRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for InstallCertificateResponse
+
+    #[test]
+    fn test_install_certificate_response_new() {
+        let response = InstallCertificateResponse::new(InstallCertificateStatusEnumType::Accepted);
+
+        assert_eq!(response.status, InstallCertificateStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_install_certificate_response_with_status_info() {
+        let status_info = create_test_status_info();
+        let response = InstallCertificateResponse::new(InstallCertificateStatusEnumType::Rejected)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, InstallCertificateStatusEnumType::Rejected);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_install_certificate_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = InstallCertificateResponse::new(InstallCertificateStatusEnumType::Failed)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, InstallCertificateStatusEnumType::Failed);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_install_certificate_response_setters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let mut response = InstallCertificateResponse::new(InstallCertificateStatusEnumType::Accepted);
+        response.set_status(InstallCertificateStatusEnumType::Failed);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, InstallCertificateStatusEnumType::Failed);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_install_certificate_response_getters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = InstallCertificateResponse::new(InstallCertificateStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &InstallCertificateStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_install_certificate_response_serialization() {
+        let response = InstallCertificateResponse::new(InstallCertificateStatusEnumType::Accepted);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: InstallCertificateResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_install_certificate_response_validation() {
+        let response = InstallCertificateResponse::new(InstallCertificateStatusEnumType::Accepted);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_install_certificate_response_all_status_types() {
+        let statuses = vec![
+            InstallCertificateStatusEnumType::Accepted,
+            InstallCertificateStatusEnumType::Rejected,
+            InstallCertificateStatusEnumType::Failed,
+        ];
+
+        for status in statuses {
+            let response = InstallCertificateResponse::new(status.clone());
+            assert_eq!(response.status, status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_install_certificate_response_json_round_trip() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = InstallCertificateResponse::new(InstallCertificateStatusEnumType::Failed)
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: InstallCertificateResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
