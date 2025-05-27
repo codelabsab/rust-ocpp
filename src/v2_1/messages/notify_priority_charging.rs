@@ -1,29 +1,170 @@
+use crate::v2_1::datatypes::CustomDataType;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::v2_1::datatypes::CustomDataType;
-
-/// Request to notify the CSMS about priority charging status.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+/// Request body for the NotifyPriorityCharging request.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyPriorityChargingRequest {
-    /// Required. The transaction for which priority charging is requested.
+    /// The transaction for which priority charging is requested.
     #[validate(length(max = 36))]
     pub transaction_id: String,
 
-    /// Required. True if priority charging was activated. False if it has stopped using the priority charging profile.
+    /// True if priority charging was activated. False if it has stopped using the priority charging profile.
     pub activated: bool,
 
-    /// Optional. Custom data specific to this class.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
-/// Response to a NotifyPriorityChargingRequest. This message has no fields.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Validate)]
+impl NotifyPriorityChargingRequest {
+    /// Creates a new instance of the struct.
+    ///
+    /// * `transaction_id` - The transaction for which priority charging is requested.
+    /// * `activated` - True if priority charging was activated. False if it has stopped using the priority charging profile.
+    ///
+    /// # Returns
+    ///
+    /// A new instance of the struct with required fields set and optional fields as None.
+    pub fn new(transaction_id: String, activated: bool) -> Self {
+        Self {
+            transaction_id,
+            activated,
+            custom_data: None,
+        }
+    }
+
+    /// Sets the transaction_id field.
+    ///
+    /// * `transaction_id` - The transaction for which priority charging is requested.
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_transaction_id(&mut self, transaction_id: String) -> &mut Self {
+        self.transaction_id = transaction_id;
+        self
+    }
+
+    /// Sets the activated field.
+    ///
+    /// * `activated` - True if priority charging was activated. False if it has stopped using the priority charging profile.
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_activated(&mut self, activated: bool) -> &mut Self {
+        self.activated = activated;
+        self
+    }
+
+    /// Sets the custom_data field.
+    ///
+    /// * `custom_data` - The custom_data field
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
+        self.custom_data = custom_data;
+        self
+    }
+
+    /// Gets a reference to the transaction_id field.
+    ///
+    /// # Returns
+    ///
+    /// The transaction for which priority charging is requested.
+    pub fn get_transaction_id(&self) -> &String {
+        &self.transaction_id
+    }
+
+    /// Gets a reference to the activated field.
+    ///
+    /// # Returns
+    ///
+    /// True if priority charging was activated. False if it has stopped using the priority charging profile.
+    pub fn get_activated(&self) -> &bool {
+        &self.activated
+    }
+
+    /// Gets a reference to the custom_data field.
+    ///
+    /// # Returns
+    ///
+    /// The custom_data field
+    pub fn get_custom_data(&self) -> Option<&CustomDataType> {
+        self.custom_data.as_ref()
+    }
+
+    /// Sets the custom_data field and returns self for builder pattern.
+    ///
+    /// * `custom_data` - The custom_data field
+    ///
+    /// # Returns
+    ///
+    /// Self with the field set.
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
+        self
+    }
+
+}
+
+/// Response body for the NotifyPriorityCharging response.
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct NotifyPriorityChargingResponse {
-    /// Optional. Custom data specific to this class.
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
+}
+
+impl NotifyPriorityChargingResponse {
+    /// Creates a new instance of the struct.
+    ///
+    ///
+    /// # Returns
+    ///
+    /// A new instance of the struct with required fields set and optional fields as None.
+    pub fn new() -> Self {
+        Self {
+            custom_data: None,
+        }
+    }
+
+    /// Sets the custom_data field.
+    ///
+    /// * `custom_data` - The custom_data field
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_custom_data(&mut self, custom_data: Option<CustomDataType>) -> &mut Self {
+        self.custom_data = custom_data;
+        self
+    }
+
+    /// Gets a reference to the custom_data field.
+    ///
+    /// # Returns
+    ///
+    /// The custom_data field
+    pub fn get_custom_data(&self) -> Option<&CustomDataType> {
+        self.custom_data.as_ref()
+    }
+
+    /// Sets the custom_data field and returns self for builder pattern.
+    ///
+    /// * `custom_data` - The custom_data field
+    ///
+    /// # Returns
+    ///
+    /// Self with the field set.
+    pub fn with_custom_data(mut self, custom_data: CustomDataType) -> Self {
+        self.custom_data = Some(custom_data);
+        self
+    }
+
 }

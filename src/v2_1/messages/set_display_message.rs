@@ -1,44 +1,44 @@
-use crate::v2_1::datatypes::{CertificateStatusRequestInfoType, CertificateStatusType, CustomDataType};
+use crate::v2_1::datatypes::{CustomDataType, MessageInfoType, StatusInfoType};
+use crate::v2_1::enumerations::DisplayMessageStatusEnumType;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-/// Request body for the GetCertificateChainStatus request.
+/// Request body for the SetDisplayMessage request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct GetCertificateChainStatusRequest {
-    #[validate(length(min = 1, max = 4))]
+pub struct SetDisplayMessageRequest {
     #[validate(nested)]
-    pub certificate_status_requests: Vec<CertificateStatusRequestInfoType>,
+    pub message: MessageInfoType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
-impl GetCertificateChainStatusRequest {
+impl SetDisplayMessageRequest {
     /// Creates a new instance of the struct.
     ///
-    /// * `certificate_status_requests` - The certificate_status_requests field
+    /// * `message` - The message field
     ///
     /// # Returns
     ///
     /// A new instance of the struct with required fields set and optional fields as None.
-    pub fn new(certificate_status_requests: Vec<CertificateStatusRequestInfoType>) -> Self {
+    pub fn new(message: MessageInfoType) -> Self {
         Self {
-            certificate_status_requests,
+            message,
             custom_data: None,
         }
     }
 
-    /// Sets the certificate_status_requests field.
+    /// Sets the message field.
     ///
-    /// * `certificate_status_requests` - The certificate_status_requests field
+    /// * `message` - The message field
     ///
     /// # Returns
     ///
     /// A mutable reference to self for method chaining.
-    pub fn set_certificate_status_requests(&mut self, certificate_status_requests: Vec<CertificateStatusRequestInfoType>) -> &mut Self {
-        self.certificate_status_requests = certificate_status_requests;
+    pub fn set_message(&mut self, message: MessageInfoType) -> &mut Self {
+        self.message = message;
         self
     }
 
@@ -54,13 +54,13 @@ impl GetCertificateChainStatusRequest {
         self
     }
 
-    /// Gets a reference to the certificate_status_requests field.
+    /// Gets a reference to the message field.
     ///
     /// # Returns
     ///
-    /// The certificate_status_requests field
-    pub fn get_certificate_status_requests(&self) -> &Vec<CertificateStatusRequestInfoType> {
-        &self.certificate_status_requests
+    /// The message field
+    pub fn get_message(&self) -> &MessageInfoType {
+        &self.message
     }
 
     /// Gets a reference to the custom_data field.
@@ -86,43 +86,58 @@ impl GetCertificateChainStatusRequest {
 
 }
 
-/// Response body for the GetCertificateChainStatus response.
+/// Response body for the SetDisplayMessage response.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct GetCertificateChainStatusResponse {
-    #[validate(length(min = 1, max = 4))]
+pub struct SetDisplayMessageResponse {
+    pub status: DisplayMessageStatusEnumType,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
-    pub certificate_status: Vec<CertificateStatusType>,
+    pub status_info: Option<StatusInfoType>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
-impl GetCertificateChainStatusResponse {
+impl SetDisplayMessageResponse {
     /// Creates a new instance of the struct.
     ///
-    /// * `certificate_status` - The certificate_status field
+    /// * `status` - The status field
     ///
     /// # Returns
     ///
     /// A new instance of the struct with required fields set and optional fields as None.
-    pub fn new(certificate_status: Vec<CertificateStatusType>) -> Self {
+    pub fn new(status: DisplayMessageStatusEnumType) -> Self {
         Self {
-            certificate_status,
+            status,
+            status_info: None,
             custom_data: None,
         }
     }
 
-    /// Sets the certificate_status field.
+    /// Sets the status field.
     ///
-    /// * `certificate_status` - The certificate_status field
+    /// * `status` - The status field
     ///
     /// # Returns
     ///
     /// A mutable reference to self for method chaining.
-    pub fn set_certificate_status(&mut self, certificate_status: Vec<CertificateStatusType>) -> &mut Self {
-        self.certificate_status = certificate_status;
+    pub fn set_status(&mut self, status: DisplayMessageStatusEnumType) -> &mut Self {
+        self.status = status;
+        self
+    }
+
+    /// Sets the status_info field.
+    ///
+    /// * `status_info` - The status_info field
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_status_info(&mut self, status_info: Option<StatusInfoType>) -> &mut Self {
+        self.status_info = status_info;
         self
     }
 
@@ -138,13 +153,22 @@ impl GetCertificateChainStatusResponse {
         self
     }
 
-    /// Gets a reference to the certificate_status field.
+    /// Gets a reference to the status field.
     ///
     /// # Returns
     ///
-    /// The certificate_status field
-    pub fn get_certificate_status(&self) -> &Vec<CertificateStatusType> {
-        &self.certificate_status
+    /// The status field
+    pub fn get_status(&self) -> &DisplayMessageStatusEnumType {
+        &self.status
+    }
+
+    /// Gets a reference to the status_info field.
+    ///
+    /// # Returns
+    ///
+    /// The status_info field
+    pub fn get_status_info(&self) -> Option<&StatusInfoType> {
+        self.status_info.as_ref()
     }
 
     /// Gets a reference to the custom_data field.
@@ -154,6 +178,18 @@ impl GetCertificateChainStatusResponse {
     /// The custom_data field
     pub fn get_custom_data(&self) -> Option<&CustomDataType> {
         self.custom_data.as_ref()
+    }
+
+    /// Sets the status_info field and returns self for builder pattern.
+    ///
+    /// * `status_info` - The status_info field
+    ///
+    /// # Returns
+    ///
+    /// Self with the field set.
+    pub fn with_status_info(mut self, status_info: StatusInfoType) -> Self {
+        self.status_info = Some(status_info);
+        self
     }
 
     /// Sets the custom_data field and returns self for builder pattern.

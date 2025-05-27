@@ -1,43 +1,62 @@
-use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
-use crate::v2_1::enumerations::{GenericDeviceModelStatusEnumType, MonitoringBaseEnumType};
+use crate::v2_1::datatypes::{ChargingScheduleUpdateType, CustomDataType, StatusInfoType};
+use crate::v2_1::enumerations::ChargingProfileStatusEnumType;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-/// Request body for the SetMonitoringBase request.
+/// Request body for the UpdateDynamicSchedule request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct SetMonitoringBaseRequest {
-    pub monitoring_base: MonitoringBaseEnumType,
+pub struct UpdateDynamicScheduleRequest {
+    /// Id of charging profile to update.
+    #[validate(range(min = 0))]
+    pub charging_profile_id: i32,
+
+    #[validate(nested)]
+    pub schedule_update: ChargingScheduleUpdateType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
-impl SetMonitoringBaseRequest {
+impl UpdateDynamicScheduleRequest {
     /// Creates a new instance of the struct.
     ///
-    /// * `monitoring_base` - The monitoring_base field
+    /// * `charging_profile_id` - Id of charging profile to update.
+    /// * `schedule_update` - The schedule_update field
     ///
     /// # Returns
     ///
     /// A new instance of the struct with required fields set and optional fields as None.
-    pub fn new(monitoring_base: MonitoringBaseEnumType) -> Self {
+    pub fn new(charging_profile_id: i32, schedule_update: ChargingScheduleUpdateType) -> Self {
         Self {
-            monitoring_base,
+            charging_profile_id,
+            schedule_update,
             custom_data: None,
         }
     }
 
-    /// Sets the monitoring_base field.
+    /// Sets the charging_profile_id field.
     ///
-    /// * `monitoring_base` - The monitoring_base field
+    /// * `charging_profile_id` - Id of charging profile to update.
     ///
     /// # Returns
     ///
     /// A mutable reference to self for method chaining.
-    pub fn set_monitoring_base(&mut self, monitoring_base: MonitoringBaseEnumType) -> &mut Self {
-        self.monitoring_base = monitoring_base;
+    pub fn set_charging_profile_id(&mut self, charging_profile_id: i32) -> &mut Self {
+        self.charging_profile_id = charging_profile_id;
+        self
+    }
+
+    /// Sets the schedule_update field.
+    ///
+    /// * `schedule_update` - The schedule_update field
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_schedule_update(&mut self, schedule_update: ChargingScheduleUpdateType) -> &mut Self {
+        self.schedule_update = schedule_update;
         self
     }
 
@@ -53,13 +72,22 @@ impl SetMonitoringBaseRequest {
         self
     }
 
-    /// Gets a reference to the monitoring_base field.
+    /// Gets a reference to the charging_profile_id field.
     ///
     /// # Returns
     ///
-    /// The monitoring_base field
-    pub fn get_monitoring_base(&self) -> &MonitoringBaseEnumType {
-        &self.monitoring_base
+    /// Id of charging profile to update.
+    pub fn get_charging_profile_id(&self) -> &i32 {
+        &self.charging_profile_id
+    }
+
+    /// Gets a reference to the schedule_update field.
+    ///
+    /// # Returns
+    ///
+    /// The schedule_update field
+    pub fn get_schedule_update(&self) -> &ChargingScheduleUpdateType {
+        &self.schedule_update
     }
 
     /// Gets a reference to the custom_data field.
@@ -85,11 +113,11 @@ impl SetMonitoringBaseRequest {
 
 }
 
-/// Response body for the SetMonitoringBase response.
+/// Response body for the UpdateDynamicSchedule response.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct SetMonitoringBaseResponse {
-    pub status: GenericDeviceModelStatusEnumType,
+pub struct UpdateDynamicScheduleResponse {
+    pub status: ChargingProfileStatusEnumType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
@@ -100,7 +128,7 @@ pub struct SetMonitoringBaseResponse {
     pub custom_data: Option<CustomDataType>,
 }
 
-impl SetMonitoringBaseResponse {
+impl UpdateDynamicScheduleResponse {
     /// Creates a new instance of the struct.
     ///
     /// * `status` - The status field
@@ -108,7 +136,7 @@ impl SetMonitoringBaseResponse {
     /// # Returns
     ///
     /// A new instance of the struct with required fields set and optional fields as None.
-    pub fn new(status: GenericDeviceModelStatusEnumType) -> Self {
+    pub fn new(status: ChargingProfileStatusEnumType) -> Self {
         Self {
             status,
             status_info: None,
@@ -123,7 +151,7 @@ impl SetMonitoringBaseResponse {
     /// # Returns
     ///
     /// A mutable reference to self for method chaining.
-    pub fn set_status(&mut self, status: GenericDeviceModelStatusEnumType) -> &mut Self {
+    pub fn set_status(&mut self, status: ChargingProfileStatusEnumType) -> &mut Self {
         self.status = status;
         self
     }
@@ -157,7 +185,7 @@ impl SetMonitoringBaseResponse {
     /// # Returns
     ///
     /// The status field
-    pub fn get_status(&self) -> &GenericDeviceModelStatusEnumType {
+    pub fn get_status(&self) -> &ChargingProfileStatusEnumType {
         &self.status
     }
 

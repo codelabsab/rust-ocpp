@@ -1,96 +1,97 @@
-use crate::v2_1::datatypes::{CertificateHashDataType, CustomDataType, StatusInfoType};
-use crate::v2_1::enumerations::{CertificateSigningUseEnumType, GenericStatusEnumType};
+use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
+use crate::v2_1::enumerations::DERControlEnumType;
+use crate::v2_1::enumerations::der_control::DERControlStatusEnumType;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-/// Request body for the SignCertificate request.
+/// Request body for the GetDERControl request.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct SignCertificateRequest {
-    /// The Charging Station SHALL send the public key in form of a Certificate Signing Request (CSR) as described in RFC 2986 [22] and then PEM encoded, using the &lt;&lt;signcertificaterequest,SignCertificateRequest&gt;&gt; message.
-    #[validate(length(max = 5500))]
-    pub csr: String,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub certificate_type: Option<CertificateSigningUseEnumType>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[validate(nested)]
-    pub hash_root_certificate: Option<CertificateHashDataType>,
-
-    /// *(2.1)* RequestId to match this message with the CertificateSignedRequest.
-    #[serde(skip_serializing_if = "Option::is_none")]
+pub struct GetDERControlRequest {
+    /// RequestId to be used in ReportDERControlRequest.
     #[validate(range(min = 0))]
-    pub request_id: Option<i32>,
+    pub request_id: i32,
+
+    /// True: get a default DER control. False: get a scheduled control.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_default: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub control_type: Option<DERControlEnumType>,
+
+    /// Id of setting to get. When omitted all settings for _controlType_ are retrieved.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[validate(length(max = 36))]
+    pub control_id: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
     pub custom_data: Option<CustomDataType>,
 }
 
-impl SignCertificateRequest {
+impl GetDERControlRequest {
     /// Creates a new instance of the struct.
     ///
-    /// * `csr` - The Charging Station SHALL send the public key in form of a Certificate Signing Request (CSR) as described in RFC 2986 [22] and then PEM encoded, using the &lt;&lt;signcertificaterequest,SignCertificateRequest&gt;&gt; message.
+    /// * `request_id` - RequestId to be used in ReportDERControlRequest.
     ///
     /// # Returns
     ///
     /// A new instance of the struct with required fields set and optional fields as None.
-    pub fn new(csr: String) -> Self {
+    pub fn new(request_id: i32) -> Self {
         Self {
-            csr,
-            certificate_type: None,
-            hash_root_certificate: None,
-            request_id: None,
+            request_id,
+            is_default: None,
+            control_type: None,
+            control_id: None,
             custom_data: None,
         }
     }
 
-    /// Sets the csr field.
-    ///
-    /// * `csr` - The Charging Station SHALL send the public key in form of a Certificate Signing Request (CSR) as described in RFC 2986 [22] and then PEM encoded, using the &lt;&lt;signcertificaterequest,SignCertificateRequest&gt;&gt; message.
-    ///
-    /// # Returns
-    ///
-    /// A mutable reference to self for method chaining.
-    pub fn set_csr(&mut self, csr: String) -> &mut Self {
-        self.csr = csr;
-        self
-    }
-
-    /// Sets the certificate_type field.
-    ///
-    /// * `certificate_type` - The certificate_type field
-    ///
-    /// # Returns
-    ///
-    /// A mutable reference to self for method chaining.
-    pub fn set_certificate_type(&mut self, certificate_type: Option<CertificateSigningUseEnumType>) -> &mut Self {
-        self.certificate_type = certificate_type;
-        self
-    }
-
-    /// Sets the hash_root_certificate field.
-    ///
-    /// * `hash_root_certificate` - The hash_root_certificate field
-    ///
-    /// # Returns
-    ///
-    /// A mutable reference to self for method chaining.
-    pub fn set_hash_root_certificate(&mut self, hash_root_certificate: Option<CertificateHashDataType>) -> &mut Self {
-        self.hash_root_certificate = hash_root_certificate;
-        self
-    }
-
     /// Sets the request_id field.
     ///
-    /// * `request_id` - *(2.1)* RequestId to match this message with the CertificateSignedRequest.
+    /// * `request_id` - RequestId to be used in ReportDERControlRequest.
     ///
     /// # Returns
     ///
     /// A mutable reference to self for method chaining.
-    pub fn set_request_id(&mut self, request_id: Option<i32>) -> &mut Self {
+    pub fn set_request_id(&mut self, request_id: i32) -> &mut Self {
         self.request_id = request_id;
+        self
+    }
+
+    /// Sets the is_default field.
+    ///
+    /// * `is_default` - True: get a default DER control. False: get a scheduled control.
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_is_default(&mut self, is_default: Option<bool>) -> &mut Self {
+        self.is_default = is_default;
+        self
+    }
+
+    /// Sets the control_type field.
+    ///
+    /// * `control_type` - The control_type field
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_control_type(&mut self, control_type: Option<DERControlEnumType>) -> &mut Self {
+        self.control_type = control_type;
+        self
+    }
+
+    /// Sets the control_id field.
+    ///
+    /// * `control_id` - Id of setting to get. When omitted all settings for _controlType_ are retrieved.
+    ///
+    /// # Returns
+    ///
+    /// A mutable reference to self for method chaining.
+    pub fn set_control_id(&mut self, control_id: Option<String>) -> &mut Self {
+        self.control_id = control_id;
         self
     }
 
@@ -106,40 +107,40 @@ impl SignCertificateRequest {
         self
     }
 
-    /// Gets a reference to the csr field.
-    ///
-    /// # Returns
-    ///
-    /// The Charging Station SHALL send the public key in form of a Certificate Signing Request (CSR) as described in RFC 2986 [22] and then PEM encoded, using the &lt;&lt;signcertificaterequest,SignCertificateRequest&gt;&gt; message.
-    pub fn get_csr(&self) -> &String {
-        &self.csr
-    }
-
-    /// Gets a reference to the certificate_type field.
-    ///
-    /// # Returns
-    ///
-    /// The certificate_type field
-    pub fn get_certificate_type(&self) -> Option<&CertificateSigningUseEnumType> {
-        self.certificate_type.as_ref()
-    }
-
-    /// Gets a reference to the hash_root_certificate field.
-    ///
-    /// # Returns
-    ///
-    /// The hash_root_certificate field
-    pub fn get_hash_root_certificate(&self) -> Option<&CertificateHashDataType> {
-        self.hash_root_certificate.as_ref()
-    }
-
     /// Gets a reference to the request_id field.
     ///
     /// # Returns
     ///
-    /// *(2.1)* RequestId to match this message with the CertificateSignedRequest.
-    pub fn get_request_id(&self) -> Option<&i32> {
-        self.request_id.as_ref()
+    /// RequestId to be used in ReportDERControlRequest.
+    pub fn get_request_id(&self) -> &i32 {
+        &self.request_id
+    }
+
+    /// Gets a reference to the is_default field.
+    ///
+    /// # Returns
+    ///
+    /// True: get a default DER control. False: get a scheduled control.
+    pub fn get_is_default(&self) -> Option<&bool> {
+        self.is_default.as_ref()
+    }
+
+    /// Gets a reference to the control_type field.
+    ///
+    /// # Returns
+    ///
+    /// The control_type field
+    pub fn get_control_type(&self) -> Option<&DERControlEnumType> {
+        self.control_type.as_ref()
+    }
+
+    /// Gets a reference to the control_id field.
+    ///
+    /// # Returns
+    ///
+    /// Id of setting to get. When omitted all settings for _controlType_ are retrieved.
+    pub fn get_control_id(&self) -> Option<&String> {
+        self.control_id.as_ref()
     }
 
     /// Gets a reference to the custom_data field.
@@ -151,39 +152,39 @@ impl SignCertificateRequest {
         self.custom_data.as_ref()
     }
 
-    /// Sets the certificate_type field and returns self for builder pattern.
+    /// Sets the is_default field and returns self for builder pattern.
     ///
-    /// * `certificate_type` - The certificate_type field
+    /// * `is_default` - True: get a default DER control. False: get a scheduled control.
     ///
     /// # Returns
     ///
     /// Self with the field set.
-    pub fn with_certificate_type(mut self, certificate_type: CertificateSigningUseEnumType) -> Self {
-        self.certificate_type = Some(certificate_type);
+    pub fn with_is_default(mut self, is_default: bool) -> Self {
+        self.is_default = Some(is_default);
         self
     }
 
-    /// Sets the hash_root_certificate field and returns self for builder pattern.
+    /// Sets the control_type field and returns self for builder pattern.
     ///
-    /// * `hash_root_certificate` - The hash_root_certificate field
+    /// * `control_type` - The control_type field
     ///
     /// # Returns
     ///
     /// Self with the field set.
-    pub fn with_hash_root_certificate(mut self, hash_root_certificate: CertificateHashDataType) -> Self {
-        self.hash_root_certificate = Some(hash_root_certificate);
+    pub fn with_control_type(mut self, control_type: DERControlEnumType) -> Self {
+        self.control_type = Some(control_type);
         self
     }
 
-    /// Sets the request_id field and returns self for builder pattern.
+    /// Sets the control_id field and returns self for builder pattern.
     ///
-    /// * `request_id` - *(2.1)* RequestId to match this message with the CertificateSignedRequest.
+    /// * `control_id` - Id of setting to get. When omitted all settings for _controlType_ are retrieved.
     ///
     /// # Returns
     ///
     /// Self with the field set.
-    pub fn with_request_id(mut self, request_id: i32) -> Self {
-        self.request_id = Some(request_id);
+    pub fn with_control_id(mut self, control_id: String) -> Self {
+        self.control_id = Some(control_id);
         self
     }
 
@@ -201,11 +202,11 @@ impl SignCertificateRequest {
 
 }
 
-/// Response body for the SignCertificate response.
+/// Response body for the GetDERControl response.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct SignCertificateResponse {
-    pub status: GenericStatusEnumType,
+pub struct GetDERControlResponse {
+    pub status: DERControlStatusEnumType,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[validate(nested)]
@@ -216,7 +217,7 @@ pub struct SignCertificateResponse {
     pub custom_data: Option<CustomDataType>,
 }
 
-impl SignCertificateResponse {
+impl GetDERControlResponse {
     /// Creates a new instance of the struct.
     ///
     /// * `status` - The status field
@@ -224,7 +225,7 @@ impl SignCertificateResponse {
     /// # Returns
     ///
     /// A new instance of the struct with required fields set and optional fields as None.
-    pub fn new(status: GenericStatusEnumType) -> Self {
+    pub fn new(status: DERControlStatusEnumType) -> Self {
         Self {
             status,
             status_info: None,
@@ -239,7 +240,7 @@ impl SignCertificateResponse {
     /// # Returns
     ///
     /// A mutable reference to self for method chaining.
-    pub fn set_status(&mut self, status: GenericStatusEnumType) -> &mut Self {
+    pub fn set_status(&mut self, status: DERControlStatusEnumType) -> &mut Self {
         self.status = status;
         self
     }
@@ -273,7 +274,7 @@ impl SignCertificateResponse {
     /// # Returns
     ///
     /// The status field
-    pub fn get_status(&self) -> &GenericStatusEnumType {
+    pub fn get_status(&self) -> &DERControlStatusEnumType {
         &self.status
     }
 
