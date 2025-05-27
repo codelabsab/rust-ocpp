@@ -268,3 +268,181 @@ impl SendLocalListResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::{AuthorizationData, CustomDataType, IdTokenType, IdTokenInfoType, StatusInfoType};
+    use crate::v2_1::enumerations::{AuthorizationStatusEnumType, SendLocalListStatusEnumType, UpdateEnumType};
+
+    #[test]
+    fn test_send_local_list_request_new() {
+        let request = SendLocalListRequest::new(1, UpdateEnumType::Full);
+        assert_eq!(request.local_authorization_list, None);
+        assert_eq!(request.version_number, 1);
+        assert_eq!(request.update_type, UpdateEnumType::Full);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_send_local_list_request_serialization() {
+        let id_token = IdTokenType::new("test_token".to_string(), "Central".to_string());
+        let id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
+        let auth_data = AuthorizationData::new(id_token, id_token_info);
+        let request = SendLocalListRequest::new(2, UpdateEnumType::Differential)
+            .with_local_authorization_list(vec![auth_data]);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: SendLocalListRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(json.contains("\"versionNumber\":2"));
+        assert!(json.contains("\"updateType\":\"Differential\""));
+    }
+
+    #[test]
+    fn test_send_local_list_request_validation() {
+        // Test valid request
+        let valid_request = SendLocalListRequest::new(1, UpdateEnumType::Full);
+        assert!(valid_request.validate().is_ok());
+
+        // Test invalid request with empty authorization list
+        let mut invalid_request = SendLocalListRequest::new(1, UpdateEnumType::Full);
+        invalid_request.local_authorization_list = Some(vec![]);
+        assert!(invalid_request.validate().is_err());
+    }
+
+    #[test]
+    fn test_send_local_list_request_builder_pattern() {
+        let id_token = IdTokenType::new("test_token".to_string(), "Central".to_string());
+        let id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
+        let auth_data = AuthorizationData::new(id_token, id_token_info);
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let request = SendLocalListRequest::new(3, UpdateEnumType::Full)
+            .with_local_authorization_list(vec![auth_data.clone()])
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.version_number, 3);
+        assert_eq!(request.update_type, UpdateEnumType::Full);
+        assert_eq!(request.local_authorization_list, Some(vec![auth_data]));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_send_local_list_request_setters() {
+        let mut request = SendLocalListRequest::new(1, UpdateEnumType::Full);
+        let id_token = IdTokenType::new("test_token".to_string(), "Central".to_string());
+        let id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
+        let auth_data = AuthorizationData::new(id_token, id_token_info);
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+
+        request.set_version_number(4)
+               .set_update_type(UpdateEnumType::Differential)
+               .set_local_authorization_list(Some(vec![auth_data.clone()]))
+               .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.version_number, 4);
+        assert_eq!(request.update_type, UpdateEnumType::Differential);
+        assert_eq!(request.local_authorization_list, Some(vec![auth_data]));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_send_local_list_request_getters() {
+        let id_token = IdTokenType::new("test_token".to_string(), "Central".to_string());
+        let id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
+        let auth_data = AuthorizationData::new(id_token, id_token_info);
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let request = SendLocalListRequest::new(5, UpdateEnumType::Full)
+            .with_local_authorization_list(vec![auth_data.clone()])
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(*request.get_version_number(), 5);
+        assert_eq!(*request.get_update_type(), UpdateEnumType::Full);
+        assert_eq!(request.get_local_authorization_list(), Some(&vec![auth_data]));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_send_local_list_response_new() {
+        let response = SendLocalListResponse::new(SendLocalListStatusEnumType::Accepted);
+        assert_eq!(response.status, SendLocalListStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_send_local_list_response_serialization() {
+        let response = SendLocalListResponse::new(SendLocalListStatusEnumType::Failed);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: SendLocalListResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(json.contains("\"status\":\"Failed\""));
+    }
+
+    #[test]
+    fn test_send_local_list_response_builder_pattern() {
+        let status_info = StatusInfoType::new("Test reason".to_string());
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let response = SendLocalListResponse::new(SendLocalListStatusEnumType::VersionMismatch)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, SendLocalListStatusEnumType::VersionMismatch);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_send_local_list_response_setters() {
+        let mut response = SendLocalListResponse::new(SendLocalListStatusEnumType::Accepted);
+        let status_info = StatusInfoType::new("Updated reason".to_string());
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+
+        response.set_status(SendLocalListStatusEnumType::Failed)
+                .set_status_info(Some(status_info.clone()))
+                .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, SendLocalListStatusEnumType::Failed);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_send_local_list_response_getters() {
+        let status_info = StatusInfoType::new("Test reason".to_string());
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let response = SendLocalListResponse::new(SendLocalListStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(*response.get_status(), SendLocalListStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_send_local_list_edge_cases() {
+        // Test with multiple authorization data entries
+        let id_token1 = IdTokenType::new("token1".to_string(), "Central".to_string());
+        let id_token2 = IdTokenType::new("token2".to_string(), "Local".to_string());
+        let id_token_info1 = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
+        let id_token_info2 = IdTokenInfoType::new(AuthorizationStatusEnumType::Accepted);
+        let auth_data1 = AuthorizationData::new(id_token1, id_token_info1);
+        let auth_data2 = AuthorizationData::new(id_token2, id_token_info2);
+
+        let request = SendLocalListRequest::new(10, UpdateEnumType::Full)
+            .with_local_authorization_list(vec![auth_data1, auth_data2]);
+
+        assert!(request.validate().is_ok());
+        assert_eq!(request.local_authorization_list.as_ref().unwrap().len(), 2);
+    }
+
+    #[test]
+    fn test_send_local_list_response_validation() {
+        let response = SendLocalListResponse::new(SendLocalListStatusEnumType::Accepted);
+        assert!(response.validate().is_ok());
+    }
+}
