@@ -853,14 +853,50 @@ mod tests {
     }
 
     #[test]
-    fn test_authorize_request_with_tariff_field() {
-        let mut response = AuthorizeResponse::new(create_test_id_token_info());
-        
-        // Test with tariff field using builder pattern
+    fn test_authorize_response_with_tariff_builder_pattern() {
+        let id_token_info = create_test_id_token_info();
         let tariff = TariffType::new("TARIFF_001".to_string(), "USD".to_string());
+        
+        // Test with_tariff builder method
+        let response = AuthorizeResponse::new(id_token_info)
+            .with_tariff(tariff.clone());
+        
+        assert_eq!(response.get_tariff(), Some(&tariff));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_authorize_response_with_tariff_chaining() {
+        let id_token_info = create_test_id_token_info();
+        let tariff = TariffType::new("TARIFF_002".to_string(), "EUR".to_string());
+        let certificate_status = AuthorizeCertificateStatusEnumType::Accepted;
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        
+        // Test with_tariff method chaining with other methods
+        let response = AuthorizeResponse::new(id_token_info)
+            .with_certificate_status(certificate_status.clone())
+            .with_tariff(tariff.clone())
+            .with_custom_data(custom_data.clone());
+        
+        assert_eq!(response.get_tariff(), Some(&tariff));
+        assert_eq!(response.get_certificate_status(), Some(&certificate_status));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_authorize_response_tariff_setter_method() {
+        let mut response = AuthorizeResponse::new(create_test_id_token_info());
+        let tariff = TariffType::new("TARIFF_003".to_string(), "GBP".to_string());
+        
+        // Test set_tariff method
         response.set_tariff(Some(tariff.clone()));
         
         assert_eq!(response.get_tariff(), Some(&tariff));
         assert!(response.validate().is_ok());
+        
+        // Test clearing tariff
+        response.set_tariff(None);
+        assert_eq!(response.get_tariff(), None);
     }
 }
