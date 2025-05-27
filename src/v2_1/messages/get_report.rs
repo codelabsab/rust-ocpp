@@ -284,3 +284,295 @@ impl GetReportResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::ComponentVariableType;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    fn create_test_component_variable() -> ComponentVariableType {
+        ComponentVariableType::new(
+            crate::v2_1::datatypes::ComponentType::new("TestComponent".to_string())
+        ).with_variable(
+            crate::v2_1::datatypes::VariableType::new("TestVariable".to_string())
+        )
+    }
+
+    // Tests for GetReportRequest
+
+    #[test]
+    fn test_get_report_request_new() {
+        let request = GetReportRequest::new(123);
+
+        assert_eq!(request.request_id, 123);
+        assert_eq!(request.component_criteria, None);
+        assert_eq!(request.component_variable, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_report_request_with_component_criteria() {
+        let criteria = vec![ComponentCriterionEnumType::Active];
+        let request = GetReportRequest::new(456)
+            .with_component_criteria(criteria.clone());
+
+        assert_eq!(request.request_id, 456);
+        assert_eq!(request.component_criteria, Some(criteria));
+        assert_eq!(request.component_variable, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_report_request_with_component_variable() {
+        let component_var = vec![create_test_component_variable()];
+        let request = GetReportRequest::new(789)
+            .with_component_variable(component_var.clone());
+
+        assert_eq!(request.request_id, 789);
+        assert_eq!(request.component_criteria, None);
+        assert_eq!(request.component_variable, Some(component_var));
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_report_request_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let request = GetReportRequest::new(999)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.request_id, 999);
+        assert_eq!(request.component_criteria, None);
+        assert_eq!(request.component_variable, None);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_report_request_setters() {
+        let criteria = vec![ComponentCriterionEnumType::Available];
+        let component_var = vec![create_test_component_variable()];
+        let custom_data = create_test_custom_data();
+
+        let mut request = GetReportRequest::new(100);
+        request.set_request_id(200);
+        request.set_component_criteria(Some(criteria.clone()));
+        request.set_component_variable(Some(component_var.clone()));
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.request_id, 200);
+        assert_eq!(request.component_criteria, Some(criteria));
+        assert_eq!(request.component_variable, Some(component_var));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_report_request_getters() {
+        let criteria = vec![ComponentCriterionEnumType::Enabled];
+        let component_var = vec![create_test_component_variable()];
+        let custom_data = create_test_custom_data();
+        let request = GetReportRequest::new(555)
+            .with_component_criteria(criteria.clone())
+            .with_component_variable(component_var.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_request_id(), &555);
+        assert_eq!(request.get_component_criteria(), Some(&criteria));
+        assert_eq!(request.get_component_variable(), Some(&component_var));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_report_request_serialization() {
+        let request = GetReportRequest::new(123);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetReportRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_get_report_request_validation() {
+        let request = GetReportRequest::new(100);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_report_request_validation_negative_request_id() {
+        let mut request = GetReportRequest::new(100);
+        request.set_request_id(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_report_request_validation_empty_component_criteria() {
+        let mut request = GetReportRequest::new(100);
+        request.set_component_criteria(Some(vec![])); // Empty list should fail validation
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_report_request_validation_empty_component_variable() {
+        let mut request = GetReportRequest::new(100);
+        request.set_component_variable(Some(vec![])); // Empty list should fail validation
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_report_request_all_component_criteria() {
+        let criteria_types = vec![
+            ComponentCriterionEnumType::Active,
+            ComponentCriterionEnumType::Available,
+            ComponentCriterionEnumType::Enabled,
+            ComponentCriterionEnumType::Problem,
+        ];
+
+        for criterion in criteria_types {
+            let request = GetReportRequest::new(123)
+                .with_component_criteria(vec![criterion.clone()]);
+            assert_eq!(request.component_criteria, Some(vec![criterion]));
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_report_request_json_round_trip() {
+        let criteria = vec![
+            ComponentCriterionEnumType::Active,
+            ComponentCriterionEnumType::Available,
+        ];
+        let component_var = vec![create_test_component_variable()];
+        let custom_data = create_test_custom_data();
+        let request = GetReportRequest::new(777)
+            .with_component_criteria(criteria)
+            .with_component_variable(component_var)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetReportRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for GetReportResponse
+
+    #[test]
+    fn test_get_report_response_new() {
+        let response = GetReportResponse::new(GenericDeviceModelStatusEnumType::Accepted);
+
+        assert_eq!(response.status, GenericDeviceModelStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_report_response_with_status_info() {
+        let status_info = create_test_status_info();
+        let response = GetReportResponse::new(GenericDeviceModelStatusEnumType::Rejected)
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, GenericDeviceModelStatusEnumType::Rejected);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_report_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = GetReportResponse::new(GenericDeviceModelStatusEnumType::NotSupported)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, GenericDeviceModelStatusEnumType::NotSupported);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_report_response_setters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let mut response = GetReportResponse::new(GenericDeviceModelStatusEnumType::Accepted);
+        response.set_status(GenericDeviceModelStatusEnumType::EmptyResultSet);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, GenericDeviceModelStatusEnumType::EmptyResultSet);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_report_response_getters() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = GetReportResponse::new(GenericDeviceModelStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &GenericDeviceModelStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_report_response_serialization() {
+        let response = GetReportResponse::new(GenericDeviceModelStatusEnumType::Accepted);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetReportResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_get_report_response_validation() {
+        let response = GetReportResponse::new(GenericDeviceModelStatusEnumType::Accepted);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_report_response_all_status_types() {
+        let statuses = vec![
+            GenericDeviceModelStatusEnumType::Accepted,
+            GenericDeviceModelStatusEnumType::Rejected,
+            GenericDeviceModelStatusEnumType::NotSupported,
+            GenericDeviceModelStatusEnumType::EmptyResultSet,
+        ];
+
+        for status in statuses {
+            let response = GetReportResponse::new(status.clone());
+            assert_eq!(response.status, status);
+            assert!(response.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_get_report_response_json_round_trip() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+        let response = GetReportResponse::new(GenericDeviceModelStatusEnumType::NotSupported)
+            .with_status_info(status_info)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetReportResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
