@@ -166,3 +166,194 @@ impl NotifyPeriodicEventStream {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Utc;
+    use rust_decimal::Decimal;
+    use std::str::FromStr;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_stream_data_element() -> StreamDataElementType {
+        StreamDataElementType::new(Decimal::from_str("123.45").unwrap(), "test_value".to_string())
+    }
+
+    fn create_test_notify_periodic_event_stream() -> NotifyPeriodicEventStream {
+        let data = vec![create_test_stream_data_element()];
+        let basetime = Utc::now();
+        NotifyPeriodicEventStream::new(data, 1, 5, basetime)
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_new() {
+        let data = vec![create_test_stream_data_element()];
+        let id = 42;
+        let pending = 10;
+        let basetime = Utc::now();
+
+        let stream = NotifyPeriodicEventStream::new(data.clone(), id, pending, basetime);
+
+        assert_eq!(stream.data, data);
+        assert_eq!(stream.id, id);
+        assert_eq!(stream.pending, pending);
+        assert_eq!(stream.basetime, basetime);
+        assert!(stream.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_serialization() {
+        let stream = create_test_notify_periodic_event_stream();
+
+        let json = serde_json::to_string(&stream).expect("Failed to serialize");
+        let deserialized: NotifyPeriodicEventStream = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(stream, deserialized);
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_validation_valid() {
+        let stream = create_test_notify_periodic_event_stream();
+        assert!(stream.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_validation_empty_data() {
+        let basetime = Utc::now();
+        let stream = NotifyPeriodicEventStream::new(vec![], 1, 5, basetime);
+
+        let validation_result = stream.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("data"));
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_validation_negative_id() {
+        let data = vec![create_test_stream_data_element()];
+        let basetime = Utc::now();
+        let stream = NotifyPeriodicEventStream::new(data, -1, 5, basetime);
+
+        let validation_result = stream.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("id"));
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_validation_negative_pending() {
+        let data = vec![create_test_stream_data_element()];
+        let basetime = Utc::now();
+        let stream = NotifyPeriodicEventStream::new(data, 1, -1, basetime);
+
+        let validation_result = stream.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("pending"));
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_set_methods() {
+        let mut stream = create_test_notify_periodic_event_stream();
+        let new_data = vec![create_test_stream_data_element(), create_test_stream_data_element()];
+        let new_id = 99;
+        let new_pending = 20;
+        let new_basetime = Utc::now();
+
+        stream.set_data(new_data.clone())
+              .set_id(new_id)
+              .set_pending(new_pending)
+              .set_basetime(new_basetime);
+
+        assert_eq!(stream.data, new_data);
+        assert_eq!(stream.id, new_id);
+        assert_eq!(stream.pending, new_pending);
+        assert_eq!(stream.basetime, new_basetime);
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_get_methods() {
+        let stream = create_test_notify_periodic_event_stream();
+
+        assert_eq!(stream.get_data(), &stream.data);
+        assert_eq!(stream.get_id(), &stream.id);
+        assert_eq!(stream.get_pending(), &stream.pending);
+        assert_eq!(stream.get_basetime(), &stream.basetime);
+        assert_eq!(stream.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let stream = create_test_notify_periodic_event_stream()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(stream.custom_data, Some(custom_data));
+        assert_eq!(stream.get_custom_data(), stream.custom_data.as_ref());
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_set_custom_data() {
+        let mut stream = create_test_notify_periodic_event_stream();
+        let custom_data = create_test_custom_data();
+
+        stream.set_custom_data(Some(custom_data.clone()));
+        assert_eq!(stream.custom_data, Some(custom_data));
+
+        stream.set_custom_data(None);
+        assert!(stream.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_boundary_values() {
+        let data = vec![create_test_stream_data_element()];
+        let basetime = Utc::now();
+
+        // Test minimum valid values
+        let stream_min = NotifyPeriodicEventStream::new(data.clone(), 0, 0, basetime);
+        assert!(stream_min.validate().is_ok());
+
+        // Test large valid values
+        let stream_max = NotifyPeriodicEventStream::new(data, i32::MAX, i32::MAX, basetime);
+        assert!(stream_max.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_json_format() {
+        let stream = create_test_notify_periodic_event_stream();
+        let json = serde_json::to_value(&stream).expect("Failed to serialize to JSON");
+
+        assert!(json.get("data").is_some());
+        assert!(json.get("id").is_some());
+        assert!(json.get("pending").is_some());
+        assert!(json.get("basetime").is_some());
+
+        // Custom data should not be present if None
+        if stream.custom_data.is_none() {
+            assert!(json.get("customData").is_none());
+        }
+    }
+
+    #[test]
+    fn test_notify_periodic_event_stream_with_multiple_data_elements() {
+        let data = vec![
+            create_test_stream_data_element(),
+            StreamDataElementType::new(Decimal::from_str("456.78").unwrap(), "another_value".to_string()),
+            StreamDataElementType::new(Decimal::from_str("789.01").unwrap(), "third_value".to_string()),
+        ];
+        let basetime = Utc::now();
+        let stream = NotifyPeriodicEventStream::new(data.clone(), 1, 5, basetime);
+
+        assert_eq!(stream.data.len(), 3);
+        assert!(stream.validate().is_ok());
+
+        let json = serde_json::to_string(&stream).expect("Failed to serialize");
+        let deserialized: NotifyPeriodicEventStream = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(stream, deserialized);
+    }
+}
