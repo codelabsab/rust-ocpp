@@ -222,3 +222,250 @@ impl StatusNotificationResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::CustomDataType;
+    use crate::v2_1::enumerations::ConnectorStatusEnumType;
+    use chrono::Utc;
+    use serde_json;
+    use validator::Validate;
+
+    // Tests for StatusNotificationRequest
+
+    #[test]
+    fn test_status_notification_request_new() {
+        let timestamp = Utc::now();
+        let connector_status = ConnectorStatusEnumType::Available;
+        let evse_id = 1;
+        let connector_id = 1;
+        let request = StatusNotificationRequest::new(timestamp, connector_status.clone(), evse_id, connector_id);
+
+        assert_eq!(request.get_timestamp(), &timestamp);
+        assert_eq!(request.get_connector_status(), &connector_status);
+        assert_eq!(request.get_evse_id(), &evse_id);
+        assert_eq!(request.get_connector_id(), &connector_id);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_status_notification_request_serialization() {
+        let timestamp = Utc::now();
+        let request = StatusNotificationRequest::new(timestamp, ConnectorStatusEnumType::Occupied, 1, 1);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: StatusNotificationRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_status_notification_request_validation() {
+        let timestamp = Utc::now();
+        let request = StatusNotificationRequest::new(timestamp, ConnectorStatusEnumType::Available, 1, 1);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_status_notification_request_with_custom_data() {
+        let timestamp = Utc::now();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = StatusNotificationRequest::new(timestamp, ConnectorStatusEnumType::Reserved, 2, 3)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_status_notification_request_set_methods() {
+        let timestamp = Utc::now();
+        let new_timestamp = Utc::now();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut request = StatusNotificationRequest::new(timestamp, ConnectorStatusEnumType::Available, 1, 1);
+
+        request
+            .set_timestamp(new_timestamp)
+            .set_connector_status(ConnectorStatusEnumType::Faulted)
+            .set_evse_id(5)
+            .set_connector_id(10)
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_timestamp(), &new_timestamp);
+        assert_eq!(request.get_connector_status(), &ConnectorStatusEnumType::Faulted);
+        assert_eq!(request.get_evse_id(), &5);
+        assert_eq!(request.get_connector_id(), &10);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_status_notification_request_builder_pattern() {
+        let timestamp = Utc::now();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let request = StatusNotificationRequest::new(timestamp, ConnectorStatusEnumType::Unavailable, 3, 2)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_status_notification_request_negative_evse_id_validation() {
+        let timestamp = Utc::now();
+        let mut request = StatusNotificationRequest::new(timestamp, ConnectorStatusEnumType::Available, 1, 1);
+        request.set_evse_id(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_status_notification_request_negative_connector_id_validation() {
+        let timestamp = Utc::now();
+        let mut request = StatusNotificationRequest::new(timestamp, ConnectorStatusEnumType::Available, 1, 1);
+        request.set_connector_id(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_status_notification_request_zero_ids_validation() {
+        let timestamp = Utc::now();
+        let request = StatusNotificationRequest::new(timestamp, ConnectorStatusEnumType::Available, 0, 0);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_status_notification_request_all_connector_statuses() {
+        let timestamp = Utc::now();
+        let statuses = vec![
+            ConnectorStatusEnumType::Available,
+            ConnectorStatusEnumType::Occupied,
+            ConnectorStatusEnumType::Reserved,
+            ConnectorStatusEnumType::Unavailable,
+            ConnectorStatusEnumType::Faulted,
+        ];
+
+        for status in statuses {
+            let request = StatusNotificationRequest::new(timestamp, status.clone(), 1, 1);
+            
+            assert_eq!(request.get_connector_status(), &status);
+            assert!(request.validate().is_ok());
+
+            let json = serde_json::to_string(&request).expect("Failed to serialize");
+            let deserialized: StatusNotificationRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+            assert_eq!(request, deserialized);
+        }
+    }
+
+    // Tests for StatusNotificationResponse
+
+    #[test]
+    fn test_status_notification_response_new() {
+        let response = StatusNotificationResponse::new();
+
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_status_notification_response_serialization() {
+        let response = StatusNotificationResponse::new();
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: StatusNotificationResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_status_notification_response_validation() {
+        let response = StatusNotificationResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_status_notification_response_with_custom_data() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = StatusNotificationResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_status_notification_response_set_custom_data() {
+        let mut response = StatusNotificationResponse::new();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_status_notification_response_builder_pattern() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = StatusNotificationResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_status_notification_request_json_round_trip() {
+        let timestamp = Utc::now();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = StatusNotificationRequest::new(timestamp, ConnectorStatusEnumType::Occupied, 2, 1)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: StatusNotificationRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_status_notification_response_json_round_trip() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = StatusNotificationResponse::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: StatusNotificationResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_status_notification_response_empty_json() {
+        let json = "{}";
+        let response: StatusNotificationResponse = serde_json::from_str(json).expect("Failed to deserialize");
+
+        assert_eq!(response.get_custom_data(), None);
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_status_notification_request_with_large_ids() {
+        let timestamp = Utc::now();
+        let request = StatusNotificationRequest::new(timestamp, ConnectorStatusEnumType::Available, 999999, 888888);
+
+        assert_eq!(request.get_evse_id(), &999999);
+        assert_eq!(request.get_connector_id(), &888888);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_status_notification_response_with_custom_data_validation() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = StatusNotificationResponse::new()
+            .with_custom_data(custom_data);
+
+        assert!(response.validate().is_ok());
+    }
+}
