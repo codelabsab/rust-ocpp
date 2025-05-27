@@ -323,3 +323,509 @@ impl DataTransferResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    #[test]
+    fn test_data_transfer_request_new() {
+        let vendor_id = "TestVendor123".to_string();
+
+        let request = DataTransferRequest::new(vendor_id.clone());
+
+        assert_eq!(request.vendor_id, vendor_id);
+        assert_eq!(request.message_id, None);
+        assert_eq!(request.data, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_data_transfer_request_with_message_id() {
+        let vendor_id = "TestVendor123".to_string();
+        let message_id = "msg_001".to_string();
+
+        let request = DataTransferRequest::new(vendor_id.clone())
+            .with_message_id(message_id.clone());
+
+        assert_eq!(request.vendor_id, vendor_id);
+        assert_eq!(request.message_id, Some(message_id));
+        assert_eq!(request.data, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_data_transfer_request_with_data() {
+        let vendor_id = "TestVendor123".to_string();
+        let data = "test_data_payload".to_string();
+
+        let request = DataTransferRequest::new(vendor_id.clone())
+            .with_data(data.clone());
+
+        assert_eq!(request.vendor_id, vendor_id);
+        assert_eq!(request.message_id, None);
+        assert_eq!(request.data, Some(data));
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_data_transfer_request_with_custom_data() {
+        let vendor_id = "TestVendor123".to_string();
+        let custom_data = create_test_custom_data();
+
+        let request = DataTransferRequest::new(vendor_id.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.vendor_id, vendor_id);
+        assert_eq!(request.message_id, None);
+        assert_eq!(request.data, None);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_data_transfer_request_setters() {
+        let mut request = DataTransferRequest::new("InitialVendor".to_string());
+
+        let new_vendor_id = "NewVendor456".to_string();
+        let message_id = "msg_002".to_string();
+        let data = "new_data_payload".to_string();
+        let custom_data = create_test_custom_data();
+
+        request.set_vendor_id(new_vendor_id.clone())
+               .set_message_id(Some(message_id.clone()))
+               .set_data(Some(data.clone()))
+               .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.vendor_id, new_vendor_id);
+        assert_eq!(request.message_id, Some(message_id));
+        assert_eq!(request.data, Some(data));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_data_transfer_request_getters() {
+        let vendor_id = "TestVendor789".to_string();
+        let message_id = "msg_003".to_string();
+        let data = "getter_test_data".to_string();
+        let custom_data = create_test_custom_data();
+
+        let request = DataTransferRequest::new(vendor_id.clone())
+            .with_message_id(message_id.clone())
+            .with_data(data.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_vendor_id(), &vendor_id);
+        assert_eq!(request.get_message_id(), Some(&message_id));
+        assert_eq!(request.get_data(), Some(&data));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_data_transfer_request_serialization() {
+        let vendor_id = "SerializationVendor".to_string();
+        let message_id = "msg_serialize".to_string();
+
+        let request = DataTransferRequest::new(vendor_id)
+            .with_message_id(message_id);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: DataTransferRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_data_transfer_request_validation_vendor_id_too_long() {
+        let long_vendor_id = "a".repeat(256); // Max is 255
+
+        let request = DataTransferRequest::new(long_vendor_id);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+    }
+
+    #[test]
+    fn test_data_transfer_request_validation_message_id_too_long() {
+        let vendor_id = "ValidVendor".to_string();
+        let long_message_id = "a".repeat(51); // Max is 50
+
+        let request = DataTransferRequest::new(vendor_id)
+            .with_message_id(long_message_id);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+    }
+
+    #[test]
+    fn test_data_transfer_request_validation_data_too_long() {
+        let vendor_id = "ValidVendor".to_string();
+        let long_data = "a".repeat(256); // Max is 255
+
+        let request = DataTransferRequest::new(vendor_id)
+            .with_data(long_data);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+    }
+
+    #[test]
+    fn test_data_transfer_request_validation_valid() {
+        let vendor_id = "a".repeat(255); // Max length
+        let message_id = "a".repeat(50); // Max length
+        let data = "a".repeat(255); // Max length
+
+        let request = DataTransferRequest::new(vendor_id)
+            .with_message_id(message_id)
+            .with_data(data);
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_ok());
+    }
+
+    #[test]
+    fn test_data_transfer_response_new() {
+        let status = DataTransferStatusEnumType::Accepted;
+
+        let response = DataTransferResponse::new(status.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.data, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_data_transfer_response_with_status_info() {
+        let status = DataTransferStatusEnumType::Rejected;
+        let status_info = create_test_status_info();
+
+        let response = DataTransferResponse::new(status.clone())
+            .with_status_info(status_info.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.data, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_data_transfer_response_with_data() {
+        let status = DataTransferStatusEnumType::Accepted;
+        let data = "response_data_payload".to_string();
+
+        let response = DataTransferResponse::new(status.clone())
+            .with_data(data.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.data, Some(data));
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_data_transfer_response_with_custom_data() {
+        let status = DataTransferStatusEnumType::UnknownMessageId;
+        let custom_data = create_test_custom_data();
+
+        let response = DataTransferResponse::new(status.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.data, None);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_data_transfer_response_setters() {
+        let mut response = DataTransferResponse::new(DataTransferStatusEnumType::Accepted);
+
+        let new_status = DataTransferStatusEnumType::UnknownVendorId;
+        let status_info = create_test_status_info();
+        let data = "setter_test_data".to_string();
+        let custom_data = create_test_custom_data();
+
+        response.set_status(new_status.clone())
+                .set_status_info(Some(status_info.clone()))
+                .set_data(Some(data.clone()))
+                .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, new_status);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.data, Some(data));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_data_transfer_response_getters() {
+        let status = DataTransferStatusEnumType::Rejected;
+        let status_info = create_test_status_info();
+        let data = "getter_response_data".to_string();
+        let custom_data = create_test_custom_data();
+
+        let response = DataTransferResponse::new(status.clone())
+            .with_status_info(status_info.clone())
+            .with_data(data.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &status);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_data(), Some(&data));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_data_transfer_response_serialization() {
+        let status = DataTransferStatusEnumType::UnknownMessageId;
+        let data = "serialization_test_data".to_string();
+
+        let response = DataTransferResponse::new(status)
+            .with_data(data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: DataTransferResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_data_transfer_response_validation_data_too_long() {
+        let status = DataTransferStatusEnumType::Accepted;
+        let long_data = "a".repeat(256); // Max is 255
+
+        let response = DataTransferResponse::new(status)
+            .with_data(long_data);
+
+        let validation_result = response.validate();
+        assert!(validation_result.is_err());
+    }
+
+    #[test]
+    fn test_data_transfer_response_validation_valid() {
+        let status = DataTransferStatusEnumType::Accepted;
+        let data = "a".repeat(255); // Max length
+
+        let response = DataTransferResponse::new(status)
+            .with_data(data);
+
+        let validation_result = response.validate();
+        assert!(validation_result.is_ok());
+    }
+
+    #[test]
+    fn test_data_transfer_response_all_status_variants() {
+        let statuses = vec![
+            DataTransferStatusEnumType::Accepted,
+            DataTransferStatusEnumType::Rejected,
+            DataTransferStatusEnumType::UnknownMessageId,
+            DataTransferStatusEnumType::UnknownVendorId,
+        ];
+
+        for status in statuses {
+            let response = DataTransferResponse::new(status.clone());
+            assert_eq!(response.status, status);
+
+            // Test serialization for each variant
+            let json = serde_json::to_string(&response).expect("Failed to serialize");
+            let deserialized: DataTransferResponse =
+                serde_json::from_str(&json).expect("Failed to deserialize");
+            assert_eq!(response, deserialized);
+        }
+    }
+
+    #[test]
+    fn test_data_transfer_request_builder_pattern() {
+        let vendor_id = "BuilderVendor".to_string();
+        let message_id = "builder_msg".to_string();
+        let data = "builder_data".to_string();
+        let custom_data = create_test_custom_data();
+
+        let request = DataTransferRequest::new(vendor_id.clone())
+            .with_message_id(message_id.clone())
+            .with_data(data.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.vendor_id, vendor_id);
+        assert_eq!(request.message_id, Some(message_id));
+        assert_eq!(request.data, Some(data));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_data_transfer_response_builder_pattern() {
+        let status = DataTransferStatusEnumType::Accepted;
+        let status_info = create_test_status_info();
+        let data = "builder_response_data".to_string();
+        let custom_data = create_test_custom_data();
+
+        let response = DataTransferResponse::new(status.clone())
+            .with_status_info(status_info.clone())
+            .with_data(data.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.data, Some(data));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_data_transfer_request_edge_cases() {
+        // Test with empty vendor ID
+        let empty_vendor = "".to_string();
+        let request_empty = DataTransferRequest::new(empty_vendor.clone());
+        assert_eq!(request_empty.vendor_id, empty_vendor);
+        assert!(request_empty.validate().is_ok());
+
+        // Test with maximum length vendor ID
+        let max_vendor = "a".repeat(255);
+        let request_max = DataTransferRequest::new(max_vendor.clone());
+        assert_eq!(request_max.vendor_id, max_vendor);
+        assert!(request_max.validate().is_ok());
+
+        // Test with empty message ID
+        let request_empty_msg = DataTransferRequest::new("Vendor".to_string())
+            .with_message_id("".to_string());
+        assert_eq!(request_empty_msg.message_id, Some("".to_string()));
+        assert!(request_empty_msg.validate().is_ok());
+
+        // Test with maximum length message ID
+        let max_message_id = "a".repeat(50);
+        let request_max_msg = DataTransferRequest::new("Vendor".to_string())
+            .with_message_id(max_message_id.clone());
+        assert_eq!(request_max_msg.message_id, Some(max_message_id));
+        assert!(request_max_msg.validate().is_ok());
+
+        // Test with empty data
+        let request_empty_data = DataTransferRequest::new("Vendor".to_string())
+            .with_data("".to_string());
+        assert_eq!(request_empty_data.data, Some("".to_string()));
+        assert!(request_empty_data.validate().is_ok());
+
+        // Test with maximum length data
+        let max_data = "a".repeat(255);
+        let request_max_data = DataTransferRequest::new("Vendor".to_string())
+            .with_data(max_data.clone());
+        assert_eq!(request_max_data.data, Some(max_data));
+        assert!(request_max_data.validate().is_ok());
+    }
+
+    #[test]
+    fn test_data_transfer_response_edge_cases() {
+        // Test with empty data
+        let response_empty_data = DataTransferResponse::new(DataTransferStatusEnumType::Accepted)
+            .with_data("".to_string());
+        assert_eq!(response_empty_data.data, Some("".to_string()));
+        assert!(response_empty_data.validate().is_ok());
+
+        // Test with maximum length data
+        let max_data = "a".repeat(255);
+        let response_max_data = DataTransferResponse::new(DataTransferStatusEnumType::Accepted)
+            .with_data(max_data.clone());
+        assert_eq!(response_max_data.data, Some(max_data));
+        assert!(response_max_data.validate().is_ok());
+    }
+
+    #[test]
+    fn test_data_transfer_request_with_all_fields() {
+        let vendor_id = "CompleteVendor".to_string();
+        let message_id = "complete_msg".to_string();
+        let data = "complete_data".to_string();
+        let custom_data = create_test_custom_data();
+
+        let request = DataTransferRequest::new(vendor_id.clone())
+            .with_message_id(message_id.clone())
+            .with_data(data.clone())
+            .with_custom_data(custom_data.clone());
+
+        // Verify all fields are set
+        assert_eq!(request.vendor_id, vendor_id);
+        assert_eq!(request.message_id, Some(message_id));
+        assert_eq!(request.data, Some(data));
+        assert_eq!(request.custom_data, Some(custom_data));
+
+        // Test validation and serialization
+        assert!(request.validate().is_ok());
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: DataTransferRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_data_transfer_response_with_all_fields() {
+        let status = DataTransferStatusEnumType::Rejected;
+        let status_info = create_test_status_info();
+        let data = "complete_response_data".to_string();
+        let custom_data = create_test_custom_data();
+
+        let response = DataTransferResponse::new(status.clone())
+            .with_status_info(status_info.clone())
+            .with_data(data.clone())
+            .with_custom_data(custom_data.clone());
+
+        // Verify all fields are set
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.data, Some(data));
+        assert_eq!(response.custom_data, Some(custom_data));
+
+        // Test validation and serialization
+        assert!(response.validate().is_ok());
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: DataTransferResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_data_transfer_request_minimal() {
+        // Test with only required field
+        let vendor_id = "MinimalVendor".to_string();
+        let request = DataTransferRequest::new(vendor_id.clone());
+
+        assert_eq!(request.vendor_id, vendor_id);
+        assert_eq!(request.message_id, None);
+        assert_eq!(request.data, None);
+        assert_eq!(request.custom_data, None);
+
+        assert!(request.validate().is_ok());
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: DataTransferRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_data_transfer_response_minimal() {
+        // Test with only required field
+        let status = DataTransferStatusEnumType::UnknownVendorId;
+        let response = DataTransferResponse::new(status.clone());
+
+        assert_eq!(response.status, status);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.data, None);
+        assert_eq!(response.custom_data, None);
+
+        assert!(response.validate().is_ok());
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: DataTransferResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(response, deserialized);
+    }
+}
