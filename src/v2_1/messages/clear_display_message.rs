@@ -296,4 +296,141 @@ mod tests {
         assert_eq!(response, deserialized);
         assert!(deserialized.validate().is_ok());
     }
+
+    #[test]
+    fn test_clear_display_message_request_all_setters() {
+        let mut request = ClearDisplayMessageRequest::new(123);
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        // Test setter methods
+        request.set_id(456);
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_id(), &456);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_clear_display_message_response_all_setters() {
+        let mut response = ClearDisplayMessageResponse::new(ClearMessageStatusEnumType::Accepted);
+        let status_info = StatusInfoType::new("Success".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        // Test setter methods
+        response.set_status(ClearMessageStatusEnumType::Unknown);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_status(), &ClearMessageStatusEnumType::Unknown);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_clear_display_message_request_validation_zero_id() {
+        let request = ClearDisplayMessageRequest::new(0); // Valid: exactly 0
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_display_message_request_clear_custom_data() {
+        let mut request = ClearDisplayMessageRequest::new(789)
+            .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+
+        // Verify custom data is set
+        assert!(request.get_custom_data().is_some());
+
+        // Clear custom data
+        request.set_custom_data(None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_clear_display_message_response_clear_fields() {
+        let mut response = ClearDisplayMessageResponse::new(ClearMessageStatusEnumType::Accepted)
+            .with_status_info(StatusInfoType::new("Success".to_string()))
+            .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+
+        // Clear optional fields
+        response.set_status_info(None);
+        response.set_custom_data(None);
+
+        assert_eq!(response.get_status_info(), None);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_clear_display_message_request_method_chaining() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        
+        let mut request = ClearDisplayMessageRequest::new(100);
+        let result = request
+            .set_id(200)
+            .set_custom_data(Some(custom_data.clone()));
+
+        // Verify chaining returns self
+        assert_eq!(result.get_id(), &200);
+        assert_eq!(result.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_clear_display_message_response_method_chaining() {
+        let status_info = StatusInfoType::new("TestInfo".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        
+        let mut response = ClearDisplayMessageResponse::new(ClearMessageStatusEnumType::Accepted);
+        let result = response
+            .set_status(ClearMessageStatusEnumType::Unknown)
+            .set_status_info(Some(status_info.clone()))
+            .set_custom_data(Some(custom_data.clone()));
+
+        // Verify chaining returns self
+        assert_eq!(result.get_status(), &ClearMessageStatusEnumType::Unknown);
+        assert_eq!(result.get_status_info(), Some(&status_info));
+        assert_eq!(result.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_clear_display_message_request_edge_cases() {
+        // Test with very large ID
+        let large_id = i32::MAX;
+        let request = ClearDisplayMessageRequest::new(large_id);
+        assert_eq!(request.get_id(), &large_id);
+        assert!(request.validate().is_ok());
+
+        // Test with maximum id boundary
+        let request = ClearDisplayMessageRequest::new(999999);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_display_message_response_with_all_custom_data() {
+        let status_info = StatusInfoType::new("DetailedInfo".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        
+        let response = ClearDisplayMessageResponse::new(ClearMessageStatusEnumType::Unknown)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_status(), &ClearMessageStatusEnumType::Unknown);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_display_message_partial_json_deserialization() {
+        // Test request with only required fields
+        let json = r#"{"id":42}"#;
+        let deserialized: ClearDisplayMessageRequest = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(deserialized.get_id(), &42);
+        assert_eq!(deserialized.get_custom_data(), None);
+
+        // Test response with only required fields
+        let json = r#"{"status":"Accepted"}"#;
+        let deserialized: ClearDisplayMessageResponse = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(deserialized.get_status(), &ClearMessageStatusEnumType::Accepted);
+        assert_eq!(deserialized.get_status_info(), None);
+        assert_eq!(deserialized.get_custom_data(), None);
+    }
 }

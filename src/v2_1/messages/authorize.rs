@@ -702,4 +702,165 @@ mod tests {
         response.set_allowed_energy_transfer(Some(min_energy_transfer));
         assert!(response.validate().is_ok());
     }
+
+    #[test]
+    fn test_authorize_request_all_setters() {
+        let id_token = create_test_id_token();
+        let mut request = AuthorizeRequest::new(id_token.clone());
+        
+        let new_id_token = IdTokenType::new("NEWTOKEN".to_string(), "RFID".to_string());
+        let certificate = "test_certificate".to_string();
+        let ocsp_data = vec![create_test_ocsp_request_data()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        // Test all setter methods  
+        request.set_id_token(new_id_token.clone());
+        request.set_certificate(Some(certificate.clone()));
+        request.set_iso_15118_certificate_hash_data(Some(ocsp_data.clone()));
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_id_token(), &new_id_token);
+        assert_eq!(request.get_certificate(), Some(&certificate));
+        assert_eq!(request.get_iso_15118_certificate_hash_data(), Some(&ocsp_data));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_authorize_response_all_setters() {
+        let id_token_info = create_test_id_token_info();
+        let mut response = AuthorizeResponse::new(id_token_info.clone());
+
+        let new_id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Blocked);
+        let certificate_status = AuthorizeCertificateStatusEnumType::CertificateRevoked;
+        let energy_transfer = vec![EnergyTransferModeEnumType::DC];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        // Test all setter methods
+        response.set_id_token_info(new_id_token_info.clone());
+        response.set_certificate_status(Some(certificate_status.clone()));
+        response.set_allowed_energy_transfer(Some(energy_transfer.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_id_token_info(), &new_id_token_info);
+        assert_eq!(response.get_certificate_status(), Some(&certificate_status));
+        assert_eq!(response.get_allowed_energy_transfer(), Some(&energy_transfer));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_authorize_request_clear_optional_fields() {
+        let id_token = create_test_id_token();
+        let certificate = "test_certificate".to_string();
+        let ocsp_data = vec![create_test_ocsp_request_data()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut request = AuthorizeRequest::new(id_token)
+            .with_certificate(certificate)
+            .with_iso_15118_certificate_hash_data(ocsp_data)
+            .with_custom_data(custom_data);
+
+        // Clear optional fields
+        request.set_certificate(None);
+        request.set_iso_15118_certificate_hash_data(None);
+        request.set_custom_data(None);
+
+        assert_eq!(request.get_certificate(), None);
+        assert_eq!(request.get_iso_15118_certificate_hash_data(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_authorize_response_clear_optional_fields() {
+        let id_token_info = create_test_id_token_info();
+        let certificate_status = AuthorizeCertificateStatusEnumType::Accepted;
+        let energy_transfer = vec![EnergyTransferModeEnumType::ACSinglePhase];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut response = AuthorizeResponse::new(id_token_info)
+            .with_certificate_status(certificate_status)
+            .with_allowed_energy_transfer(energy_transfer)
+            .with_custom_data(custom_data);
+
+        // Clear optional fields
+        response.set_certificate_status(None);
+        response.set_allowed_energy_transfer(None);
+        response.set_custom_data(None);
+
+        assert_eq!(response.get_certificate_status(), None);
+        assert_eq!(response.get_allowed_energy_transfer(), None);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_authorize_request_method_chaining() {
+        let id_token = create_test_id_token();
+        let new_id_token = IdTokenType::new("CHAIN_TOKEN".to_string(), "RFID".to_string());
+        let certificate = "chain_certificate".to_string();
+        let ocsp_data = vec![create_test_ocsp_request_data()];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        
+        let mut request = AuthorizeRequest::new(id_token);
+        let result = request
+            .set_id_token(new_id_token.clone())
+            .set_certificate(Some(certificate.clone()))
+            .set_iso_15118_certificate_hash_data(Some(ocsp_data.clone()))
+            .set_custom_data(Some(custom_data.clone()));
+
+        // Verify chaining returns self
+        assert_eq!(result.get_id_token(), &new_id_token);
+        assert_eq!(result.get_certificate(), Some(&certificate));
+        assert_eq!(result.get_iso_15118_certificate_hash_data(), Some(&ocsp_data));
+        assert_eq!(result.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_authorize_response_method_chaining() {
+        let id_token_info = create_test_id_token_info();
+        let new_id_token_info = IdTokenInfoType::new(AuthorizationStatusEnumType::Expired);
+        let certificate_status = AuthorizeCertificateStatusEnumType::SignatureError;
+        let energy_transfer = vec![EnergyTransferModeEnumType::ACThreePhase];
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        
+        let mut response = AuthorizeResponse::new(id_token_info);
+        let result = response
+            .set_id_token_info(new_id_token_info.clone())
+            .set_certificate_status(Some(certificate_status.clone()))
+            .set_allowed_energy_transfer(Some(energy_transfer.clone()))
+            .set_custom_data(Some(custom_data.clone()));
+
+        // Verify chaining returns self
+        assert_eq!(result.get_id_token_info(), &new_id_token_info);
+        assert_eq!(result.get_certificate_status(), Some(&certificate_status));
+        assert_eq!(result.get_allowed_energy_transfer(), Some(&energy_transfer));
+        assert_eq!(result.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_authorize_partial_json_deserialization() {
+        // Test request with only required fields
+        let json = r#"{"idToken":{"idToken":"4F62C4E0123456789","type":"ISO14443"}}"#;
+        let deserialized: AuthorizeRequest = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(deserialized.get_certificate(), None);
+        assert_eq!(deserialized.get_iso_15118_certificate_hash_data(), None);
+        assert_eq!(deserialized.get_custom_data(), None);
+
+        // Test response with only required fields
+        let json = r#"{"idTokenInfo":{"status":"Accepted"}}"#;
+        let deserialized: AuthorizeResponse = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(deserialized.get_certificate_status(), None);
+        assert_eq!(deserialized.get_allowed_energy_transfer(), None);
+        assert_eq!(deserialized.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_authorize_request_with_tariff_field() {
+        let mut response = AuthorizeResponse::new(create_test_id_token_info());
+        
+        // Test with tariff field using builder pattern
+        let tariff = TariffType::new("TARIFF_001".to_string(), "USD".to_string());
+        response.set_tariff(Some(tariff.clone()));
+        
+        assert_eq!(response.get_tariff(), Some(&tariff));
+        assert!(response.validate().is_ok());
+    }
 }

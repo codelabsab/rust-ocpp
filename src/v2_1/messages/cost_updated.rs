@@ -309,4 +309,145 @@ mod tests {
         request.set_custom_data(None);
         assert_eq!(request.get_custom_data(), None);
     }
+
+    #[test]
+    fn test_cost_updated_request_all_setters() {
+        let total_cost = Decimal::new(1000, 2);
+        let transaction_id = "TXN_SETTERS".to_string();
+        let mut request = CostUpdatedRequest::new(total_cost, transaction_id);
+
+        let new_cost = Decimal::new(2000, 2);
+        let new_transaction_id = "TXN_NEW".to_string();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        // Test all setter methods
+        request.set_total_cost(new_cost);
+        request.set_transaction_id(new_transaction_id.clone());
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_total_cost(), &new_cost);
+        assert_eq!(request.get_transaction_id(), &new_transaction_id);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_cost_updated_response_all_setters() {
+        let mut response = CostUpdatedResponse::new();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        // Test setter method
+        response.set_custom_data(Some(custom_data.clone()));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+
+        // Clear custom data
+        response.set_custom_data(None);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_cost_updated_request_method_chaining() {
+        let total_cost = Decimal::new(1500, 2);
+        let transaction_id = "TXN_CHAIN".to_string();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        
+        let mut request = CostUpdatedRequest::new(total_cost, transaction_id);
+        let new_cost = Decimal::new(3000, 2);
+        let new_transaction_id = "TXN_CHAINED".to_string();
+        
+        let result = request
+            .set_total_cost(new_cost)
+            .set_transaction_id(new_transaction_id.clone())
+            .set_custom_data(Some(custom_data.clone()));
+
+        // Verify chaining returns self
+        assert_eq!(result.get_total_cost(), &new_cost);
+        assert_eq!(result.get_transaction_id(), &new_transaction_id);
+        assert_eq!(result.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_cost_updated_response_method_chaining() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        
+        let mut response = CostUpdatedResponse::new();
+        let result = response.set_custom_data(Some(custom_data.clone()));
+
+        // Verify chaining returns self
+        assert_eq!(result.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_cost_updated_response_with_custom_data() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = CostUpdatedResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_cost_updated_request_validation_max_transaction_id() {
+        let total_cost = Decimal::new(100, 2);
+        let max_transaction_id = "x".repeat(36); // Exactly max length
+        let request = CostUpdatedRequest::new(total_cost, max_transaction_id.clone());
+        
+        assert_eq!(request.get_transaction_id(), &max_transaction_id);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_cost_updated_request_validation_empty_transaction_id() {
+        let total_cost = Decimal::new(100, 2);
+        let empty_transaction_id = "".to_string(); // Valid: min 0 chars
+        let request = CostUpdatedRequest::new(total_cost, empty_transaction_id.clone());
+        
+        assert_eq!(request.get_transaction_id(), &empty_transaction_id);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_cost_updated_negative_costs() {
+        // Test with negative cost (refund scenario)
+        let negative_cost = Decimal::new(-500, 2); // -5.00
+        let transaction_id = "TXN_REFUND".to_string();
+        let request = CostUpdatedRequest::new(negative_cost, transaction_id);
+        
+        assert_eq!(request.get_total_cost(), &negative_cost);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_cost_updated_large_decimal_values() {
+        // Test with very large decimal values
+        let large_cost = Decimal::new(999999999, 2); // 9999999.99
+        let transaction_id = "TXN_LARGE".to_string();
+        let request = CostUpdatedRequest::new(large_cost, transaction_id);
+        
+        assert_eq!(request.get_total_cost(), &large_cost);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_cost_updated_partial_json_deserialization() {
+        // Test request with only required fields
+        let json = r#"{"totalCost":"12.50","transactionId":"TXN123"}"#;
+        let deserialized: CostUpdatedRequest = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(deserialized.get_total_cost(), &Decimal::new(1250, 2));
+        assert_eq!(deserialized.get_transaction_id(), "TXN123");
+        assert_eq!(deserialized.get_custom_data(), None);
+
+        // Test response with no fields (empty object)
+        let json = r#"{}"#;
+        let deserialized: CostUpdatedResponse = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(deserialized.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_cost_updated_response_json_serialization() {
+        let response = CostUpdatedResponse::new();
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: CostUpdatedResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+        assert_eq!(response, deserialized);
+    }
 }

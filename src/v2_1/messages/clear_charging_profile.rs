@@ -370,4 +370,135 @@ mod tests {
         assert_eq!(response, deserialized);
         assert!(deserialized.validate().is_ok());
     }
+
+    #[test]
+    fn test_clear_charging_profile_request_all_setters() {
+        let mut request = ClearChargingProfileRequest::new();
+        let criteria = ClearChargingProfileType::new();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        // Test all setter methods
+        request.set_charging_profile_id(Some(42));
+        request.set_charging_profile_criteria(Some(criteria.clone()));
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_charging_profile_id(), Some(&42));
+        assert_eq!(request.get_charging_profile_criteria(), Some(&criteria));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_clear_charging_profile_response_all_setters() {
+        let mut response = ClearChargingProfileResponse::new(ClearChargingProfileStatusEnumType::Accepted);
+        let status_info = StatusInfoType::new("Success".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        // Test all setter methods
+        response.set_status(ClearChargingProfileStatusEnumType::Unknown);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_status(), &ClearChargingProfileStatusEnumType::Unknown);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_clear_charging_profile_request_validation_zero_id() {
+        let request = ClearChargingProfileRequest::new()
+            .with_charging_profile_id(0); // Valid: exactly 0
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_charging_profile_request_clear_fields() {
+        let mut request = ClearChargingProfileRequest::new()
+            .with_charging_profile_id(123)
+            .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+
+        // Clear optional fields
+        request.set_charging_profile_id(None);
+        request.set_custom_data(None);
+
+        assert_eq!(request.get_charging_profile_id(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_clear_charging_profile_response_clear_fields() {
+        let mut response = ClearChargingProfileResponse::new(ClearChargingProfileStatusEnumType::Accepted)
+            .with_status_info(StatusInfoType::new("Success".to_string()))
+            .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+
+        // Clear optional fields
+        response.set_status_info(None);
+        response.set_custom_data(None);
+
+        assert_eq!(response.get_status_info(), None);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_clear_charging_profile_request_with_criteria() {
+        let criteria = ClearChargingProfileType::new();
+        let request = ClearChargingProfileRequest::new()
+            .with_charging_profile_criteria(criteria.clone());
+        
+        assert_eq!(request.get_charging_profile_criteria(), Some(&criteria));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_clear_charging_profile_request_method_chaining() {
+        let criteria = ClearChargingProfileType::new();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        
+        let mut request = ClearChargingProfileRequest::new();
+        let result = request
+            .set_charging_profile_id(Some(999))
+            .set_charging_profile_criteria(Some(criteria.clone()))
+            .set_custom_data(Some(custom_data.clone()));
+
+        // Verify chaining returns self
+        assert_eq!(result.get_charging_profile_id(), Some(&999));
+        assert_eq!(result.get_charging_profile_criteria(), Some(&criteria));
+        assert_eq!(result.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_clear_charging_profile_response_method_chaining() {
+        let status_info = StatusInfoType::new("TestInfo".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        
+        let mut response = ClearChargingProfileResponse::new(ClearChargingProfileStatusEnumType::Accepted);
+        let result = response
+            .set_status(ClearChargingProfileStatusEnumType::Unknown)
+            .set_status_info(Some(status_info.clone()))
+            .set_custom_data(Some(custom_data.clone()));
+
+        // Verify chaining returns self
+        assert_eq!(result.get_status(), &ClearChargingProfileStatusEnumType::Unknown);
+        assert_eq!(result.get_status_info(), Some(&status_info));
+        assert_eq!(result.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_clear_charging_profile_request_partial_json() {
+        // Test with only required fields (none in this case)
+        let json = r#"{}"#;
+        let deserialized: ClearChargingProfileRequest = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(deserialized.get_charging_profile_id(), None);
+        assert_eq!(deserialized.get_charging_profile_criteria(), None);
+        assert_eq!(deserialized.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_clear_charging_profile_response_partial_json() {
+        // Test with only required fields
+        let json = r#"{"status":"Accepted"}"#;
+        let deserialized: ClearChargingProfileResponse = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(deserialized.get_status(), &ClearChargingProfileStatusEnumType::Accepted);
+        assert_eq!(deserialized.get_status_info(), None);
+        assert_eq!(deserialized.get_custom_data(), None);
+    }
 }
