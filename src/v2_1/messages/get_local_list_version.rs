@@ -141,3 +141,159 @@ impl GetLocalListVersionResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    // Tests for GetLocalListVersionRequest
+
+    #[test]
+    fn test_get_local_list_version_request_new() {
+        let request = GetLocalListVersionRequest::new();
+
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_local_list_version_request_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let request = GetLocalListVersionRequest::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_local_list_version_request_setters() {
+        let custom_data = create_test_custom_data();
+
+        let mut request = GetLocalListVersionRequest::new();
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_local_list_version_request_getters() {
+        let custom_data = create_test_custom_data();
+        let request = GetLocalListVersionRequest::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_local_list_version_request_serialization() {
+        let request = GetLocalListVersionRequest::new();
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetLocalListVersionRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_get_local_list_version_request_validation() {
+        let request = GetLocalListVersionRequest::new();
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_local_list_version_request_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let request = GetLocalListVersionRequest::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: GetLocalListVersionRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for GetLocalListVersionResponse
+
+    #[test]
+    fn test_get_local_list_version_response_new() {
+        let response = GetLocalListVersionResponse::new(42);
+
+        assert_eq!(response.version_number, 42);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_local_list_version_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = GetLocalListVersionResponse::new(123)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.version_number, 123);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_local_list_version_response_setters() {
+        let custom_data = create_test_custom_data();
+
+        let mut response = GetLocalListVersionResponse::new(100);
+        response.set_version_number(200);
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.version_number, 200);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_get_local_list_version_response_getters() {
+        let custom_data = create_test_custom_data();
+        let response = GetLocalListVersionResponse::new(555)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_version_number(), &555);
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_get_local_list_version_response_serialization() {
+        let response = GetLocalListVersionResponse::new(999);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetLocalListVersionResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_get_local_list_version_response_validation() {
+        let response = GetLocalListVersionResponse::new(0);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_get_local_list_version_response_negative_version() {
+        let response = GetLocalListVersionResponse::new(-1);
+
+        assert!(response.validate().is_ok()); // No validation constraints on version_number
+    }
+
+    #[test]
+    fn test_get_local_list_version_response_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let response = GetLocalListVersionResponse::new(777)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: GetLocalListVersionResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+}
