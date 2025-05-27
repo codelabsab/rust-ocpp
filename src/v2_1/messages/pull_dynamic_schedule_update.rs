@@ -244,3 +244,201 @@ impl PullDynamicScheduleUpdateResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::StatusInfoType;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    fn create_test_schedule_update() -> ChargingScheduleUpdateType {
+        ChargingScheduleUpdateType::new()
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_request_new() {
+        let request = PullDynamicScheduleUpdateRequest::new(123);
+
+        assert_eq!(request.charging_profile_id, 123);
+        assert!(request.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_request_serialization() {
+        let request = PullDynamicScheduleUpdateRequest::new(456)
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: PullDynamicScheduleUpdateRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert_eq!(deserialized.charging_profile_id, 456);
+        assert!(deserialized.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_request_validation() {
+        let valid_request = PullDynamicScheduleUpdateRequest::new(0);
+        assert!(valid_request.validate().is_ok());
+
+        let invalid_request = PullDynamicScheduleUpdateRequest {
+            charging_profile_id: -1,
+            custom_data: None,
+        };
+        assert!(invalid_request.validate().is_err());
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_request_builder_pattern() {
+        let custom_data = create_test_custom_data();
+        let request = PullDynamicScheduleUpdateRequest::new(789)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.charging_profile_id, 789);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_request_setters_getters() {
+        let mut request = PullDynamicScheduleUpdateRequest::new(100);
+        let custom_data = create_test_custom_data();
+
+        // Test setters
+        request.set_charging_profile_id(200);
+        request.set_custom_data(Some(custom_data.clone()));
+
+        // Test getters
+        assert_eq!(*request.get_charging_profile_id(), 200);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_response_new() {
+        let response = PullDynamicScheduleUpdateResponse::new(ChargingProfileStatusEnumType::Accepted);
+
+        assert_eq!(response.status, ChargingProfileStatusEnumType::Accepted);
+        assert!(response.schedule_update.is_none());
+        assert!(response.status_info.is_none());
+        assert!(response.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_response_serialization() {
+        let response = PullDynamicScheduleUpdateResponse::new(ChargingProfileStatusEnumType::Rejected)
+            .with_schedule_update(create_test_schedule_update())
+            .with_status_info(create_test_status_info())
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: PullDynamicScheduleUpdateResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert_eq!(deserialized.status, ChargingProfileStatusEnumType::Rejected);
+        assert!(deserialized.schedule_update.is_some());
+        assert!(deserialized.status_info.is_some());
+        assert!(deserialized.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_response_validation() {
+        let valid_response = PullDynamicScheduleUpdateResponse::new(ChargingProfileStatusEnumType::Accepted);
+        assert!(valid_response.validate().is_ok());
+
+        let response_with_all_fields = PullDynamicScheduleUpdateResponse::new(ChargingProfileStatusEnumType::Rejected)
+            .with_schedule_update(create_test_schedule_update())
+            .with_status_info(create_test_status_info())
+            .with_custom_data(create_test_custom_data());
+        assert!(response_with_all_fields.validate().is_ok());
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_response_builder_pattern() {
+        let schedule_update = create_test_schedule_update();
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let response = PullDynamicScheduleUpdateResponse::new(ChargingProfileStatusEnumType::Accepted)
+            .with_schedule_update(schedule_update.clone())
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, ChargingProfileStatusEnumType::Accepted);
+        assert_eq!(response.schedule_update, Some(schedule_update));
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_response_setters_getters() {
+        let mut response = PullDynamicScheduleUpdateResponse::new(ChargingProfileStatusEnumType::Accepted);
+        let schedule_update = create_test_schedule_update();
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        // Test setters
+        response.set_status(ChargingProfileStatusEnumType::Rejected);
+        response.set_schedule_update(Some(schedule_update.clone()));
+        response.set_status_info(Some(status_info.clone()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        // Test getters
+        assert_eq!(*response.get_status(), ChargingProfileStatusEnumType::Rejected);
+        assert_eq!(response.get_schedule_update(), Some(&schedule_update));
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_response_enum_variants() {
+        let accepted_response = PullDynamicScheduleUpdateResponse::new(ChargingProfileStatusEnumType::Accepted);
+        assert_eq!(accepted_response.status, ChargingProfileStatusEnumType::Accepted);
+
+        let rejected_response = PullDynamicScheduleUpdateResponse::new(ChargingProfileStatusEnumType::Rejected);
+        assert_eq!(rejected_response.status, ChargingProfileStatusEnumType::Rejected);
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_request_edge_cases() {
+        // Test minimum valid charging_profile_id
+        let min_request = PullDynamicScheduleUpdateRequest::new(0);
+        assert!(min_request.validate().is_ok());
+
+        // Test large charging_profile_id
+        let large_request = PullDynamicScheduleUpdateRequest::new(i32::MAX);
+        assert!(large_request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_pull_dynamic_schedule_update_json_round_trip() {
+        let original_request = PullDynamicScheduleUpdateRequest::new(12345)
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&original_request).expect("Failed to serialize request");
+        let parsed_request: PullDynamicScheduleUpdateRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize request");
+
+        assert_eq!(original_request, parsed_request);
+
+        let original_response = PullDynamicScheduleUpdateResponse::new(ChargingProfileStatusEnumType::Accepted)
+            .with_schedule_update(create_test_schedule_update())
+            .with_status_info(create_test_status_info())
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&original_response).expect("Failed to serialize response");
+        let parsed_response: PullDynamicScheduleUpdateResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize response");
+
+        assert_eq!(original_response, parsed_response);
+    }
+}
