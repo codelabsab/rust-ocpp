@@ -275,10 +275,14 @@ mod tests {
     }
 
     fn create_test_charging_profile() -> ChargingProfileType {
+        use crate::v2_1::datatypes::ChargingSchedulePeriodType;
+        use rust_decimal::prelude::*;
+
+        let period = ChargingSchedulePeriodType::new(0, Decimal::from_str("1000.0").unwrap());
         let schedule = ChargingScheduleType::new(
             1,
             ChargingRateUnitEnumType::W,
-            vec![]
+            vec![period]
         );
         ChargingProfileType::new(
             1,
