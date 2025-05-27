@@ -206,3 +206,171 @@ impl SetMonitoringLevelResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
+    use crate::v2_1::enumerations::GenericStatusEnumType;
+
+    #[test]
+    fn test_set_monitoring_level_request_new() {
+        let request = SetMonitoringLevelRequest::new(5);
+        assert_eq!(request.severity, 5);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_set_monitoring_level_request_serialization() {
+        let request = SetMonitoringLevelRequest::new(3);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: SetMonitoringLevelRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(json.contains("\"severity\":3"));
+    }
+
+    #[test]
+    fn test_set_monitoring_level_request_validation() {
+        // Test valid severity levels (0-9)
+        for severity in 0..=9 {
+            let request = SetMonitoringLevelRequest::new(severity);
+            assert!(request.validate().is_ok());
+        }
+
+        // Test invalid negative severity
+        let invalid_request = SetMonitoringLevelRequest::new(-1);
+        assert!(invalid_request.validate().is_err());
+    }
+
+    #[test]
+    fn test_set_monitoring_level_request_builder_pattern() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = SetMonitoringLevelRequest::new(7)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.severity, 7);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_monitoring_level_request_setters() {
+        let mut request = SetMonitoringLevelRequest::new(0);
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        request.set_severity(9)
+               .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.severity, 9);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_monitoring_level_request_getters() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = SetMonitoringLevelRequest::new(4)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(*request.get_severity(), 4);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_monitoring_level_response_new() {
+        let response = SetMonitoringLevelResponse::new(GenericStatusEnumType::Accepted);
+        assert_eq!(response.status, GenericStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_set_monitoring_level_response_serialization() {
+        let response = SetMonitoringLevelResponse::new(GenericStatusEnumType::Rejected);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: SetMonitoringLevelResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(json.contains("\"status\":\"Rejected\""));
+    }
+
+    #[test]
+    fn test_set_monitoring_level_response_builder_pattern() {
+        let status_info = StatusInfoType::new("Monitoring level conflict".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = SetMonitoringLevelResponse::new(GenericStatusEnumType::Rejected)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, GenericStatusEnumType::Rejected);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_monitoring_level_response_setters() {
+        let mut response = SetMonitoringLevelResponse::new(GenericStatusEnumType::Accepted);
+        let status_info = StatusInfoType::new("Updated status".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        response.set_status(GenericStatusEnumType::Rejected)
+                .set_status_info(Some(status_info.clone()))
+                .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, GenericStatusEnumType::Rejected);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_set_monitoring_level_response_getters() {
+        let status_info = StatusInfoType::new("Test status".to_string());
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = SetMonitoringLevelResponse::new(GenericStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(*response.get_status(), GenericStatusEnumType::Accepted);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_set_monitoring_level_edge_cases() {
+        // Test boundary severity levels
+        let danger_level = SetMonitoringLevelRequest::new(0); // Danger
+        let debug_level = SetMonitoringLevelRequest::new(9);  // Debug
+
+        assert!(danger_level.validate().is_ok());
+        assert!(debug_level.validate().is_ok());
+        assert_eq!(danger_level.severity, 0);
+        assert_eq!(debug_level.severity, 9);
+
+        // Test all severity levels have specific meanings
+        let severity_meanings = vec![
+            (0, "Danger"),
+            (1, "Hardware Failure"),
+            (2, "System Failure"),
+            (3, "Critical"),
+            (4, "Error"),
+            (5, "Alert"),
+            (6, "Warning"),
+            (7, "Notice"),
+            (8, "Informational"),
+            (9, "Debug"),
+        ];
+
+        for (severity, _meaning) in severity_meanings {
+            let request = SetMonitoringLevelRequest::new(severity);
+            assert!(request.validate().is_ok());
+            assert_eq!(request.severity, severity);
+        }
+    }
+
+    #[test]
+    fn test_set_monitoring_level_response_validation() {
+        let response = SetMonitoringLevelResponse::new(GenericStatusEnumType::Accepted);
+        assert!(response.validate().is_ok());
+    }
+}
