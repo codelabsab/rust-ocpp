@@ -402,3 +402,367 @@ impl Get15118EVCertificateResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    // Tests for Get15118EVCertificateRequest
+    
+    #[test]
+    fn test_get_15118_ev_certificate_request_new() {
+        let request = Get15118EVCertificateRequest::new(
+            "urn:iso:15118:2:2013:MsgDef".to_string(),
+            CertificateActionEnumType::Install,
+            "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+        );
+        
+        assert_eq!(request.iso_15118_schema_version, "urn:iso:15118:2:2013:MsgDef");
+        assert_eq!(request.action, CertificateActionEnumType::Install);
+        assert_eq!(request.exi_request, "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==");
+        assert_eq!(request.maximum_contract_certificate_chains, None);
+        assert_eq!(request.prioritized_emai_ds, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_with_optional_fields() {
+        let request = Get15118EVCertificateRequest::new(
+            "urn:iso:15118:2:2013:MsgDef".to_string(),
+            CertificateActionEnumType::Update,
+            "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+        )
+        .with_maximum_contract_certificate_chains(5)
+        .with_prioritized_emai_ds(vec!["DE-ABC-123456".to_string(), "DE-XYZ-789012".to_string()])
+        .with_custom_data(CustomDataType::new("Vendor".to_string()));
+        
+        assert_eq!(request.maximum_contract_certificate_chains, Some(5));
+        assert_eq!(request.prioritized_emai_ds, Some(vec!["DE-ABC-123456".to_string(), "DE-XYZ-789012".to_string()]));
+        assert!(request.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_setters() {
+        let mut request = Get15118EVCertificateRequest::new(
+            "urn:iso:15118:2:2013:MsgDef".to_string(),
+            CertificateActionEnumType::Install,
+            "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+        );
+        
+        request.set_iso_15118_schema_version("urn:iso:15118:20:2022:MsgDef".to_string());
+        request.set_action(CertificateActionEnumType::Update);
+        request.set_exi_request("bmV3X2V4aV9yZXF1ZXN0".to_string());
+        request.set_maximum_contract_certificate_chains(Some(10));
+        request.set_prioritized_emai_ds(Some(vec!["EMAID1".to_string()]));
+        request.set_custom_data(Some(CustomDataType::new("TestVendor".to_string())));
+        
+        assert_eq!(request.iso_15118_schema_version, "urn:iso:15118:20:2022:MsgDef");
+        assert_eq!(request.action, CertificateActionEnumType::Update);
+        assert_eq!(request.exi_request, "bmV3X2V4aV9yZXF1ZXN0");
+        assert_eq!(request.maximum_contract_certificate_chains, Some(10));
+        assert_eq!(request.prioritized_emai_ds, Some(vec!["EMAID1".to_string()]));
+        assert!(request.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_getters() {
+        let request = Get15118EVCertificateRequest::new(
+            "urn:iso:15118:2:2013:MsgDef".to_string(),
+            CertificateActionEnumType::Install,
+            "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+        )
+        .with_maximum_contract_certificate_chains(3)
+        .with_prioritized_emai_ds(vec!["EMAID1".to_string()]);
+        
+        assert_eq!(request.get_iso_15118_schema_version(), "urn:iso:15118:2:2013:MsgDef");
+        assert_eq!(*request.get_action(), CertificateActionEnumType::Install);
+        assert_eq!(request.get_exi_request(), "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==");
+        assert_eq!(request.get_maximum_contract_certificate_chains(), Some(&3));
+        assert_eq!(request.get_prioritized_emai_ds(), Some(&vec!["EMAID1".to_string()]));
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_serialization() {
+        let request = Get15118EVCertificateRequest::new(
+            "urn:iso:15118:2:2013:MsgDef".to_string(),
+            CertificateActionEnumType::Install,
+            "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+        );
+        
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: Get15118EVCertificateRequest = serde_json::from_str(&json).unwrap();
+        
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_deserialization() {
+        let json = r#"{
+            "iso15118SchemaVersion": "urn:iso:15118:2:2013:MsgDef",
+            "action": "Install",
+            "exiRequest": "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==",
+            "maximumContractCertificateChains": 5,
+            "prioritizedEmaiDs": ["DE-ABC-123456", "DE-XYZ-789012"]
+        }"#;
+        
+        let request: Get15118EVCertificateRequest = serde_json::from_str(json).unwrap();
+        
+        assert_eq!(request.iso_15118_schema_version, "urn:iso:15118:2:2013:MsgDef");
+        assert_eq!(request.action, CertificateActionEnumType::Install);
+        assert_eq!(request.exi_request, "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==");
+        assert_eq!(request.maximum_contract_certificate_chains, Some(5));
+        assert_eq!(request.prioritized_emai_ds, Some(vec!["DE-ABC-123456".to_string(), "DE-XYZ-789012".to_string()]));
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_validation_schema_version_too_long() {
+        let request = Get15118EVCertificateRequest::new(
+            "a".repeat(51), // 51 characters, exceeds max length of 50
+            CertificateActionEnumType::Install,
+            "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+        );
+        
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_validation_exi_request_too_long() {
+        let request = Get15118EVCertificateRequest::new(
+            "urn:iso:15118:2:2013:MsgDef".to_string(),
+            CertificateActionEnumType::Install,
+            "a".repeat(11001) // 11001 characters, exceeds max length of 11000
+        );
+        
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_validation_negative_contract_chains() {
+        let mut request = Get15118EVCertificateRequest::new(
+            "urn:iso:15118:2:2013:MsgDef".to_string(),
+            CertificateActionEnumType::Install,
+            "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+        );
+        request.set_maximum_contract_certificate_chains(Some(-1));
+        
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_validation_empty_prioritized_emai_ds() {
+        let mut request = Get15118EVCertificateRequest::new(
+            "urn:iso:15118:2:2013:MsgDef".to_string(),
+            CertificateActionEnumType::Install,
+            "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+        );
+        request.set_prioritized_emai_ds(Some(vec![])); // Empty vector, min length is 1
+        
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_validation_too_many_prioritized_emai_ds() {
+        let mut request = Get15118EVCertificateRequest::new(
+            "urn:iso:15118:2:2013:MsgDef".to_string(),
+            CertificateActionEnumType::Install,
+            "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+        );
+        let emai_ds: Vec<String> = (0..9).map(|i| format!("EMAID{}", i)).collect(); // 9 items, max is 8
+        request.set_prioritized_emai_ds(Some(emai_ds));
+        
+        assert!(request.validate().is_err());
+    }
+
+    // Tests for Get15118EVCertificateResponse
+    
+    #[test]
+    fn test_get_15118_ev_certificate_response_new() {
+        let response = Get15118EVCertificateResponse::new(
+            Iso15118EVCertificateStatusEnumType::Accepted,
+            "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=".to_string()
+        );
+        
+        assert_eq!(response.status, Iso15118EVCertificateStatusEnumType::Accepted);
+        assert_eq!(response.exi_response, "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=");
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.remaining_contracts, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_response_with_optional_fields() {
+        let response = Get15118EVCertificateResponse::new(
+            Iso15118EVCertificateStatusEnumType::Accepted,
+            "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=".to_string()
+        )
+        .with_status_info(StatusInfoType::new("Success".to_string())
+            .with_additional_info("Certificate installed successfully".to_string()))
+        .with_remaining_contracts(3)
+        .with_custom_data(CustomDataType::new("Vendor".to_string()));
+        
+        assert!(response.status_info.is_some());
+        assert_eq!(response.remaining_contracts, Some(3));
+        assert!(response.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_response_setters() {
+        let mut response = Get15118EVCertificateResponse::new(
+            Iso15118EVCertificateStatusEnumType::Accepted,
+            "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=".to_string()
+        );
+        
+        response.set_status(Iso15118EVCertificateStatusEnumType::Failed);
+        response.set_exi_response("bmV3X2V4aV9yZXNwb25zZQ==".to_string());
+        response.set_status_info(Some(StatusInfoType::new("Error".to_string())));
+        response.set_remaining_contracts(Some(5));
+        response.set_custom_data(Some(CustomDataType::new("TestVendor".to_string())));
+        
+        assert_eq!(response.status, Iso15118EVCertificateStatusEnumType::Failed);
+        assert_eq!(response.exi_response, "bmV3X2V4aV9yZXNwb25zZQ==");
+        assert!(response.status_info.is_some());
+        assert_eq!(response.remaining_contracts, Some(5));
+        assert!(response.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_response_getters() {
+        let response = Get15118EVCertificateResponse::new(
+            Iso15118EVCertificateStatusEnumType::Accepted,
+            "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=".to_string()
+        )
+        .with_remaining_contracts(2);
+        
+        assert_eq!(*response.get_status(), Iso15118EVCertificateStatusEnumType::Accepted);
+        assert_eq!(response.get_exi_response(), "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=");
+        assert_eq!(response.get_status_info(), None);
+        assert_eq!(response.get_remaining_contracts(), Some(&2));
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_response_serialization() {
+        let response = Get15118EVCertificateResponse::new(
+            Iso15118EVCertificateStatusEnumType::Accepted,
+            "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=".to_string()
+        );
+        
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: Get15118EVCertificateResponse = serde_json::from_str(&json).unwrap();
+        
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_response_deserialization() {
+        let json = r#"{
+            "status": "Accepted",
+            "exiResponse": "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=",
+            "remainingContracts": 2
+        }"#;
+        
+        let response: Get15118EVCertificateResponse = serde_json::from_str(json).unwrap();
+        
+        assert_eq!(response.status, Iso15118EVCertificateStatusEnumType::Accepted);
+        assert_eq!(response.exi_response, "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=");
+        assert_eq!(response.remaining_contracts, Some(2));
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_response_validation_exi_response_too_long() {
+        let response = Get15118EVCertificateResponse::new(
+            Iso15118EVCertificateStatusEnumType::Accepted,
+            "a".repeat(17001) // 17001 characters, exceeds max length of 17000
+        );
+        
+        assert!(response.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_response_validation_negative_remaining_contracts() {
+        let mut response = Get15118EVCertificateResponse::new(
+            Iso15118EVCertificateStatusEnumType::Accepted,
+            "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=".to_string()
+        );
+        response.set_remaining_contracts(Some(-1));
+        
+        assert!(response.validate().is_err());
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_response_all_status_types() {
+        // Test with different status types
+        let statuses = vec![
+            Iso15118EVCertificateStatusEnumType::Accepted,
+            Iso15118EVCertificateStatusEnumType::Failed,
+        ];
+        
+        for status in statuses {
+            let response = Get15118EVCertificateResponse::new(
+                status.clone(),
+                "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=".to_string()
+            );
+            assert_eq!(response.status, status);
+        }
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_all_action_types() {
+        // Test with different action types
+        let actions = vec![
+            CertificateActionEnumType::Install,
+            CertificateActionEnumType::Update,
+        ];
+        
+        for action in actions {
+            let request = Get15118EVCertificateRequest::new(
+                "urn:iso:15118:2:2013:MsgDef".to_string(),
+                action.clone(),
+                "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+            );
+            assert_eq!(request.action, action);
+        }
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_request_json_round_trip_with_all_fields() {
+        let request = Get15118EVCertificateRequest::new(
+            "urn:iso:15118:2:2013:MsgDef".to_string(),
+            CertificateActionEnumType::Install,
+            "YmFzZTY0X2VuY29kZWRfZXhhbXBsZQ==".to_string()
+        )
+        .with_maximum_contract_certificate_chains(5)
+        .with_prioritized_emai_ds(vec!["EMAID1".to_string(), "EMAID2".to_string()])
+        .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+        
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: Get15118EVCertificateRequest = serde_json::from_str(&json).unwrap();
+        
+        assert_eq!(request, parsed);
+        assert_eq!(parsed.maximum_contract_certificate_chains, Some(5));
+        assert_eq!(parsed.prioritized_emai_ds, Some(vec!["EMAID1".to_string(), "EMAID2".to_string()]));
+        assert_eq!(parsed.custom_data.as_ref().unwrap().vendor_id, "TestVendor");
+    }
+
+    #[test]
+    fn test_get_15118_ev_certificate_response_json_round_trip_with_all_fields() {
+        let response = Get15118EVCertificateResponse::new(
+            Iso15118EVCertificateStatusEnumType::Accepted,
+            "YmFzZTY0X2VuY29kZWRfcmVzcG9uc2U=".to_string()
+        )
+        .with_status_info(StatusInfoType::new("Success".to_string())
+            .with_additional_info("All good".to_string()))
+        .with_remaining_contracts(3)
+        .with_custom_data(CustomDataType::new("TestVendor".to_string()));
+        
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: Get15118EVCertificateResponse = serde_json::from_str(&json).unwrap();
+        
+        assert_eq!(response, parsed);
+        assert_eq!(parsed.remaining_contracts, Some(3));
+        assert_eq!(parsed.status_info.as_ref().unwrap().reason_code, "Success");
+        assert_eq!(parsed.custom_data.as_ref().unwrap().vendor_id, "TestVendor");
+    }
+}
