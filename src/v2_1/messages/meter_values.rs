@@ -169,3 +169,230 @@ impl MeterValuesResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::SampledValueType;
+    use chrono::Utc;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_sampled_value() -> SampledValueType {
+        SampledValueType::new(42.5)
+    }
+
+    fn create_test_meter_value() -> MeterValueType {
+        let timestamp = Utc::now();
+        let sampled_values = vec![create_test_sampled_value()];
+        MeterValueType::new(timestamp, sampled_values)
+    }
+
+    // Tests for MeterValuesRequest
+
+    #[test]
+    fn test_meter_values_request_new() {
+        let meter_values = vec![create_test_meter_value()];
+        let request = MeterValuesRequest::new(1, meter_values.clone());
+
+        assert_eq!(request.evse_id, 1);
+        assert_eq!(request.meter_value, meter_values);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_meter_values_request_with_evse_id_zero() {
+        let meter_values = vec![create_test_meter_value()];
+        let request = MeterValuesRequest::new(0, meter_values.clone());
+
+        assert_eq!(request.evse_id, 0);
+        assert_eq!(request.meter_value, meter_values);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_meter_values_request_with_custom_data() {
+        let meter_values = vec![create_test_meter_value()];
+        let custom_data = create_test_custom_data();
+        let request = MeterValuesRequest::new(2, meter_values.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.evse_id, 2);
+        assert_eq!(request.meter_value, meter_values);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_meter_values_request_setters() {
+        let meter_values1 = vec![create_test_meter_value()];
+        let meter_values2 = vec![create_test_meter_value(), create_test_meter_value()];
+        let custom_data = create_test_custom_data();
+
+        let mut request = MeterValuesRequest::new(1, meter_values1);
+        request.set_evse_id(3);
+        request.set_meter_value(meter_values2.clone());
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.evse_id, 3);
+        assert_eq!(request.meter_value, meter_values2);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_meter_values_request_getters() {
+        let meter_values = vec![create_test_meter_value()];
+        let custom_data = create_test_custom_data();
+        let request = MeterValuesRequest::new(4, meter_values.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_evse_id(), &4);
+        assert_eq!(request.get_meter_value(), &meter_values);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_meter_values_request_serialization() {
+        let meter_values = vec![create_test_meter_value()];
+        let request = MeterValuesRequest::new(1, meter_values);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: MeterValuesRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_meter_values_request_validation() {
+        let meter_values = vec![create_test_meter_value()];
+        let request = MeterValuesRequest::new(1, meter_values);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_meter_values_request_validation_negative_evse_id() {
+        let meter_values = vec![create_test_meter_value()];
+        let mut request = MeterValuesRequest::new(1, meter_values);
+        request.set_evse_id(-1);
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_meter_values_request_validation_empty_meter_values() {
+        let mut request = MeterValuesRequest::new(1, vec![create_test_meter_value()]);
+        request.set_meter_value(vec![]); // Empty list should fail validation
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_meter_values_request_multiple_meter_values() {
+        let meter_values = vec![
+            create_test_meter_value(),
+            create_test_meter_value(),
+            create_test_meter_value(),
+        ];
+        let request = MeterValuesRequest::new(1, meter_values.clone());
+
+        assert_eq!(request.meter_value.len(), 3);
+        assert_eq!(request.meter_value, meter_values);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_meter_values_request_json_round_trip() {
+        let meter_values = vec![create_test_meter_value()];
+        let custom_data = create_test_custom_data();
+        let request = MeterValuesRequest::new(5, meter_values)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: MeterValuesRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for MeterValuesResponse
+
+    #[test]
+    fn test_meter_values_response_new() {
+        let response = MeterValuesResponse::new();
+
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_meter_values_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = MeterValuesResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_meter_values_response_setters() {
+        let custom_data = create_test_custom_data();
+
+        let mut response = MeterValuesResponse::new();
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_meter_values_response_getters() {
+        let custom_data = create_test_custom_data();
+        let response = MeterValuesResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_meter_values_response_serialization() {
+        let response = MeterValuesResponse::new();
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: MeterValuesResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_meter_values_response_validation() {
+        let response = MeterValuesResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_meter_values_response_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let response = MeterValuesResponse::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: MeterValuesResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    #[test]
+    fn test_meter_values_response_clear_custom_data() {
+        let custom_data = create_test_custom_data();
+        let mut response = MeterValuesResponse::new()
+            .with_custom_data(custom_data);
+
+        assert!(response.custom_data.is_some());
+
+        response.set_custom_data(None);
+        assert_eq!(response.custom_data, None);
+    }
+}
