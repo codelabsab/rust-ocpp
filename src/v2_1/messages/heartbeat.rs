@@ -142,3 +142,172 @@ impl HeartbeatResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Utc;
+    use serde_json;
+    use validator::Validate;
+
+    #[test]
+    fn test_heartbeat_request_new() {
+        let request = HeartbeatRequest::new();
+
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_heartbeat_request_serialization() {
+        let request = HeartbeatRequest::new();
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: HeartbeatRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_heartbeat_request_validation() {
+        let request = HeartbeatRequest::new();
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_heartbeat_request_with_custom_data() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = HeartbeatRequest::new().with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_heartbeat_request_set_custom_data() {
+        let mut request = HeartbeatRequest::new();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_heartbeat_request_builder_pattern() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = HeartbeatRequest::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_heartbeat_response_new() {
+        let current_time = Utc::now();
+        let response = HeartbeatResponse::new(current_time);
+
+        assert_eq!(response.get_current_time(), &current_time);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_heartbeat_response_serialization() {
+        let current_time = Utc::now();
+        let response = HeartbeatResponse::new(current_time);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: HeartbeatResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_heartbeat_response_validation() {
+        let current_time = Utc::now();
+        let response = HeartbeatResponse::new(current_time);
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_heartbeat_response_with_custom_data() {
+        let current_time = Utc::now();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = HeartbeatResponse::new(current_time)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_heartbeat_response_set_methods() {
+        let current_time = Utc::now();
+        let new_time = Utc::now();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let mut response = HeartbeatResponse::new(current_time);
+
+        response
+            .set_current_time(new_time)
+            .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.get_current_time(), &new_time);
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_heartbeat_response_builder_pattern() {
+        let current_time = Utc::now();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+
+        let response = HeartbeatResponse::new(current_time)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_heartbeat_request_json_round_trip() {
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let request = HeartbeatRequest::new().with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: HeartbeatRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_heartbeat_response_json_round_trip() {
+        let current_time = Utc::now();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = HeartbeatResponse::new(current_time)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: HeartbeatResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(deserialized.validate().is_ok());
+    }
+
+    #[test]
+    fn test_heartbeat_request_empty_json() {
+        let json = "{}";
+        let request: HeartbeatRequest = serde_json::from_str(json).expect("Failed to deserialize");
+
+        assert_eq!(request.get_custom_data(), None);
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_heartbeat_response_with_custom_data_validation() {
+        let current_time = Utc::now();
+        let custom_data = CustomDataType::new("TestVendor".to_string());
+        let response = HeartbeatResponse::new(current_time)
+            .with_custom_data(custom_data);
+
+        assert!(response.validate().is_ok());
+    }
+}
