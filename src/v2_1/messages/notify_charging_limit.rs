@@ -219,3 +219,292 @@ impl NotifyChargingLimitResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::ChargingSchedulePeriodType;
+    use crate::v2_1::enumerations::{ChargingLimitSourceEnumType, ChargingRateUnitEnumType};
+    use crate::v2_1::enumerations::charging_limit_source::StandardChargingLimitSourceEnumType;
+    use serde_json;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_charging_limit() -> ChargingLimitType {
+        ChargingLimitType::new(ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::EMS))
+    }
+
+    fn create_test_charging_schedule_period() -> ChargingSchedulePeriodType {
+        ChargingSchedulePeriodType::new_from_f64(0, 16.0)
+    }
+
+    fn create_test_charging_schedule() -> ChargingScheduleType {
+        let period = create_test_charging_schedule_period();
+        ChargingScheduleType::new(1, ChargingRateUnitEnumType::A, vec![period])
+    }
+
+    // Tests for NotifyChargingLimitRequest
+
+    #[test]
+    fn test_notify_charging_limit_request_new() {
+        let charging_limit = create_test_charging_limit();
+        let request = NotifyChargingLimitRequest::new(charging_limit.clone());
+
+        assert_eq!(request.charging_schedule, None);
+        assert_eq!(request.evse_id, None);
+        assert_eq!(request.charging_limit, charging_limit);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_with_charging_schedule() {
+        let charging_limit = create_test_charging_limit();
+        let charging_schedule = vec![create_test_charging_schedule()];
+        let request = NotifyChargingLimitRequest::new(charging_limit.clone())
+            .with_charging_schedule(charging_schedule.clone());
+
+        assert_eq!(request.charging_schedule, Some(charging_schedule));
+        assert_eq!(request.evse_id, None);
+        assert_eq!(request.charging_limit, charging_limit);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_with_evse_id() {
+        let charging_limit = create_test_charging_limit();
+        let request = NotifyChargingLimitRequest::new(charging_limit.clone())
+            .with_evse_id(1);
+
+        assert_eq!(request.charging_schedule, None);
+        assert_eq!(request.evse_id, Some(1));
+        assert_eq!(request.charging_limit, charging_limit);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_with_evse_id_zero() {
+        let charging_limit = create_test_charging_limit();
+        let request = NotifyChargingLimitRequest::new(charging_limit.clone())
+            .with_evse_id(0);
+
+        assert_eq!(request.charging_schedule, None);
+        assert_eq!(request.evse_id, Some(0));
+        assert_eq!(request.charging_limit, charging_limit);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_with_custom_data() {
+        let charging_limit = create_test_charging_limit();
+        let custom_data = create_test_custom_data();
+        let request = NotifyChargingLimitRequest::new(charging_limit.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.charging_schedule, None);
+        assert_eq!(request.evse_id, None);
+        assert_eq!(request.charging_limit, charging_limit);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_setters() {
+        let charging_limit1 = create_test_charging_limit();
+        let charging_limit2 = ChargingLimitType::new(ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::SO));
+        let charging_schedule = vec![create_test_charging_schedule()];
+        let custom_data = create_test_custom_data();
+
+        let mut request = NotifyChargingLimitRequest::new(charging_limit1);
+        request.set_charging_schedule(Some(charging_schedule.clone()));
+        request.set_evse_id(Some(2));
+        request.set_charging_limit(charging_limit2.clone());
+        request.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.charging_schedule, Some(charging_schedule));
+        assert_eq!(request.evse_id, Some(2));
+        assert_eq!(request.charging_limit, charging_limit2);
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_getters() {
+        let charging_limit = create_test_charging_limit();
+        let charging_schedule = vec![create_test_charging_schedule()];
+        let custom_data = create_test_custom_data();
+        let request = NotifyChargingLimitRequest::new(charging_limit.clone())
+            .with_charging_schedule(charging_schedule.clone())
+            .with_evse_id(3)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.get_charging_schedule(), Some(&charging_schedule));
+        assert_eq!(request.get_evse_id(), Some(&3));
+        assert_eq!(request.get_charging_limit(), &charging_limit);
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_serialization() {
+        let charging_limit = create_test_charging_limit();
+        let request = NotifyChargingLimitRequest::new(charging_limit);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: NotifyChargingLimitRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_validation() {
+        let charging_limit = create_test_charging_limit();
+        let request = NotifyChargingLimitRequest::new(charging_limit);
+
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_validation_negative_evse_id() {
+        let charging_limit = create_test_charging_limit();
+        let mut request = NotifyChargingLimitRequest::new(charging_limit);
+        request.set_evse_id(Some(-1));
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_validation_empty_charging_schedule() {
+        let charging_limit = create_test_charging_limit();
+        let mut request = NotifyChargingLimitRequest::new(charging_limit);
+        request.set_charging_schedule(Some(vec![])); // Empty list should fail validation
+
+        assert!(request.validate().is_err());
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_multiple_charging_schedules() {
+        let charging_limit = create_test_charging_limit();
+        let charging_schedules = vec![
+            create_test_charging_schedule(),
+            create_test_charging_schedule(),
+        ];
+        let request = NotifyChargingLimitRequest::new(charging_limit)
+            .with_charging_schedule(charging_schedules.clone());
+
+        assert_eq!(request.charging_schedule.as_ref().unwrap().len(), 2);
+        assert_eq!(request.charging_schedule, Some(charging_schedules));
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_all_charging_limit_sources() {
+        let sources = vec![
+            ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::EMS),
+            ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::Other),
+            ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::SO),
+            ChargingLimitSourceEnumType::Standard(StandardChargingLimitSourceEnumType::CSO),
+        ];
+
+        for source in sources {
+            let charging_limit = ChargingLimitType::new(source.clone());
+            let request = NotifyChargingLimitRequest::new(charging_limit.clone());
+            assert_eq!(request.charging_limit, charging_limit);
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_notify_charging_limit_request_json_round_trip() {
+        let charging_limit = create_test_charging_limit();
+        let charging_schedule = vec![create_test_charging_schedule()];
+        let custom_data = create_test_custom_data();
+        let request = NotifyChargingLimitRequest::new(charging_limit)
+            .with_charging_schedule(charging_schedule)
+            .with_evse_id(1)
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&request).unwrap();
+        let parsed: NotifyChargingLimitRequest = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(request, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    // Tests for NotifyChargingLimitResponse
+
+    #[test]
+    fn test_notify_charging_limit_response_new() {
+        let response = NotifyChargingLimitResponse::new();
+
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_notify_charging_limit_response_with_custom_data() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyChargingLimitResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_notify_charging_limit_response_setters() {
+        let custom_data = create_test_custom_data();
+
+        let mut response = NotifyChargingLimitResponse::new();
+        response.set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_notify_charging_limit_response_getters() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyChargingLimitResponse::new()
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_notify_charging_limit_response_serialization() {
+        let response = NotifyChargingLimitResponse::new();
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: NotifyChargingLimitResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+    }
+
+    #[test]
+    fn test_notify_charging_limit_response_validation() {
+        let response = NotifyChargingLimitResponse::new();
+
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_charging_limit_response_json_round_trip() {
+        let custom_data = create_test_custom_data();
+        let response = NotifyChargingLimitResponse::new()
+            .with_custom_data(custom_data);
+
+        let json = serde_json::to_string(&response).unwrap();
+        let parsed: NotifyChargingLimitResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(response, parsed);
+        assert!(parsed.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_charging_limit_response_clear_custom_data() {
+        let custom_data = create_test_custom_data();
+        let mut response = NotifyChargingLimitResponse::new()
+            .with_custom_data(custom_data);
+
+        assert!(response.custom_data.is_some());
+
+        response.set_custom_data(None);
+        assert_eq!(response.custom_data, None);
+    }
+}
