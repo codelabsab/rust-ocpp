@@ -244,3 +244,147 @@ impl ResetResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::CustomDataType;
+    use crate::v2_1::enumerations::{ResetEnumType, ResetStatusEnumType};
+
+    #[test]
+    fn test_reset_request_new() {
+        let request = ResetRequest::new(ResetEnumType::Immediate);
+        assert_eq!(request.type_, ResetEnumType::Immediate);
+        assert_eq!(request.evse_id, None);
+        assert_eq!(request.custom_data, None);
+    }
+
+    #[test]
+    fn test_reset_request_serialization() {
+        let request = ResetRequest::new(ResetEnumType::OnIdle)
+            .with_evse_id(1);
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: ResetRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert!(json.contains("\"type\":\"OnIdle\""));
+        assert!(json.contains("\"evseId\":1"));
+    }
+
+    #[test]
+    fn test_reset_request_validation() {
+        let mut request = ResetRequest::new(ResetEnumType::Immediate);
+        request.evse_id = Some(-1); // Invalid negative value
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+    }
+
+    #[test]
+    fn test_reset_request_builder_pattern() {
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let request = ResetRequest::new(ResetEnumType::Immediate)
+            .with_evse_id(2)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.type_, ResetEnumType::Immediate);
+        assert_eq!(request.evse_id, Some(2));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_reset_request_setters() {
+        let mut request = ResetRequest::new(ResetEnumType::OnIdle);
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+
+        request.set_type_(ResetEnumType::Immediate)
+               .set_evse_id(Some(3))
+               .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(request.type_, ResetEnumType::Immediate);
+        assert_eq!(request.evse_id, Some(3));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_reset_request_getters() {
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let request = ResetRequest::new(ResetEnumType::OnIdle)
+            .with_evse_id(4)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(*request.get_type_(), ResetEnumType::OnIdle);
+        assert_eq!(request.get_evse_id(), Some(&4));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_reset_response_new() {
+        let response = ResetResponse::new(ResetStatusEnumType::Accepted);
+        assert_eq!(response.status, ResetStatusEnumType::Accepted);
+        assert_eq!(response.status_info, None);
+        assert_eq!(response.custom_data, None);
+    }
+
+    #[test]
+    fn test_reset_response_serialization() {
+        let response = ResetResponse::new(ResetStatusEnumType::Rejected);
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: ResetResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert!(json.contains("\"status\":\"Rejected\""));
+    }
+
+    #[test]
+    fn test_reset_response_builder_pattern() {
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let response = ResetResponse::new(ResetStatusEnumType::Scheduled)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, ResetStatusEnumType::Scheduled);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_reset_response_setters() {
+        let mut response = ResetResponse::new(ResetStatusEnumType::Accepted);
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+
+        response.set_status(ResetStatusEnumType::Rejected)
+                .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.status, ResetStatusEnumType::Rejected);
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_reset_response_getters() {
+        let custom_data = CustomDataType::new("test_vendor".to_string());
+        let response = ResetResponse::new(ResetStatusEnumType::Scheduled)
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(*response.get_status(), ResetStatusEnumType::Scheduled);
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_reset_request_edge_cases() {
+        // Test with zero evse_id (should be valid)
+        let request = ResetRequest::new(ResetEnumType::Immediate)
+            .with_evse_id(0);
+        assert!(request.validate().is_ok());
+
+        // Test without optional fields
+        let minimal_request = ResetRequest::new(ResetEnumType::OnIdle);
+        assert!(minimal_request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_reset_response_validation() {
+        let response = ResetResponse::new(ResetStatusEnumType::Accepted);
+        assert!(response.validate().is_ok());
+    }
+}
