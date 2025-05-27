@@ -1,6 +1,5 @@
 use crate::v2_1::datatypes::{CustomDataType, StatusInfoType};
-use crate::v2_1::enumerations::DERControlEnumType;
-use crate::v2_1::enumerations::der_control::DERControlStatusEnumType;
+use crate::v2_1::enumerations::{DERControlEnumType, DERControlStatusEnumType};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
