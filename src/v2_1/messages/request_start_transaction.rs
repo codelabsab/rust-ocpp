@@ -1,7 +1,7 @@
 use crate::v2_1::datatypes::{
-    ChargingProfileType, 
-    CustomDataType, 
-    IdTokenType, 
+    ChargingProfileType,
+    CustomDataType,
+    IdTokenType,
     StatusInfoType,
 };
 use crate::v2_1::enumerations::RequestStartStopStatusEnumType;
@@ -390,4 +390,338 @@ impl RequestStartTransactionResponse {
         self
     }
 
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::v2_1::datatypes::{ChargingProfileType, ChargingScheduleType, IdTokenType, StatusInfoType};
+    use crate::v2_1::enumerations::{ChargingProfileKindEnumType, ChargingProfilePurposeEnumType, ChargingRateUnitEnumType, RequestStartStopStatusEnumType};
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_id_token() -> IdTokenType {
+        IdTokenType::new("test_token".to_string(), "Central".to_string())
+    }
+
+    fn create_test_status_info() -> StatusInfoType {
+        StatusInfoType::new("TestReason".to_string())
+    }
+
+    fn create_test_charging_profile() -> ChargingProfileType {
+        let schedule = ChargingScheduleType::new(
+            1,
+            ChargingRateUnitEnumType::W,
+            vec![]
+        );
+        ChargingProfileType::new(
+            1,
+            0,
+            ChargingProfilePurposeEnumType::TxProfile,
+            ChargingProfileKindEnumType::Absolute,
+            vec![schedule]
+        )
+    }
+
+    #[test]
+    fn test_request_start_transaction_request_new() {
+        let id_token = create_test_id_token();
+        let request = RequestStartTransactionRequest::new(id_token.clone(), 123);
+
+        assert_eq!(request.id_token, id_token);
+        assert_eq!(request.remote_start_id, 123);
+        assert!(request.evse_id.is_none());
+        assert!(request.group_id_token.is_none());
+        assert!(request.charging_profile.is_none());
+        assert!(request.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_request_start_transaction_request_serialization() {
+        let id_token = create_test_id_token();
+        let group_id_token = IdTokenType::new("group_token".to_string(), "Local".to_string());
+        let charging_profile = create_test_charging_profile();
+
+        let request = RequestStartTransactionRequest::new(id_token.clone(), 456)
+            .with_evse_id(2)
+            .with_group_id_token(group_id_token.clone())
+            .with_charging_profile(charging_profile.clone())
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: RequestStartTransactionRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+        assert_eq!(deserialized.id_token, id_token);
+        assert_eq!(deserialized.remote_start_id, 456);
+        assert_eq!(deserialized.evse_id, Some(2));
+        assert_eq!(deserialized.group_id_token, Some(group_id_token));
+        assert_eq!(deserialized.charging_profile, Some(charging_profile));
+        assert!(deserialized.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_request_start_transaction_request_validation() {
+        let id_token = create_test_id_token();
+
+        // Valid request
+        let valid_request = RequestStartTransactionRequest::new(id_token.clone(), 0);
+        assert!(valid_request.validate().is_ok());
+
+        // Invalid remote_start_id (negative)
+        let invalid_request = RequestStartTransactionRequest {
+            evse_id: None,
+            group_id_token: None,
+            id_token: id_token.clone(),
+            remote_start_id: -1,
+            charging_profile: None,
+            custom_data: None,
+        };
+        assert!(invalid_request.validate().is_err());
+
+        // Invalid evse_id (zero - should be > 0 if present)
+        let invalid_evse_request = RequestStartTransactionRequest {
+            evse_id: Some(0),
+            group_id_token: None,
+            id_token: id_token.clone(),
+            remote_start_id: 1,
+            charging_profile: None,
+            custom_data: None,
+        };
+        assert!(invalid_evse_request.validate().is_err());
+    }
+
+    #[test]
+    fn test_request_start_transaction_request_builder_pattern() {
+        let id_token = create_test_id_token();
+        let group_id_token = IdTokenType::new("group_token".to_string(), "KeyCode".to_string());
+        let charging_profile = create_test_charging_profile();
+        let custom_data = create_test_custom_data();
+
+        let request = RequestStartTransactionRequest::new(id_token.clone(), 789)
+            .with_evse_id(3)
+            .with_group_id_token(group_id_token.clone())
+            .with_charging_profile(charging_profile.clone())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.id_token, id_token);
+        assert_eq!(request.remote_start_id, 789);
+        assert_eq!(request.evse_id, Some(3));
+        assert_eq!(request.group_id_token, Some(group_id_token));
+        assert_eq!(request.charging_profile, Some(charging_profile));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_request_start_transaction_request_setters_getters() {
+        let id_token = create_test_id_token();
+        let mut request = RequestStartTransactionRequest::new(id_token.clone(), 100);
+        let new_id_token = IdTokenType::new("new_token".to_string(), "ISO14443".to_string());
+        let group_id_token = IdTokenType::new("group_token".to_string(), "MacAddress".to_string());
+        let charging_profile = create_test_charging_profile();
+        let custom_data = create_test_custom_data();
+
+        // Test setters
+        request.set_evse_id(Some(5));
+        request.set_group_id_token(Some(group_id_token.clone()));
+        request.set_id_token(new_id_token.clone());
+        request.set_remote_start_id(200);
+        request.set_charging_profile(Some(charging_profile.clone()));
+        request.set_custom_data(Some(custom_data.clone()));
+
+        // Test getters
+        assert_eq!(request.get_evse_id(), Some(&5));
+        assert_eq!(request.get_group_id_token(), Some(&group_id_token));
+        assert_eq!(request.get_id_token(), &new_id_token);
+        assert_eq!(*request.get_remote_start_id(), 200);
+        assert_eq!(request.get_charging_profile(), Some(&charging_profile));
+        assert_eq!(request.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_request_start_transaction_response_new() {
+        let response = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Accepted);
+
+        assert_eq!(response.status, RequestStartStopStatusEnumType::Accepted);
+        assert!(response.status_info.is_none());
+        assert!(response.transaction_id.is_none());
+        assert!(response.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_request_start_transaction_response_serialization() {
+        let response = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Rejected)
+            .with_status_info(create_test_status_info())
+            .with_transaction_id("tx-12345".to_string())
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: RequestStartTransactionResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+        assert_eq!(deserialized.status, RequestStartStopStatusEnumType::Rejected);
+        assert!(deserialized.status_info.is_some());
+        assert_eq!(deserialized.transaction_id, Some("tx-12345".to_string()));
+        assert!(deserialized.custom_data.is_some());
+    }
+
+    #[test]
+    fn test_request_start_transaction_response_validation() {
+        let valid_response = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Accepted);
+        assert!(valid_response.validate().is_ok());
+
+        let response_with_all_fields = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Rejected)
+            .with_status_info(create_test_status_info())
+            .with_transaction_id("tx-67890".to_string())
+            .with_custom_data(create_test_custom_data());
+        assert!(response_with_all_fields.validate().is_ok());
+
+        // Test transaction_id length validation (max 36 characters)
+        let long_transaction_id = "a".repeat(37);
+        let invalid_response = RequestStartTransactionResponse {
+            status: RequestStartStopStatusEnumType::Accepted,
+            status_info: None,
+            transaction_id: Some(long_transaction_id),
+            custom_data: None,
+        };
+        assert!(invalid_response.validate().is_err());
+    }
+
+    #[test]
+    fn test_request_start_transaction_response_builder_pattern() {
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        let response = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Accepted)
+            .with_status_info(status_info.clone())
+            .with_transaction_id("tx-abc123".to_string())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.status, RequestStartStopStatusEnumType::Accepted);
+        assert_eq!(response.status_info, Some(status_info));
+        assert_eq!(response.transaction_id, Some("tx-abc123".to_string()));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_request_start_transaction_response_setters_getters() {
+        let mut response = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Accepted);
+        let status_info = create_test_status_info();
+        let custom_data = create_test_custom_data();
+
+        // Test setters
+        response.set_status(RequestStartStopStatusEnumType::Rejected);
+        response.set_status_info(Some(status_info.clone()));
+        response.set_transaction_id(Some("tx-xyz789".to_string()));
+        response.set_custom_data(Some(custom_data.clone()));
+
+        // Test getters
+        assert_eq!(*response.get_status(), RequestStartStopStatusEnumType::Rejected);
+        assert_eq!(response.get_status_info(), Some(&status_info));
+        assert_eq!(response.get_transaction_id(), Some(&"tx-xyz789".to_string()));
+        assert_eq!(response.get_custom_data(), Some(&custom_data));
+    }
+
+    #[test]
+    fn test_request_start_transaction_response_enum_variants() {
+        let accepted_response = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Accepted);
+        assert_eq!(accepted_response.status, RequestStartStopStatusEnumType::Accepted);
+
+        let rejected_response = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Rejected);
+        assert_eq!(rejected_response.status, RequestStartStopStatusEnumType::Rejected);
+    }
+
+    #[test]
+    fn test_request_start_transaction_request_edge_cases() {
+        let id_token = create_test_id_token();
+
+        // Test minimum valid remote_start_id
+        let min_request = RequestStartTransactionRequest::new(id_token.clone(), 0);
+        assert!(min_request.validate().is_ok());
+
+        // Test large remote_start_id
+        let large_request = RequestStartTransactionRequest::new(id_token.clone(), i32::MAX);
+        assert!(large_request.validate().is_ok());
+
+        // Test minimum valid evse_id
+        let min_evse_request = RequestStartTransactionRequest::new(id_token, 1)
+            .with_evse_id(1);
+        assert!(min_evse_request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_request_start_transaction_json_round_trip() {
+        let id_token = create_test_id_token();
+        let group_id_token = IdTokenType::new("group_token".to_string(), "eMAID".to_string());
+        let charging_profile = create_test_charging_profile();
+
+        let original_request = RequestStartTransactionRequest::new(id_token, 12345)
+            .with_evse_id(10)
+            .with_group_id_token(group_id_token)
+            .with_charging_profile(charging_profile)
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&original_request).expect("Failed to serialize request");
+        let parsed_request: RequestStartTransactionRequest =
+            serde_json::from_str(&json).expect("Failed to deserialize request");
+
+        assert_eq!(original_request, parsed_request);
+
+        let original_response = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Accepted)
+            .with_status_info(create_test_status_info())
+            .with_transaction_id("tx-round-trip".to_string())
+            .with_custom_data(create_test_custom_data());
+
+        let json = serde_json::to_string(&original_response).expect("Failed to serialize response");
+        let parsed_response: RequestStartTransactionResponse =
+            serde_json::from_str(&json).expect("Failed to deserialize response");
+
+        assert_eq!(original_response, parsed_response);
+    }
+
+    #[test]
+    fn test_request_start_transaction_id_token_types() {
+        // Test different IdToken types
+        let token_types = vec![
+            "Central",
+            "DirectPayment",
+            "eMAID",
+            "EVCCID",
+            "ISO14443",
+            "ISO15693",
+            "KeyCode",
+            "Local",
+            "MacAddress",
+            "NoAuthorization",
+            "VIN",
+        ];
+
+        for token_type in token_types {
+            let id_token = IdTokenType::new("test_token".to_string(), token_type.to_string());
+            let request = RequestStartTransactionRequest::new(id_token.clone(), 1);
+            assert!(request.validate().is_ok());
+            assert_eq!(request.id_token, id_token);
+        }
+    }
+
+    #[test]
+    fn test_request_start_transaction_transaction_id_edge_cases() {
+        // Test maximum valid transaction_id length (36 characters)
+        let max_transaction_id = "a".repeat(36);
+        let response = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Accepted)
+            .with_transaction_id(max_transaction_id.clone());
+        assert!(response.validate().is_ok());
+        assert_eq!(response.transaction_id, Some(max_transaction_id));
+
+        // Test empty transaction_id
+        let empty_response = RequestStartTransactionResponse::new(RequestStartStopStatusEnumType::Accepted)
+            .with_transaction_id("".to_string());
+        assert!(empty_response.validate().is_ok());
+    }
 }
