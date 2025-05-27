@@ -532,3 +532,493 @@ impl NotifySettlementResponse {
     }
 
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Utc;
+    use rust_decimal::Decimal;
+    use serde_json;
+    use validator::Validate;
+
+    fn create_test_custom_data() -> CustomDataType {
+        CustomDataType::new("TestVendor".to_string())
+    }
+
+    fn create_test_address() -> AddressType {
+        AddressType::new(
+            "Test Company".to_string(),
+            "123 Main St".to_string(),
+            "Test City".to_string(),
+            "Test Country".to_string(),
+        )
+    }
+
+    fn create_test_notify_settlement_request() -> NotifySettlementRequest {
+        let settlement_amount = Decimal::try_from(25.50).unwrap();
+        let settlement_time = Utc::now();
+        NotifySettlementRequest::new(
+            "test_psp_ref_123".to_string(),
+            PaymentStatusEnumType::Settled,
+            settlement_amount,
+            settlement_time,
+        )
+    }
+
+    fn create_test_notify_settlement_response() -> NotifySettlementResponse {
+        NotifySettlementResponse::new()
+    }
+
+    #[test]
+    fn test_notify_settlement_request_new() {
+        let psp_ref = "test_psp_456".to_string();
+        let status = PaymentStatusEnumType::Failed;
+        let settlement_amount = Decimal::try_from(100.75).unwrap();
+        let settlement_time = Utc::now();
+
+        let request = NotifySettlementRequest::new(
+            psp_ref.clone(),
+            status.clone(),
+            settlement_amount,
+            settlement_time,
+        );
+
+        assert_eq!(request.psp_ref, psp_ref);
+        assert_eq!(request.status, status);
+        assert_eq!(request.settlement_amount, settlement_amount);
+        assert_eq!(request.settlement_time, settlement_time);
+        assert!(request.transaction_id.is_none());
+        assert!(request.status_info.is_none());
+        assert!(request.receipt_id.is_none());
+        assert!(request.receipt_url.is_none());
+        assert!(request.vat_company.is_none());
+        assert!(request.vat_number.is_none());
+        assert!(request.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_notify_settlement_request_serialization() {
+        let request = create_test_notify_settlement_request();
+
+        let json = serde_json::to_string(&request).expect("Failed to serialize");
+        let deserialized: NotifySettlementRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(request, deserialized);
+    }
+
+    #[test]
+    fn test_notify_settlement_request_validation_valid() {
+        let request = create_test_notify_settlement_request();
+        assert!(request.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_settlement_request_validation_psp_ref_too_long() {
+        let long_psp_ref = "a".repeat(256); // Max is 255
+        let settlement_amount = Decimal::try_from(25.50).unwrap();
+        let settlement_time = Utc::now();
+        let request = NotifySettlementRequest::new(
+            long_psp_ref,
+            PaymentStatusEnumType::Settled,
+            settlement_amount,
+            settlement_time,
+        );
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("psp_ref"));
+    }
+
+    #[test]
+    fn test_notify_settlement_request_validation_transaction_id_too_long() {
+        let mut request = create_test_notify_settlement_request();
+        request.transaction_id = Some("a".repeat(37)); // Max is 36
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("transaction_id"));
+    }
+
+    #[test]
+    fn test_notify_settlement_request_validation_status_info_too_long() {
+        let mut request = create_test_notify_settlement_request();
+        request.status_info = Some("a".repeat(501)); // Max is 500
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("status_info"));
+    }
+
+    #[test]
+    fn test_notify_settlement_request_validation_receipt_id_too_long() {
+        let mut request = create_test_notify_settlement_request();
+        request.receipt_id = Some("a".repeat(51)); // Max is 50
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("receipt_id"));
+    }
+
+    #[test]
+    fn test_notify_settlement_request_validation_receipt_url_too_long() {
+        let mut request = create_test_notify_settlement_request();
+        request.receipt_url = Some("a".repeat(2001)); // Max is 2000
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("receipt_url"));
+    }
+
+    #[test]
+    fn test_notify_settlement_request_validation_vat_number_too_long() {
+        let mut request = create_test_notify_settlement_request();
+        request.vat_number = Some("a".repeat(21)); // Max is 20
+
+        let validation_result = request.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("vat_number"));
+    }
+
+    #[test]
+    fn test_notify_settlement_request_set_methods() {
+        let mut request = create_test_notify_settlement_request();
+        let new_psp_ref = "new_psp_ref".to_string();
+        let new_status = PaymentStatusEnumType::Canceled;
+        let new_settlement_amount = Decimal::try_from(50.25).unwrap();
+        let new_settlement_time = Utc::now();
+
+        request.set_psp_ref(new_psp_ref.clone())
+               .set_status(new_status.clone())
+               .set_settlement_amount(new_settlement_amount)
+               .set_settlement_time(new_settlement_time)
+               .set_transaction_id(Some("new_transaction".to_string()))
+               .set_status_info(Some("New status info".to_string()));
+
+        assert_eq!(request.psp_ref, new_psp_ref);
+        assert_eq!(request.status, new_status);
+        assert_eq!(request.settlement_amount, new_settlement_amount);
+        assert_eq!(request.settlement_time, new_settlement_time);
+        assert_eq!(request.transaction_id, Some("new_transaction".to_string()));
+        assert_eq!(request.status_info, Some("New status info".to_string()));
+    }
+
+    #[test]
+    fn test_notify_settlement_request_get_methods() {
+        let request = create_test_notify_settlement_request();
+
+        assert_eq!(request.get_psp_ref(), &request.psp_ref);
+        assert_eq!(request.get_status(), &request.status);
+        assert_eq!(request.get_settlement_amount(), &request.settlement_amount);
+        assert_eq!(request.get_settlement_time(), &request.settlement_time);
+        assert_eq!(request.get_transaction_id(), None);
+        assert_eq!(request.get_status_info(), None);
+        assert_eq!(request.get_receipt_id(), None);
+        assert_eq!(request.get_receipt_url(), None);
+        assert_eq!(request.get_vat_company(), None);
+        assert_eq!(request.get_vat_number(), None);
+        assert_eq!(request.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_settlement_request_with_methods() {
+        let custom_data = create_test_custom_data();
+        let address = create_test_address();
+
+        let request = create_test_notify_settlement_request()
+            .with_transaction_id("test_transaction".to_string())
+            .with_status_info("Test status info".to_string())
+            .with_receipt_id("receipt_123".to_string())
+            .with_receipt_url("https://example.com/receipt".to_string())
+            .with_vat_company(address.clone())
+            .with_vat_number("VAT123456".to_string())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(request.transaction_id, Some("test_transaction".to_string()));
+        assert_eq!(request.status_info, Some("Test status info".to_string()));
+        assert_eq!(request.receipt_id, Some("receipt_123".to_string()));
+        assert_eq!(request.receipt_url, Some("https://example.com/receipt".to_string()));
+        assert_eq!(request.vat_company, Some(address));
+        assert_eq!(request.vat_number, Some("VAT123456".to_string()));
+        assert_eq!(request.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_notify_settlement_request_payment_status_variants() {
+        let settlement_amount = Decimal::try_from(25.50).unwrap();
+        let settlement_time = Utc::now();
+
+        // Test all payment status variants
+        let statuses = vec![
+            PaymentStatusEnumType::Settled,
+            PaymentStatusEnumType::Canceled,
+            PaymentStatusEnumType::Rejected,
+            PaymentStatusEnumType::Failed,
+        ];
+
+        for status in statuses {
+            let request = NotifySettlementRequest::new(
+                "test_psp_ref".to_string(),
+                status.clone(),
+                settlement_amount,
+                settlement_time,
+            );
+            assert_eq!(request.status, status);
+            assert!(request.validate().is_ok());
+        }
+    }
+
+    #[test]
+    fn test_notify_settlement_request_boundary_values() {
+        let settlement_amount = Decimal::try_from(25.50).unwrap();
+        let settlement_time = Utc::now();
+
+        // Test maximum length values
+        let max_psp_ref = "a".repeat(255);
+        let max_transaction_id = "a".repeat(36);
+        let max_status_info = "a".repeat(500);
+        let max_receipt_id = "a".repeat(50);
+        let max_receipt_url = "a".repeat(2000);
+        let max_vat_number = "a".repeat(20);
+
+        let request = NotifySettlementRequest::new(
+            max_psp_ref.clone(),
+            PaymentStatusEnumType::Settled,
+            settlement_amount,
+            settlement_time,
+        )
+        .with_transaction_id(max_transaction_id.clone())
+        .with_status_info(max_status_info.clone())
+        .with_receipt_id(max_receipt_id.clone())
+        .with_receipt_url(max_receipt_url.clone())
+        .with_vat_number(max_vat_number.clone());
+
+        assert!(request.validate().is_ok());
+        assert_eq!(request.psp_ref, max_psp_ref);
+        assert_eq!(request.transaction_id, Some(max_transaction_id));
+        assert_eq!(request.status_info, Some(max_status_info));
+        assert_eq!(request.receipt_id, Some(max_receipt_id));
+        assert_eq!(request.receipt_url, Some(max_receipt_url));
+        assert_eq!(request.vat_number, Some(max_vat_number));
+    }
+
+    #[test]
+    fn test_notify_settlement_request_json_format() {
+        let request = create_test_notify_settlement_request();
+        let json = serde_json::to_value(&request).expect("Failed to serialize to JSON");
+
+        assert!(json.get("pspRef").is_some());
+        assert!(json.get("status").is_some());
+        assert!(json.get("settlementAmount").is_some());
+        assert!(json.get("settlementTime").is_some());
+
+        // Optional fields should not be present if None
+        if request.transaction_id.is_none() {
+            assert!(json.get("transactionId").is_none());
+        }
+        if request.status_info.is_none() {
+            assert!(json.get("statusInfo").is_none());
+        }
+        if request.receipt_id.is_none() {
+            assert!(json.get("receiptId").is_none());
+        }
+        if request.receipt_url.is_none() {
+            assert!(json.get("receiptUrl").is_none());
+        }
+        if request.vat_company.is_none() {
+            assert!(json.get("vatCompany").is_none());
+        }
+        if request.vat_number.is_none() {
+            assert!(json.get("vatNumber").is_none());
+        }
+        if request.custom_data.is_none() {
+            assert!(json.get("customData").is_none());
+        }
+    }
+
+    #[test]
+    fn test_notify_settlement_response_new() {
+        let response = NotifySettlementResponse::new();
+        assert!(response.receipt_url.is_none());
+        assert!(response.receipt_id.is_none());
+        assert!(response.custom_data.is_none());
+    }
+
+    #[test]
+    fn test_notify_settlement_response_serialization() {
+        let response = create_test_notify_settlement_response();
+
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        let deserialized: NotifySettlementResponse = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(response, deserialized);
+    }
+
+    #[test]
+    fn test_notify_settlement_response_validation_valid() {
+        let response = create_test_notify_settlement_response();
+        assert!(response.validate().is_ok());
+    }
+
+    #[test]
+    fn test_notify_settlement_response_validation_receipt_url_too_long() {
+        let mut response = create_test_notify_settlement_response();
+        response.receipt_url = Some("a".repeat(2001)); // Max is 2000
+
+        let validation_result = response.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("receipt_url"));
+    }
+
+    #[test]
+    fn test_notify_settlement_response_validation_receipt_id_too_long() {
+        let mut response = create_test_notify_settlement_response();
+        response.receipt_id = Some("a".repeat(51)); // Max is 50
+
+        let validation_result = response.validate();
+        assert!(validation_result.is_err());
+        let errors = validation_result.unwrap_err();
+        assert!(errors.field_errors().contains_key("receipt_id"));
+    }
+
+    #[test]
+    fn test_notify_settlement_response_set_methods() {
+        let mut response = create_test_notify_settlement_response();
+        let custom_data = create_test_custom_data();
+
+        response.set_receipt_url(Some("https://example.com/receipt".to_string()))
+                .set_receipt_id(Some("receipt_456".to_string()))
+                .set_custom_data(Some(custom_data.clone()));
+
+        assert_eq!(response.receipt_url, Some("https://example.com/receipt".to_string()));
+        assert_eq!(response.receipt_id, Some("receipt_456".to_string()));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_notify_settlement_response_get_methods() {
+        let response = create_test_notify_settlement_response();
+        assert_eq!(response.get_receipt_url(), None);
+        assert_eq!(response.get_receipt_id(), None);
+        assert_eq!(response.get_custom_data(), None);
+    }
+
+    #[test]
+    fn test_notify_settlement_response_with_methods() {
+        let custom_data = create_test_custom_data();
+
+        let response = create_test_notify_settlement_response()
+            .with_receipt_url("https://example.com/receipt".to_string())
+            .with_receipt_id("receipt_789".to_string())
+            .with_custom_data(custom_data.clone());
+
+        assert_eq!(response.receipt_url, Some("https://example.com/receipt".to_string()));
+        assert_eq!(response.receipt_id, Some("receipt_789".to_string()));
+        assert_eq!(response.custom_data, Some(custom_data));
+    }
+
+    #[test]
+    fn test_notify_settlement_response_boundary_values() {
+        // Test maximum length values
+        let max_receipt_url = "a".repeat(2000);
+        let max_receipt_id = "a".repeat(50);
+
+        let response = create_test_notify_settlement_response()
+            .with_receipt_url(max_receipt_url.clone())
+            .with_receipt_id(max_receipt_id.clone());
+
+        assert!(response.validate().is_ok());
+        assert_eq!(response.receipt_url, Some(max_receipt_url));
+        assert_eq!(response.receipt_id, Some(max_receipt_id));
+    }
+
+    #[test]
+    fn test_notify_settlement_response_json_format() {
+        let response = create_test_notify_settlement_response();
+        let json = serde_json::to_value(&response).expect("Failed to serialize to JSON");
+
+        // Optional fields should not be present if None
+        if response.receipt_url.is_none() {
+            assert!(json.get("receiptUrl").is_none());
+        }
+        if response.receipt_id.is_none() {
+            assert!(json.get("receiptId").is_none());
+        }
+        if response.custom_data.is_none() {
+            assert!(json.get("customData").is_none());
+        }
+    }
+
+    #[test]
+    fn test_notify_settlement_decimal_amounts() {
+        let settlement_time = Utc::now();
+
+        // Test various decimal amounts
+        let amounts = vec![
+            Decimal::try_from(0.01).unwrap(),
+            Decimal::try_from(1.00).unwrap(),
+            Decimal::try_from(99.99).unwrap(),
+            Decimal::try_from(1000.50).unwrap(),
+            Decimal::try_from(9999999.99).unwrap(),
+        ];
+
+        for amount in amounts {
+            let request = NotifySettlementRequest::new(
+                "test_psp_ref".to_string(),
+                PaymentStatusEnumType::Settled,
+                amount,
+                settlement_time,
+            );
+            assert_eq!(request.settlement_amount, amount);
+            assert!(request.validate().is_ok());
+
+            // Test serialization/deserialization preserves decimal precision
+            let json = serde_json::to_string(&request).expect("Failed to serialize");
+            let deserialized: NotifySettlementRequest = serde_json::from_str(&json).expect("Failed to deserialize");
+            assert_eq!(request.settlement_amount, deserialized.settlement_amount);
+        }
+    }
+
+    #[test]
+    fn test_notify_settlement_round_trip_with_all_fields() {
+        let custom_data = create_test_custom_data();
+        let address = create_test_address();
+        let settlement_amount = Decimal::try_from(123.45).unwrap();
+        let settlement_time = Utc::now();
+
+        let request = NotifySettlementRequest::new(
+            "complete_psp_ref".to_string(),
+            PaymentStatusEnumType::Settled,
+            settlement_amount,
+            settlement_time,
+        )
+        .with_transaction_id("complete_transaction".to_string())
+        .with_status_info("Complete status info".to_string())
+        .with_receipt_id("complete_receipt".to_string())
+        .with_receipt_url("https://complete.example.com/receipt".to_string())
+        .with_vat_company(address)
+        .with_vat_number("COMPLETE123".to_string())
+        .with_custom_data(custom_data.clone());
+
+        let response = create_test_notify_settlement_response()
+            .with_receipt_url("https://response.example.com/receipt".to_string())
+            .with_receipt_id("response_receipt".to_string())
+            .with_custom_data(custom_data);
+
+        // Test request round trip
+        let request_json = serde_json::to_string(&request).expect("Failed to serialize request");
+        let request_deserialized: NotifySettlementRequest = serde_json::from_str(&request_json).expect("Failed to deserialize request");
+        assert_eq!(request, request_deserialized);
+
+        // Test response round trip
+        let response_json = serde_json::to_string(&response).expect("Failed to serialize response");
+        let response_deserialized: NotifySettlementResponse = serde_json::from_str(&response_json).expect("Failed to deserialize response");
+        assert_eq!(response, response_deserialized);
+    }
+}
